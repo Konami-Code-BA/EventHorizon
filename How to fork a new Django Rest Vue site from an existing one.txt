@@ -5,7 +5,8 @@ terminal:
 	git push --mirror https://github.com/new_thing
 	cd ..
 	rmdir /s old_thing.git
-	git clone https://github.com/new_thing
+clone the new_thing repository into your code editor
+terminal:
 	cd new_thing
 	python -m venv ./venv
 	venv\Scripts\activate venv
@@ -13,5 +14,7 @@ terminal:
 	python manage.py runserver
 open another terminal and cd into new_thing:
 	venv\Scripts\activate venv
-	npm install --save webpack-dev-server
+	cd frontend
+	npm install -g vue-cli
+	npm install --save axios
 	npm run dev
