@@ -9,7 +9,8 @@
         "start": "npm run dev",
         "lint": "eslint --ext .js,.vue src",
         "build": "node build/build.js",
-        "postinstall": "npm run build"
+        "postinstall": "npm run build",
+        "heroku-prebuild": "npm install --dev"
     },
     "dependencies": {
         "@line/bot-sdk": "^7.3.0",
