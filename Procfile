@@ -1,1 +1,1 @@
-web: gunicorn EventHorizon.wsgi
+web: gunicorn project_name.wsgi
