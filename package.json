@@ -9,7 +9,7 @@
         "start": "npm run dev",
         "lint": "eslint --ext .js,.vue src",
         "heroku-prebuild": "npm install --dev",
-        "build": "npm run build"
+        "build": "webpack-dev-server --inline --progress --config build/webpack.prod.conf.js"
     },
     "dependencies": {
         "@line/bot-sdk": "^7.3.0",
