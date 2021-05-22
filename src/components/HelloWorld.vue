@@ -7,7 +7,6 @@
 </template>
 <script>
 import axios from 'axios'
-//const line = require('@line/bot-sdk')
 export default {
   name: 'HelloWorld',
   data () {
