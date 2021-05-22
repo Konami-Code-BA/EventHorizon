@@ -8,8 +8,8 @@
         "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
         "start": "npm run dev",
         "lint": "eslint --ext .js,.vue src",
-        "heroku-prebuild": "npm install --dev; npm update --force",
-        "build": "webpack-dev-server --inline --progress --config build/webpack.prod.conf.js"
+        "heroku-prebuild": "npm install --dev",
+        "build": "npm update --force; webpack-dev-server --inline --progress --config build/webpack.prod.conf.js"
     },
     "dependencies": {
         "@line/bot-sdk": "^7.3.0",
