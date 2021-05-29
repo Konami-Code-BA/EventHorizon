@@ -2,6 +2,8 @@
   <div>
     <button v-on:click.prevent="line_thing()">line_thing</button><br>
 		<br>
+    <button v-on:click.prevent="line_thing()">line_thing</button><br>
+		<br>
 		<a href="https://lin.ee/UeSvNxR"><img height="36" border="0" src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png"></a>
   </div>
 </template>
@@ -40,7 +42,7 @@ export default {
 
     async line_thing () {
       await axios
-        .post('http://127.0.0.1:8000/api/line_thing/', {command: 'consumption'})
+        .post('/api/line_thing/', {command: 'consumption'})
         .then(response => {console.log('response: ', response)})
         .catch(error => {console.log('error: ', error)})
     },
