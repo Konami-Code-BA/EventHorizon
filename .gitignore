@@ -1,4 +1,5 @@
 \venv
 .env
 \frontend\node_modules
+\backup\frontend\node_modules
 \node_modules
