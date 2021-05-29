@@ -67,9 +67,6 @@ CORS_ORIGIN_WHITELIST = (
 
 ROOT_URLCONF = 'project_name.urls'
 
-TEMPLATES_DIR = os.path.join(BASE_DIR, 'app_name/templates/app_name')
-FRONTEND_DIR = os.path.join(BASE_DIR, 'frontend')
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -141,7 +138,8 @@ STATIC_URL = '/dist/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'dist')
 
 # Vue project location
-FRONTEND_DIR = os.path.join(BASE_DIR, 'frontend')
+#FRONTEND_DIR = os.path.join(BASE_DIR, 'frontend')
+FRONTEND_DIR = BASE_DIR
 
 # Vue assets directory (assetsDir)
 STATICFILES_DIRS = [
