@@ -30,10 +30,39 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEBUG = True
 SECRET_KEY = config('SECRET_KEY')
 ALLOWED_HOSTS = ['event-horizon-jp.herokuapp.com/', 'localhost']
+#ALLOWED_HOSTS=['*']
 
+CORS_ORIGIN_ALLOW_ALL = True
+
+CSRF_COOKIE_NAME = "XSRF-TOKEN"
+#CSRF_COOKIE_DOMAIN = 'localhost'
+CORS_ALLOW_CREDENTIALS = True
+SESSION_COOKIE_SAMESITE = None
+#CORS_ORIGIN_WHITELIST = (
+#    'http://:localhost:8080',
+#    'http://:localhost:8000',
+#		'https://event-horizon-jp.herokuapp.com',
+#)
+#CORS_ALLOWED_ORIGINS = [
+#    'http://localhost:8080',
+#    'http://localhost:8000',
+#		'https://event-horizon-jp.herokuapp.com',
+#]
+#CSRF_TRUSTED_ORIGINS = [
+#    'localhost:8080',
+#    'localhost:8000',
+#		'event-horizon-jp.herokuapp.com',
+#]
+#CORS_ALLOW_METHODS = [
+#    'DELETE',
+#    'GET',
+#    'OPTIONS',
+#    'PATCH',
+#    'POST',
+#    'PUT',
+#]
 
 # Application definition
-
 INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',
     'django.contrib.admin',
@@ -58,12 +87,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsPostCsrfMiddleware',
 ]
-
-CORS_ORIGIN_WHITELIST = (
-    'http://127.0.0.1:8080',
-    'http://127.0.0.1:8081',
-)
 
 ROOT_URLCONF = 'project_name.urls'
 
