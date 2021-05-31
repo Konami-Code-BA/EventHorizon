@@ -4,4 +4,4 @@ from app_name.viewsets import UserViewSet, LineViewset
 router = routers.DefaultRouter()
 
 router.register(r'user', UserViewSet)
-router.register(r'line_thing', LineViewset)
+router.register(r'line', LineViewset)
