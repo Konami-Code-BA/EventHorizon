@@ -31,8 +31,8 @@ export default {
     }
   },
 	async mounted () {
-		//const csrftoken = JSON.parse('{"'+document.cookie.replaceAll('=', '": "').replaceAll('; ', '", "')+'"}')['XSRF-TOKEN']
-		//axios.defaults.headers.common['x-csrftoken'] = csrftoken;
+		const csrftoken = JSON.parse('{"'+document.cookie.replaceAll('=', '": "').replaceAll('; ', '", "')+'"}')['XSRF-TOKEN']
+		axios.defaults.headers.common['x-csrftoken'] = csrftoken;
 	}, 
   methods: {
     async getuser () {
