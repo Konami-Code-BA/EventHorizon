@@ -33,6 +33,7 @@ export default {
 	async mounted () {
 		const csrftoken = JSON.parse('{"'+document.cookie.replaceAll('=', '": "').replaceAll('; ', '", "')+'"}')['XSRF-TOKEN']
 		axios.defaults.headers.common['x-csrftoken'] = csrftoken;
+		console.log(process.env.NODE_ENV)
 	}, 
   methods: {
     async getuser () {
