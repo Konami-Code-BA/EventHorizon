@@ -25,9 +25,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 #SECRET_KEY = 'django-insecure-(j7(p96vyw7r)*)8%u++g8qkkz!v=bwzymi!7a39#py&1dvt(w'
 
 ## SECURITY WARNING: don't run with debug turned on in production!
-#DEBUG = True
 
 DEBUG = True
+#DEBUG = True if config('NODE_ENV') == 'development' else False
 SECRET_KEY = config('SECRET_KEY')
 ALLOWED_HOSTS = ['event-horizon-jp.herokuapp.com/', 'localhost']
 #ALLOWED_HOSTS=['*']
