@@ -37,7 +37,9 @@ export default {
 		const csrftoken = JSON.parse('{"'+document.cookie.replaceAll('=', '": "').replaceAll('; ', '", "')+'"}')['XSRF-TOKEN']
 		axios.defaults.headers.common['x-csrftoken'] = csrftoken
 		console.log(process.env.NODE_ENV)
-		console.log('DEBUG: ', process.env.DEBUG)
+		console.log(process.env.HOST)
+		console.log(process.env.PORT)
+		console.log(process.env.VUE_ENV)
 		if (process.env.NODE_ENV == 'development') {
 			this.APIBaseUrl = 'http://127.0.0.1:8000'
 		} else {
