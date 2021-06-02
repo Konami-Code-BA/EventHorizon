@@ -26,8 +26,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 ## SECURITY WARNING: don't run with debug turned on in production!
 
-DEBUG = True
-#DEBUG = config('DEBUG')
+#DEBUG = True
+DEBUG = config('DEBUG')
 #DEBUG = True if config('NODE_ENV') == 'development' else False
 SECRET_KEY = config('SECRET_KEY')
 ALLOWED_HOSTS = ['event-horizon-jp.herokuapp.com/', 'localhost']
@@ -78,12 +78,6 @@ INSTALLED_APPS = [
 ]
 
 AUTH_USER_MODEL = 'app_name.User'
-
-#REST_FRAMEWORK = {
-#    'DEFAULT_PERMISSION_CLASSES': [
-#        'rest_framework.permissions.IsAdminUser',
-#    ]
-#}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
