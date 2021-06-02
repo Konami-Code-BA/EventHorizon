@@ -64,14 +64,6 @@ export default {
 			} else {
 				baseUrl = ''
 			}
-			//console.log(baseUrl)
-      //await axios({
-			//		method: 'post',
-			//		url: baseUrl+'/api/line/',
-			//		data: {
-			//			command: 'consumption',
-			//		},
-			//	})
       await axios
 				.post(baseUrl+'/api/line/', {
 					command: command,
