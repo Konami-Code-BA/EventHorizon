@@ -26,8 +26,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 ## SECURITY WARNING: don't run with debug turned on in production!
 
-#DEBUG = True
-DEBUG = config('DEBUG')
+DEBUG = True
+#DEBUG = config('DEBUG')
 #DEBUG = True if config('NODE_ENV') == 'development' else False
 SECRET_KEY = config('SECRET_KEY')
 ALLOWED_HOSTS = ['event-horizon-jp.herokuapp.com/', 'localhost']
@@ -65,7 +65,7 @@ SESSION_COOKIE_SAMESITE = None
 
 # Application definition
 INSTALLED_APPS = [
-    'whitenoise.runserver_nostatic',
+    #'whitenoise.runserver_nostatic',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -115,10 +115,20 @@ WSGI_APPLICATION = 'project_name.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.sqlite3',
+#        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#    }
+#}
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'eventdb',
+        'USER': 'postgres',
+        'PASSWORD': 'kakariko4P$',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
