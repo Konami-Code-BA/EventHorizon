@@ -1,6 +1,10 @@
 <template>
 	<div>
 		<div class="box">
+			<div class="box-item logout">
+				<button v-on:click.prevent="logout()" class="no-border-button"><small>LOGOUT</small></button><br>
+			</div>
+    	<img src="../assets/eventhorizon.png" class="logo"><br>
 			<br>
 			<button v-on:click.prevent="goToPage2()" class="box-item">GO TO PAGE 2</button><br>
 			<br>
@@ -13,14 +17,17 @@
 					<td style="text-align: right"><small>SHOW</small><input v-model="showPassword" type="checkbox"></td>
 				</table>
 				<input v-model="passwordInput" placeholder="" :type="[showPassword ? 'text' : 'password']" class="box-item"/><br>
-			</form><br>
-			<button v-on:click.prevent="login()" class="box-item">LOGIN</button><br><br>
-			<button v-on:click.prevent="login()" class="box-item">NOT REGISTERED YET?</button><br><br>
+			</form>
+			<br>
+			<button v-on:click.prevent="login()" class="box-item">LOGIN</button><br>
+			<br>
+			<button v-on:click.prevent="login()" class="box-item">NOT REGISTERED YET?</button><br>
+			<br>
 			<span v-if="response !== ''">response:<br>{{response}}</span><br>
+			<br>
 			<span v-if="error !== ''">error:<br>{{error}}</span>
 			<br>
 		</div>
-		<button v-on:click.prevent="logout()" class="no-border-button footer">LOGOUT</button><br>
 		<!--a href="https://lin.ee/UeSvNxR"><img height="36" border="0" src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png"></a-->
 	</div>
 </template>
@@ -149,9 +156,8 @@ export default {
 		background: none;
 	}
 
-	.footer {
-		position: absolute;
-		bottom: 5px;
-		right: 5px;
+	.logout {
+		text-align: left !important;
 	}
+
 </style>
