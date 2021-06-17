@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import store from '@/store'
 import frontPage from '@/components/frontPage'
+import registration from '@/components/registration'
 import login from '@/components/login'
 import pageTwo from '@/components/pageTwo'
 
@@ -15,6 +16,11 @@ const router = new Router({
         path: '/',
         name: 'frontPage',
         component: frontPage,
+        meta: { userGroups: [] },
+    }, {
+        path: '/registration',
+        name: 'registration',
+        component: registration,
         meta: { userGroups: [] },
     }, {
         path: '/login',
@@ -35,7 +41,8 @@ router.beforeEach((to, from, next) => {
         return
     } else {
         for (let i = 0; i < to.meta.userGroups.length; i++) {
-            for (let j = 0; j < store.groups.length; i++) {
+            for (let j = 0; j < store.groups.length; j++) {
+                console.log('looping1', i, j)
                 if (to.meta.userGroups[i] === store.groups[j]) { // permission granted
                     next()
                     return
@@ -45,6 +52,7 @@ router.beforeEach((to, from, next) => {
         next({ // permission denied
             name: 'login'
         })
+        return
     }
 
     //if (to.meta.requiresAuth) {
