@@ -2,11 +2,12 @@
 	<div>
 		<div class="box">
 			<br>
-			<button v-on:click.prevent="goToPage2()" class="box-item">GO TO PAGE 2</button><br>
-			<br>
-			<div class="box-item">USERNAME</div>
-			<form v-on:keyup.enter="login()">
+			<form v-on:keyup.enter="register()">
+				<div class="box-item">USERNAME</div>
 				<input v-model="usernameInput" placeholder="" ref="username" class="box-item"/><br>
+				<br>
+				<div class="box-item">EMAIL</div>
+				<input v-model="emailInput" placeholder="" class="box-item"/><br>
 				<br>
 				<table class="box-item">
 					<td style="text-align: left">PASSWORD</td>
@@ -14,8 +15,8 @@
 				</table>
 				<input v-model="passwordInput" placeholder="" :type="[showPassword ? 'text' : 'password']" class="box-item"/><br>
 			</form><br>
-			<button v-on:click.prevent="login()" class="box-item">LOGIN</button><br><br>
-			<button v-on:click.prevent="login()" class="box-item">NOT REGISTERED YET?</button><br><br>
+			<button v-on:click.prevent="register()" class="box-item">REGISTER</button><br><br>
+			<button v-on:click.prevent="goToLogin()" class="box-item">ALREADY REGISTERED? LOGIN</button><br><br>
 			<span v-if="response !== ''">response:<br>{{response}}</span><br>
 			<span v-if="error !== ''">error:<br>{{error}}</span>
 			<br>
@@ -30,7 +31,7 @@ import axios from 'axios'
 axios.defaults.withCredentials = true
 axios.defaults.xsrfHeaderName = "X-CSRFToken"
 export default {
-  name: 'login',
+  name: 'registration',
   data () {
     return {
 			token: 'QHyTosat3st1hTca9MII4ZT8zAAfEmCSRkE7JpRFN8vXz2YcUFKbOnvr2ItzKihjBqSo2L+St2o2awCJuR9ZYhBF2zmhZTq02wUDV1JrlPtJdI9zEGBYHtlPEza+Yjrg96ldnJHNx560asXkXKIEpQdB04t89/1O/w1cDnyilFU=',
@@ -39,6 +40,7 @@ export default {
 			response: '',
 			error: '',
 			usernameInput: '',
+			emailInput: '',
 			passwordInput: '',
 			showPassword: false,
 			APIBaseUrl: '',
@@ -56,26 +58,14 @@ export default {
 		}
 	}, 
   methods: {
-    async getuser () {
-      await axios
-        .get(this.APIBaseUrl+'/api/user/?search=' + this.inp)
-        .then(response => {
-					this.response = response.data[0].date_joined
-					this.error = ''
-				})
-        .catch(error => {
-					this.response = ''
-					this.error = error
-				})
-      console.log('response', this.response)
-    },
-
-    async login () {
+    async register () {
       await axios
         .post(this.APIBaseUrl+'/api/user/', {
-					command: 'login',
+					command: 'registration',
           username: this.usernameInput,
+          email: this.emailInput,
           password: this.passwordInput,
+					groups: [ 2 ],
         })
         .then(response => {
 					this.response = response.data[0]['username'] + ' just logged in'
@@ -90,68 +80,40 @@ export default {
       console.log('response', this.response)
     },
 
-    async logout () {
-			store.user = null
-      await axios
-        .post(this.APIBaseUrl+'/api/user/', {
-					command: 'logout',
-          username: store.username,
-        })
-        .then(response => {
-					this.response = response.data[0]['username'] + ' just logged out'
-					this.error = ''
-					store.username = null
-					store.groups = []
-				})
-        .catch(error => {
-					this.response = ''
-					this.error = error
-				})
-      console.log('response', this.response)
-    },
-
-    async line (command) {
-			this.response = ''
-			this.error = ''
-      await axios
-				.post(this.APIBaseUrl+'/api/line/', {
-					command: command,
-					message: this.inp,
-				})
-        .then(response => {
-					this.response = response['data'][response['data'].length-1]['response']
-					this.error = ''
-				})
-        .catch(error => {
-					this.response = ''
-					this.error = error
-				})
-    },
-
-		goToPage2 () {
-			this.$router.push({ name: 'pageTwo', params: { thruParams: 'this was sent from the login page' } })
+		goToLogin () {
+			this.$router.push({ name: 'login' })
 		},
   } // methods
 } // export
 </script>
 <style scoped>
-
-	table {
-		border-collapse: collapse;
-	}
-
-	td {
-		padding: 0;
-	}
-
-	.no-border-button {
-		border: none;
-		background: none;
-	}
-
-	.footer {
-		position: absolute;
-		bottom: 5px;
-		right: 5px;
-	}
+.box {
+	max-width: 80%;
+	width: 300px;
+	margin: auto;
+}
+.box-item {
+	box-sizing: border-box;
+	width: 100%;
+	text-align: left;
+	padding: 0;
+}
+table {
+	border-collapse: collapse;
+}
+td {
+	padding: 0;
+}
+button {
+	text-align: center !important;
+}
+.no-border-button {
+	border: none;
+	background: none;
+}
+.footer {
+	position: absolute;
+	bottom: 5px;
+	right: 5px;
+}
 </style>

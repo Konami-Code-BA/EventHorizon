@@ -5,6 +5,7 @@ from rest_framework.response import Response
 import requests
 import json
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.models import Group
 from django.contrib import auth
 from django.conf import settings
 from django.contrib.sessions.models import Session
@@ -33,22 +34,25 @@ class UserViewSet(viewsets.ModelViewSet):
 	#def partial_update(self, request, pk=None):  # PATCH {prefix}/{lookup}/
 	#def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
 
-	def register(self, request):
+	
+	def registration(self, request):
 		username = request.data['username']
+		email = request.data['email']
 		password = request.data['password']
-		
-		user = User.objects.create_user(username, password)
+		user = User.objects.create_user(username=username, password=password, email=email)
 		user.save()
-		print('register ', user.date_joined)
+		group = Group.objects.get(name='User')
+		group.user_set.add(user)
+		print('register')
 		return user
 
 	def login(self, request):
 		username = request.data['username']
 		password = request.data['password']
-		#user = User.objects.get(username=username)
 		user = auth.authenticate(username=username, password=password)
 		if user is None:
 			print('AUTHENTICATION FAILED')
+			user = auth.models.AnonymousUser()
 		else:
 			auth.login(request, user)
 		print('login')
@@ -61,16 +65,17 @@ class UserViewSet(viewsets.ModelViewSet):
 		print('logout')
 		return user
 
-	def check(self, request):
-		try:
-			sessionid = request.session.session_key
-			session = Session.objects.get(pk=sessionid)
-			user_id = session.get_decoded()['_auth_user_id']
-			user = User.objects.get(pk=user_id)
-		except Session.DoesNotExist:
-			print('exception')
-			user = auth.models.AnonymousUser()
-		return user
+
+	#def check(self, request):
+	#	try:
+	#		sessionid = request.session.session_key
+	#		session = Session.objects.get(pk=sessionid)
+	#		user_id = session.get_decoded()['_auth_user_id']
+	#		user = User.objects.get(pk=user_id)
+	#	except Session.DoesNotExist:
+	#		print('exception')
+	#		user = auth.models.AnonymousUser()
+	#	return user
 
 
 
