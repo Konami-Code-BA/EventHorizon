@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import store from '@/store.js'
-import frontPage from '@/components/frontPage.vue'
-import login from '@/components/login.vue'
-import page2 from '@/components/page2.vue'
+import store from '@/store'
+import frontPage from '@/components/frontPage'
+import login from '@/components/login'
+import pageTwo from '@/components/pageTwo'
 
 Vue.use(Router)
 
@@ -22,11 +22,10 @@ const router = new Router({
         component: login,
         meta: { userGroups: [] },
     }, {
-        path: '/page2/',
-        name: 'page2',
-        component: page2,
+        path: '/pageTwo/',
+        name: 'pageTwo',
+        component: pageTwo,
         meta: { userGroups: [1] },
-        //beforeEnter: ifAuthenticated
     }]
 })
 
