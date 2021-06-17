@@ -9,6 +9,7 @@ from django.contrib.auth.models import Group
 from django.contrib import auth
 from django.conf import settings
 from django.contrib.sessions.models import Session
+from decouple import config
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -19,6 +20,8 @@ class UserViewSet(viewsets.ModelViewSet):
 
 	#def list(self, request):  # GET {prefix}/
 	def create(self, request):  # POST {prefix}/
+		
+		print("DEBUG", config('PYTHON_ENV'), config('PYTHON_ENV', default='production') == 'development', settings.DEBUG)
 		user = eval(f"self.{request.data['command']}(request)")
 		print('user ', user, '\n', user.is_authenticated)
 		if user.is_authenticated:
