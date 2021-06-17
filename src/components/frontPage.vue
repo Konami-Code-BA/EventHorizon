@@ -1,7 +1,10 @@
 <template>
   <div>
-    <button v-on:click.prevent="goToLogin()">Login</button><br>
-  </div>
+		<div class="box">
+			<br>
+			<button v-on:click.prevent="goToRegistration()" class="box-item">REGISTER</button><br>
+		</div>
+	</div>
 </template>
 <script>
 import axios from 'axios'
@@ -25,8 +28,8 @@ export default {
 		}
 	},
   methods: {
-		goToLogin () {
-			this.$router.push(name='login')
+		goToRegistration () {
+			this.$router.push(name='registration')
     },
   }
 }
