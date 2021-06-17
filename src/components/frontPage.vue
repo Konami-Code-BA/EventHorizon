@@ -1,7 +1,6 @@
 <template>
   <div>
-    <h1 v-if="thruParams !== null">Hello</h1>
-    <h1 v-if="thruParams !== null">{{thruParams}}</h1>
+    <button v-on:click.prevent="goToLogin()">Login</button><br>
   </div>
 </template>
 <script>
@@ -9,10 +8,9 @@ import axios from 'axios'
 axios.defaults.withCredentials = true
 axios.defaults.xsrfHeaderName = "X-CSRFToken"
 export default {
-  name: 'page2',
+  name: 'frontPage',
   data () {
     return {
-      thruParams: this.$route.params.thruParams,
 			APIBaseUrl: '',
     }
   },
@@ -27,6 +25,9 @@ export default {
 		}
 	},
   methods: {
+		goToLogin () {
+			this.$router.push(name='login')
+    },
   }
 }
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" v-cloak>
     <img src="./assets/logo.png">
     <router-view/>
   </div>
@@ -20,4 +20,8 @@ export default {
   color: #2c3e50;
   margin-top: 60px;
 }
+
+/*[v-cloak] {display: none}*/
+[v-cloak] > * { display:none }
+[v-cloak]::before { content: "loading…" }
 </style>
