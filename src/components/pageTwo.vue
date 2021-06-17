@@ -1,8 +1,11 @@
 <template>
-  <div>
-    <h1 v-if="thruParams !== null">Hello</h1>
-    <h1 v-if="thruParams !== null">{{thruParams}}</h1>
-  </div>
+	<div>
+  	<div class="box">
+    	<img src="../assets/eventhorizon.png" class="logo"><br><br>
+			<h1 v-if="thruParams !== null">Hello</h1>
+			<h1 v-if="thruParams !== null">{{thruParams}}</h1>
+  	</div>
+	</div>
 </template>
 <script>
 import axios from 'axios'

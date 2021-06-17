@@ -1,6 +1,5 @@
 <template>
   <div id="app" v-cloak>
-    <img src="./assets/eventhorizon.png" class="logo">
     <router-view/>
   </div>
 </template>
