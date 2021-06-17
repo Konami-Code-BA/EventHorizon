@@ -133,7 +133,7 @@ export default {
     },
 
 		goToPage2 () {
-			this.$router.push({ name: 'page2', params: { thruParams: 'this was sent from the login page' } })
+			this.$router.push({ name: 'pageTwo', params: { thruParams: 'this was sent from the login page' } })
 		},
   } // methods
 } // export

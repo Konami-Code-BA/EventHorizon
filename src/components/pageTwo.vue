@@ -9,7 +9,7 @@ import axios from 'axios'
 axios.defaults.withCredentials = true
 axios.defaults.xsrfHeaderName = "X-CSRFToken"
 export default {
-  name: 'page2',
+  name: 'pageTwo',
   data () {
     return {
       thruParams: this.$route.params.thruParams,
