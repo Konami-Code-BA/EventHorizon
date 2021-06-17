@@ -5,12 +5,12 @@ from django.shortcuts import render
 
 from django.http import HttpResponse
 from django.views.decorators.http import require_POST
+	
+def index(request):
+    return render(request, template_name='index.html')
 
 @require_POST
 def example(request):
 	print(request)
 	return HttpResponse('This is the webhook response.')
-	
-def index(request):
-    return render(request, template_name='index.html')
 		
