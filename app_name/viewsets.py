@@ -5,6 +5,9 @@ from rest_framework.response import Response
 import requests
 import json
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib import auth
+from django.conf import settings
+from django.contrib.sessions.models import Session
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -12,6 +15,63 @@ class UserViewSet(viewsets.ModelViewSet):
 	serializer_class = UserSerializer
 	filter_backends = (filters.SearchFilter,)
 	search_fields = ['=email', '=username',]
+
+	#def list(self, request):  # GET {prefix}/
+	def create(self, request):  # POST {prefix}/
+		user = eval(f"self.{request.data['command']}(request)")
+		print('user ', user, '\n', user.is_authenticated)
+		if user.is_authenticated:
+			print("HERE")
+			queryset = [user]
+			serializer = UserSerializer(queryset, many=True)
+			return Response(serializer.data)
+		else:
+			return Response({'data': None})
+
+	#def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
+	#def update(self, request, pk=None):  # PUT {prefix}/{lookup}/
+	#def partial_update(self, request, pk=None):  # PATCH {prefix}/{lookup}/
+	#def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
+
+	def register(self, request):
+		username = request.data['username']
+		password = request.data['password']
+		
+		user = User.objects.create_user(username, password)
+		user.save()
+		print('register ', user.date_joined)
+		return user
+
+	def login(self, request):
+		username = request.data['username']
+		password = request.data['password']
+		#user = User.objects.get(username=username)
+		user = auth.authenticate(username=username, password=password)
+		if user is None:
+			print('AUTHENTICATION FAILED')
+		else:
+			auth.login(request, user)
+		print('login')
+		return user
+
+	def logout(self, request):
+		username = request.data['username']
+		user = User.objects.get(username=username)
+		auth.logout(request)
+		print('logout')
+		return user
+
+	def check(self, request):
+		try:
+			sessionid = request.session.session_key
+			session = Session.objects.get(pk=sessionid)
+			user_id = session.get_decoded()['_auth_user_id']
+			user = User.objects.get(pk=user_id)
+		except Session.DoesNotExist:
+			print('exception')
+			user = auth.models.AnonymousUser()
+		return user
+
 
 
 class LineViewset(viewsets.ViewSet):
