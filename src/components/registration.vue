@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div class="box">
-			<br>
+    	<img src="../assets/eventhorizon.png" class="logo"><br><br>
 			<form v-on:keyup.enter="register()">
 				<div class="box-item">USERNAME</div>
 				<input v-model="usernameInput" placeholder="" ref="username" class="box-item"/><br>

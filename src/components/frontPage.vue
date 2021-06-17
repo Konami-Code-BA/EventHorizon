@@ -1,7 +1,7 @@
 <template>
   <div>
 		<div class="box">
-			<br>
+    	<img src="../assets/eventhorizon.png" class="logo"><br><br>
 			<button v-on:click.prevent="goToRegistration()" class="box-item">REGISTER</button><br>
 		</div>
 	</div>
