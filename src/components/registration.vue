@@ -1,7 +1,11 @@
 <template>
 	<div>
 		<div class="box">
-    	<img src="../assets/eventhorizon.png" class="logo"><br><br>
+			<div class="box-item logout">
+				<button v-on:click.prevent="logout()" class="no-border-button"><small>LOGOUT</small></button><br>
+			</div>
+    	<img src="../assets/eventhorizon.png" class="logo"><br>
+			<br>
 			<form v-on:keyup.enter="register()">
 				<div class="box-item">USERNAME</div>
 				<input v-model="usernameInput" placeholder="" ref="username" class="box-item"/><br>
@@ -14,14 +18,16 @@
 					<td style="text-align: right"><small>SHOW</small><input v-model="showPassword" type="checkbox"></td>
 				</table>
 				<input v-model="passwordInput" placeholder="" :type="[showPassword ? 'text' : 'password']" class="box-item"/><br>
-			</form><br>
-			<button v-on:click.prevent="register()" class="box-item">REGISTER</button><br><br>
-			<button v-on:click.prevent="goToLogin()" class="box-item">ALREADY REGISTERED? LOGIN</button><br><br>
+			</form>
+			<br>
+			<button v-on:click.prevent="register()" class="box-item">REGISTER</button><br>
+			<br>
+			<button v-on:click.prevent="goToLogin()" class="box-item">ALREADY REGISTERED? LOGIN</button><br>
+			<br>
 			<span v-if="response !== ''">response:<br>{{response}}</span><br>
 			<span v-if="error !== ''">error:<br>{{error}}</span>
 			<br>
 		</div>
-		<button v-on:click.prevent="logout()" class="no-border-button footer">LOGOUT</button><br>
 		<!--a href="https://lin.ee/UeSvNxR"><img height="36" border="0" src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png"></a-->
 	</div>
 </template>
@@ -80,6 +86,27 @@ export default {
       console.log('response', this.response)
     },
 
+    async logout () {
+			store.user = null
+      await axios
+        .post(this.APIBaseUrl+'/api/user/', {
+					command: 'logout',
+          username: store.username,
+        })
+        .then(response => {
+					this.response = response.data[0]['username'] + ' just logged out'
+					this.error = ''
+					store.username = null
+					store.groups = []
+					location.reload()
+				})
+        .catch(error => {
+					this.response = ''
+					this.error = error
+				})
+      console.log('response', this.response)
+    },
+
 		goToLogin () {
 			this.$router.push({ name: 'login' })
 		},
@@ -87,33 +114,4 @@ export default {
 } // export
 </script>
 <style scoped>
-.box {
-	max-width: 80%;
-	width: 300px;
-	margin: auto;
-}
-.box-item {
-	box-sizing: border-box;
-	width: 100%;
-	text-align: left;
-	padding: 0;
-}
-table {
-	border-collapse: collapse;
-}
-td {
-	padding: 0;
-}
-button {
-	text-align: center !important;
-}
-.no-border-button {
-	border: none;
-	background: none;
-}
-.footer {
-	position: absolute;
-	bottom: 5px;
-	right: 5px;
-}
 </style>

@@ -109,6 +109,7 @@ export default {
 					this.error = ''
 					store.username = null
 					store.groups = []
+					location.reload()
 				})
         .catch(error => {
 					this.response = ''
@@ -142,22 +143,4 @@ export default {
 } // export
 </script>
 <style scoped>
-
-	table {
-		border-collapse: collapse;
-	}
-
-	td {
-		padding: 0;
-	}
-
-	.no-border-button {
-		border: none;
-		background: none;
-	}
-
-	.logout {
-		text-align: left !important;
-	}
-
 </style>
