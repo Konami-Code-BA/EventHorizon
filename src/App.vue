@@ -19,6 +19,7 @@ export default {
 		text-align: center;
 		color: #2c3e50;
 		margin-top: 60px;
+  	font-size: 16px;
 	}
 
 	/*[v-cloak] {display: none}*/
@@ -46,6 +47,11 @@ export default {
 
 	button {
 		text-align: center !important;
+  	font-size: 16px;
+	}
+
+	input {
+  	font-size: 16px;
 	}
 
 </style>
