@@ -1,6 +1,6 @@
 <template>
   <div id="app" v-cloak>
-    <router-view/>
+    <router-view :key="$route.fullPath"/>
   </div>
 </template>
 
@@ -53,4 +53,20 @@ export default {
   	font-size: 16px;
 	}
 
+	.no-border-button {
+		border: none;
+		background: none;
+	}
+
+	.logout {
+		text-align: left !important;
+	}
+	
+	table {
+		border-collapse: collapse;
+	}
+
+	td {
+		padding: 0;
+	}
 </style>
