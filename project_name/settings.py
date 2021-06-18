@@ -80,11 +80,11 @@ INSTALLED_APPS = [
 
 AUTH_USER_MODEL = 'app_name.User'
 
-#REST_FRAMEWORK = {
-#    'DEFAULT_RENDERER_CLASSES': (
-#        'rest_framework.renderers.JSONRenderer',
-#    )
-#}
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAdminUser',
+    )
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
