@@ -17,6 +17,9 @@ const router = new Router({
     //beforeEach: (to, from, next) => {},
     routes: [{
         path: '/',
+        redirect: { name: 'frontPage' },
+    }, {
+        path: '/frontPage',
         name: 'frontPage',
         component: frontPage,
         meta: { userGroups: [] },
@@ -52,9 +55,7 @@ router.beforeEach(
     async(to, from, next) => {
         await apiFunctions.authenticateFromSession()
         console.log('routed')
-        if (to.path === from.path) {
-            return
-        } else if (to.meta.userGroups.length === 0) {
+        if (to.meta.userGroups.length === 0) {
             next()
             return
         } else {
