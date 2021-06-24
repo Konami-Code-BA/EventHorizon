@@ -1,10 +1,13 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import store from '@/store'
-import frontPage from '@/components/frontPage'
-import registration from '@/components/registration'
-import login from '@/components/login'
-import pageTwo from '@/components/pageTwo'
+import apiFunctions from '@/functions/apiFunctions.js'
+import frontPage from '@/views/frontPage'
+import registration from '@/views/registration'
+import login from '@/views/login'
+import pageTwo from '@/views/pageTwo'
+import accountSettings from '@/views/accountSettings'
+import home from '@/views/home'
 
 Vue.use(Router)
 
@@ -28,45 +31,58 @@ const router = new Router({
         component: login,
         meta: { userGroups: [] },
     }, {
-        path: '/pageTwo/',
+        path: '/pageTwo',
         name: 'pageTwo',
         component: pageTwo,
         meta: { userGroups: [1] },
-    }]
+    }, {
+        path: '/accountSettings',
+        name: 'accountSettings',
+        component: accountSettings,
+        meta: { userGroups: [1, 2] },
+    }, {
+        path: '/home',
+        name: 'home',
+        component: home,
+        meta: { userGroups: [1, 2] },
+    }, ]
 })
 
-router.beforeEach((to, from, next) => {
-    if (to.meta.userGroups.length === 0) {
-        next()
-        return
-    } else {
-        for (let i = 0; i < to.meta.userGroups.length; i++) {
-            for (let j = 0; j < store.groups.length; j++) {
-                console.log('looping1', i, j)
-                if (to.meta.userGroups[i] === store.groups[j]) { // permission granted
-                    next()
-                    return
+router.beforeEach(
+    async(to, from, next) => {
+        await apiFunctions.authenticateFromSession()
+        console.log('routed')
+        if (to.path === from.path) {
+            return
+        } else if (to.meta.userGroups.length === 0) {
+            next()
+            return
+        } else {
+            for (let i = 0; i < to.meta.userGroups.length; i++) {
+                for (let j = 0; j < store.user.groups.length; j++) {
+                    if (to.meta.userGroups[i] === store.user.groups[j]) { // permission granted
+                        next()
+                        return
+                    }
                 }
             }
+            next({ name: 'frontPage' }) // permission denied
+            return
         }
-        next({ // permission denied
-            name: 'login'
-        })
-        return
-    }
 
-    //if (to.meta.requiresAuth) {
-    //    if (!store.user) {
-    //        console.log("MAKE IT?", store.user)
-    //        next({
-    //            name: 'login'
-    //        })
-    //    } else {
-    //        next()
-    //    }
-    //} else {
-    //    next()
-    //}
-})
+        //if (to.meta.requiresAuth) {
+        //    if (!store.user) {
+        //        console.log("MAKE IT?", store.user)
+        //        next({
+        //            name: 'login'
+        //        })
+        //    } else {
+        //        next()
+        //    }
+        //} else {
+        //    next()
+        //}
+    }
+)
 
 export default router

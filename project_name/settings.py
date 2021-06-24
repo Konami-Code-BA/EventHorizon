@@ -28,45 +28,27 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 #DEBUG = True
 #DEBUG = os.environ.get('PYTHON_ENV', 'production') == 'development'
-DEBUG = config('PYTHON_ENV', default='production') == 'development'
+DEBUG = config('PYTHON_ENV', default='production') == 'development'  # need to make sure this works
 #DEBUG = True if os.environ['NODE_ENV'] == 'development' else False
 SECRET_KEY = config('SECRET_KEY')
 ALLOWED_HOSTS = ['event-horizon-jp.herokuapp.com/', 'localhost']
-#ALLOWED_HOSTS=['*']
-
-CORS_ORIGIN_ALLOW_ALL = True
-
-CSRF_COOKIE_NAME = "XSRF-TOKEN"
-#CSRF_COOKIE_DOMAIN = 'localhost'
 CORS_ALLOW_CREDENTIALS = True
-SESSION_COOKIE_SAMESITE = None
-#CORS_ORIGIN_WHITELIST = (
-#    'http://:localhost:8080',
-#    'http://:localhost:8000',
-#		'https://event-horizon-jp.herokuapp.com',
-#)
-#CORS_ALLOWED_ORIGINS = [
-#    'http://localhost:8080',
-#    'http://localhost:8000',
-#		'https://event-horizon-jp.herokuapp.com',
-#]
-#CSRF_TRUSTED_ORIGINS = [
-#    'localhost:8080',
-#    'localhost:8000',
-#		'event-horizon-jp.herokuapp.com',
-#]
-#CORS_ALLOW_METHODS = [
-#    'DELETE',
-#    'GET',
-#    'OPTIONS',
-#    'PATCH',
-#    'POST',
-#    'PUT',
-#]
+CSRF_COOKIE_NAME = "XSRF-TOKEN"
+
+#CORS_ALLOW_ALL_ORIGINS = True  # dangerous, want to restrict origins that can make cross-origin requests
+CORS_ALLOWED_ORIGINS  = (  # need to figure out how to use this correctly
+	"http://127.0.0.1:8080",
+	"http://127.0.0.1:8000",
+	"https://event-horizon-jp.herokuapp.com",
+)
+
+# "Strict": prevents the cookie from being sent by the browser to the target site in all cross-site browsing context, even when following a regular link
+# "Lax": maintain user’s logged-in session after the user arrives from an external link
+# "None": the session cookie will be sent with all same-site and cross-site requests
+SESSION_COOKIE_SAMESITE = "Strict"
 
 # Application definition
 INSTALLED_APPS = [
-    #'whitenoise.runserver_nostatic',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -79,12 +61,6 @@ INSTALLED_APPS = [
 ]
 
 AUTH_USER_MODEL = 'app_name.User'
-
-REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAdminUser',
-    )
-}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -118,27 +94,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'project_name.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#        'NAME': 'eventdb',
-#        'USER': 'postgres',
-#        'PASSWORD': 'kakariko4P$',
-#        'HOST': 'localhost',
-#        'PORT': '5432',
-#    }
-#}
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
