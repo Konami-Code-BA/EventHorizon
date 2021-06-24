@@ -16,10 +16,10 @@ const router = new Router({
     mode: 'history',
     //beforeEach: (to, from, next) => {},
     routes: [{
+        //    path: '/',
+        //    redirect: { name: 'frontPage' },
+        //}, {
         path: '/',
-        redirect: { name: 'frontPage' },
-    }, {
-        path: '/frontPage',
         name: 'frontPage',
         component: frontPage,
         meta: { userGroups: [] },
