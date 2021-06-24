@@ -1,13 +1,18 @@
 <template>
-  <div>
-		<menus-header/>
-		<div class="box">
-			<button v-on:click.prevent="$router.push(name='registration')" class="box-item" v-if="!isAuthenticatedUser">
-				{{ t('REGISTER') }}
-			</button>
-			<button v-on:click.prevent="$router.push(name='home')" class="box-item" v-else>
-				{{ t('HOME') }}
-			</button>
+	<div>
+		<div v-if="!loading">
+			<menus-header/>
+			<div class="box">
+				<button v-on:click.prevent="$router.push(name='registration')" class="box-item" v-if="!isAuthenticatedUser">
+					{{ t('REGISTER') }}
+				</button>
+				<button v-on:click.prevent="$router.push(name='home')" class="box-item" v-else>
+					{{ t('HOME') }}
+				</button>
+			</div>
+		</div>
+		<div class="box" v-else>
+			Loading...
 		</div>
 	</div>
 </template>
