@@ -1,12 +1,12 @@
 <template>
 	<div>
 		<div v-if="!loading">
+			<menus-header/>
 			<div class="box">
-				<menus-header/>
-				<h1 class="box-center">{{t('HOME')}}</h1><br>
-				<div style="display: flex; align-items: center; color:grey"><h2>{{t('HOME')}}</h2><small>(COMING SOON)</small><br></div>
-				<div style="display: flex; align-items: center; color:grey"><h2>{{t('HOME')}}</h2><small>(COMING SOON)</small><br></div>
-				<div style="display: flex; align-items: center; color:grey"><h2>{{t('HOME')}}</h2><small>(COMING SOON)</small><br></div>
+				<h1>{{t('HOME')}}</h1>
+				<div style="display: flex; align-items: center; color:grey"><h2>{{t('UPCOMING EVENTS')}}</h2><small>　({{t('COMING SOON')}})</small></div>
+				<div style="display: flex; align-items: center; color:grey"><h2>{{t('MY EVENTS')}}</h2><small>　({{t('COMING SOON')}})</small></div>
+				<div style="display: flex; align-items: center; color:grey"><h2>{{t('TBA')}}</h2><small>　({{t('COMING SOON')}})</small></div>
 			</div>
 			<!--a href="https://lin.ee/UeSvNxR"><img height="36" border="0" src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png"></a-->
 		</div>

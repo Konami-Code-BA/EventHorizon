@@ -70,6 +70,22 @@ export default {
             'EN': 'GET EMAILS',
             'JP': 'Eメール送信'
         },
+        'UPCOMING EVENTS': {
+            'EN': 'UPCOMING EVENTS',
+            'JP': '今後のイベント'
+        },
+        'MY EVENTS': {
+            'EN': 'MY EVENTS',
+            'JP': 'マイ・イベント'
+        },
+        'TBA': {
+            'EN': 'TBA',
+            'JP': '未定'
+        },
+        'COMING SOON': {
+            'EN': 'COMING SOON',
+            'JP': '近日公開'
+        },
     },
 
     t: function(w) {

@@ -1,9 +1,11 @@
 <template>
 	<div>
 		<div v-if="!loading">
+			<menus-header/>
 			<div class="box">
-				<menus-header/>
-				<h1 class="box-center">{{ t('SETTINGS') }}</h1><br>
+				<div>
+					<h1>{{ t('SETTINGS') }}</h1>
+				</div>
 				<div style="display: flex; align-items: center;">
 					<h2>{{ t('GET EMAILS') }}</h2>
 					<input type="checkbox" v-model="store.user.getEmails" />

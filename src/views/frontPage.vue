@@ -2,8 +2,12 @@
   <div>
 		<menus-header/>
 		<div class="box">
-			<h1 style="text-align: center">EVENT HORIZON</h1>
-			<button v-on:click.prevent="$router.push(name='registration')" class="box-item">{{ t('REGISTER') }}</button>
+			<button v-on:click.prevent="$router.push(name='registration')" class="box-item" v-if="!isAuthenticatedUser">
+				{{ t('REGISTER') }}
+			</button>
+			<button v-on:click.prevent="$router.push(name='home')" class="box-item" v-else>
+				{{ t('HOME') }}
+			</button>
 		</div>
 	</div>
 </template>
@@ -16,6 +20,9 @@
 		name: 'frontPage',
 		components: {
 			menusHeader,
+		},
+		computed: {
+			isAuthenticatedUser () { return Boolean(store.user.username) },
 		},
 		data () {
 			return {
