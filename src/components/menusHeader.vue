@@ -31,14 +31,23 @@
 						<div style="text-align: right">
 							<button v-on:click.prevent="mainMenu=!mainMenu" class="close-button">
 								<small>✖</small>
-							</button><br>
+							</button>
 						</div>
-						<button v-on:click.prevent="logout()" class="no-border-button">
-							<small>{{ t('LOGOUT') }}</small>
-						</button>
-						<button v-on:click.prevent="$router.push({ name: 'accountSettings' })" class="no-border-button">
-							<small>{{ t('SETTINGS') }}</small>
-						</button>
+						<div>
+							<button v-on:click.prevent="$router.push({ name: 'home' })" class="no-border-button">
+								<small>{{ t('HOME') }}</small>
+							</button>
+						</div>
+						<div>
+							<button v-on:click.prevent="$router.push({ name: 'accountSettings' })" class="no-border-button">
+								<small>{{ t('SETTINGS') }}</small>
+							</button>
+						</div>
+						<div>
+							<button v-on:click.prevent="logout()" class="no-border-button">
+								<small>{{ t('LOGOUT') }}</small>
+							</button>
+						</div>
 					</template>
 				</modal>
 			</transition>
@@ -48,14 +57,18 @@
 						<div style="text-align: right">
 							<button v-on:click.prevent="languageMenu=!languageMenu" class="close-button">
 								<small>✖</small>
-							</button><br>
+							</button>
 						</div>
-						<button v-on:click.prevent="english()" class="no-border-button">
-							<small>English</small>
-						</button><br>
-						<button v-on:click.prevent="japanese()" class="no-border-button">
-							<small>日本語</small>
-						</button>
+						<div>
+							<button v-on:click.prevent="english()" class="no-border-button">
+								<small>English</small>
+							</button>
+						</div>
+						<div>
+							<button v-on:click.prevent="japanese()" class="no-border-button">
+								<small>日本語</small>
+							</button>
+						</div>
 					</template>
 				</modal>
 			</transition>

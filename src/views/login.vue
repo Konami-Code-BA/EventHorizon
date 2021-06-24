@@ -1,29 +1,29 @@
 <template>
 	<div>
 		<div v-if="!loading">
+			<menus-header :isLoginPage="true"/>
 			<div class="box">
-				<menus-header :isLoginPage="true"/>
-				<br>
 				<form v-on:keyup.enter="login()">
 					<input :placeholder="t('USERNAME')" v-model="usernameInput" type="text" class="box-item"
-						id="username"/><br>
-					<br>
-					<div style="display: flex;">
+						id="username"/><br><br>
+					<div style="display: flex">
 						<input :placeholder="t('PASSWORD')" v-model="passwordInput"
-							:type="[showPassword ? 'text' : 'password']" class="box-item" style="flex-grow: 4;"
+							:type="[showPassword ? 'text' : 'password']" class="box-item" style="flex-grow: 1"
 							id="password"/>
 						<button v-on:click.prevent="showPassword = !showPassword" class="box-item" style="width: 60px"
 							id="show">
-							<small v-if="!showPassword">{{ t('SHOW') }}</small>
-							<small v-else>{{ t('HIDE') }}</small>
-						</button><br>
+							<small v-if="!showPassword">
+								{{ t('SHOW') }}
+							</small>
+							<small v-else>
+								{{ t('HIDE') }}
+							</small>
+						</button>
 					</div>
-				</form>
-				<br>
-				<div>
-				<button v-on:click.prevent="login()" class="box-item">{{ t('LOGIN') }}</button><br>
-				</div>
-				<br>
+				</form><br>
+				<button v-on:click.prevent="login()" class="box-item">
+					{{ t('REGISTER') }}
+				</button>
 			</div>
 			<!--a href="https://lin.ee/UeSvNxR"><img height="36" border="0" src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png"></a-->
 		</div>
