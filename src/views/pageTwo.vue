@@ -20,7 +20,6 @@ export default {
   data () {
     return {
       thruParams: this.$route.params.thruParams,
-			APIBaseUrl: '',
 			response: '',
 			error: '',
     }

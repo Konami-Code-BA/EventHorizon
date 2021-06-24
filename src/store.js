@@ -1,4 +1,10 @@
 export default {
-    username: null,
-    groups: [],
+    defaultUser: {
+        language: 'EN',
+        groups: [],
+    },
+    user: {
+        language: 'EN',
+        groups: [],
+    },
 }
