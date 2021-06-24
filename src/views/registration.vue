@@ -1,31 +1,34 @@
 <template>
 	<div>
 		<div v-if="!loading">
+			<menus-header :isRegistrationPage="true"/>
 			<div class="box">
-				<menus-header :isRegistrationPage="true"/>
-				<br>
 				<form v-on:keyup.enter="register()">
-					<input :placeholder="t('USERNAME')" v-model="usernameInput" type="text" ref="username"
-						class="box-item" id="username"/><br>
-					<br>
-					<input :placeholder="t('EMAIL')" v-model="emailInput" type="email" class="box-item"/><br>
-					<br>
-					<div style="display: flex;">
+					<div>
+						<input :placeholder="t('USERNAME')" v-model="usernameInput" type="text" class="box-item"
+							id="username"/>
+					</div>
+					<div>
+						<input :placeholder="t('EMAIL')" v-model="emailInput" type="email" class="box-item"/>
+					</div>
+					<div style="display: flex">
 						<input :placeholder="t('PASSWORD')" v-model="passwordInput"
-							:type="[showPassword ? 'text' : 'password']" class="box-item" style="flex-grow: 1;"
+							:type="[showPassword ? 'text' : 'password']" class="box-item" style="flex-grow: 1"
 							id="password"/>
 						<button v-on:click.prevent="showPassword = !showPassword" class="box-item" style="width: 60px"
 							id="show">
-							<small v-if="!showPassword">{{ t('SHOW') }}</small>
-							<small v-else>{{ t('HIDE') }}</small>
-						</button><br>
+							<small v-if="!showPassword">
+								{{ t('SHOW') }}
+							</small>
+							<small v-else>
+								{{ t('HIDE') }}
+							</small>
+						</button>
 					</div>
 				</form>
-				<br>
 				<button v-on:click.prevent="register()" class="box-item">
 					{{ t('REGISTER') }}
-				</button><br>
-				<br>
+				</button>
 			</div>
 			<!--a href="https://lin.ee/UeSvNxR"><img height="36" border="0" src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png"></a-->
 		</div>
