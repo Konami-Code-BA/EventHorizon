@@ -13,4 +13,3 @@ def index(request):
 def example(request):
 	print(request)
 	return HttpResponse('This is the webhook response.')
-		
