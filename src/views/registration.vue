@@ -7,10 +7,10 @@
 					<div>
 						<input :placeholder="t('USERNAME')" v-model="usernameInput" type="text" class="box-item"
 							id="username"/>
-					</div>
+					</div><br>
 					<div>
 						<input :placeholder="t('EMAIL')" v-model="emailInput" type="email" class="box-item"/>
-					</div>
+					</div><br>
 					<div style="display: flex">
 						<input :placeholder="t('PASSWORD')" v-model="passwordInput"
 							:type="[showPassword ? 'text' : 'password']" class="box-item" style="flex-grow: 1"
@@ -24,7 +24,7 @@
 								{{ t('HIDE') }}
 							</small>
 						</button>
-					</div>
+					</div><br>
 				</form>
 				<button v-on:click.prevent="register()" class="box-item">
 					{{ t('REGISTER') }}
