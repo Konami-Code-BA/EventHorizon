@@ -4,8 +4,10 @@
 			<menus-header :isLoginPage="true"/>
 			<div class="box">
 				<form v-on:keyup.enter="login()">
-					<input :placeholder="t('USERNAME')" v-model="usernameInput" type="text" class="box-item"
-						id="username"/><br><br>
+					<div>
+						<input :placeholder="t('USERNAME')" v-model="usernameInput" type="text" class="box-item"
+							id="username"/>
+					</div><br>
 					<div style="display: flex">
 						<input :placeholder="t('PASSWORD')" v-model="passwordInput"
 							:type="[showPassword ? 'text' : 'password']" class="box-item" style="flex-grow: 1"
@@ -19,12 +21,12 @@
 								{{ t('HIDE') }}
 							</small>
 						</button>
-					</div>
-				</form><br>
+					</div><br>
+				</form>
 				<button v-on:click.prevent="login()" class="box-item">
-					{{ t('REGISTER') }}
+					{{ t('LOGIN') }}
 				</button>
-			</div>
+			</div><br>
 			<!--a href="https://lin.ee/UeSvNxR"><img height="36" border="0" src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png"></a-->
 		</div>
 		<div class="box" v-else>

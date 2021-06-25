@@ -5,15 +5,15 @@
 				<div>
 					<button v-on:click.prevent="mainMenu=!mainMenu" class="no-border-button"
 						v-if="isAuthenticatedUser">
-						<small>{{ t('MENU') }}</small>
+						{{ t('MENU') }}
 					</button>
 					<button v-on:click.prevent="$router.push({ name: 'login' })" class="no-border-button"
 						v-else-if="!isLoginPage">
-						<small>{{ t('LOGIN') }}</small>
+						{{ t('LOGIN') }}
 					</button>
 					<button v-on:click.prevent="$router.push({ name: 'registration' })" class="no-border-button"
 						v-else>
-						<small>{{ t('REGISTER') }}</small>
+						{{ t('REGISTER') }}
 					</button>
 				</div>
 				<div>
@@ -24,30 +24,30 @@
 			</div>
 			<div>
 				<img src="../assets/eventhorizon.png" class="logo">
-			</div>
+			</div><br>
 			<transition name="fade">
 				<modal class="mainMenu" v-show="mainMenu" @closeModals="closeAllModals" id="mainMenu">
 					<template v-slot:contents>
 						<div style="text-align: right">
 							<button v-on:click.prevent="mainMenu=!mainMenu" class="close-button">
-								<small>✖</small>
+								<big>✖</big>
 							</button>
 						</div>
 						<div>
 							<button v-on:click.prevent="$router.push({ name: 'home' })" class="no-border-button">
-								<small>{{ t('HOME') }}</small>
+								<big>{{ t('HOME') }}</big>
 							</button>
-						</div>
+						</div><br><br>
 						<div>
 							<button v-on:click.prevent="$router.push({ name: 'accountSettings' })" class="no-border-button">
-								<small>{{ t('SETTINGS') }}</small>
+								<big>{{ t('SETTINGS') }}</big>
 							</button>
-						</div>
+						</div><br><br>
 						<div>
 							<button v-on:click.prevent="logout()" class="no-border-button">
-								<small>{{ t('LOGOUT') }}</small>
+								<big>{{ t('LOGOUT') }}</big>
 							</button>
-						</div>
+						</div><br>
 					</template>
 				</modal>
 			</transition>
@@ -56,19 +56,19 @@
 					<template v-slot:contents>
 						<div style="text-align: right">
 							<button v-on:click.prevent="languageMenu=!languageMenu" class="close-button">
-								<small>✖</small>
+								<big>✖</big>
 							</button>
 						</div>
 						<div>
 							<button v-on:click.prevent="english()" class="no-border-button">
-								<small>English</small>
+								<big>ENGLISH</big>
 							</button>
-						</div>
+						</div><br><br>
 						<div>
 							<button v-on:click.prevent="japanese()" class="no-border-button">
-								<small>日本語</small>
+								<big>日本語</big>
 							</button>
-						</div>
+						</div><br>
 					</template>
 				</modal>
 			</transition>
@@ -139,16 +139,16 @@
 <style scoped>
 	.mainMenu {
 		position: absolute;
-		padding: 10px;
-		width: 80px;
+		padding: 20px;
+		width: 50%;
 		text-align: left;
 		top: 30px;
 		left: 0;
 	}
 	.languageMenu {
 		position: absolute;
-		padding: 10px;
-		width: 80px;
+		padding: 20px;
+		width: 50%;
 		text-align: left;
 		top: 30px;
 		right: 0;
