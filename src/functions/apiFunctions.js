@@ -1,8 +1,8 @@
 import store from '@/store.js'
 axios.defaults.withCredentials = true
 axios.defaults.xsrfHeaderName = "X-CSRFToken"
-const csrftoken = JSON.parse('{"' + document.cookie.replaceAll('=', '": "').replaceAll('; ', '", "') + '"}')['XSRF-TOKEN']
-axios.defaults.headers.common['X-CSRFToken'] = csrftoken
+    //let csrftoken = JSON.parse('{"' + document.cookie.replaceAll('=', '": "').replaceAll('; ', '", "') + '"}')['XSRF-TOKEN']
+    //axios.defaults.headers.common['X-CSRFToken'] = csrftoken
 import axios from 'axios'
 export default {
     get ApiBaseUrl() { return process.env.NODE_ENV == 'development' ? 'http://127.0.0.1:8000' : '' },
