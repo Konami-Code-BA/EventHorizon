@@ -5,20 +5,21 @@
 				<div>
 					<button v-on:click.prevent="mainMenu=!mainMenu" class="no-border-button"
 						v-if="isAuthenticatedUser">
-						{{ t('MENU') }}
+						<big>{{ t('MENU') }}</big>
 					</button>
 					<button v-on:click.prevent="$router.push({ name: 'login' })" class="no-border-button"
 						v-else-if="!isLoginPage">
-						{{ t('LOGIN') }}
+						<big>{{ t('LOGIN') }}</big>
 					</button>
 					<button v-on:click.prevent="$router.push({ name: 'registration' })" class="no-border-button"
 						v-else>
-						{{ t('REGISTER') }}
+						<big>{{ t('REGISTER') }}</big>
 					</button>
 				</div>
 				<div>
 					<button v-on:click.prevent="languageMenu=!languageMenu" class="no-border-button">
-						<img src="../assets/languageIcon.png" class="languageIcon">
+						<!--img src="../assets/languageIcon.png" class="languageIcon"-->
+							<big>A あ</big>
 					</button>
 				</div>
 			</div>
@@ -30,7 +31,7 @@
 					<template v-slot:contents>
 						<div style="text-align: right">
 							<button v-on:click.prevent="mainMenu=!mainMenu" class="close-button">
-								<big>✖</big>
+								✖
 							</button>
 						</div>
 						<div>
@@ -56,7 +57,7 @@
 					<template v-slot:contents>
 						<div style="text-align: right">
 							<button v-on:click.prevent="languageMenu=!languageMenu" class="close-button">
-								<big>✖</big>
+								✖
 							</button>
 						</div>
 						<div>

@@ -13,7 +13,7 @@ urlpatterns = [
 	path('webhook/', example),
     path('', index, name='index'),
     path('/', index, name='index'),
-    #path('frontPage/', index, name='index'),
+    path('frontPage/', index, name='index'),
     path('registration/', index, name='index'),
     path('login/', index, name='index'),
     path('accountSettings/', index, name='index'),
