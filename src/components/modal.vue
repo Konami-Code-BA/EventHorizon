@@ -28,7 +28,7 @@
   width: 1000%;
   height: 1000%;
   margin-left: -500%;
-  margin-top: -500%;
+  margin-top: -200%;
   background-color: rgba(0, 0, 0, .5);
   transition: opacity .3s ease;
 }
