@@ -3,17 +3,17 @@
 		<div v-if="!loading">
 			<menus-header :isLoginPage="true"/>
 			<div class="box">
-				<form v-on:keyup.enter="login()">
+				<form v-on:keyup.enter="showPassword = false; login()">
 					<div>
 						<input :placeholder="t('USERNAME')" v-model="usernameInput" type="text" class="box-item"
-							id="username"/>
+							id="username" autocorrect="off" autocapitalize="none"/>
 					</div><br>
 					<div style="display: flex">
 						<input :placeholder="t('PASSWORD')" v-model="passwordInput"
 							:type="[showPassword ? 'text' : 'password']" class="box-item" style="flex-grow: 1"
-							id="password"/>
-						<button v-on:click.prevent="showPassword = !showPassword" class="box-item" style="width: 60px"
-							id="show">
+							id="password" autocorrect="off" autocapitalize="none"/>
+						<button v-on:click.prevent="showButton()" class="box-item" style="width: 60px"
+							id="show" type="button">
 							<small v-if="!showPassword">
 								{{ t('SHOW') }}
 							</small>
@@ -68,6 +68,10 @@
 			async login () {
 				await apiFunctions.login(this.usernameInput, this.passwordInput)
 				this.$router.push({ name: 'home' })
+			},
+			showButton () {
+				functions.focusCursor('password')
+				this.showPassword = !this.showPassword
 			},
 			//goToPage2 () {
 			//	this.$router.push({ name: 'pageTwo', params: { thruParams: 'this was sent from the login page' } })

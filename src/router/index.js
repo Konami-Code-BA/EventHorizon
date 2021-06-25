@@ -16,10 +16,10 @@ const router = new Router({
     mode: 'history',
     //beforeEach: (to, from, next) => {},
     routes: [{
-        //    path: '/',
-        //    redirect: { name: 'frontPage' },
-        //}, {
         path: '/',
+        redirect: { name: 'frontPage' },
+    }, {
+        path: '/frontPage',
         name: 'frontPage',
         component: frontPage,
         meta: { userGroups: [] },
@@ -54,7 +54,7 @@ const router = new Router({
 router.beforeEach(
     async(to, from, next) => {
         await apiFunctions.authenticateFromSession()
-        console.log('routed')
+        console.log('routed', from.name, typeof from.name)
         if (to.meta.userGroups.length === 0) {
             next()
             return
@@ -67,8 +67,13 @@ router.beforeEach(
                     }
                 }
             }
-            next({ name: 'frontPage' }) // permission denied
-            return
+            // permission denied
+            if (['login', 'frontPage', 'registration'].includes(from.name)) {
+                return
+            } else {
+                next({ name: 'frontPage' })
+                return
+            }
         }
 
         //if (to.meta.requiresAuth) {

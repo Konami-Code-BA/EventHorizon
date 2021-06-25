@@ -1,10 +1,10 @@
 export default {
     defaultUser: {
-        language: 'EN',
+        language: 'JP',
         groups: [],
     },
     user: {
-        language: 'EN',
+        language: 'JP',
         groups: [],
     },
 }
