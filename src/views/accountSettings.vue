@@ -10,6 +10,9 @@
 					<h2>{{ t('GET EMAILS') }}</h2>
 					<input type="checkbox" v-model="store.user.getEmails" />
 				</div>
+				<!--div>
+					<h2>{{ t('CHANGE PASSWORD') }}</h2>
+				</div-->
 			</div>
 			<!--a href="https://lin.ee/UeSvNxR"><img height="36" border="0" src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png"></a-->
 		</div>

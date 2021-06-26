@@ -2,7 +2,7 @@
 	<div>
   	<div class="box">
 			<div class="box-item logout">
-				<button v-on:click.prevent="logout()" class="no-border-button"><small>LOGOUT</small></button><br>
+				<button v-on:click.prevent="logout()" class="half-border-button"><small>LOGOUT</small></button><br>
 			</div>
     	<img src="../assets/eventhorizon.png" class="logo"><br><br>
 			<h1 v-if="thruParams !== null">Hello</h1>
