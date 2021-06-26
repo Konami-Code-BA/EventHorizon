@@ -3,8 +3,9 @@
 		<div v-if="!loading">
 			<menus-header/>
 			<div class="box">
+				<h2 style="text-align: center">{{t('front page screen')}}</h2>
 				<button v-on:click.prevent="$router.push(name='registration')" class="box-item" v-if="!isAuthenticatedUser">
-					{{ t('REGISTER') }}
+					{{ t('NEW USER REGISTRATION') }}
 				</button>
 				<button v-on:click.prevent="$router.push(name='home')" class="box-item" v-else>
 					{{ t('HOME') }}

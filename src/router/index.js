@@ -54,7 +54,11 @@ const router = new Router({
 router.beforeEach(
     async(to, from, next) => {
         await apiFunctions.authenticateFromSession()
-        console.log('routed', from.name, typeof from.name)
+        console.log('routed', from.name, to.name)
+            //if (from.name == to.name) {
+            //    console.log(from.name, to.name)
+            //    return
+            //} else 
         if (to.meta.userGroups.length === 0) {
             next()
             return

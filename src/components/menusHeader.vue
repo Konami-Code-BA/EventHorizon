@@ -3,21 +3,21 @@
 		<div v-if="!loading">
 			<div class="header">
 				<div>
-					<button v-on:click.prevent="mainMenu=!mainMenu" class="no-border-button"
+					<button v-on:click.prevent="mainMenu=!mainMenu" class="half-border-button"
 						v-if="isAuthenticatedUser">
 						<big>{{ t('MENU') }}</big>
 					</button>
-					<button v-on:click.prevent="$router.push({ name: 'login' })" class="no-border-button"
+					<button v-on:click.prevent="$router.push({ name: 'login' })" class="half-border-button"
 						v-else-if="!isLoginPage">
 						<big>{{ t('LOGIN') }}</big>
 					</button>
-					<button v-on:click.prevent="$router.push({ name: 'registration' })" class="no-border-button"
+					<button v-on:click.prevent="$router.push({ name: 'registration' })" class="half-border-button"
 						v-else>
 						<big>{{ t('REGISTER') }}</big>
 					</button>
 				</div>
 				<div>
-					<button v-on:click.prevent="languageMenu=!languageMenu" class="no-border-button">
+					<button v-on:click.prevent="languageMenu=!languageMenu" class="half-border-button">
 						<!--img src="../assets/languageIcon.png" class="languageIcon"-->
 							<big>A あ</big>
 					</button>
@@ -27,25 +27,25 @@
 				<img src="../assets/eventhorizon.png" class="logo">
 			</div><br>
 			<transition name="fade">
-				<modal class="mainMenu" v-show="mainMenu" @closeModals="closeAllModals" id="mainMenu">
+				<modal class="mainMenu" v-show="mainMenu" @closeModals="languageMenu = false; mainMenu = false" id="mainMenu">
 					<template v-slot:contents>
 						<div style="text-align: right">
-							<button v-on:click.prevent="mainMenu=!mainMenu" class="close-button">
-								✖
+							<button v-on:click.prevent="mainMenu=!mainMenu" class="no-border-button">
+								{{'✖\n'}}
 							</button>
 						</div>
 						<div>
-							<button v-on:click.prevent="$router.push({ name: 'home' })" class="no-border-button">
+							<button v-on:click.prevent="$router.push({ name: 'home' })" class="half-border-button">
 								<big>{{ t('HOME') }}</big>
 							</button>
 						</div><br><br>
 						<div>
-							<button v-on:click.prevent="$router.push({ name: 'accountSettings' })" class="no-border-button">
+							<button v-on:click.prevent="$router.push({ name: 'accountSettings' })" class="half-border-button">
 								<big>{{ t('SETTINGS') }}</big>
 							</button>
 						</div><br><br>
 						<div>
-							<button v-on:click.prevent="logout()" class="no-border-button">
+							<button v-on:click.prevent="logout()" class="half-border-button">
 								<big>{{ t('LOGOUT') }}</big>
 							</button>
 						</div><br>
@@ -53,20 +53,21 @@
 				</modal>
 			</transition>
 			<transition name="fade">
-				<modal class="languageMenu" v-show="languageMenu" @closeModals="closeAllModals" id="languageMenu">
+				<modal class="languageMenu" v-show="languageMenu" @closeModals="languageMenu = false; mainMenu = false"
+					id="languageMenu">
 					<template v-slot:contents>
 						<div style="text-align: right">
-							<button v-on:click.prevent="languageMenu=!languageMenu" class="close-button">
+							<button v-on:click.prevent="languageMenu=!languageMenu" class="no-border-button">
 								✖
 							</button>
 						</div>
 						<div>
-							<button v-on:click.prevent="english()" class="no-border-button">
+							<button v-on:click.prevent="english()" class="half-border-button">
 								<big>ENGLISH</big>
 							</button>
 						</div><br><br>
 						<div>
-							<button v-on:click.prevent="japanese()" class="no-border-button">
+							<button v-on:click.prevent="japanese()" class="half-border-button">
 								<big>日本語</big>
 							</button>
 						</div><br>
@@ -129,10 +130,6 @@
 				if (store.user.username) {
 					await apiFunctions.updateUserLanguage()
 				}
-			},
-			closeAllModals () {
-				this.languageMenu = false
-				this.mainMenu = false
 			},
 		}
 	}

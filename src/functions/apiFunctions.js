@@ -65,4 +65,9 @@ export default {
             getEmails: store.user.getEmails,
         })
     },
+    async sendEmail() {
+        await this.userApiFunction('post', '/api/user/', {
+            command: 'sendEmail',
+        })
+    },
 }

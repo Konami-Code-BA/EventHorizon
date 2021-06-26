@@ -56,14 +56,15 @@
 			text-align: center !important;
 			font-size: 16px;
 			background-color: white;
-			border: 3px solid black;
-			border-radius: 3px;
+			border: 1px solid black;
+			box-shadow: 1px 1px black;
+			border-radius: 5px;
 			height: 30px;
 			transition-duration: 0.3s;
 			padding: 2px;
 		}
 		button:hover {
-			font-weight: bold;
+			font-weight: normal;
 		}
 		input[type=text], input[type=email], input[type=password] {
 			font-size: 16px;
@@ -77,12 +78,27 @@
 			border: 2px solid black;
 			outline: none;
 		}
+		.half-border-button {
+			border: none;
+			background: none;
+			box-shadow: 1px 1px black;
+			transition-duration: 0.1s;
+			width: 100%;
+		}
+		.half-border-button:active {
+			font-weight: normal;
+			box-shadow: none;
+		}
 		.no-border-button {
 			border: none;
 			background: none;
+			box-shadow: none;
 		}
-		.no-border-button:hover {
+		.hanolf-border-button:active {
 			font-weight: normal;
+		}
+		.small-button {
+			height: 19px !important;
 		}
 		.logout {
 			text-align: left !important;

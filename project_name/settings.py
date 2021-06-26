@@ -33,19 +33,26 @@ DEBUG = config('PYTHON_ENV', default='production') == 'development'  # need to m
 SECRET_KEY = config('SECRET_KEY')
 ALLOWED_HOSTS = ['event-horizon-jp.herokuapp.com/', 'localhost']
 CORS_ALLOW_CREDENTIALS = True
-CSRF_COOKIE_NAME = "XSRF-TOKEN"
+CSRF_COOKIE_NAME = 'XSRF-TOKEN'
 
 #CORS_ALLOW_ALL_ORIGINS = True  # dangerous, want to restrict origins that can make cross-origin requests
 CORS_ALLOWED_ORIGINS  = (  # need to figure out how to use this correctly
-	"http://127.0.0.1:8080",
-	"http://127.0.0.1:8000",
-	"https://event-horizon-jp.herokuapp.com",
+	'http://127.0.0.1:8080',
+	'http://127.0.0.1:8000',
+	'https://event-horizon-jp.herokuapp.com',
 )
 
-# "Strict": prevents the cookie from being sent by the browser to the target site in all cross-site browsing context, even when following a regular link
-# "Lax": maintain user’s logged-in session after the user arrives from an external link
-# "None": the session cookie will be sent with all same-site and cross-site requests
-SESSION_COOKIE_SAMESITE = "Strict"
+# 'Strict': prevents the cookie from being sent by the browser to the target site in all cross-site browsing context, even when following a regular link
+# 'Lax': maintain user’s logged-in session after the user arrives from an external link
+# 'None': the session cookie will be sent with all same-site and cross-site requests
+SESSION_COOKIE_SAMESITE = 'Strict'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp-mail.outlook.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 25
+EMAIL_HOST_USER = 'mdsimeone234@outlook.com'
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 
 # Application definition
 INSTALLED_APPS = [
