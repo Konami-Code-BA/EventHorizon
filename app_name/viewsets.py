@@ -10,6 +10,7 @@ from django.contrib import auth
 from django.conf import settings
 from django.contrib.sessions.models import Session
 from decouple import config
+from django.core.mail import send_mail
 
 
 def is_admin(request):  # is staff and is in the Admin group
@@ -133,6 +134,15 @@ class UserViewSet(viewsets.ModelViewSet):
 		else:
 			user = None
 		return user
+	
+	def sendEmail(self, request):
+		print('in the place')
+		subject = 'Test sending email from site from mikey'
+		message = 'Was I able to send it?'
+		email_from = settings.EMAIL_HOST_USER
+		recipient_list = ['stuart.william.auld@gmail.com',]
+		send_mail( subject, message, email_from, recipient_list, fail_silently=False)
+		print('finished')
 
 
 class LineViewset(viewsets.ViewSet):

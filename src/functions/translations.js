@@ -2,9 +2,21 @@ import store from '@/store.js'
 export default {
     translationsDict: {
         '': { '': '' },
+        'front page screen': {
+            'EN': 'FOR PLANNING / JOINING EVENTS',
+            'JP': 'イベントの計画・参加のため'
+        },
         'LOGIN': {
             'EN': 'LOGIN',
             'JP': 'ログイン'
+        },
+        'REGISTER': {
+            'EN': 'REGISTER',
+            'JP': '登録'
+        },
+        'NEW USER REGISTRATION': {
+            'EN': 'NEW USER REGISTRATION',
+            'JP': '新規登録'
         },
         'MENU': {
             'EN': 'MENU',
@@ -26,6 +38,18 @@ export default {
             'EN': 'PASSWORD',
             'JP': 'パスワード'
         },
+        'PASSWORD CONFIRMATION': {
+            'EN': 'PASSWORD CONFIRMATION',
+            'JP': 'パスワード確認'
+        },
+        "PASSWORDS DON'T MATCH": {
+            'EN': "PASSWORDS DON'T MATCH",
+            'JP': 'パスワードが一致しません'
+        },
+        "FORGOT PASSWORD": {
+            'EN': "FORGOT PASSWORD",
+            'JP': 'パスワードが忘れました'
+        },
         'SHOW': {
             'EN': 'SHOW',
             'JP': '表示'
@@ -33,10 +57,6 @@ export default {
         'HIDE': {
             'EN': 'HIDE',
             'JP': '非表示'
-        },
-        'REGISTER': {
-            'EN': 'REGISTER',
-            'JP': '登録'
         },
         'LANGUAGE': {
             'EN': 'LANGUAGE',
@@ -89,6 +109,11 @@ export default {
     },
 
     t: function(w) {
-        return this.translationsDict[w][store.user.language]
+        try {
+            return this.translationsDict[w][store.user.language]
+        } catch (e) {
+            console.log(e, 'word:', w)
+            return 'TRANSLATION ERROR'
+        }
     }
 }
