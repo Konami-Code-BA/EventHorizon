@@ -70,4 +70,9 @@ export default {
             command: 'sendEmail',
         })
     },
+    async sendwebhook() {
+        await this.userApiFunction('post', '/webhook/', {
+            command: 'sendwebhook',
+        })
+    },
 }
