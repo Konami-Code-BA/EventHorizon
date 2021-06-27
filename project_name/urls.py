@@ -12,11 +12,11 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 	path('webhook/', example),
     path('', index, name='index'),
-    path('/', index, name='index'),
     #path('frontPage/', index, name='index'),
     path('registration/', index, name='index'),
     path('login/', index, name='index'),
     path('accountSettings/', index, name='index'),
     path('home/', index, name='index'),
-    path('pageTwo/', index, name='index'),
+    path('experiment1/', index, name='index'),
+    path('experiment2/', index, name='index'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

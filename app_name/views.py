@@ -11,5 +11,5 @@ def index(request):
 
 @require_POST
 def example(request):
-	print(request)
+	print('This is the webhook request.', request)
 	return HttpResponse('This is the webhook response.')

@@ -5,9 +5,10 @@ import apiFunctions from '@/functions/apiFunctions.js'
 import frontPage from '@/views/frontPage'
 import registration from '@/views/registration'
 import login from '@/views/login'
-import pageTwo from '@/views/pageTwo'
 import accountSettings from '@/views/accountSettings'
 import home from '@/views/home'
+import experiment1 from '@/views/experiment1'
+import experiment2 from '@/views/experiment2'
 
 Vue.use(Router)
 
@@ -34,9 +35,14 @@ const router = new Router({
         component: login,
         meta: { userGroups: [] },
     }, {
-        path: '/pageTwo',
-        name: 'pageTwo',
-        component: pageTwo,
+        path: '/experiment1',
+        name: 'experiment1',
+        component: experiment1,
+        meta: { userGroups: [1] },
+    }, {
+        path: '/experiment2',
+        name: 'experiment2',
+        component: experiment2,
         meta: { userGroups: [1] },
     }, {
         path: '/accountSettings',
