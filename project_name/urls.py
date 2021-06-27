@@ -5,12 +5,13 @@ from app_name.views import example
 from django.conf import settings
 from django.conf.urls.static import static
 from app_name.views import index
+from decouple import config
 
 
 urlpatterns = [
-    path(f'api/', include(router.urls)),
+    path('api/', include(router.urls)),
     path('admin/', admin.site.urls),
-	path('webhook/', example),
+	path(f'webhook/{config("WEBHOOK_CODE")}/', example),
     path('', index, name='index'),
     #path('frontPage/', index, name='index'),
     path('registration/', index, name='index'),
