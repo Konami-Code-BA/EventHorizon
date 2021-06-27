@@ -9,5 +9,5 @@ def index(request):
 @require_POST
 @csrf_exempt
 def example(request):
-	print('This is the webhook request.', request.events)
+	print('This is the webhook request.', request['events'])
 	return HttpResponse('This is the webhook response.')
