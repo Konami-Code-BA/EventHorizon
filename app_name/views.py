@@ -5,6 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.messages import get_messages
 import json
 import requests
+from app_name.viewsets import UserViewSet, LineViewset
 	
 def index(request):
     return render(request, template_name='index.html')
@@ -12,17 +13,61 @@ def index(request):
 @require_POST
 @csrf_exempt
 def example(request):
-	#req = requests.Request('POST','http://stackoverflow.com',headers={'X-Custom':'Test'},data='a=1&b=2')
-	#prepared = req.prepare()
-	#req = request
-	print('This is the webhook request 1.', json.loads(request.body.decode('utf-8')))
-	#print('This is the webhook request _messages.', request._messages)
-	#print('This is the webhook request get_messages.', get_messages(request._messages))
-	#for message in get_messages(request._messages):
-	#	print('This is a message:', message.message)
-	print('This is the webhook request _stream.', request._stream.readline())
-	#print('This is the webhook request 2.', list(request.POST))
-	#print('This is the webhook request 1.', list(req.headers))
-	#print('This is the webhook request 2.', list(req.POST))
-	#print('This is the webhook request 3.', list(req.body))
+	line_body = json.loads(request.body.decode('utf-8'))
+	#{
+	#	'destination': 'Ub480d7e5ff2b8357eb196ed6729bd689',
+	#	'events': [
+	#		{
+	#			'type': 'message',
+	#			'message': {
+	#				'type': 'text',
+	#				'id': '14296801432826',
+	#				'text': 'Test message brah'
+	#			},
+	#			'timestamp': 1624799029188,
+	#			'source': {
+	#				'type': 'user',
+	#				'userId': 'U09e3b108910c1711d2732a8b9ac8a19d'
+	#			},
+	#			'replyToken': '3ef6d67db3304eebab8588ce2eff6331',
+	#			'mode': 'active'
+	#		}
+	#	]
+	#}
+	#{
+	#	'destination': 'Ub480d7e5ff2b8357eb196ed6729bd689',
+	#	'events': [
+	#		{
+	#			'type': 'unfollow',
+	#			'timestamp': 1624799291429,
+	#			'source': {
+	#				'type': 'user',
+	#				'userId': 'U09e3b108910c1711d2732a8b9ac8a19d'
+	#			},
+	#			'mode': 'active'
+	#		}
+	#	]
+	#}
+	#{
+	#	'destination': 'Ub480d7e5ff2b8357eb196ed6729bd689',
+	#	'events': [
+	#		{
+	#			'type': 'follow',
+	#			'timestamp': 1624799586678,
+	#			'source': {
+	#				'type': 'user',
+	#				'userId': 'U09e3b108910c1711d2732a8b9ac8a19d'
+	#			},
+	#			'replyToken': 'be6008d01ab84e1a8ee7699102927f00',
+	#			'mode': 'active'
+	#		}
+	#	]
+	#}
+
+	# when there is a new follow, create a new user. the username is the userid, the password...
+	# want them to be able to login by line right, or by username? should we just still make them make username password
+	# and just their contact is line instead of email?
+	# or go the complicated route of using the real "Integrating LINE Login with your web app"
+	line_header = json.loads(request.header.decode('utf-8'))
+
 	return HttpResponse('This is the webhook response.')
