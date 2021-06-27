@@ -20,7 +20,7 @@ def example(request):
 	#print('This is the webhook request get_messages.', get_messages(request._messages))
 	#for message in get_messages(request._messages):
 	#	print('This is a message:', message.message)
-	#print('This is the webhook request _stream.', request._stream.readline())
+	print('This is the webhook request _stream.', request._stream.readline())
 	#print('This is the webhook request 2.', list(request.POST))
 	#print('This is the webhook request 1.', list(req.headers))
 	#print('This is the webhook request 2.', list(req.POST))
