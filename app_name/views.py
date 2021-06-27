@@ -64,10 +64,8 @@ def example(request):
 	#	]
 	#}
 
-	# when there is a new follow, create a new user. the username is the userid, the password...
-	# want them to be able to login by line right, or by username? should we just still make them make username password
-	# and just their contact is line instead of email?
-	# or go the complicated route of using the real "Integrating LINE Login with your web app"
-	line_header = json.loads(request.header.decode('utf-8'))
+	# either we have them make a username password or they login using line and get their line name, if possible.
+	# "Integrating LINE Login with your web app"
+	line_header = json.loads(request.headers.decode('utf-8'))
 
 	return HttpResponse('This is the webhook response.')
