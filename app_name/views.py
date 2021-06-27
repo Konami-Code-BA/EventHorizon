@@ -15,9 +15,10 @@ def example(request):
 	#req = requests.Request('POST','http://stackoverflow.com',headers={'X-Custom':'Test'},data='a=1&b=2')
 	#prepared = req.prepare()
 	#req = request
-	print('This is the webhook request 4.', request.__dict__)
-	for message in get_messages(request._messages):
+	print('This is the webhook request 1.', request._messages)
+	for message in get_messages(request.__dict__._messages):
 		print('This is a message:', message.message)
+	print('This is the webhook request 2.', list(request._messages))
 	#print('This is the webhook request 2.', list(request.POST))
 	#print('This is the webhook request 1.', list(req.headers))
 	#print('This is the webhook request 2.', list(req.POST))
