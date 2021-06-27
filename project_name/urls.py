@@ -11,7 +11,7 @@ from decouple import config
 urlpatterns = [
     path('api/', include(router.urls)),
     path('admin/', admin.site.urls),
-	path(f'webhook/{config("WEBHOOK_CODE")}/', example),
+	path('webhook/', example),
     path('', index, name='index'),
     #path('frontPage/', index, name='index'),
     path('registration/', index, name='index'),
