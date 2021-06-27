@@ -66,6 +66,6 @@ def example(request):
 
 	# either we have them make a username password or they login using line and get their line name, if possible.
 	# "Integrating LINE Login with your web app"
-	line_header = json.loads(request.headers.decode('utf-8'))
+	line_header = json.loads(request.headers)
 
 	return HttpResponse('This is the webhook response.')
