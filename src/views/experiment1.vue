@@ -5,7 +5,8 @@
 			<div class="box">
 				<h1>experiment 1</h1>
 				<div><h2>{{$route.query.test}}</h2></div> <!--http://127.0.0.1:8080/experiment1?test=boi-->
-				<button v-on:click.prevent="sendwebhook()">button</button>
+				<button v-on:click.prevent="sendEmail()">sendEmail</button>
+				<button v-on:click.prevent="sendWebhook()">sendWebhook</button>
 			</div>
 			<!--a href="https://lin.ee/UeSvNxR"><img height="36" border="0" src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png"></a-->
 		</div>
@@ -44,8 +45,11 @@
 		},
 		methods: {
 			t (w) { return translations.t(w) },
-			async sendwebhook () {
-				await apiFunctions.sendwebhook()
+			async sendEmail () {
+				await apiFunctions.sendEmail()
+			},
+			async sendWebhook () {
+				await apiFunctions.sendWebhook()
 			}
 		} // methods
 	} // export

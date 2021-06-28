@@ -54,6 +54,12 @@ SESSION_COOKIE_SAMESITE = 'Strict'
 #EMAIL_HOST_USER = 'mdsimeone234@outlook.com'
 #EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'eventhorizonjp@gmail.com'
+EMAIL_HOST_PASSWORD = 'uffjmemybpamgziu'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
