@@ -14,6 +14,7 @@ def index(request):
 @csrf_exempt
 def example(request):
 	line_body = json.loads(request.body.decode('utf-8'))
+	print('line_body', line_body)
 	received_message_1 = {  # https://developers.line.biz/en/reference/messaging-api/#message-event
 		'destination': 'Ub480d7e5ff2b8357eb196ed6729bd689',
 		'events': [
@@ -63,6 +64,11 @@ def example(request):
 			}
 		]
 	}
+	event = received_message_1
+	#event = new_follower_1
+	#event = lost_follower_1
+	#if event['events']['type'] == 'message':
+
 
 	# either we have them make a username password or they login using line and get their line name, if possible.
 	# "Integrating LINE Login with your web app" i think it will be annoying but i can do it and it is better than having to make a password
