@@ -87,10 +87,10 @@ def line_push(message):
 
 
 def line_reply(replyToken, message):
+	print('inside line reply')
 	token = 'QHyTosat3st1hTca9MII4ZT8zAAfEmCSRkE7JpRFN8vXz2YcUFKbOnvr2ItzKihjBqSo2L+St2o2awCJuR9ZYhBF2zmhZTq02wUDV1JrlPtJdI9zEGBYHtlPEza+Yjrg96ldnJHNx560asXkXKIEpQdB04t89/1O/w1cDnyilFU='
-
 	response = requests.post(
-		'https://api.line.me/v2/bot/message/push',
+		'https://api.line.me/v2/bot/message/reply',
 		headers = {
 			'Content-Type': 'application/json',
 			'Authorization': 'Bearer ' + token,

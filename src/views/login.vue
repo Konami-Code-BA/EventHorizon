@@ -36,9 +36,7 @@
 			<div class="box-item"></div>
 			<!--a href="https://lin.ee/UeSvNxR"><img height="36" border="0" src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png"></a-->
 		</div>
-		<div class="box" v-else>
-			Loading...
-		</div>
+		<div class="loading" v-else></div>
 	</div>
 </template>
 <script src="https://smtpjs.com/v3/smtp.js"></script>

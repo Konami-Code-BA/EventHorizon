@@ -10,9 +10,7 @@
 			</div>
 			<!--a href="https://lin.ee/UeSvNxR"><img height="36" border="0" src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png"></a-->
 		</div>
-		<div class="box" v-else>
-			Loading...
-		</div>
+		<div class="loading" v-else></div>
 	</div>
 </template>
 <script>
@@ -41,7 +39,9 @@
 			}
 		},
 		async mounted () {
+        	//setTimeout(() => { }, 2000)
 			this.loading = false
+			
 		},
 		methods: {
 			t (w) { return translations.t(w) },

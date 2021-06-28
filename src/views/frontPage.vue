@@ -12,9 +12,7 @@
 				</button>
 			</div>
 		</div>
-		<div class="box" v-else>
-			Loading...
-		</div>
+		<div class="loading" v-else></div>
 	</div>
 </template>
 <script>
