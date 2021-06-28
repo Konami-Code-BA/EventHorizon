@@ -87,11 +87,7 @@ def example(request):
 	#event = lost_follower_1
 
 	replyToken, reply = line_bot(line_body)
-	print('replyToken, reply', replyToken, reply)
 	if reply:
-		print('line_body', line_body)
-		print('replyToken', replyToken)
-		print('reply', reply)
 		#line_push(reply)
 		line_reply(replyToken, reply) # fails here
 
