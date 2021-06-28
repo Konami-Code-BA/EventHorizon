@@ -140,8 +140,8 @@ class UserViewSet(viewsets.ModelViewSet):
 		subject = 'Test sending email from site from mikey'
 		message = 'Was I able to send it?'
 		email_from = settings.EMAIL_HOST_USER
-		recipient_list = ['stuart.william.auld@gmail.com',]
-		send_mail( subject, message, email_from, recipient_list, fail_silently=False)
+		recipient_list = ['mdsimeone@gmail.com',]
+		send_mail(subject, message, email_from, recipient_list, fail_silently=False)
 		print('finished')
 
 
