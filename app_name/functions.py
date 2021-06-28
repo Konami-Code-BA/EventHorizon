@@ -58,7 +58,7 @@ def line_bot(line_body):
 				if events['message']['text'][:4] == '.bot':
 					text = events['message']['text'][5:]
 	print("text", text)
-	if text == 'Status':
+	if text in ['Status', 'status']:
 		print("events['replyToken']", events['replyToken'])
 		replyToken, reply = events['replyToken'], '15 people confirmed'
 	return replyToken, reply
