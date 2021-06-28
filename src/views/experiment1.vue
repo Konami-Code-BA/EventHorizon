@@ -45,12 +45,8 @@
 		},
 		methods: {
 			t (w) { return translations.t(w) },
-			async sendEmail () {
-				await apiFunctions.sendEmail()
-			},
-			async sendWebhook () {
-				await apiFunctions.sendWebhook()
-			}
+			async sendEmail () { await apiFunctions.sendEmail() },
+			async sendWebhook () { await apiFunctions.sendWebhook() },
 		} // methods
 	} // export
 </script>

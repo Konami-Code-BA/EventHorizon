@@ -6,12 +6,13 @@ axios.defaults.xsrfHeaderName = "X-CSRFToken"
 import axios from 'axios'
 export default {
     get ApiBaseUrl() { return process.env.NODE_ENV == 'development' ? 'http://127.0.0.1:8000' : '' },
+    axiosCall: {
+        post: axios.post,
+        patch: axios.patch,
+    },
     async userApiFunction(method, uri, data) {
         let output = store.defaultUser
-        let axiosCall = {}
-        axiosCall['post'] = axios.post
-        axiosCall['patch'] = axios.patch
-        await axiosCall[method](this.ApiBaseUrl + uri, data)
+        await this.axiosCall[method](this.ApiBaseUrl + uri, data)
             .then(response => {
                 console.log(`${data.command} SUCCESS:`, response.data)
                 if (response.data !== '' && data.command !== 'logout') {
@@ -70,9 +71,9 @@ export default {
             command: 'sendEmail',
         })
     },
-    async sendwebhook() {
+    async sendWebhook() {
         await this.userApiFunction('post', '/webhook/', {
-            command: 'sendwebhook',
+            command: 'sendWebhook',
         })
     },
 }
