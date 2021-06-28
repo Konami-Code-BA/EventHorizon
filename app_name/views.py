@@ -82,7 +82,7 @@ def example(request):
 	}
 
 	#line_body = received_message_1
-	line_body = received_message_2
+	#line_body = received_message_2
 	#event = new_follower_1
 	#event = lost_follower_1
 
