@@ -36,43 +36,61 @@ def example(request):
 			}
 		]
 	}
+	received_message_2 = {
+		'destination': 'Ub480d7e5ff2b8357eb196ed6729bd689',
+		'events': [{
+			'type': 'message',
+			'message': {
+				'type': 'text',
+				'id': '14302576500342',
+				'text': 'status'
+			},
+			'timestamp': 1624886647207,
+			'source': {
+				'type': 'room',
+				'roomId': 'R243cbfb03168e95081d5895c2f99a4b5',
+				'userId': 'U09e3b108910c1711d2732a8b9ac8a19d'
+			},
+			'replyToken': 'c16418c3cc2a4aab82ab961a024f2ea8',
+			'mode': 'active'
+		}]
+	}
 	new_follower_1 = {
 		'destination': 'Ub480d7e5ff2b8357eb196ed6729bd689',
-		'events': [
-			{
-				'type': 'unfollow',
-				'timestamp': 1624799291429,
-				'source': {
-					'type': 'user',
-					'userId': 'U09e3b108910c1711d2732a8b9ac8a19d'
-				},
-				'mode': 'active'
-			}
-		]
+		'events': [{
+			'type': 'unfollow',
+			'timestamp': 1624799291429,
+			'source': {
+				'type': 'user',
+				'userId': 'U09e3b108910c1711d2732a8b9ac8a19d'
+			},
+			'mode': 'active'
+		}]
 	}
 	lost_follower_1 = {
 		'destination': 'Ub480d7e5ff2b8357eb196ed6729bd689',
-		'events': [
-			{
-				'type': 'follow',
-				'timestamp': 1624799586678,
-				'source': {
-					'type': 'user',
-					'userId': 'U09e3b108910c1711d2732a8b9ac8a19d'
-				},
-				'replyToken': 'be6008d01ab84e1a8ee7699102927f00',
-				'mode': 'active'
-			}
-		]
+		'events': [{
+			'type': 'follow',
+			'timestamp': 1624799586678,
+			'source': {
+				'type': 'user',
+				'userId': 'U09e3b108910c1711d2732a8b9ac8a19d'
+			},
+			'replyToken': 'be6008d01ab84e1a8ee7699102927f00',
+			'mode': 'active'
+		}]
 	}
 
-	line_body = received_message_1
+	#line_body = received_message_1
+	line_body = received_message_2
 	#event = new_follower_1
 	#event = lost_follower_1
 
 	replyToken, reply = line_bot(line_body)
 	if reply:
-		print('Sending reply text', reply)
+		print('line_body', line_body)
+		print('replyToken', replyToken)
+		print('reply', reply)
 		#line_push(reply)
 		line_reply(replyToken, reply)
 

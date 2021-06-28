@@ -38,15 +38,19 @@ def get_return_queryset(self, request, pk=None):
 
 
 def line_bot(line_body):
-	replyToken, reply = None, None
+	replyToken, reply, text = None, None, None
 	events = line_body['events'][0]
 	if events['type'] == 'message':
 		if events['source']['type'] == 'user':
 			if events['message']['type'] == 'text':
 				text = events['message']['text']
-				if text == 'status':
-					replyToken, reply = events['replyToken'], '15 people confirmed'
-				return replyToken, reply
+		elif events['source']['type'] == 'room':
+			if events['message']['type'] == 'text':
+				if events['message']['text'][:4] == '.bot':
+					text = events['message']['text'][5:]
+	if text == 'Status':
+		replyToken, reply = events['replyToken'], '15 people confirmed'
+	return replyToken, reply
 
 
 def line_push(message):
