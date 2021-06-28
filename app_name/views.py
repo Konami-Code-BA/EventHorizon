@@ -43,7 +43,7 @@ def example(request):
 			'message': {
 				'type': 'text',
 				'id': '14302576500342',
-				'text': 'status'
+				'text': '.bot status'
 			},
 			'timestamp': 1624886647207,
 			'source': {
@@ -93,7 +93,7 @@ def example(request):
 		print('replyToken', replyToken)
 		print('reply', reply)
 		#line_push(reply)
-		line_reply(replyToken, reply)
+		line_reply(replyToken, reply) # fails here
 
 	# either we have them make a username password or they login using line and get their line name, if possible.
 	# "Integrating LINE Login with your web app" i think it will be annoying but i can do it and it is better than having to make a password
