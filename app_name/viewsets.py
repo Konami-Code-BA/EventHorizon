@@ -11,41 +11,7 @@ from django.conf import settings
 from django.contrib.sessions.models import Session
 from decouple import config
 from django.core.mail import send_mail
-
-
-def is_admin(request):  # is staff and is in the Admin group
-	return request.user.is_staff and request.user.groups.filter(name='Admin').exists()
-
-
-def is_admin_or_this_user(request, pk):  # is admin, or is a user that matches the pk
-	return is_admin(request) or int(pk) == request.user.pk
-
-
-def get_return_queryset(self, request, pk=None):
-		if request.user.is_authenticated:  # is an authenticated user
-				if pk:  # trying to access one user
-						checker = is_admin_or_this_user(request, pk)  # check if is admin or is this user
-				else:  # trying to access all users
-						checker = is_admin(request)  # check if is admin
-				objects = self.serializer_class.Meta.model.objects
-				if checker:  # if accessing one user: is admin or is this user. if accessing all users, is admin
-						if pk:  # trying to access one user
-								queryset = objects.get(pk=pk)  # get the user
-						else:  # trying to access all users
-								queryset = objects.all()  # get all users
-				else:  # is some user
-						if pk:  # trying to access one other user
-								queryset = None  # get nothing
-						else:  # trying to access all users
-								queryset = [request.user]  # get only himself
-		else:  # unauthenticated user
-				queryset = None  # get nothing
-		if queryset:
-			serializer_data = self.serializer_class(queryset, many=not bool(pk)).data
-		else:
-			serializer_data = None
-		print('serializer_data:', serializer_data)
-		return Response(serializer_data)
+from app_name.functions import get_return_queryset
 
 
 class UserViewSet(viewsets.ModelViewSet):

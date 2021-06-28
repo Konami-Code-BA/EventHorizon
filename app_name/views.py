@@ -6,6 +6,7 @@ from django.contrib.messages import get_messages
 import json
 import requests
 from app_name.viewsets import UserViewSet, LineViewset
+from app_name.functions import line_bot, line_reply, line_push
 	
 def index(request):
     return render(request, template_name='index.html')
@@ -23,7 +24,7 @@ def example(request):
 				'message': {
 					'type': 'text',
 					'id': '14296801432826',
-					'text': 'Test message brah'
+					'text': 'status'
 				},
 				'timestamp': 1624799029188,
 				'source': {
@@ -64,18 +65,23 @@ def example(request):
 			}
 		]
 	}
-	event = received_message_1
+
+	line_body = received_message_1
 	#event = new_follower_1
 	#event = lost_follower_1
-	#if event['events']['type'] == 'message':
 
+	replyToken, reply = line_bot(line_body)
+	if reply:
+		print('Sending reply text', reply)
+		#line_push(reply)
+		line_reply(replyToken, reply)
 
 	# either we have them make a username password or they login using line and get their line name, if possible.
 	# "Integrating LINE Login with your web app" i think it will be annoying but i can do it and it is better than having to make a password
 	# i can get their display name via API with their user id
 	#line_header = json.loads(request.headers)
 
-	return HttpResponse('This is the webhook response.')
+	return HttpResponse(f'Sending reply text {reply}')
 
 
 def sendEmail(request):
