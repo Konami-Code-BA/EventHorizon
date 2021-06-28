@@ -15,7 +15,7 @@ def index(request):
 @csrf_exempt
 def example(request):
 	line_body = json.loads(request.body.decode('utf-8'))
-	print('line_body', line_body)
+	print('line_body1', line_body)
 	received_message_1 = {  # https://developers.line.biz/en/reference/messaging-api/#message-event
 		'destination': 'Ub480d7e5ff2b8357eb196ed6729bd689',
 		'events': [
@@ -87,6 +87,7 @@ def example(request):
 	#event = lost_follower_1
 
 	replyToken, reply = line_bot(line_body)
+	print('replyToken, reply', replyToken, reply)
 	if reply:
 		print('line_body', line_body)
 		print('replyToken', replyToken)
