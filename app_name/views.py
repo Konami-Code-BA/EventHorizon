@@ -87,6 +87,7 @@ def line_webhook(request):
 	#event = lost_follower_1
 
 	replyToken, reply = line_bot(line_body)
+	response = "Don't need to send a reply"
 	if replyToken and reply:
 		print('sending reply', reply, 'to', replyToken)
 		response = api_to_line('reply', reply, replyToken)
