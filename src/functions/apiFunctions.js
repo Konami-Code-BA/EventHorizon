@@ -9,6 +9,7 @@ export default {
     axiosCall: {
         post: axios.post,
         patch: axios.patch,
+        get: axios.get,
     },
     async userApiFunction(method, uri, data) {
         let output = store.defaultUser
@@ -24,6 +25,19 @@ export default {
             })
             .finally(() => {
                 store.user = output
+            })
+    },
+    async lineApiFunction(method, uri, data) {
+        let output = null
+        await this.axiosCall[method](this.ApiBaseUrl + uri, data)
+            .then(response => {
+                console.log(`${data.command} SUCCESS:`, response.data)
+                if (response.data !== '') {
+                    output = response.data
+                }
+            })
+            .catch(error => {
+                console.log(`${data.command} ERROR:`, error)
             })
     },
     async authenticateFromSession() {
@@ -72,8 +86,27 @@ export default {
         })
     },
     async sendWebhook() {
-        await this.userApiFunction('post', '/webhook/', {
+        await this.lineApiFunction('post', '/webhook/', {
             command: 'sendWebhook',
+        })
+    },
+    async lineConsumption() {
+        await this.lineApiFunction('post', '/api/line/', {
+            command: 'consumption',
+        })
+    },
+    async linePush() {
+        await this.lineApiFunction('post', '/api/line/', {
+            command: 'push',
+            message: 'sup this is a push message',
+            to: 'U09e3b108910c1711d2732a8b9ac8a19d',
+        })
+    },
+    async lineBroadcast() {
+        await this.lineApiFunction('post', '/api/line/', {
+            command: 'broadcast',
+            message: 'sup this is a broadcast message',
+            to: 'U09e3b108910c1711d2732a8b9ac8a19d',
         })
     },
 }

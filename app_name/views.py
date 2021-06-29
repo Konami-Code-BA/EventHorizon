@@ -6,16 +6,16 @@ from django.contrib.messages import get_messages
 import json
 import requests
 from app_name.viewsets import UserViewSet, LineViewset
-from app_name.functions import line_bot, line_reply, line_push
+from app_name.functions import line_bot, api_to_line
 	
 def index(request):
     return render(request, template_name='index.html')
 
 @require_POST
 @csrf_exempt
-def example(request):
+def line_webhook(request):
 	line_body = json.loads(request.body.decode('utf-8'))
-	print('line_body1', line_body)
+	print('line_body', line_body)
 	received_message_1 = {  # https://developers.line.biz/en/reference/messaging-api/#message-event
 		'destination': 'Ub480d7e5ff2b8357eb196ed6729bd689',
 		'events': [
@@ -58,18 +58,6 @@ def example(request):
 	new_follower_1 = {
 		'destination': 'Ub480d7e5ff2b8357eb196ed6729bd689',
 		'events': [{
-			'type': 'unfollow',
-			'timestamp': 1624799291429,
-			'source': {
-				'type': 'user',
-				'userId': 'U09e3b108910c1711d2732a8b9ac8a19d'
-			},
-			'mode': 'active'
-		}]
-	}
-	lost_follower_1 = {
-		'destination': 'Ub480d7e5ff2b8357eb196ed6729bd689',
-		'events': [{
 			'type': 'follow',
 			'timestamp': 1624799586678,
 			'source': {
@@ -80,6 +68,18 @@ def example(request):
 			'mode': 'active'
 		}]
 	}
+	lost_follower_1 = {
+		'destination': 'Ub480d7e5ff2b8357eb196ed6729bd689',
+		'events': [{
+			'type': 'unfollow',
+			'timestamp': 1624799291429,
+			'source': {
+				'type': 'user',
+				'userId': 'U09e3b108910c1711d2732a8b9ac8a19d'
+			},
+			'mode': 'active'
+		}]
+	}
 
 	#line_body = received_message_1
 	#line_body = received_message_2
@@ -87,16 +87,10 @@ def example(request):
 	#event = lost_follower_1
 
 	replyToken, reply = line_bot(line_body)
-	if reply:
-		#line_push(reply)
-		line_reply(replyToken, reply) # fails here
-
-	# either we have them make a username password or they login using line and get their line name, if possible.
-	# "Integrating LINE Login with your web app" i think it will be annoying but i can do it and it is better than having to make a password
-	# i can get their display name via API with their user id
-	#line_header = json.loads(request.headers)
-
-	return HttpResponse(f'Sending reply text {reply}')
+	if replyToken and reply:
+		print('sending reply', reply, 'to', replyToken)
+		response = api_to_line('reply', reply, replyToken)
+	return HttpResponse(response)
 
 
 def sendEmail(request):

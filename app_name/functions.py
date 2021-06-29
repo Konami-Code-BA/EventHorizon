@@ -38,58 +38,102 @@ def get_return_queryset(self, request, pk=None):
 
 
 def line_bot(line_body):
-	replyToken, reply, text = None, None, None
+	replyToken, reply, received = None, None, None
 	events = line_body['events'][0]
-	if events['type'] == 'message':  # its a message (not a follow etc)
+	if events['type'] == 'follow':
+		reply = 'Thank you for following!'
+	elif events['type'] == 'message':  # its a message (not a follow etc)
 		if events['message']['type'] == 'text':  # its a text message (not an image etc)
-			if events['message']['text'][:4] == '.bot':  # its a .bot command
-				text = events['message']['text'][5:]  # save the text minus the .bot command
-			elif events['source']['type'] == 'user':  # its not a .bot command but it is a 1-user private room
-				text = events['message']['text']  # private room doesn't need .bot command, so save all the text
-	if text in ['Status', 'status']:
-		replyToken, reply = events['replyToken'], '15 people confirmed'
+			if events['message']['text'][:4] == '.bot':  # it has a .bot trigger
+				received = events['message']['text'][5:]  # save the text minus the .bot trigger
+			elif events['source']['type'] == 'user':  # it doesn't have a .bot trigger but it is a 1-user private room
+				received = events['message']['text']  # private room doesn't need .bot trigger, so save all the text
+	if 'replyToken' in events:
+		replyToken = events['replyToken']
+	if received in ['Status', 'status']:
+		reply = '15 people confirmed'
 	return replyToken, reply
 
 
-def line_push(message):
+def api_to_line(todo, message=None, towho=None):
 	token = 'QHyTosat3st1hTca9MII4ZT8zAAfEmCSRkE7JpRFN8vXz2YcUFKbOnvr2ItzKihjBqSo2L+St2o2awCJuR9ZYhBF2zmhZTq02wUDV1JrlPtJdI9zEGBYHtlPEza+Yjrg96ldnJHNx560asXkXKIEpQdB04t89/1O/w1cDnyilFU='
+	urls = {
+		'push': 'https://api.line.me/v2/bot/message/push',
+		'reply': 'https://api.line.me/v2/bot/message/reply',
+		'multicast': 'https://api.line.me/v2/bot/message/multicast',
+		'broadcast': 'https://api.line.me/v2/bot/message/broadcast',
+		'consumption': 'https://api.line.me/v2/bot/message/quota/consumption',
+	}
+	send_type = {
+		'push': 'to',
+		'reply': 'replyToken',
+		'multicast': 'to',
+		'broadcast': None,
+		'consumption': None,
+	}
+	headers = {
+		'Content-Type': 'application/json',
+		'Authorization': 'Bearer ' + token,
+	}
+	if message:  # if there's a message, want to send the message, its a post
+		data = {}
+		if towho:  # if there is a towho, put it in the data, otherwise it's a broadcast to all
+			data[send_type[todo]] = towho
+		data['messages'] = [{
+			"type": "text",
+			"text": message,
+		}]
+		response = requests.post(  # post it
+			urls[todo],
+			headers = headers,
+			data = json.dumps(data)
+		)
+	else:  # if there's no message, it's a get
+		response = requests.get(  # get it
+			urls[todo],
+			headers = headers
+		)
+	return json.loads(response.content)
 
-	response = requests.post(
-		'https://api.line.me/v2/bot/message/push',
-		headers = {
-			'Content-Type': 'application/json',
-			'Authorization': 'Bearer ' + token,
-		},
-		data = json.dumps({
-			"to": 'U09e3b108910c1711d2732a8b9ac8a19d',
-			"messages": [
-				{
-					"type": "text",
-					"text": message,
-				}
-			]
-		})
-	)
-	return response
+
+#def line_push(message):
+#	token = 'QHyTosat3st1hTca9MII4ZT8zAAfEmCSRkE7JpRFN8vXz2YcUFKbOnvr2ItzKihjBqSo2L+St2o2awCJuR9ZYhBF2zmhZTq02wUDV1JrlPtJdI9zEGBYHtlPEza+Yjrg96ldnJHNx560asXkXKIEpQdB04t89/1O/w1cDnyilFU='
+	#response = requests.post(
+	#	'https://api.line.me/v2/bot/message/push',
+	#	headers = {
+	#		'Content-Type': 'application/json',
+	#		'Authorization': 'Bearer ' + token,
+	#	},
+	#	data = json.dumps({
+	#		"to": 'U09e3b108910c1711d2732a8b9ac8a19d',
+	#		"messages": [
+	#			{
+	#				"type": "text",
+	#				"text": message,
+	#			}
+	#		]
+	#	})
+	#)
+	#return response
 
 
-def line_reply(replyToken, message):
-	print('inside line reply')
-	token = 'QHyTosat3st1hTca9MII4ZT8zAAfEmCSRkE7JpRFN8vXz2YcUFKbOnvr2ItzKihjBqSo2L+St2o2awCJuR9ZYhBF2zmhZTq02wUDV1JrlPtJdI9zEGBYHtlPEza+Yjrg96ldnJHNx560asXkXKIEpQdB04t89/1O/w1cDnyilFU='
-	response = requests.post(
-		'https://api.line.me/v2/bot/message/reply',
-		headers = {
-			'Content-Type': 'application/json',
-			'Authorization': 'Bearer ' + token,
-		},
-		data = json.dumps({
-			"replyToken": replyToken,
-			"messages": [
-				{
-					"type": "text",
-					"text": message,
-				}
-			]
-		})
-	)
-	return response
+#def line_reply(replyToken, message):
+#	print('inside line reply')
+#	token = 'QHyTosat3st1hTca9MII4ZT8zAAfEmCSRkE7JpRFN8vXz2YcUFKbOnvr2ItzKihjBqSo2L+St2o2awCJuR9ZYhBF2zmhZTq02wUDV1JrlPtJdI9zEGBYHtlPEza+Yjrg96ldnJHNx560asXkXKIEpQdB04t89/1O/w1cDnyilFU='
+#	response = requests.post(
+#		'https://api.line.me/v2/bot/message/reply',
+#		headers = {
+#			'Content-Type': 'application/json',
+#			'Authorization': 'Bearer ' + token,
+#		},
+#		data = json.dumps({
+#			"replyToken": replyToken,
+#			"messages": [
+#				{
+#					"type": "text",
+#					"text": message,
+#				}
+#			]
+#		})
+#	)
+#	return response
