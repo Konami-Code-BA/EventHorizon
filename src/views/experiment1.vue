@@ -7,6 +7,9 @@
 				<div><h2>{{$route.query.test}}</h2></div> <!--http://127.0.0.1:8080/experiment1?test=boi-->
 				<button v-on:click.prevent="sendEmail()">sendEmail</button>
 				<button v-on:click.prevent="sendWebhook()">sendWebhook</button>
+				<button v-on:click.prevent="lineConsumption()">lineConsumption</button>
+				<button v-on:click.prevent="linePush()">linePush</button>
+				<button v-on:click.prevent="lineBroadcast()">lineBroadcast</button>
 			</div>
 			<!--a href="https://lin.ee/UeSvNxR"><img height="36" border="0" src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png"></a-->
 		</div>
@@ -47,6 +50,9 @@
 			t (w) { return translations.t(w) },
 			async sendEmail () { await apiFunctions.sendEmail() },
 			async sendWebhook () { await apiFunctions.sendWebhook() },
+			async lineConsumption () { await apiFunctions.lineConsumption() },
+			async linePush () { await apiFunctions.linePush() },
+			async lineBroadcast () { await apiFunctions.lineBroadcast() },
 		} // methods
 	} // export
 </script>

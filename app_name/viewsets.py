@@ -12,6 +12,7 @@ from django.contrib.sessions.models import Session
 from decouple import config
 from django.core.mail import send_mail
 from app_name.functions import get_return_queryset
+from app_name.functions import api_to_line
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -117,65 +118,22 @@ class LineViewset(viewsets.ViewSet):
 	queryset = Line.objects.all()
 	serializer_class = LineSerializer(queryset, many=True)
 	def create(self, request):
-		#print("REQUEST: " + request.data['command'])
 		response = eval(f"self.{request.data['command']}(request)")
-		#print("RESPONSE: ", response.json())
-
-		saveit = Line(response=str(response))
-		saveit.save()
-		queryset = Line.objects.all()
-		serializer = self.serializer_class(queryset, many=True)
-		return Response(serializer.data)
+		#queryset = None
+		#serializer_data = None
+		return Response(response)
 
 	def consumption(self, request):
-		response = requests.get(
-			'https://api.line.me/v2/bot/message/quota/consumption',
-			headers = {
-				'Authorization': 'Bearer ' + self.token,
-			}
-		)
-		print("HERE", json.loads(response.content)['totalUsage'])
-		response = json.loads(response.content)['totalUsage']
+		response = api_to_line('consumption')
+		print('consumption success:', response)
 		return response
 
 	def broadcast(self, request):
-		message = request.data['message']
-		response = requests.post(
-			'https://api.line.me/v2/bot/message/broadcast',
-			headers = {
-				'Content-Type': 'application/json',
-				'Authorization': 'Bearer ' + self.token,
-			},
-			data = json.dumps({
-				#"to": "michaels234", 
-				"messages": [
-					{
-						"type": "text",
-						"text": message,
-					}
-				]
-			})
-		)
-		response = 'Sent "' + message + '" to everyone'
+		response = api_to_line('broadcast', request.data['message'])
+		print('broadcast success:', response)
 		return response
 
 	def push(self, request):
-		message = request.data['message']
-		response = requests.post(
-			'https://api.line.me/v2/bot/message/push',
-			headers = {
-				'Content-Type': 'application/json',
-				'Authorization': 'Bearer ' + self.token,
-			},
-			data = json.dumps({
-				"to": 'U09e3b108910c1711d2732a8b9ac8a19d',
-				"messages": [
-					{
-						"type": "text",
-						"text": message,
-					}
-				]
-			})
-		)
-		response = 'Sent "' + message + '" to Mikey'
+		response = api_to_line('push', request.data['message'], request.data['to'])
+		print('push success:', response)
 		return response
