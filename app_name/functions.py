@@ -55,7 +55,7 @@ def line_bot(line_body):
 	return replyToken, reply
 
 
-def api_to_line(todo, message=None, towho=None):
+def api_to_line(todo, message=None, towho=None, params=None):
 	token = 'QHyTosat3st1hTca9MII4ZT8zAAfEmCSRkE7JpRFN8vXz2YcUFKbOnvr2ItzKihjBqSo2L+St2o2awCJuR9ZYhBF2zmhZTq02wUDV1JrlPtJdI9zEGBYHtlPEza+Yjrg96ldnJHNx560asXkXKIEpQdB04t89/1O/w1cDnyilFU='
 	urls = {
 		'push': 'https://api.line.me/v2/bot/message/push',
@@ -63,6 +63,8 @@ def api_to_line(todo, message=None, towho=None):
 		'multicast': 'https://api.line.me/v2/bot/message/multicast',
 		'broadcast': 'https://api.line.me/v2/bot/message/broadcast',
 		'consumption': 'https://api.line.me/v2/bot/message/quota/consumption',
+		'getAccessToken': 'https://api.line.me/oauth2/v2.1/token',
+		'verify': 'https://api.line.me/oauth2/v2.1/verify',
 	}
 	send_type = {
 		'push': 'to',
@@ -71,69 +73,45 @@ def api_to_line(todo, message=None, towho=None):
 		'broadcast': None,
 		'consumption': None,
 	}
-	headers = {
-		'Content-Type': 'application/json',
-		'Authorization': 'Bearer ' + token,
-	}
-	if message:  # if there's a message, want to send the message, its a post
-		data = {}
-		if towho:  # if there is a towho, put it in the data, otherwise it's a broadcast to all
-			data[send_type[todo]] = towho
-		data['messages'] = [{
-			"type": "text",
-			"text": message,
-		}]
-		response = requests.post(  # post it
-			urls[todo],
-			headers = headers,
+	#headers = {
+	#	'Content-Type': 'application/json',
+	#	'Authorization': 'Bearer ' + token,
+	#}
+	headers = {}
+	data = None
+	if params:  # if there is data, it's for getAccessToken token or verify
+		if todo == 'getAccessToken':
+			headers['Content-Type'] = 'application/x-www-form-urlencoded'
+		data = params
+	else:
+		headers['Content-Type'] = 'application/json'
+		headers['Authorization'] = 'Bearer ' + token
+		if message:  # if there's a message, want to send the message, its a post
+			data = {}
+			if towho:  # if there is a towho, put it in the data, otherwise it's a broadcast to all
+				data[send_type[todo]] = towho
+			data['messages'] = [{
+				"type": "text",
+				"text": message,
+			}]
 			data = json.dumps(data)
-		)
-	else:  # if there's no message, it's a get
+	if data:
+		if headers == {}:
+			print('made it here\n\n', urls[todo], '\ndata\n', data)
+			response = requests.post(  # post it
+				urls[todo],
+				data = data
+			)
+		else:
+			response = requests.post(  # post it
+				urls[todo],
+				headers = headers,
+				data = data
+			)
+	else:
 		response = requests.get(  # get it
 			urls[todo],
 			headers = headers
 		)
+	
 	return json.loads(response.content)
-
-
-#def line_push(message):
-#	token = 'QHyTosat3st1hTca9MII4ZT8zAAfEmCSRkE7JpRFN8vXz2YcUFKbOnvr2ItzKihjBqSo2L+St2o2awCJuR9ZYhBF2zmhZTq02wUDV1JrlPtJdI9zEGBYHtlPEza+Yjrg96ldnJHNx560asXkXKIEpQdB04t89/1O/w1cDnyilFU='
-	#response = requests.post(
-	#	'https://api.line.me/v2/bot/message/push',
-	#	headers = {
-	#		'Content-Type': 'application/json',
-	#		'Authorization': 'Bearer ' + token,
-	#	},
-	#	data = json.dumps({
-	#		"to": 'U09e3b108910c1711d2732a8b9ac8a19d',
-	#		"messages": [
-	#			{
-	#				"type": "text",
-	#				"text": message,
-	#			}
-	#		]
-	#	})
-	#)
-	#return response
-
-
-#def line_reply(replyToken, message):
-#	print('inside line reply')
-#	token = 'QHyTosat3st1hTca9MII4ZT8zAAfEmCSRkE7JpRFN8vXz2YcUFKbOnvr2ItzKihjBqSo2L+St2o2awCJuR9ZYhBF2zmhZTq02wUDV1JrlPtJdI9zEGBYHtlPEza+Yjrg96ldnJHNx560asXkXKIEpQdB04t89/1O/w1cDnyilFU='
-#	response = requests.post(
-#		'https://api.line.me/v2/bot/message/reply',
-#		headers = {
-#			'Content-Type': 'application/json',
-#			'Authorization': 'Bearer ' + token,
-#		},
-#		data = json.dumps({
-#			"replyToken": replyToken,
-#			"messages": [
-#				{
-#					"type": "text",
-#					"text": message,
-#				}
-#			]
-#		})
-#	)
-#	return response

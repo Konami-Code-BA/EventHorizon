@@ -4,7 +4,7 @@
 			<menus-header/>
 			<div class="box">
 				<h1>experiment 2</h1>
-				{{received}}
+				<button v-on:click.prevent="lineGetAccessToken()">lineGetAccessToken</button>
 			</div>
 			<!--a href="https://lin.ee/UeSvNxR"><img height="36" border="0" src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png"></a-->
 		</div>
@@ -34,17 +34,22 @@
 				passwordInput: '',
 				showPassword: false,
 				loading: true,
-				received: 'nothing yet',
+				state: this.$route.query.state,
 			}
 		},
 		async mounted () {
 			this.loading = false
+			console.log('code', this.$route.query.code)
+			console.log('friendship_status_changed', this.$route.query.friendship_status_changed)
+			console.log('state', this.$route.query.state)
+			console.log('error', this.$route.query.error)
+			console.log('error_description', this.$route.query.error_description)
 		},
 		methods: {
 			t (w) { return translations.t(w) },
-			async sendwebhook () {
-				await apiFunctions.sendwebhook()
-			}
+			async lineGetAccessToken () {
+				await apiFunctions.lineGetAccessToken(this.$route.query.code)
+			},
 		} // methods
 	} // export
 </script>
