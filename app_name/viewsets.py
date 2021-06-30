@@ -129,11 +129,33 @@ class LineViewset(viewsets.ViewSet):
 		return response
 
 	def broadcast(self, request):
-		response = api_to_line('broadcast', request.data['message'])
+		response = api_to_line('broadcast', message=request.data['message'])
 		print('broadcast success:', response)
 		return response
 
 	def push(self, request):
-		response = api_to_line('push', request.data['message'], request.data['to'])
+		mikeyOrStu = {
+			'mikey': 'U09e3b108910c1711d2732a8b9ac8a19d',
+			'stu': 'U7139ad1375429964a43e49031a509341',
+		},
+		response = api_to_line('push', message=request.data['message'], towho=mikeyOrStu[request.data['to']])
+		print('push success:', response)
+		return response
+
+	def getAccessToken(self, request):
+		params = {
+			'grant_type': 'authorization_code',
+			'code': request.data['code'],
+			'redirect_uri': 'http://127.0.0.1:8080/experiment2',
+			'client_id': '1656150937', # login channel
+			'client_secret': 'db1b0a96dac4415e457efcaedb621ed1' # login channel
+		}
+		response = api_to_line('getAccessToken', params=params)
+		print('we got the response', response, '\ntype', type(response))
+		params = {
+			'id_token': response['id_token'],
+			'client_id': '1656150937', # login channel
+		}
+		response = api_to_line('verify', params=params)
 		print('push success:', response)
 		return response
