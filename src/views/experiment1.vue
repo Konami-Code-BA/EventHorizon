@@ -10,6 +10,7 @@
 				<button v-on:click.prevent="lineConsumption()">lineConsumption</button>
 				<button v-on:click.prevent="linePush()">linePush</button>
 				<button v-on:click.prevent="lineBroadcast()">lineBroadcast</button>
+				<button v-on:click.prevent="lineLogin()">lineLogin</button>
 			</div>
 			<!--a href="https://lin.ee/UeSvNxR"><img height="36" border="0" src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png"></a-->
 		</div>
@@ -53,6 +54,10 @@
 			async lineConsumption () { await apiFunctions.lineConsumption() },
 			async linePush () { await apiFunctions.linePush() },
 			async lineBroadcast () { await apiFunctions.lineBroadcast() },
+			async lineLogin () {  // state = 12345abcde
+				//window.location.replace("https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=1656150937&redirect_uri=https%3A%2F%2Fevent-horizon-jp.herokuapp.com%2Fexperiment2%2F&state=12345abcde&bot_prompt=aggressive&scope=profile%20openid")
+				window.location.replace("https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=1656150937&redirect_uri=http%3A%2F%2F127.0.0.1%3A8080%2Fexperiment2&state=12345abcde&bot_prompt=aggressive&scope=profile%20openid")
+			},
 		} // methods
 	} // export
 </script>

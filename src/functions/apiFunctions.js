@@ -95,21 +95,23 @@ export default {
             command: 'consumption',
         })
     },
-    mikeyOrStu: {
-        mikey: 'U09e3b108910c1711d2732a8b9ac8a19d',
-        stu: 'U7139ad1375429964a43e49031a509341',
-    },
     async linePush() {
         await this.lineApiFunction('post', '/api/line/', {
             command: 'push',
             message: 'sup this is a push message',
-            to: this.mikeyOrStu.stu,
+            to: 'mikey',
         })
     },
     async lineBroadcast() {
         await this.lineApiFunction('post', '/api/line/', {
             command: 'broadcast',
             message: 'sup this is a broadcast message',
+        })
+    },
+    async lineGetAccessToken(code) {
+        await this.lineApiFunction('post', '/api/line/', {
+            command: 'getAccessToken',
+            code: code,
         })
     },
 }
