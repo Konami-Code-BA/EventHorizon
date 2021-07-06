@@ -41,6 +41,7 @@ CORS_ALLOWED_ORIGINS  = (  # need to figure out how to use this correctly
 	'http://127.0.0.1:8000',
 	'https://event-horizon-jp.herokuapp.com',
 	'http://eventhorizon.vip',
+	'https://eventhorizon.vip',
 )
 
 # 'Strict': prevents the cookie from being sent by the browser to the target site in all cross-site browsing context, even when following a regular link
