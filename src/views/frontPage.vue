@@ -3,8 +3,20 @@
 		<div v-if="!loading">
 			<menus-header/>
 			<div class="box">
-				<h2 style="text-align: center">{{t('front page screen')}}</h2>
-				<button v-on:click.prevent="$router.push(name='registration')" class="box-item" v-if="!isAuthenticatedUser">
+				<h1 style="text-align: center">EVENT HORIZON</h1>
+				<div class="container">
+					<img src="../assets/pexels-photo-event1.jpg" class="wide-img">
+					<h2 class="contained" style="background-color: #94877f;">FIND EVENTS. HAVE FUN.</h2>
+				</div>
+				<div class="container">
+					<img src="../assets/pexels-photo-event2.jpeg" class="wide-img">
+					<h2 class="contained" style="background-color: #574944;">MEET PEOPLE. NETWORK.</h2>
+				</div>
+				<div class="container">
+					<img src="../assets/pexels-photo-event4.jpeg" class="wide-img">
+					<h2 class="contained" style="background-color: #4e1713;">Hello</h2>
+				</div>
+				<button v-on:click.prevent="$router.push(name='loginRegister')" class="box-item" v-if="!isAuthenticatedUser">
 					{{ t('NEW USER REGISTRATION') }}
 				</button>
 				<button v-on:click.prevent="$router.push(name='home')" class="box-item" v-else>
@@ -39,6 +51,7 @@
 		},
 		methods: {
 			t (w) { return translations.t(w) },
+
 		}
 	}
 </script>

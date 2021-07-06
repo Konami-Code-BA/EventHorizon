@@ -23,20 +23,19 @@
 </script>
 <style scoped>
 .outside {
-  z-index: 9999;
-  position: fixed;
-  width: 1000%;
-  height: 1000%;
-  margin-left: -500%;
-  margin-top: -200%;
-  background-color: rgba(0, 0, 0, .5);
-  transition: opacity .3s ease;
+	z-index: 9999;
+	position: fixed;
+	width: 1000%;
+	height: 1000%;
+	margin-left: -500%;
+	margin-top: -200%;
+	background-color: rgba(0, 0, 0, .5);
+	transition: opacity .3s ease;
 }
 .contents {
-  position: fixed;
-  z-index: 10000;
-	background-color: white;
-	border: 1px solid black;
+	position: fixed;
+	z-index: 10000;
+	background-color: #00022e;
 	padding: inherit;
 	width: inherit;
 	text-align: inherit;

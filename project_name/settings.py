@@ -56,7 +56,7 @@ SESSION_COOKIE_SAMESITE = 'Strict'
 
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'eventhorizonjp@gmail.com'
-EMAIL_HOST_PASSWORD = 'uffjmemybpamgziu'
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
@@ -74,6 +74,11 @@ INSTALLED_APPS = [
 ]
 
 AUTH_USER_MODEL = 'app_name.User'
+
+AUTHENTICATION_BACKENDS = [
+	#'django.contrib.auth.backends.ModelBackend',
+	'app_name.backends.UserBackend',
+]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

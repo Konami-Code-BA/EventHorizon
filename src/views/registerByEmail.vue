@@ -63,7 +63,7 @@
 	import apiFunctions from '@/functions/apiFunctions.js'
 	import functions from '@/functions/functions.js'
 	export default {
-		name: 'registration',
+		name: 'registerByEmail',
 		components: {
 			modal,
 			menusHeader,

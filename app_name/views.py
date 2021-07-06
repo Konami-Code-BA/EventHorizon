@@ -5,7 +5,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.messages import get_messages
 import json
 import requests
-from app_name.viewsets import UserViewSet, LineViewset
 from app_name.functions import line_bot, api_to_line
 	
 def index(request):
@@ -15,7 +14,6 @@ def index(request):
 @csrf_exempt
 def line_webhook(request):
 	line_body = json.loads(request.body.decode('utf-8'))
-	print('line_body', line_body)
 	received_message_1 = {  # https://developers.line.biz/en/reference/messaging-api/#message-event
 		'destination': 'Ub480d7e5ff2b8357eb196ed6729bd689',
 		'events': [
@@ -83,18 +81,11 @@ def line_webhook(request):
 
 	#line_body = received_message_1
 	#line_body = received_message_2
-	#event = new_follower_1
-	#event = lost_follower_1
+	line_body = new_follower_1
+	#line_body = lost_follower_1
 
 	replyToken, reply = line_bot(line_body)
 	response = "Don't need to send a reply"
 	if replyToken and reply:
-		print('sending reply', reply, 'to', replyToken)
 		response = api_to_line('reply', reply, replyToken)
 	return HttpResponse(response)
-
-
-def sendEmail(request):
-	#send_mail('Test', 'This is a test', 'your@email.com', ['toemail@email.com'],
-    #   fail_silently=False)
-	return HttpResponse('This is the email response.')

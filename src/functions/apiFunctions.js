@@ -11,11 +11,11 @@ export default {
         patch: axios.patch,
         get: axios.get,
     },
+    // API /////////////////////////////////////////////////////////////////////////////////////////////////////////////
     async userApiFunction(method, uri, data) {
         let output = store.defaultUser
         await this.axiosCall[method](this.ApiBaseUrl + uri, data)
             .then(response => {
-                console.log(`${data.command} SUCCESS:`, response.data)
                 if (response.data !== '' && data.command !== 'logout') {
                     output = response.data
                 }
@@ -31,7 +31,6 @@ export default {
         let output = null
         await this.axiosCall[method](this.ApiBaseUrl + uri, data)
             .then(response => {
-                console.log(`${data.command} SUCCESS:`, response.data)
                 if (response.data !== '') {
                     output = response.data
                 }
@@ -39,45 +38,52 @@ export default {
             .catch(error => {
                 console.log(`${data.command} ERROR:`, error)
             })
+        return output
     },
-    async authenticateFromSession() {
-        await this.userApiFunction('post', '/api/user/', {
-            command: 'authenticateFromSession',
-        })
+    async secretsApiFunction(toGet) {
+        let output = null
+        await this.axiosCall['get'](this.ApiBaseUrl + '/api/secrets/' + toGet + '/')
+            .then(response => {
+                if (response.data !== '') {
+                    output = response.data
+                }
+            })
+            .catch(error => {
+                console.log(`${toGet} ERROR:`, error)
+            })
+        return output
     },
-    async register(username, email, password) {
+    // USERS ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+    async registerByEmail(email, password) {
         await this.userApiFunction('post', '/api/user/', {
-            command: 'registration',
-            username: username,
+            command: 'register_by_email',
             email: email,
             password: password,
             language: store.user.language,
-            groups: [2],
         })
     },
-    async login(username, password) {
-        await this.userApiFunction('post', '/api/user/', {
-            command: 'login',
-            username: username,
-            password: password,
-        })
+    //async registerByLine(line, lineAccessToken) {
+    //    await this.userApiFunction('post', '/api/user/', {
+    //        command: 'register_by_line',
+    //        line: line,
+    //        lineAccessToken: lineAccessToken,
+    //        language: store.user.language,
+    //    })
+    //},
+    async login(data) {
+        data['command'] = 'login'
+        await this.userApiFunction('post', '/api/user/', data)
     },
+    //async loginByLine(email, password) {
+    //    await this.userApiFunction('post', '/api/user/', {
+    //        command: 'login',
+    //		email: email,
+    //		password: password,
+    //    })
+    //},
     async logout() {
         await this.userApiFunction('post', '/api/user/', {
             command: 'logout',
-            username: store.user.username,
-        })
-    },
-    async updateUserLanguage() {
-        await this.userApiFunction('patch', '/api/user/' + store.user.id + '/', {
-            command: 'updateUserLanguage',
-            language: store.user.language,
-        })
-    },
-    async updateUserGetEmails() {
-        await this.userApiFunction('patch', '/api/user/' + store.user.id + '/', {
-            command: 'updateUserGetEmails',
-            getEmails: store.user.getEmails,
         })
     },
     async sendEmail() {
@@ -85,6 +91,29 @@ export default {
             command: 'sendEmail',
         })
     },
+    async updateUserLanguage() {
+        await this.userApiFunction('patch', '/api/user/' + store.user.id + '/', {
+            command: 'update_user_language',
+            language: store.user.language,
+        })
+    },
+    async updateUserDoGetEmails() {
+        await this.userApiFunction('patch', '/api/user/' + store.user.id + '/', {
+            command: 'update_user_do_get_emails',
+            getEmail: store.user.do_get_emails,
+        })
+    },
+    async updateUserLocation() {
+        await this.userApiFunction('patch', '/api/user/' + store.user.id + '/', {
+            command: 'update_user_location',
+            ip_continent_name: store.user.ip_continent_name,
+            ip_country_name: store.user.ip_country_name,
+            ip_state_prov: store.user.ip_state_prov,
+            ip_city: store.user.ip_city,
+            ip_date: store.user.ip_date,
+        })
+    },
+    // LINE ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     async sendWebhook() {
         await this.lineApiFunction('post', '/webhook/', {
             command: 'sendWebhook',
@@ -108,10 +137,41 @@ export default {
             message: 'sup this is a broadcast message',
         })
     },
-    async lineGetAccessToken(code) {
+    //async lineGetAccessToken(code, state) {
+    //    await this.lineApiFunction('post', '/api/line/', {
+    //        command: 'get_access_token',
+    //        code: code,
+    //        state: state,
+    //    })
+    //},
+    async lineNewDevice(code) {
         await this.lineApiFunction('post', '/api/line/', {
-            command: 'getAccessToken',
+            command: 'new_device',
             code: code,
+            language: store.user.language,
         })
+    },
+    // SECRETS /////////////////////////////////////////////////////////////////////////////////////////////////////////
+    async loginChannelId() {
+        let response = await this.secretsApiFunction('login_channel_id')
+        return response
+    },
+    async state() {
+        let response = await this.secretsApiFunction('random_secret')
+        return response
+    },
+    async ip() {
+        axios.defaults.withCredentials = false
+        await this.axiosCall['get']('https://api.db-ip.com/v2/free/self')
+            .then(response => {
+                store.user.ip_continent_name = response.data['continentName']
+                store.user.ip_country_name = response.data['countryName']
+                store.user.ip_state_prov = response.data['stateProv']
+                store.user.ip_city = response.data['city']
+                store.user.ip_date = new Date().toISOString()
+            })
+            .catch(error => {
+                console.log(`ip ERROR:`, error)
+            })
     },
 }
