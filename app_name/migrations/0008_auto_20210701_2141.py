@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='user',
             name='contact',
-            field=models.CharField(default='', max_length=255, unique=True),
+            field=models.CharField(default='', max_length=255),
         ),
         migrations.AddField(
             model_name='user',
