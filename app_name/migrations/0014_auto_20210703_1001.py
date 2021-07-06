@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='user',
             name='line',
-            field=models.CharField(blank=True, default='', max_length=40, unique=True),
+            field=models.CharField(blank=True, default='', max_length=40),
         ),
         migrations.AlterField(
             model_name='user',
