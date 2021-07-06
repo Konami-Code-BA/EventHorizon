@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="app">
+  <div id="app">
     <router-view :key="$route.fullPath"/>
   </div>
 </template>
@@ -13,12 +13,14 @@
 
 <style>
 	@media all {
-		.app {
-			font-family: 'Avenir', Helvetica, Arial, sans-serif;
+		body {
+			font-family: Segoe UI;
+			color: #ffe07a;
+			font-weight: 600; /*400=normal, 700=bold*/
+			font-size: 16px;
 			-webkit-font-smoothing: antialiased;
 			-moz-osx-font-smoothing: grayscale;
-			color: black;
-			font-size: 16px;
+			background-color: #18002e; /*00033e 20003e*/
 			max-width: 500px;
 			width: 100%;
 			margin-left: 50%;
@@ -53,37 +55,51 @@
 			text-align: center;
 		}
 		button {
-			text-align: center !important;
+			font-family: inherit;
+			color: inherit;
+			font-weight: inherit;
+			font-size: inherit;
 			font-size: 16px;
-			background-color: white;
-			border: 1px solid black;
-			box-shadow: 1px 1px black;
+			background-color: #4600eb; /*000bff*/
+			border: none;
 			border-radius: 5px;
 			height: 30px;
 			transition-duration: 0.3s;
 			padding: 2px;
+			display: inline-flex;
+			align-items: center; 
+			justify-content: space-around; 
 		}
 		button:hover {
 			font-weight: normal;
 		}
 		input[type=text], input[type=email], input[type=password] {
-			font-size: 16px;
+			font-family: inherit;
+  			color: #4600eb;
+			font-weight: inherit;
+			font-size: inherit;
 			border-radius: 3px;
-			border: 1px solid black;
+			border: none;
+			background-color: #ffe07a;
 			height: 30px;
 			padding: 5px;
-			text-align: left;
+			display: inline-flex;
+			align-items: center; 
 		}
 		input[type=text]:focus, input[type=email]:focus, input[type=password]:focus {
-			border: 2px solid black;
+			border: none;
 			outline: none;
+		}
+		::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  			color: #4600eb;
+			font-weight: inherit;
 		}
 		.half-border-button {
 			border: none;
 			background: none;
-			box-shadow: 1px 1px black;
 			transition-duration: 0.1s;
 			width: 100%;
+			height: inherit;
 		}
 		.half-border-button:active {
 			font-weight: normal;
@@ -119,6 +135,23 @@
 			display: flex;
 			flex-direction: row;
 			justify-content: space-between;
+			height: inherit;
+			padding-bottom: 10px;
+		}
+		.container {
+			position: relative;
+			display: inline-block;
+			text-align: center;
+		}
+		.contained {
+  			position: absolute;
+			bottom: 50%;
+			left: 0;
+			right: 0;
+			transform: translate(0, 50%);
+		}
+		.wide-img {
+			width: 100%;
 		}
 
 		/* SPINNER */

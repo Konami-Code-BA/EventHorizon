@@ -3,43 +3,14 @@
 		<div v-if="!loading">
 			<menus-header :isLoginPage="true"/>
 			<div class="box">
-				<form v-on:keyup.enter="showPassword = false; login()">
-					<div>
-						<input :placeholder="t('USERNAME')" v-model="usernameInput" type="text" class="box-item"
-							id="username" autocorrect="off" autocapitalize="none"/>
-					</div>
-					<div class="box-item"></div>
-					<div style="display: flex">
-						<input :placeholder="t('PASSWORD')" v-model="passwordInput"
-							:type="[showPassword ? 'text' : 'password']" class="box-item" style="flex-grow: 1"
-							id="password" autocorrect="off" autocapitalize="none"/>
-						<button v-on:click.prevent="showButton()" class="box-item" style="width: 60px"
-							id="show" type="button">
-							<small v-if="!showPassword">
-								{{ t('SHOW') }}
-							</small>
-							<small v-else>
-								{{ t('HIDE') }}
-							</small>
-						</button>
-					</div>
-				</form>
-				<div class="box-item">
-					<!--button class="half-border-button small-button" v-on:click.prevent="sendEmail()">
-						<small><small>{{t('FORGOT PASSWORD')}}</small></small>
-					</button-->
-				</div>
-				<button v-on:click.prevent="login()" class="box-item">
-					{{ t('LOGIN') }}
-				</button>
+				<button v-on:click.prevent="$router.push(name='loginByEmail')">Login With Email</button>
+				<button v-on:click.prevent="loginByLine()">Login With Line</button>
 			</div>
-			<div class="box-item"></div>
 			<!--a href="https://lin.ee/UeSvNxR"><img height="36" border="0" src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png"></a-->
 		</div>
 		<div class="loading" v-else></div>
 	</div>
 </template>
-<script src="https://smtpjs.com/v3/smtp.js"></script>
 <script>
 	import store from '@/store.js'
 	import menusHeader from '@/components/menusHeader.vue'
@@ -48,7 +19,7 @@
 	import apiFunctions from '@/functions/apiFunctions.js'
 	import functions from '@/functions/functions.js'
 	export default {
-		name: 'login',
+		name: 'experiment1',
 		components: {
 			menusHeader,
 			modal,
@@ -56,35 +27,42 @@
 		data () {
 			return {
 				store: store,
-				loading: true,
-				//token: 'QHyTosat3st1hTca9MII4ZT8zAAfEmCSRkE7JpRFN8vXz2YcUFKbOnvr2ItzKihjBqSo2L+St2o2awCJuR9ZYhBF2zmhZTq02wUDV1JrlPtJdI9zEGBYHtlPEza+Yjrg96ldnJHNx560asXkXKIEpQdB04t89/1O/w1cDnyilFU=',
-				//client_secret: 'f5ba1cafa7a7057e68360d4d260827f6',
-				//client_id: '1655871760',
 				usernameInput: '',
 				passwordInput: '',
 				showPassword: false,
+				loading: true,
+				stateCookie: JSON.parse('{"' + document.cookie.replaceAll('=', '": "').replaceAll('; ', '", "') + '"}')['state']
 			}
 		},
 		async mounted () {
+			console.log('code', this.$route.query.code)
+			console.log('friendship_status_changed', this.$route.query.friendship_status_changed)
+			console.log('state', this.$route.query.state)
+			console.log('error', this.$route.query.error)
+			console.log('error_description', this.$route.query.error_description)
+			this.tryLineNewDevice()
 			this.loading = false
-			functions.focusCursor('username')
 		},
 		methods: {
 			t (w) { return translations.t(w) },
-			async login () {
-				await apiFunctions.login(this.usernameInput, this.passwordInput)
-				this.$router.push({ name: 'home' })
+			async loginByLine () {
+				let loginChannelId = await apiFunctions.loginChannelId()
+				let state = await apiFunctions.state()
+				document.cookie = `state=${state}`;
+				let lineLoginRedirectUrl = 'https%3A%2F%2Fevent-horizon-jp.herokuapp.com%2Flogin'
+				if (process.env.NODE_ENV == 'development') {
+					lineLoginRedirectUrl = 'http%3A%2F%2F127.0.0.1%3A8080%2Flogin'
+				}
+				window.location.replace(`https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=${loginChannelId}&redirect_uri=${lineLoginRedirectUrl}&state=${state}&prompt=consent&bot_prompt=aggressive&scope=profile%20openid`)
 			},
-			showButton () {
-				functions.focusCursor('password')
-				this.showPassword = !this.showPassword
-			},
-			async sendEmail() {
-				await apiFunctions.sendEmail()
+			async tryLineNewDevice () {
+				if (this.$route.query.code && this.stateCookie === this.$route.query.state) {
+					await apiFunctions.lineNewDevice(this.$route.query.code)
+					this.$router.push({ name: 'home' })
+				} else {
+					console.log('not logged in yet')
+				}
 			}
-			//goToPage2 () {
-			//	this.$router.push({ name: 'pageTwo', params: { thruParams: 'this was sent from the login page' } })
-			//},
 		} // methods
 	} // export
 </script>
