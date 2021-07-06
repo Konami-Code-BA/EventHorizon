@@ -33,9 +33,6 @@
 		data () {
 			return {
 				store: store,
-				token: 'QHyTosat3st1hTca9MII4ZT8zAAfEmCSRkE7JpRFN8vXz2YcUFKbOnvr2ItzKihjBqSo2L+St2o2awCJuR9ZYhBF2zmhZTq02wUDV1JrlPtJdI9zEGBYHtlPEza+Yjrg96ldnJHNx560asXkXKIEpQdB04t89/1O/w1cDnyilFU=',
-				client_secret: 'f5ba1cafa7a7057e68360d4d260827f6',
-				client_id: '1655871760',
 				usernameInput: '',
 				passwordInput: '',
 				showPassword: false,
@@ -45,7 +42,6 @@
 		async mounted () {
         	//setTimeout(() => { }, 2000)
 			this.loading = false
-			
 		},
 		methods: {
 			t (w) { return translations.t(w) },
@@ -54,9 +50,23 @@
 			async lineConsumption () { await apiFunctions.lineConsumption() },
 			async linePush () { await apiFunctions.linePush() },
 			async lineBroadcast () { await apiFunctions.lineBroadcast() },
-			async lineLogin () {  // state = 12345abcde
-				//window.location.replace("https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=1656150937&redirect_uri=https%3A%2F%2Fevent-horizon-jp.herokuapp.com%2Fexperiment2%2F&state=12345abcde&bot_prompt=aggressive&scope=profile%20openid")
-				window.location.replace("https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=1656150937&redirect_uri=http%3A%2F%2F127.0.0.1%3A8080%2Fexperiment2&state=12345abcde&bot_prompt=aggressive&scope=profile%20openid")
+			async loginChannelId () {
+				let response = await apiFunctions.loginChannelId()
+				return response
+			},
+			async state () {
+				let response = await apiFunctions.state()
+				return response
+			},
+			async lineLogin () {
+				let loginChannelId = await this.loginChannelId()
+				let state = await this.state()
+				store.state = state
+				let lineLoginRedirectUrl = 'https%3A%2F%2Fevent-horizon-jp.herokuapp.com%2Fexperiment2'
+				if (process.env.NODE_ENV == 'development') {
+					lineLoginRedirectUrl = 'http%3A%2F%2F127.0.0.1%3A8080%2Fexperiment2'
+				}
+				window.location.replace(`https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=${loginChannelId}&redirect_uri=${lineLoginRedirectUrl}&state=${state}&bot_prompt=aggressive&scope=profile%20openid`)
 			},
 		} // methods
 	} // export

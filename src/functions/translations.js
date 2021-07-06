@@ -14,6 +14,10 @@ export default {
             'EN': 'REGISTER',
             'JP': '登録'
         },
+        'LOGIN / REGISTER': {
+            'EN': 'LOGIN / REGISTER',
+            'JP': 'ログイン・登録'
+        },
         'NEW USER REGISTRATION': {
             'EN': 'NEW USER REGISTRATION',
             'JP': '新規登録'

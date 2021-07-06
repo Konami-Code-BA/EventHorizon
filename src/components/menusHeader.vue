@@ -7,27 +7,23 @@
 						v-if="isAuthenticatedUser">
 						<big>{{ t('MENU') }}</big>
 					</button>
-					<button v-on:click.prevent="$router.push({ name: 'login' })" class="half-border-button"
-						v-else-if="!isLoginPage">
-						<big>{{ t('LOGIN') }}</big>
-					</button>
-					<button v-on:click.prevent="$router.push({ name: 'registration' })" class="half-border-button"
+					<button v-on:click.prevent="$router.push({ name: 'loginRegister' })" class="half-border-button"
 						v-else>
-						<big>{{ t('REGISTER') }}</big>
+						<big>{{ t('LOGIN / REGISTER') }}</big>
 					</button>
 				</div>
 				<div>
 					<button v-on:click.prevent="languageMenu=!languageMenu" class="half-border-button">
-						<!--img src="../assets/languageIcon.png" class="languageIcon"-->
 							<big>A あ</big>
 					</button>
 				</div>
 			</div>
 			<div>
 				<img src="../assets/eventhorizon.png" class="logo">
-			</div><br>
+			</div>
 			<transition name="fade">
-				<modal class="mainMenu" v-show="mainMenu" @closeModals="languageMenu = false; mainMenu = false" id="mainMenu">
+				<modal class="mainMenu" v-show="mainMenu" @closeModals="languageMenu = false; mainMenu = false"
+					id="mainMenu">
 					<template v-slot:contents>
 						<div style="text-align: right">
 							<button v-on:click.prevent="mainMenu=!mainMenu" class="no-border-button">
@@ -40,7 +36,8 @@
 							</button>
 						</div><br><br>
 						<div>
-							<button v-on:click.prevent="$router.push({ name: 'accountSettings' })" class="half-border-button">
+							<button v-on:click.prevent="$router.push({ name: 'accountSettings' })"
+								class="half-border-button">
 								<big>{{ t('SETTINGS') }}</big>
 							</button>
 						</div><br><br>
@@ -103,7 +100,7 @@
 			isLoginPage: { default: false },
 		},
 		computed: {
-			isAuthenticatedUser () { return Boolean(store.user.username) },
+			isAuthenticatedUser () { return Boolean(store.user.display_name) },
 		},
 		async mounted () {
 			this.loading = false
@@ -119,7 +116,7 @@
 				let lang = 'EN'
 				store.user.language = lang
 				this.languageMenu = false
-				if (store.user.username) {
+				if (store.user.display_name) {
 					await apiFunctions.updateUserLanguage()
 				}
 			},
@@ -127,7 +124,7 @@
 				let lang = 'JP'
 				store.user.language = lang
 				this.languageMenu = false
-				if (store.user.username) {
+				if (store.user.display_name) {
 					await apiFunctions.updateUserLanguage()
 				}
 			},

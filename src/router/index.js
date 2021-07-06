@@ -3,8 +3,9 @@ import Router from 'vue-router'
 import store from '@/store'
 import apiFunctions from '@/functions/apiFunctions.js'
 import frontPage from '@/views/frontPage'
-import registration from '@/views/registration'
-import login from '@/views/login'
+import loginRegister from '@/views/loginRegister'
+import registerByEmail from '@/views/registerByEmail'
+import loginByEmail from '@/views/loginByEmail'
 import accountSettings from '@/views/accountSettings'
 import home from '@/views/home'
 import experiment1 from '@/views/experiment1'
@@ -25,46 +26,52 @@ const router = new Router({
         component: frontPage,
         meta: { userGroups: [] },
     }, {
-        path: '/registration',
-        name: 'registration',
-        component: registration,
-        meta: { userGroups: [] },
+        path: '/loginRegister',
+        name: 'loginRegister',
+        component: loginRegister,
+        meta: { userGroups: [100, ] },
     }, {
-        path: '/login',
-        name: 'login',
-        component: login,
-        meta: { userGroups: [] },
+        path: '/registerByEmail',
+        name: 'registerByEmail',
+        component: registerByEmail,
+        meta: { userGroups: [100, ] },
+    }, {
+        path: '/loginByEmail',
+        name: 'loginByEmail',
+        component: loginByEmail,
+        meta: { userGroups: [100, ] },
     }, {
         path: '/experiment1',
         name: 'experiment1',
         component: experiment1,
-        meta: { userGroups: [1] },
+        meta: { userGroups: [1, ] },
     }, {
         path: '/experiment2',
         name: 'experiment2',
         component: experiment2,
-        meta: { userGroups: [1] },
+        meta: { userGroups: [1, ] },
     }, {
         path: '/accountSettings',
         name: 'accountSettings',
         component: accountSettings,
-        meta: { userGroups: [1, 2] },
+        meta: { userGroups: [1, 2, ] },
     }, {
         path: '/home',
         name: 'home',
         component: home,
-        meta: { userGroups: [1, 2] },
+        meta: { userGroups: [1, 2, ] },
     }, ]
 })
 
 router.beforeEach(
     async(to, from, next) => {
-        await apiFunctions.authenticateFromSession()
-        console.log('routed', from.name, to.name)
-            //if (from.name == to.name) {
-            //    console.log(from.name, to.name)
-            //    return
-            //} else 
+        await apiFunctions.login({})
+        if (store.user.ip_date && new Date().toISOString().slice(0, 10) !== store.user.ip_date.slice(0, 10)) {
+            await apiFunctions.ip()
+            if (store.user.display_name) {
+                await apiFunctions.updateUserLocation()
+            }
+        }
         if (to.meta.userGroups.length === 0) {
             next()
             return
@@ -78,26 +85,13 @@ router.beforeEach(
                 }
             }
             // permission denied
-            if (['login', 'frontPage', 'registration'].includes(from.name)) {
+            if (['loginByEmail', 'frontPage', 'registerByEmail'].includes(from.name)) {
                 return
             } else {
                 next({ name: 'frontPage' })
                 return
             }
         }
-
-        //if (to.meta.requiresAuth) {
-        //    if (!store.user) {
-        //        console.log("MAKE IT?", store.user)
-        //        next({
-        //            name: 'login'
-        //        })
-        //    } else {
-        //        next()
-        //    }
-        //} else {
-        //    next()
-        //}
     }
 )
 
