@@ -3,13 +3,13 @@
 		<div v-if="!loading">
 			<menus-header/>
 			<div class="box">
-				<div>
-					<button v-on:click.prevent="$router.push(name='loginByEmail')">Login With Email</button>
-					<button v-on:click.prevent="loginByLine()">Login With Line</button>
+				<div style="display: flex; width: 100%">
+					<button v-on:click.prevent="$router.push(name='loginByEmail')" class="box-item" style="flex-grow: 1">Login With Email</button>
+					<button v-on:click.prevent="loginByLine()" class="box-item" style="flex-grow: 1">Login With Line</button>
 				</div>
-				<div>
-					<button v-on:click.prevent="$router.push(name='registerByEmail')">Register With Email</button>
-					<button v-on:click.prevent="registerByLine()">Register With Line</button>
+				<div style="display: flex">
+					<button v-on:click.prevent="$router.push(name='registerByEmail')" class="box-item" style="flex-grow: 1">Register With Email</button>
+					<button v-on:click.prevent="registerByLine()" class="box-item" style="flex-grow: 1">Register With Line</button>
 				</div>
 			</div>
 			<!--a href="https://lin.ee/UeSvNxR"><img height="36" border="0" src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png"></a-->
@@ -59,9 +59,9 @@
 			async registerByLine () {
 				let loginChannelId = await this.loginChannelId()
 				let state = await this.state()
-				let lineLoginRedirectUrl = 'https%3A%2F%2Fevent-horizon-jp.herokuapp.com%2Fexperiment2'
+				let lineLoginRedirectUrl = 'http%3A%2F%2Feventhorizon.vip%2Flogin'
 				if (process.env.NODE_ENV == 'development') {
-					lineLoginRedirectUrl = 'http%3A%2F%2F127.0.0.1%3A8080%2Fexperiment2'
+					lineLoginRedirectUrl = 'http%3A%2F%2F127.0.0.1%3A8080%2Flogin'
 				}
 				console.log('logging it now', loginChannelId, state)
 				//window.location.replace(`https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=${loginChannelId}&redirect_uri=${lineLoginRedirectUrl}&state=${state}&bot_prompt=aggressive&scope=profile%20openid`)
@@ -70,7 +70,7 @@
 				let loginChannelId = await apiFunctions.loginChannelId()
 				let state = await apiFunctions.state()
 				document.cookie = `state=${state}`;
-				let lineLoginRedirectUrl = 'https%3A%2F%2Fevent-horizon-jp.herokuapp.com%2Flogin'
+				let lineLoginRedirectUrl = 'http%3A%2F%2Feventhorizon.vip%2Flogin'
 				if (process.env.NODE_ENV == 'development') {
 					lineLoginRedirectUrl = 'http%3A%2F%2F127.0.0.1%3A8080%2Flogin'
 				}
