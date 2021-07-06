@@ -31,7 +31,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEBUG = config('PYTHON_ENV', default='production') == 'development'  # need to make sure this works
 #DEBUG = True if os.environ['NODE_ENV'] == 'development' else False
 SECRET_KEY = config('SECRET_KEY')
-ALLOWED_HOSTS = ['event-horizon-jp.herokuapp.com/', 'localhost']
+ALLOWED_HOSTS = ['event-horizon-jp.herokuapp.com/', 'localhost', 'http://eventhorizon.vip/']
 CORS_ALLOW_CREDENTIALS = True
 CSRF_COOKIE_NAME = 'XSRF-TOKEN'
 
@@ -39,7 +39,8 @@ CSRF_COOKIE_NAME = 'XSRF-TOKEN'
 CORS_ALLOWED_ORIGINS  = (  # need to figure out how to use this correctly
 	'http://127.0.0.1:8080',
 	'http://127.0.0.1:8000',
-	'https://event-horizon-jp.herokuapp.com',
+	'https://event-horizon-jp.herokuapp.com'
+	'http://eventhorizon.vip/',
 )
 
 # 'Strict': prevents the cookie from being sent by the browser to the target site in all cross-site browsing context, even when following a regular link
