@@ -4,7 +4,7 @@
 			<menus-header/>
 			<div class="box">
 				<h1 style="text-align: center">EVENT HORIZON</h1>
-				<div class="container">
+				<!--div class="container">
 					<img src="../assets/pexels-photo-event1.jpg" class="wide-img">
 					<h2 class="contained" style="background-color: #94877f;">FIND EVENTS. HAVE FUN.</h2>
 				</div>
@@ -15,7 +15,7 @@
 				<div class="container">
 					<img src="../assets/pexels-photo-event4.jpeg" class="wide-img">
 					<h2 class="contained" style="background-color: #4e1713;">Hello</h2>
-				</div>
+				</div-->
 				<button v-on:click.prevent="$router.push(name='loginRegister')" class="box-item" v-if="!isAuthenticatedUser">
 					{{ t('NEW USER REGISTRATION') }}
 				</button>

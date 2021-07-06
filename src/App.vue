@@ -61,14 +61,14 @@
 			font-size: inherit;
 			font-size: 16px;
 			background-color: #4600eb; /*000bff*/
-			border: none;
-			border-radius: 5px;
+			border: 1px solid #18002e;
+			border-radius: 15px;
 			height: 30px;
 			transition-duration: 0.3s;
-			padding: 2px;
+			padding: 10px;
 			display: inline-flex;
 			align-items: center; 
-			justify-content: space-around; 
+			justify-content: space-around;
 		}
 		button:hover {
 			font-weight: normal;
@@ -78,11 +78,11 @@
   			color: #4600eb;
 			font-weight: inherit;
 			font-size: inherit;
-			border-radius: 3px;
-			border: none;
+			border-radius: 15px;
+			border: 1px solid #18002e;
 			background-color: #ffe07a;
 			height: 30px;
-			padding: 5px;
+			padding: 10px;
 			display: inline-flex;
 			align-items: center; 
 		}

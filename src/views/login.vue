@@ -49,7 +49,7 @@
 				let loginChannelId = await apiFunctions.loginChannelId()
 				let state = await apiFunctions.state()
 				document.cookie = `state=${state}`;
-				let lineLoginRedirectUrl = 'https%3A%2F%2Fevent-horizon-jp.herokuapp.com%2Flogin'
+				let lineLoginRedirectUrl = 'http%3A%2F%2Feventhorizon.vip%2Flogin'
 				if (process.env.NODE_ENV == 'development') {
 					lineLoginRedirectUrl = 'http%3A%2F%2F127.0.0.1%3A8080%2Flogin'
 				}
