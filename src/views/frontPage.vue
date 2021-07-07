@@ -4,6 +4,7 @@
 			<menus-header/>
 			<div class="box">
 				<h1 style="text-align: center">EVENT HORIZON</h1>
+				<h2 style="text-align: center">{{ t('EXPAND YOUR REACH TO NEW HORIZONS') }}</h2>
 				<!--div class="container">
 					<img src="../assets/pexels-photo-event1.jpg" class="wide-img">
 					<h2 class="contained" style="background-color: #94877f;">FIND EVENTS. HAVE FUN.</h2>
