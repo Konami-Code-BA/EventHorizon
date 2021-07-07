@@ -19,7 +19,7 @@
 		}
 		body {
 			font-family: Futura; /*Segoe UI*/
-			color: #c6fcff;
+			color: #d2e6ff;
 			font-weight: 600; /*400=normal, 700=bold*/
 			font-size: 16px;
 			-webkit-font-smoothing: antialiased;
@@ -64,7 +64,7 @@
 			font-weight: inherit;
 			font-size: inherit;
 			font-size: 16px;
-			background-color: #4600eb; /*000bff*/
+			background-color: #5841e9; /*000bff*/
 			border: 1px solid #18002e;
 			border-radius: 15px;
 			height: 30px;
@@ -74,12 +74,12 @@
 			align-items: center; 
 			justify-content: space-around;
 		}
-		button:hover {
-			font-weight: normal;
+		button:active {
+			font-weight: inherit;
 		}
 		input[type=text], input[type=email], input[type=password] {
 			font-family: inherit;
-  			color: #4600eb;
+  			color: #5841e9;
 			font-weight: inherit;
 			font-size: inherit;
 			border-radius: 15px;
@@ -91,11 +91,11 @@
 			align-items: center; 
 		}
 		input[type=text]:focus, input[type=email]:focus, input[type=password]:focus {
-			border: none;
-			outline: none;
+			border: 1px solid #18002e;
+			background-color: inherit;
 		}
 		::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
-  			color: #4600eb;
+  			color: #5841e9;
 			font-weight: inherit;
 		}
 		.half-border-button {
@@ -104,18 +104,10 @@
 			transition-duration: 0.1s;
 			width: 100%;
 			height: inherit;
+			color: #d2e6ff;
 		}
 		.half-border-button:active {
-			font-weight: normal;
-			box-shadow: none;
-		}
-		.no-border-button {
-			border: none;
-			background: none;
-			box-shadow: none;
-		}
-		.hanolf-border-button:active {
-			font-weight: normal;
+			font-weight: inherit;
 		}
 		.small-button {
 			height: 19px !important;

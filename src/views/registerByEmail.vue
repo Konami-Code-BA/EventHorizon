@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div v-if="!loading">
-			<menus-header :isRegistrationPage="true"/>
+			<menus-header/>
 			<div class="box">
 				<form v-on:keyup.enter="register()">
 					<div>

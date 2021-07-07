@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div v-if="!loading">
-			<menus-header :isLoginPage="true"/>
+			<menus-header/>
 			<div class="box">
 				<form v-on:keyup.enter="showPassword = false; login()">
 					<div>
