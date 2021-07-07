@@ -2,9 +2,9 @@ import store from '@/store.js'
 export default {
     translationsDict: {
         '': { '': '' },
-        'front page screen': {
-            'EN': 'FOR PLANNING / JOINING EVENTS',
-            'JP': 'イベントの計画・参加のため'
+        'EXPAND YOUR REACH TO NEW HORIZONS': {
+            'EN': 'EXPAND YOUR REACH TO NEW HORIZONS',
+            'JP': '新たな地平線への到達を目指して'
         },
         'LOGIN': {
             'EN': 'LOGIN',

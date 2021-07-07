@@ -13,9 +13,13 @@
 
 <style>
 	@media all {
+		@font-face {
+			font-family: Futura;
+			src: url(./assets/FuturaLT.woff);
+		}
 		body {
-			font-family: Segoe UI;
-			color: #ffe07a;
+			font-family: Futura; /*Segoe UI*/
+			color: #c6fcff;
 			font-weight: 600; /*400=normal, 700=bold*/
 			font-size: 16px;
 			-webkit-font-smoothing: antialiased;
@@ -137,6 +141,7 @@
 			justify-content: space-between;
 			height: inherit;
 			padding-bottom: 10px;
+			color: #inherit;
 		}
 		.container {
 			position: relative;

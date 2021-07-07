@@ -14,7 +14,7 @@
 				</div>
 				<div>
 					<button v-on:click.prevent="languageMenu=!languageMenu" class="half-border-button">
-							<big>A あ</big>
+							<big>A/文</big>
 					</button>
 				</div>
 			</div>
