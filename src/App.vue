@@ -60,7 +60,7 @@
 		}
 		button {
 			font-family: inherit;
-			color: inherit;
+			color: #ffe07a;
 			font-weight: inherit;
 			font-size: inherit;
 			font-size: 16px;
