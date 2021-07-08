@@ -5,12 +5,15 @@
 			<div class="box">
 				<div style="display: flex; width: 100%">
 					<button v-on:click.prevent="$router.push(name='loginByEmail')" class="box-item" style="flex-grow: 1">Login With Email</button>
-					<button v-on:click.prevent="loginByLine()" class="box-item" style="flex-grow: 1">Login With Line</button>
-				</div>
-				<div style="display: flex">
 					<button v-on:click.prevent="$router.push(name='registerByEmail')" class="box-item" style="flex-grow: 1">Register With Email</button>
-					<button v-on:click.prevent="registerByLine()" class="box-item" style="flex-grow: 1">Register With Line</button>
 				</div>
+				<div class="box-item"></div>
+					<button v-on:click.prevent="loginByLine()" class="box-item line" style="flex-grow: 1">
+					<div style="display: flex; height: 100%; width: 70px; align-items: center; justify-content: space-between;">
+						<img src="../assets/line.png" style="height: inherit">
+						<div>Line</div>
+					</div>
+					</button>
 			</div>
 			<!--a href="https://lin.ee/UeSvNxR"><img height="36" border="0" src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png"></a-->
 		</div>
@@ -56,16 +59,6 @@
 				let response = await apiFunctions.state()
 				return response
 			},
-			async registerByLine () {
-				let loginChannelId = await this.loginChannelId()
-				let state = await this.state()
-				let lineLoginRedirectUrl = 'https%3A%2F%2Fwww.eventhorizon.vip%2Flogin'
-				if (process.env.NODE_ENV == 'development') {
-					lineLoginRedirectUrl = 'http%3A%2F%2F127.0.0.1%3A8080%2Flogin'
-				}
-				console.log('logging it now', loginChannelId, state)
-				//window.location.replace(`https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=${loginChannelId}&redirect_uri=${lineLoginRedirectUrl}&state=${state}&bot_prompt=aggressive&scope=profile%20openid`)
-			},
 			async loginByLine () {
 				let loginChannelId = await apiFunctions.loginChannelId()
 				let state = await apiFunctions.state()
@@ -88,4 +81,8 @@
 	} // export
 </script>
 <style scoped>
+	.line {
+		background-color: #00c300;
+		color: white;
+	}
 </style>

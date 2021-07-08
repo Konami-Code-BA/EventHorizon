@@ -3,17 +3,17 @@
 		<div v-if="!loading">
 			<div class="header">
 				<div>
-					<button v-on:click.prevent="mainMenu=!mainMenu" class="half-border-button"
+					<button v-on:click.prevent="mainMenu=!mainMenu" class="no-border-button"
 						v-if="isAuthenticatedUser">
 						<big>{{ t('MENU') }}</big>
 					</button>
-					<button v-on:click.prevent="$router.push({ name: 'loginRegister' })" class="half-border-button"
+					<button v-on:click.prevent="$router.push({ name: 'loginRegister' })" class="no-border-button"
 						v-else>
 						<big>{{ t('LOGIN / REGISTER') }}</big>
 					</button>
 				</div>
 				<div>
-					<button v-on:click.prevent="languageMenu=!languageMenu" class="half-border-button">
+					<button v-on:click.prevent="languageMenu=!languageMenu" class="no-border-button">
 							<big>A/文</big>
 					</button>
 				</div>
@@ -26,23 +26,23 @@
 					id="mainMenu">
 					<template v-slot:contents>
 						<div style="text-align: right">
-							<button v-on:click.prevent="mainMenu=!mainMenu" class="no-border-button">
+							<button v-on:click.prevent="mainMenu=!mainMenu" class="close-button">
 								{{'✖\n'}}
 							</button>
 						</div>
 						<div>
-							<button v-on:click.prevent="$router.push({ name: 'home' })" class="half-border-button">
+							<button v-on:click.prevent="$router.push({ name: 'home' })" class="no-border-button">
 								<big>{{ t('HOME') }}</big>
 							</button>
 						</div><br><br>
 						<div>
 							<button v-on:click.prevent="$router.push({ name: 'accountSettings' })"
-								class="half-border-button">
+								class="no-border-button">
 								<big>{{ t('SETTINGS') }}</big>
 							</button>
 						</div><br><br>
 						<div>
-							<button v-on:click.prevent="logout()" class="half-border-button">
+							<button v-on:click.prevent="logout()" class="no-border-button">
 								<big>{{ t('LOGOUT') }}</big>
 							</button>
 						</div><br>
@@ -54,17 +54,17 @@
 					id="languageMenu">
 					<template v-slot:contents>
 						<div style="text-align: right">
-							<button v-on:click.prevent="languageMenu=!languageMenu" class="no-border-button">
-								✖
+							<button v-on:click.prevent="languageMenu=!languageMenu" class="close-button">
+								{{'✖\n'}}
 							</button>
 						</div>
 						<div>
-							<button v-on:click.prevent="english()" class="half-border-button">
+							<button v-on:click.prevent="english()" class="no-border-button">
 								<big>ENGLISH</big>
 							</button>
 						</div><br><br>
 						<div>
-							<button v-on:click.prevent="japanese()" class="half-border-button">
+							<button v-on:click.prevent="japanese()" class="no-border-button">
 								<big>日本語</big>
 							</button>
 						</div><br>

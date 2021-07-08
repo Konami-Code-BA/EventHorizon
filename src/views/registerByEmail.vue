@@ -18,7 +18,7 @@
 						<input :placeholder="t('PASSWORD')" v-model="passwordInput"
 							:type="[showPassword ? 'text' : 'password']" class="box-item" style="flex-grow: 1"
 							id="password" autocorrect="off" autocapitalize="none"/>
-						<button v-on:click.prevent="showButton()" class="box-item" style="width: 60px"
+						<button v-on:click.prevent="showButton()" class="box-item" style="width: 70px"
 							id="show" type="button">
 							<small v-if="!showPassword">
 								{{ t('SHOW') }}
@@ -33,7 +33,7 @@
 						<input :placeholder="t('PASSWORD CONFIRMATION')" v-model="passwordInput2"
 							:type="[showPassword2 ? 'text' : 'password']" class="box-item" style="flex-grow: 1"
 							id="password2" autocorrect="off" autocapitalize="none" :class="{'shake' : shakeIt}"/>
-						<button v-on:click.prevent="showButton2()" class="box-item" style="width: 60px"
+						<button v-on:click.prevent="showButton2()" class="box-item" style="width: 70px"
 							id="show" type="button">
 							<small v-if="!showPassword2">
 								{{ t('SHOW') }}
