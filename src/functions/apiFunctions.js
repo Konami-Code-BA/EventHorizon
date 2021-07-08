@@ -54,9 +54,10 @@ export default {
         return output
     },
     // USERS ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-    async registerByEmail(email, password) {
+    async registerByEmail(displayName, email, password) {
         await this.userApiFunction('post', '/api/user/', {
             command: 'register_by_email',
+            display_name: displayName,
             email: email,
             password: password,
             language: store.user.language,

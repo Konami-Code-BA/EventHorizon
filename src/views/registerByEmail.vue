@@ -3,9 +3,9 @@
 		<div v-if="!loading">
 			<menus-header/>
 			<div class="box">
-				<form v-on:keyup.enter="register()">
+				<form v-on:keyup.enter="registerByEmail()">
 					<div>
-						<input :placeholder="t('USERNAME')" v-model="usernameInput" type="text" class="box-item"
+						<input :placeholder="t('USERNAME')" v-model="displayName" type="text" class="box-item"
 							id="username" autocorrect="off" autocapitalize="none"/>
 					</div>
 					<div class="box-item"></div>
@@ -46,7 +46,7 @@
 					<div v-if="showError" class="box-item" :class="{'shake' : shakeIt}" style="color: red">✘</div>
 					<div v-else class="box-item">✅</div>
 				</form>
-				<button v-on:click.prevent="register()" class="box-item">
+				<button v-on:click.prevent="registerByEmail()" class="box-item">
 					{{ t('REGISTER') }}
 				</button>
 			</div>
@@ -72,7 +72,7 @@
 			return {
 				store: store,
 				loading: true,
-				usernameInput: '',
+				displayName: '',
 				emailInput: '',
 				passwordInput: '',
 				passwordInput2: '',
@@ -104,7 +104,7 @@
 		},
 		methods: {
 			t (w) { return translations.t(w) },
-			async register () {
+			async registerByEmail () {
 				if (this.passwordInput !== this.passwordInput2) {
 					this.shakeIt = true
 					setTimeout(() => { this.shakeIt = false; }, 1000);
@@ -112,7 +112,7 @@
 				}
 				this.showPassword = false
 				this.showPassword2 = false
-				await apiFunctions.register(this.usernameInput, this.emailInput, this.passwordInput)
+				await apiFunctions.registerByEmail(this.displayName, this.emailInput, this.passwordInput)
 				this.$router.push({ name: 'home' })
 			},
 			showButton () {
