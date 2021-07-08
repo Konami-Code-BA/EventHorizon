@@ -140,6 +140,7 @@ class LineViewset(viewsets.ViewSet):
 	queryset = []
 	def create(self, request):
 		response = eval(f"self.{request.data['command']}(request)")
+		print('MADE IT 10')
 		return Response(response)
 
 	def consumption(self, request):
@@ -183,30 +184,45 @@ class LineViewset(viewsets.ViewSet):
 		response = api_to_line('profile', params=params)
 		print("profile RESPONSE", response)
 		line_id = response['userId']
+		print('MADE IT 1')
 		display_name = response['displayName']
+		print('MADE IT 2')
 		random_secret = SecretsViewset.retrieve(SecretsViewset, None, 'random_secret')
+		print('MADE IT 3')
 		try:
+			print('MADE IT 4')
 			user = User.objects.get(line_id=line_id)
 			user.line_access_token = line_access_token
 			user.line_refresh_token = line_refresh_token
 			user.language = language
 			user.random_secret = random_secret
+			print('MADE IT 5')
 			if user.do_get_line_display_name:
 				user.display_name = display_name
+			print('MADE IT 6')
 			user.save()
+			print('MADE IT 7')
 			request.data['line_id'] = line_id
 			request.user = user
+			print('MADE IT 8')
 		except User.DoesNotExist:
+			print('MADE IT 4b')
 			user = User.objects.create_user(
 				display_name=display_name, line_id=line_id, line_access_token=line_access_token, do_get_lines=True,
 				username='USER', language=language, is_superuser=False, is_staff=False, random_secret=random_secret,
 			)
+			print('MADE IT 5b')
 			user.save()
+			print('MADE IT 6b')
 			group = Group.objects.get(name='User')
 			group.user_set.add(user)
+			print('MADE IT 7b')
 			request.data['line_id'] = line_id
 			request.user = user
+			print('MADE IT 8b')
 		UserViewset.login(UserViewset, request)
+		print('MADE IT 9')
+		return user
 		
 	def verify(self, request):
 		user = User.objects.get(pk=request.user.pk)
