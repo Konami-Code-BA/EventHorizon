@@ -72,9 +72,6 @@ router.beforeEach(
                 await apiFunctions.updateUserLocation()
             }
         }
-        console.log('to', to)
-        console.log('to.meta', to.meta)
-        console.log('to.meta.userGroups', to.meta.userGroups)
         if (to.meta.userGroups.length === 0) {
             next()
             return

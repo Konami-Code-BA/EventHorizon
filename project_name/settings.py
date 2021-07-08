@@ -47,7 +47,7 @@ CORS_ALLOWED_ORIGINS  = (  # need to figure out how to use this correctly
 # 'Strict': prevents the cookie from being sent by the browser to the target site in all cross-site browsing context, even when following a regular link
 # 'Lax': maintain user’s logged-in session after the user arrives from an external link
 # 'None': the session cookie will be sent with all same-site and cross-site requests
-SESSION_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SAMESITE = 'Strict'
 
 #EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 #EMAIL_HOST = 'smtp-mail.outlook.com'
