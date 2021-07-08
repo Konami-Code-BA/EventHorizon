@@ -60,11 +60,11 @@
 		}
 		button, button:hover, button:active {
 			font-family: inherit;
-			color: #ffe07a;
+			color: inherit;
 			font-weight: inherit;
 			font-size: inherit;
 			font-size: 16px;
-			background-color: #5841e9; /*000bff*/
+			background-color: #5300e1; /*000bff*/
 			border: 1px solid #18002e;
 			border-radius: 15px;
 			height: 30px;
@@ -78,8 +78,8 @@
 		input:-webkit-autofill:active, input[type=text], input[type=email], input[type=password],
 		input[type=text]:focus, input[type=email]:focus, input[type=password]:focus {
 			font-family: inherit;
-  			color: #5841e9;
-  			-webkit-text-fill-color: #5841e9;
+  			color: #5300e1;
+  			-webkit-text-fill-color: #5300e1;
 			font-weight: inherit;
 			font-size: inherit;
 			border-radius: 15px;
