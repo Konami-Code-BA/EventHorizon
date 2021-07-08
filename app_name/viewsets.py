@@ -222,7 +222,6 @@ class LineViewset(viewsets.ViewSet):
 			print('MADE IT 8b')
 		UserViewset.login(UserViewset, request)
 		print('MADE IT 9')
-		return user
 		
 	def verify(self, request):
 		user = User.objects.get(pk=request.user.pk)
