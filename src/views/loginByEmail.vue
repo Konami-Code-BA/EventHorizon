@@ -13,7 +13,7 @@
 						<input :placeholder="t('PASSWORD')" v-model="passwordInput"
 							:type="[showPassword ? 'text' : 'password']" class="box-item" style="flex-grow: 1"
 							id="password" autocorrect="off" autocapitalize="none"/>
-						<button v-on:click.prevent="showButton()" class="box-item" style="width: 60px"
+						<button v-on:click.prevent="showButton()" class="box-item" style="width: 70px"
 							id="show" type="button">
 							<small v-if="!showPassword">
 								{{ t('SHOW') }}
@@ -25,7 +25,7 @@
 					</div>
 				</form>
 				<div class="box-item">
-					<!--button class="half-border-button small-button" v-on:click.prevent="sendEmail()">
+					<!--button class="no-border-button small-button" v-on:click.prevent="sendEmail()">
 						<small><small>{{t('FORGOT PASSWORD')}}</small></small>
 					</button-->
 				</div>

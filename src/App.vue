@@ -58,7 +58,7 @@
 		.box-center {
 			text-align: center;
 		}
-		button {
+		button, button:hover, button:active {
 			font-family: inherit;
 			color: #ffe07a;
 			font-weight: inherit;
@@ -74,40 +74,35 @@
 			align-items: center; 
 			justify-content: space-around;
 		}
-		button:active {
-			font-weight: inherit;
-		}
-		input[type=text], input[type=email], input[type=password] {
+		input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus,
+		input:-webkit-autofill:active, input[type=text], input[type=email], input[type=password],
+		input[type=text]:focus, input[type=email]:focus, input[type=password]:focus {
 			font-family: inherit;
   			color: #5841e9;
+  			-webkit-text-fill-color: #5841e9;
 			font-weight: inherit;
 			font-size: inherit;
 			border-radius: 15px;
 			border: 1px solid #18002e;
 			background-color: #ffe07a;
+ 			-webkit-box-shadow: 0 0 0 30px #ffe07a inset;
 			height: 30px;
 			padding: 10px;
 			display: inline-flex;
-			align-items: center; 
-		}
-		input[type=text]:focus, input[type=email]:focus, input[type=password]:focus {
-			border: 1px solid #18002e;
-			background-color: inherit;
+			align-items: center;
+			outline: none !important;
 		}
 		::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
   			color: #5841e9;
 			font-weight: inherit;
 		}
-		.half-border-button {
+		.no-border-button, .no-border-button:hover, .no-border-button:active {
 			border: none;
 			background: none;
-			transition-duration: 0.1s;
+			/*transition-duration: 0.1s;*/
 			width: 100%;
 			height: inherit;
 			color: #d2e6ff;
-		}
-		.half-border-button:active {
-			font-weight: inherit;
 		}
 		.small-button {
 			height: 19px !important;
@@ -126,6 +121,7 @@
 			background: none;
 			height: 16px;
 			padding: 0;
+			color: #d2e6ff;
 		}
 		.header {
 			display: flex;
