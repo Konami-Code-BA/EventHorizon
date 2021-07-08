@@ -72,6 +72,7 @@ export default {
     //},
     async login(data) {
         data['command'] = 'login'
+        console.log('login')
         await this.userApiFunction('post', '/api/user/', data)
     },
     //async loginByLine(email, password) {

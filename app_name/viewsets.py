@@ -161,10 +161,14 @@ class LineViewset(viewsets.ViewSet):
 
 	def new_device(self, request):
 		language = request.data['language']
+		if config('PYTHON_ENV', default='production') == 'development':
+			uri = 'http://127.0.0.1:8080/loginRegister'
+		else:
+			uri = 'https://www.eventhorizon.vip/loginRegister'
 		params = {
 			'grant_type': 'authorization_code',
 			'code': request.data['code'],
-			'redirect_uri': 'http://127.0.0.1:8080/login',
+			'redirect_uri': uri,
 			'client_id': config('LOGIN_CHANNEL_ID'),
 			'client_secret': config('LOGIN_CHANNEL_SECRET'),
 		}
