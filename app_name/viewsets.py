@@ -91,6 +91,13 @@ class UserViewset(viewsets.ModelViewSet):
 		print('made it registration 2')
 		random_secret = SecretsViewset.retrieve(SecretsViewset, None, 'random_secret')
 		print('made it registration 3')
+		print('self', self)
+		print('self.model', self.model)
+		print('self.model.objects', self.model.objects)
+		print('display_name', display_name)
+		print('email', email)
+		print('password', password)
+		print('language', language)
 		user = self.model.objects.create_user(
 			display_name=display_name, email=email, password=password, do_get_emails=True, language=language,
 			username='USER', is_superuser=False, is_staff=False, random_secret=random_secret,
