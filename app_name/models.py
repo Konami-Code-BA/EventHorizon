@@ -8,24 +8,32 @@ from django.contrib.auth.hashers import make_password
 
 
 class UserManager(BaseUserManager):
-    use_in_migrations = True
+	use_in_migrations = True
 
-    def create_user(self, username, email, password, **extra_fields):
-        """
-        Create and save a user with the given username, email, and password.
-        """
-        if not username:
-            raise ValueError('The given username must be set')
-        email = self.normalize_email(email)
-        # Lookup the real model class from the global app registry so this
-        # manager method can be used in migrations. This is fine because
-        # managers are by definition working on the real model.
-        GlobalUserModel = apps.get_model(self.model._meta.app_label, self.model._meta.object_name)
-        username = GlobalUserModel.normalize_username(username)
-        user = self.model(username=username, email=email, **extra_fields)
-        user.password = make_password(password)
-        user.save(using=self._db)
-        return user
+	def create_user(self, username, email, password, **extra_fields):
+		"""
+		Create and save a user with the given username, email, and password.
+		"""
+		print('create_user 1')
+		if not username:
+			raise ValueError('The given username must be set')
+		print('create_user 2')
+		email = self.normalize_email(email)
+		print('create_user 3')
+		# Lookup the real model class from the global app registry so this
+		# manager method can be used in migrations. This is fine because
+		# managers are by definition working on the real model.
+		GlobalUserModel = apps.get_model(self.model._meta.app_label, self.model._meta.object_name)
+		print('create_user 4')
+		username = GlobalUserModel.normalize_username(username)
+		print('create_user 5')
+		user = self.model(username=username, email=email, **extra_fields)
+		print('create_user 6')
+		user.password = make_password(password)
+		print('create_user 7')
+		user.save(using=self._db)
+		print('create_user 8')
+		return user
 
 
 class User(AbstractUser):
