@@ -59,7 +59,7 @@
 			async registerByLine () {
 				let loginChannelId = await this.loginChannelId()
 				let state = await this.state()
-				let lineLoginRedirectUrl = 'http%3A%2F%2Feventhorizon.vip%2Flogin'
+				let lineLoginRedirectUrl = 'https%3A%2F%2Fwww.eventhorizon.vip%2Flogin'
 				if (process.env.NODE_ENV == 'development') {
 					lineLoginRedirectUrl = 'http%3A%2F%2F127.0.0.1%3A8080%2Flogin'
 				}
@@ -70,7 +70,7 @@
 				let loginChannelId = await apiFunctions.loginChannelId()
 				let state = await apiFunctions.state()
 				document.cookie = `state=${state}`;
-				let lineLoginRedirectUrl = 'http%3A%2F%2Feventhorizon.vip%2Flogin'
+				let lineLoginRedirectUrl = 'https%3A%2F%2Fwww.eventhorizon.vip%2Flogin'
 				if (process.env.NODE_ENV == 'development') {
 					lineLoginRedirectUrl = 'http%3A%2F%2F127.0.0.1%3A8080%2Flogin'
 				}
