@@ -83,19 +83,26 @@ class UserViewset(viewsets.ModelViewSet):
 		return get_return_queryset(self, request, pk=request.user.pk)
 
 	def register_by_email(self, request):
+		print('made it registration 1')
 		display_name = request.data['display_name']
 		email = request.data['email']
 		password = request.data['password']
 		language = request.data['language']
+		print('made it registration 2')
 		random_secret = SecretsViewset.retrieve(SecretsViewset, None, 'random_secret')
+		print('made it registration 3')
 		user = self.model.objects.create_user(
 			display_name=display_name, email=email, password=password, do_get_emails=True, language=language,
 			username='USER', is_superuser=False, is_staff=False, random_secret=random_secret,
 		)
+		print('made it registration 4')
 		user.save()
+		print('made it registration 5')
 		group = Group.objects.get(name='User')
 		group.user_set.add(user)
+		print('made it registration 6')
 		self.login(request)
+		print('made it registration 7')
 		return user
 
 	#def register_by_line(self, request):
