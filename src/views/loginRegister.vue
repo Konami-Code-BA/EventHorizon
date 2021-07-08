@@ -37,9 +37,14 @@
 			return {
 				store: store,
 				loading: true,
-				stateCookie: JSON.parse('{"' + document.cookie.replaceAll('=', '": "').replaceAll('; ', '", "') + '"}')['state']
+				stateCookie: JSON.parse('{"' + this.replaceAll(this.replaceAll(document.cookie, '=', '": "'), '; ', '", "') + '"}')['state']
 			}
 		},
+		//compute: {
+		//	cookiesString () {
+
+		//	}
+		//},
 		async mounted () {
 			console.log('code', this.$route.query.code)
 			console.log('friendship_status_changed', this.$route.query.friendship_status_changed)
@@ -51,6 +56,9 @@
 		},
 		methods: {
 			t (w) { return translations.t(w) },
+			replaceAll (str, match, replace) {
+				return str.replace(new RegExp(match, 'g'), () => replace);
+			},
 			async loginChannelId () {
 				let response = await apiFunctions.loginChannelId()
 				return response
