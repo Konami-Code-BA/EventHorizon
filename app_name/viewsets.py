@@ -84,27 +84,23 @@ class UserViewset(viewsets.ModelViewSet):
 		return get_return_queryset(self, request, pk=request.user.pk)
 
 	def register_by_email(self, request):
-		print('made it registration 1')
 		display_name = request.data['display_name']
 		email = request.data['email']
 		password = request.data['password']
 		language = request.data['language']
-		print('made it registration 2')
 		random_secret = SecretsViewset.retrieve(SecretsViewset, None, 'random_secret')
 		print('made it registration 3')
 		user = self.model.objects.create_user()
-		print('user', user.__dict__)
 		user.display_name = display_name
-		user.email = email
-		user.password = make_password(password)
-		user.do_get_emails = True
-		user.language = language
-		user.is_superuser = False
-		user.is_staff = False
-		user.random_secret = random_secret
-		user.username = user.id
+		#user.email = email
+		#user.password = make_password(password)
+		#user.do_get_emails = True
+		#user.language = language
+		#user.is_superuser = False
+		#user.is_staff = False
+		#user.random_secret = random_secret
+		#user.username = user.id
 		print('made it registration 4')
-		print('user', user.__dict__)
 		user.save()
 		print('made it registration 5')
 		group = Group.objects.get(name='User')
