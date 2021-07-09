@@ -1,10 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib import admin
-from django.conf import settings
 from django.contrib.auth.models import BaseUserManager
-from django.apps import apps
-from django.contrib.auth.hashers import make_password
 
 
 class UserManager(BaseUserManager):
@@ -44,4 +41,12 @@ class UserAdmin(admin.ModelAdmin):
 		'do_get_line_display_name', 'is_line_friend', 'do_get_lines', 'language', 'groups', 'user_permissions',
 		'is_staff', 'is_superuser', 'last_login', 'date_joined', 'ip_continent_name', 'ip_country_name',
 		'ip_state_prov', 'ip_city',
+	)
+
+
+class GroupAdmin(admin.ModelAdmin):
+	readonly_fields = ('id',)
+	list_display = ('name', 'id')
+	fields = (
+		'id', 'name', 'permissions',
 	)
