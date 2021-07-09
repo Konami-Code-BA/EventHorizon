@@ -99,7 +99,7 @@ class UserViewset(viewsets.ModelViewSet):
 		user.is_superuser = False
 		user.is_staff = False
 		user.random_secret = random_secret
-		user.username = user.id.toString()
+		#user.username = user.id.toString()
 		print('made it registration 4')
 		user.save()
 		print('made it registration 5')
