@@ -1,13 +1,19 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib import admin
+from django.conf import settings
 from django.contrib.auth.models import BaseUserManager
+from django.apps import apps
+from django.contrib.auth.hashers import make_password
 
 
 class UserManager(BaseUserManager):
 	use_in_migrations = True
 
 	def create_user(self, **extra_fields):
+		"""
+		Create and save a user
+		"""
 		user = self.model(**extra_fields)
 		user.save()
 		return user

@@ -93,6 +93,7 @@ class UserViewset(viewsets.ModelViewSet):
 		random_secret = SecretsViewset.retrieve(SecretsViewset, None, 'random_secret')
 		print('made it registration 3')
 		user = self.model.objects.create_user()
+		print('user', user.__dict__)
 		user.display_name = display_name
 		user.email = email
 		user.password = make_password(password)
@@ -103,6 +104,7 @@ class UserViewset(viewsets.ModelViewSet):
 		user.random_secret = random_secret
 		user.username = user.id
 		print('made it registration 4')
+		print('user', user.__dict__)
 		user.save()
 		print('made it registration 5')
 		group = Group.objects.get(name='User')
