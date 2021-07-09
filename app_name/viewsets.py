@@ -98,11 +98,11 @@ class UserViewset(viewsets.ModelViewSet):
 		user.email = email
 		user.password = make_password(password)
 		user.language = language
-		#user.do_get_emails = True
-		#user.is_superuser = False
-		#user.is_staff = False
-		#user.random_secret = random_secret
-		#user.username = user.id
+		user.do_get_emails = True
+		user.is_superuser = False
+		user.is_staff = False
+		user.random_secret = random_secret
+		user.username = user.id
 		print('made it registration 4')
 		user.save()
 		print('made it registration 5')
