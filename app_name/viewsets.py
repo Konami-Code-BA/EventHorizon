@@ -2,12 +2,8 @@ from rest_framework import viewsets, filters, permissions
 from .models import User
 from .serializers import UserSerializer
 from rest_framework.response import Response
-import requests
-import json
-from django.views.decorators.csrf import csrf_exempt
 from django.contrib import auth
 from django.conf import settings
-from django.contrib.sessions.models import Session
 from decouple import config
 from django.core.mail import send_mail
 from app_name.functions import get_return_queryset, api_to_line, new_user_from_request
@@ -83,7 +79,6 @@ class UserViewset(viewsets.ModelViewSet):
 	def register_by_email(self, request):
 		user = new_user_from_request(request)
 		self.login(request)
-		print('REGISTERED AND LOGGED IN')
 		return user
 
 	#def register_by_line(self, request):
@@ -148,7 +143,6 @@ class LineViewset(viewsets.ViewSet):
 		return response
 
 	def new_device(self, request):
-		language = request.data['language']
 		if config('PYTHON_ENV', default='production') == 'development':
 			uri = 'http://127.0.0.1:8080/loginRegister'
 		else:
@@ -160,38 +154,30 @@ class LineViewset(viewsets.ViewSet):
 			'client_id': config('LOGIN_CHANNEL_ID'),
 			'client_secret': config('LOGIN_CHANNEL_SECRET'),
 		}
-		response =  api_to_line('getAccessToken', params=params)
-		line_access_token = response['access_token']
-		line_refresh_token = response['refresh_token']
+		getAccessToken_response =  api_to_line('getAccessToken', params=params)
 		params = {
-			'access_token': line_access_token,
+			'access_token': getAccessToken_response['access_token'],
 		}
-		response = api_to_line('profile', params=params)
-		line_id = response['userId']
-		display_name = response['displayName']
-		random_secret = SecretsViewset.retrieve(SecretsViewset, None, 'random_secret')
+		profile_response = api_to_line('profile', params=params)
+		print('THIS FAR')
 		try:
-			user = User.objects.get(line_id=line_id)
-			user.line_access_token = line_access_token
-			user.line_refresh_token = line_refresh_token
-			user.language = language
-			user.random_secret = random_secret
+			user = User.objects.get(line_id=profile_response['userId'])
+			user.line_access_token = getAccessToken_response['access_token']
+			user.line_refresh_token = getAccessToken_response['refresh_token']
+			user.language = request.data['language']
+			user.random_secret = SecretsViewset.retrieve(SecretsViewset, None, 'random_secret').content.decode("utf-8")
 			if user.do_get_line_display_name:
-				user.display_name = display_name
+				user.display_name = profile_response['displayName']
 			user.save()
-			request.data['line_id'] = line_id
-			request.user = user
 		except User.DoesNotExist:
-			user = User.objects.create_user(
-				display_name=display_name, line_id=line_id, line_access_token=line_access_token, do_get_lines=True,
-				username='USER', language=language, is_superuser=False, is_staff=False, random_secret=random_secret,
-			)
-			user.save()
-			group = Group.objects.get(name='User')
-			group.user_set.add(user)
-			request.data['line_id'] = line_id
-			request.user = user
+			request.data['display_name'] = profile_response['displayName']
+			request.data['line_id'] = profile_response['userId']
+			request.data['line_access_token'] = getAccessToken_response['access_token']
+			request.data['line_refresh_token'] = getAccessToken_response['refresh_token']
+			user = new_user_from_request(request)
+		request.user = user
 		UserViewset.login(UserViewset, request)
+		return user
 		
 	def verify(self, request):
 		user = User.objects.get(pk=request.user.pk)

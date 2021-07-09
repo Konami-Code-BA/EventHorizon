@@ -162,14 +162,32 @@ def remove_temp_line_friend(line_id):
 
 def new_user_from_request(request):
 	from app_name.viewsets import UserViewset, SecretsViewset
-	display_name = request.data['display_name']
 	language = request.data['language']
+	random_secret = SecretsViewset.retrieve(SecretsViewset, None, 'random_secret').content.decode("utf-8")
 	if 'email' in request.data and 'password' in request.data:
+		display_name = request.data['display_name']
 		email = request.data['email']
 		password = request.data['password']
-		random_secret = SecretsViewset.retrieve(SecretsViewset, None, 'random_secret').content.decode("utf-8")
-		user = UserViewset.model.objects.create_user(display_name=display_name, email=email,
-			password=make_password(password), do_get_emails=True, do_get_line_display_name=True, language=language,
-			is_superuser=False, is_staff=False, random_secret=random_secret)
+		user = UserViewset.model.objects.create_user(
+			display_name=display_name, email=email, password=make_password(password), do_get_emails=True,
+			language=language, is_superuser=False, is_staff=False, random_secret=random_secret,
+		)
 		group = Group.objects.get(name='User')
-		group.user_set.add(user)
+	elif 'line_id' in request.data:
+		display_name = request.data['display_name']
+		line_id = request.data['line_id']
+		line_access_token = request.data['line_access_token']
+		line_refresh_token = request.data['line_refresh_token']
+		user = UserViewset.model.objects.create_user(
+			display_name=display_name, line_id=line_id, line_access_token=line_access_token,
+			line_refresh_token=line_refresh_token, do_get_lines=True, do_get_line_display_name=True, language=language,
+			is_superuser=False, is_staff=False, random_secret=random_secret,
+		)
+		group = Group.objects.get(name='User')
+	#else:
+	#	user = UserViewset.model.objects.create_user(
+	#		language=language, is_superuser=False, is_staff=False, random_secret=random_secret,
+	#	)
+	#	group = Group.objects.get(name='Visitor')
+	group.user_set.add(user)
+	group.save()
