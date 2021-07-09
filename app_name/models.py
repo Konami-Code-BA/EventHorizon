@@ -25,9 +25,10 @@ class UserManager(BaseUserManager):
 		# managers are by definition working on the real model.
 		GlobalUserModel = apps.get_model(self.model._meta.app_label, self.model._meta.object_name)
 		print('create_user 4')
+		print('GlobalUserModel', GlobalUserModel)
 		username = GlobalUserModel.normalize_username(username)
 		print('create_user 5')
-		user = self.model(username=username, email=email, **extra_fields)
+		user = GlobalUserModel(username=username, email=email, **extra_fields)
 		print('create_user 6')
 		user.password = make_password(password)
 		print('create_user 7')
