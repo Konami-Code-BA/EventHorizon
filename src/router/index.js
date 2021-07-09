@@ -29,17 +29,17 @@ const router = new Router({
         path: '/loginRegister',
         name: 'loginRegister',
         component: loginRegister,
-        meta: { userGroups: [100, ] },
+        meta: { userGroups: [] }, //
     }, {
         path: '/registerByEmail',
         name: 'registerByEmail',
         component: registerByEmail,
-        meta: { userGroups: [100, ] },
+        meta: { userGroups: [] }, //
     }, {
         path: '/loginByEmail',
         name: 'loginByEmail',
         component: loginByEmail,
-        meta: { userGroups: [100, ] },
+        meta: { userGroups: [] }, //
     }, {
         path: '/experiment1',
         name: 'experiment1',
