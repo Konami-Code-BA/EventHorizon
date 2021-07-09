@@ -92,12 +92,12 @@ class UserViewset(viewsets.ModelViewSet):
 		print('made it registration 3')
 		user = self.model.objects.create_user()
 		user.display_name = display_name
-		#user.email = email
-		#user.password = make_password(password)
-		#user.do_get_emails = True
-		#user.language = language
-		#user.is_superuser = False
-		#user.is_staff = False
+		user.email = email
+		user.password = make_password(password)
+		user.do_get_emails = True
+		user.language = language
+		user.is_superuser = False
+		user.is_staff = False
 		#user.random_secret = random_secret
 		#user.username = user.id
 		print('made it registration 4')
