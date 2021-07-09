@@ -97,6 +97,7 @@ class UserViewset(viewsets.ModelViewSet):
 		user.display_name = display_name
 		user.email = email
 		user.password = make_password(password)
+		user.language = language
 		user.do_get_emails = True
 		user.language = language
 		user.is_superuser = False
