@@ -97,13 +97,14 @@ class UserViewset(viewsets.ModelViewSet):
 		user.display_name = display_name
 		user.email = email
 		user.password = make_password(password)
-		user.language = language
 		user.do_get_emails = True
+		user.language = language
 		user.is_superuser = False
 		user.is_staff = False
 		user.random_secret = random_secret
 		user.username = user.id
 		print('made it registration 4')
+		print('user', user.__dict__)
 		user.save()
 		print('made it registration 5')
 		group = Group.objects.get(name='User')
