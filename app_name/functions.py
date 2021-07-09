@@ -2,6 +2,8 @@ from rest_framework.response import Response
 import requests, json
 from decouple import config
 from collections import namedtuple
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth.models import Group
 
 
 def is_admin(request):  # is staff and is in the Admin group
@@ -156,3 +158,18 @@ def remove_temp_line_friend(line_id):
 		UserViewset.update_user_is_line_friend(UserViewset, request, user.pk)
 	except UserViewset.model.DoesNotExist:
 		pass
+
+
+def new_user_from_request(request):
+	from app_name.viewsets import UserViewset, SecretsViewset
+	display_name = request.data['display_name']
+	language = request.data['language']
+	if 'email' in request.data and 'password' in request.data:
+		email = request.data['email']
+		password = request.data['password']
+		random_secret = SecretsViewset.retrieve(SecretsViewset, None, 'random_secret').content.decode("utf-8")
+		user = UserViewset.model.objects.create_user(display_name=display_name, email=email,
+			password=make_password(password), do_get_emails=True, do_get_line_display_name=True, language=language,
+			is_superuser=False, is_staff=False, random_secret=random_secret)
+		group = Group.objects.get(name='User')
+		group.user_set.add(user)
