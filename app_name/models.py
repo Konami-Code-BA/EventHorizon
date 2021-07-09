@@ -10,26 +10,26 @@ from django.contrib.auth.hashers import make_password
 class UserManager(BaseUserManager):
 	use_in_migrations = True
 
-	def create_user(self, username, email, password, **extra_fields):
+	def create_user(self, **extra_fields):
 		"""
 		Create and save a user with the given username, email, and password.
 		"""
 		print('create_user 1')
-		if not username:
-			raise ValueError('The given username must be set')
-		print('create_user 2')
-		email = self.normalize_email(email)
-		print('create_user 3')
-		# Lookup the real model class from the global app registry so this
-		# manager method can be used in migrations. This is fine because
-		# managers are by definition working on the real model.
-		GlobalUserModel = apps.get_model(self.model._meta.app_label, self.model._meta.object_name)
-		print('create_user 4')
-		username = GlobalUserModel.normalize_username(username)
-		print('create_user 5')
-		user = GlobalUserModel(username=username, email=email, **extra_fields)
-		print('create_user 6')
-		user.password = make_password(password)
+		#if not username:
+		#	raise ValueError('The given username must be set')
+		#print('create_user 2')
+		#email = self.normalize_email(email)
+		#print('create_user 3')
+		## Lookup the real model class from the global app registry so this
+		## manager method can be used in migrations. This is fine because
+		## managers are by definition working on the real model.
+		#GlobalUserModel = apps.get_model(self.model._meta.app_label, self.model._meta.object_name)
+		#print('create_user 4')
+		#username = GlobalUserModel.normalize_username(username)
+		#print('create_user 5')
+		user = self.model(**extra_fields)
+		#print('create_user 6')
+		#user.password = make_password(password)
 		print('create_user 7')
 		print('user', user.__dict__)
 		#user.save(using=self._db)
@@ -56,14 +56,12 @@ class User(AbstractUser):
 	ip_state_prov = models.CharField(max_length=40, default='', blank=True)
 	ip_city = models.CharField(max_length=40, default='', blank=True)
 	ip_date = models.CharField(max_length=40, default='', blank=True)
-	username = models.CharField(max_length=40, default='', unique=False, blank=True)
-
 	objects = UserManager()
 
 
 class UserAdmin(admin.ModelAdmin):
 	readonly_fields = ('id',)
-	list_display = ('display_name', 'email', 'line_id', 'pk')
+	list_display = ('display_name', 'email', 'line_id', 'id')
 	fields = (
 		'id', 'display_name', 'email', 'do_get_emails', 'line_id', 'line_access_token', 'line_refresh_token',
 		'do_get_line_display_name', 'is_line_friend', 'do_get_lines', 'language', 'groups', 'user_permissions',
