@@ -125,7 +125,7 @@ DATABASES = {
 } if config('PYTHON_ENV', default='production') == 'development' else {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'gevibcbynxcvpj',
+        'NAME': 'd4bkbmcjedtp2g',
         'USER': 'gevibcbynxcvpj',
         'PASSWORD': 'b20f1778016d5a321ca60f78461ed7e139b99fef389961f93e66718eec157744',
         'HOST': 'ec2-54-152-185-191.compute-1.amazonaws.com',
