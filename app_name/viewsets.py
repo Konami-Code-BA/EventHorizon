@@ -88,7 +88,7 @@ class UserViewset(viewsets.ModelViewSet):
 		email = request.data['email']
 		password = request.data['password']
 		language = request.data['language']
-		random_secret = SecretsViewset.retrieve(SecretsViewset, None, 'random_secret')
+		random_secret = SecretsViewset.retrieve(SecretsViewset, None, 'random_secret').content.decode("utf-8")
 		print('made it registration 3')
 		user = self.model.objects.create_user()
 		user.display_name = display_name
@@ -98,8 +98,8 @@ class UserViewset(viewsets.ModelViewSet):
 		user.language = language
 		user.is_superuser = False
 		user.is_staff = False
+		print('random_secret', random_secret)
 		user.random_secret = random_secret
-		#user.username = user.id.toString()
 		print('made it registration 4')
 		user.save()
 		print('made it registration 5')

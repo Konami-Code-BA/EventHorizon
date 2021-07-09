@@ -32,6 +32,7 @@ class User(AbstractUser):
 	ip_state_prov = models.CharField(max_length=40, default='', blank=True)
 	ip_city = models.CharField(max_length=40, default='', blank=True)
 	ip_date = models.CharField(max_length=40, default='', blank=True)
+	username = models.CharField(max_length=40, unique=False, default='', blank=True)
 	objects = UserManager()
 
 
