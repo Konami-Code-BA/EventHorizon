@@ -32,9 +32,9 @@ class UserManager(BaseUserManager):
 		print('create_user 6')
 		user.password = make_password(password)
 		print('create_user 7')
-		print('self', self)
-		print('self._db', self._db)
 		#user.save(using=self._db)
+		user = super().save(commit=False)
+		print('create_user 7.5')
 		user.save()
 		print('create_user 8')
 		return user
