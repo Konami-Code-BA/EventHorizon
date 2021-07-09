@@ -103,7 +103,6 @@ class UserViewset(viewsets.ModelViewSet):
 			username='USER', is_superuser=False, is_staff=False, random_secret=random_secret,
 		)
 		print('made it registration 4')
-		user.save()
 		print('made it registration 5')
 		group = Group.objects.get(name='User')
 		group.user_set.add(user)
