@@ -15,6 +15,7 @@ from app_name.functions import get_return_queryset
 from app_name.functions import api_to_line
 from django.http import HttpResponse
 import secrets
+from django.contrib.auth.hashers import make_password
 
 
 class UserViewset(viewsets.ModelViewSet):
@@ -91,18 +92,20 @@ class UserViewset(viewsets.ModelViewSet):
 		print('made it registration 2')
 		random_secret = SecretsViewset.retrieve(SecretsViewset, None, 'random_secret')
 		print('made it registration 3')
-		print('self', self)
-		print('self.model', self.model)
-		print('self.model.objects', self.model.objects)
-		print('display_name', display_name)
-		print('email', email)
-		print('password', password)
-		print('language', language)
-		user = self.model.objects.create_user(
-			display_name=display_name, email=email, password=password, do_get_emails=True, language=language,
-			username='USER', is_superuser=False, is_staff=False, random_secret=random_secret,
-		)
+		user = self.model.objects.create_user()
+		print('user', user.__dict__)
+		user.display_name = display_name
+		user.email = email
+		user.password = make_password(password)
+		user.do_get_emails = True
+		user.language = language
+		user.is_superuser = False
+		user.is_staff = False
+		user.random_secret = random_secret
+		user.username = user.id
 		print('made it registration 4')
+		print('user', user.__dict__)
+		user.save()
 		print('made it registration 5')
 		group = Group.objects.get(name='User')
 		group.user_set.add(user)
@@ -130,6 +133,7 @@ class UserViewset(viewsets.ModelViewSet):
 	def login(self, request):
 		user = auth.authenticate(request)
 		if user:
+			print('login', user)
 			auth.login(request, user)
 		return user
 
