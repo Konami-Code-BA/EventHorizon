@@ -22,14 +22,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 ## SECURITY WARNING: keep the secret key used in production secret!
-#SECRET_KEY = 'django-insecure-(j7(p96vyw7r)*)8%u++g8qkkz!v=bwzymi!7a39#py&1dvt(w'
-
 ## SECURITY WARNING: don't run with debug turned on in production!
-
-#DEBUG = True
-#DEBUG = os.environ.get('PYTHON_ENV', 'production') == 'development'
 DEBUG = config('PYTHON_ENV', default='production') == 'development'  # need to make sure this works
-#DEBUG = True if os.environ['NODE_ENV'] == 'development' else False
 SECRET_KEY = config('SECRET_KEY')
 ALLOWED_HOSTS = ['event-horizon-jp.herokuapp.com/', 'localhost', 'eventhorizon.vip/']
 CORS_ALLOW_CREDENTIALS = True
@@ -122,16 +116,16 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
-} if config('PYTHON_ENV', default='production') == 'development' else {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'd4bkbmcjedtp2g',
-        'USER': 'gevibcbynxcvpj',
-        'PASSWORD': 'b20f1778016d5a321ca60f78461ed7e139b99fef389961f93e66718eec157744',
-        'HOST': 'ec2-54-152-185-191.compute-1.amazonaws.com',
-        'PORT': '5432',
-    }
-}
+} #if config('PYTHON_ENV', default='production') == 'development' else {
+#    'default': {
+#        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#        'NAME': 'd4bkbmcjedtp2g',
+#        'USER': 'gevibcbynxcvpj',
+#        'PASSWORD': 'b20f1778016d5a321ca60f78461ed7e139b99fef389961f93e66718eec157744',
+#        'HOST': 'ec2-54-152-185-191.compute-1.amazonaws.com',
+#        'PORT': '5432',
+#    }
+#}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
