@@ -1,9 +1,10 @@
 from rest_framework.response import Response
-import requests, json
+import requests, json, secrets
 from decouple import config
 from collections import namedtuple
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
+from django.contrib import auth
 
 
 def is_admin(request):  # is staff and is in the Admin group
@@ -48,10 +49,10 @@ def line_bot(line_body):
 	events = line_body['events'][0]
 	if events['type'] == 'follow':
 		reply = 'Thank you for following!'
-		add_temp_line_friend(events['source']['userId'])
+		add_line_friend(events['source']['userId'])
 	if events['type'] == 'unfollow':
 		reply = 'Thank you for following!'
-		remove_temp_line_friend(events['source']['userId'])
+		remove_line_friend(events['source']['userId'])
 	elif events['type'] == 'message':  # its a message (not a follow etc)
 		if events['message']['type'] == 'text':  # its a text message (not an image etc)
 			if events['message']['text'][:4] == '.bot':  # it has a .bot trigger
@@ -65,129 +66,122 @@ def line_bot(line_body):
 	return replyToken, reply
 
 
-def api_to_line(todo, message=None, towho=None, params=None):
-	channel_access_token = config('MESSAGING_CHANNEL_ACCESS_TOKEN')
-	urls = {
-		'push': 'https://api.line.me/v2/bot/message/push',
-		'reply': 'https://api.line.me/v2/bot/message/reply',
-		'multicast': 'https://api.line.me/v2/bot/message/multicast',
-		'broadcast': 'https://api.line.me/v2/bot/message/broadcast',
-		'consumption': 'https://api.line.me/v2/bot/message/quota/consumption',
-		'getAccessToken': 'https://api.line.me/oauth2/v2.1/token',
-		'verify': 'https://api.line.me/oauth2/v2.1/verify?access_token=',
-		'profile': 'https://api.line.me/v2/profile',
-	}
-	send_type = {
-		'push': 'to',
-		'reply': 'replyToken',
-		'multicast': 'to',
-		'broadcast': None,
-		'consumption': None,
-	}
-	headers = {}
-	data = None
-	if params:  # if there are params, it's for getAccessToken, verify, or profile
-		if todo == 'getAccessToken':
-			headers['Content-Type'] = 'application/x-www-form-urlencoded'
-			data = params
-		elif todo == 'profile':
-			headers['Authorization'] = 'Bearer ' + params['access_token']
-		elif todo == 'verify':
-			urls[todo] = urls[todo] + params['access_token']
-	else:  # if no params, it's for consumption or one of the message ones
-		headers['Content-Type'] = 'application/json'
-		headers['Authorization'] = 'Bearer ' + channel_access_token
-		if message:  # if there's a message, want to send the message
-			data = {}
-			if towho:  # if there is a towho, put it in the data, otherwise it's a broadcast to all
-				data[send_type[todo]] = towho
-			data['messages'] = [{
-				"type": "text",
-				"text": message,
-			}]
-			data = json.dumps(data)
-	
-	if data:  # requests with data
-		if headers == {}:  # requests with no headers
-			response = requests.post(  # post it
-				urls[todo],
-				data = data,
-			)
-		else:  # requests with headers
-			response = requests.post(  # post it
-				urls[todo],
-				headers = headers,
-				data = data,
-			)
-	else:  # requests with no data
-		if headers == {}:  # requests with no headers
-			response = requests.get(  # get it
-				urls[todo],
-			)
-		else:  # requests with headers
-			response = requests.get(  # get it
-				urls[todo],
-				headers = headers,
-			)
-	
-	return json.loads(response.content)
-
-
-def add_temp_line_friend(line_id):
+def add_line_friend(line_id):
 	from app_name.viewsets import UserViewset, SecretsViewset
-	try:
+	try:  # if user with this line id exists
 		user = UserViewset.model.objects.get(line_id=line_id)
 		request = namedtuple('request', 'data')
 		request.data = {'is_line_friend': True}
-		UserViewset.update_user_is_line_friend(UserViewset, request, user.pk)
-	except UserViewset.model.DoesNotExist:
-		random_secret = SecretsViewset.retrieve(SecretsViewset, None, 'random_secret')
-		user = UserViewset.model.objects.create_user(
-			line_id=line_id, do_get_lines=True, username='USER', is_superuser=False, is_staff=False,
-			is_line_friend=True, display_name='TEMP', random_secret=random_secret,
+		UserViewset.update_user_is_line_friend(UserViewset, request, user.pk)  # update user, is_line_friend: True
+	except UserViewset.model.DoesNotExist:  # if no user with this line id exists
+		# this wasn't done on the site, it was done in line so there is no visitor, ip, language, and can't make session
+		user = UserViewset.model.objects.create_user(  # create temporary line friend user
+			line_id = line_id,
+			do_get_lines = True,
+			is_line_friend = True,
+			display_name = 'Temp Line Friend', 
+			do_get_line_display_name = True,
+			random_secret = secrets.token_urlsafe(16)
 		)
+		user.groups.add(5)  # temp line friend
 		user.save()
 
 
-def remove_temp_line_friend(line_id):
+def remove_line_friend(line_id):
 	from app_name.viewsets import UserViewset
-	try:
+	try:  # if user with this line id exists
 		user = UserViewset.model.objects.get(line_id=line_id)
 		request = namedtuple('request', 'data')
 		request.data = {'is_line_friend': False}
-		UserViewset.update_user_is_line_friend(UserViewset, request, user.pk)
-	except UserViewset.model.DoesNotExist:
+		UserViewset.update_user_is_line_friend(UserViewset, request, user.pk)  # update user, is_line_friend: False
+		user.do_get_lines = False
+		user.save()
+	except UserViewset.model.DoesNotExist:  # this is basically not possible
 		pass
 
 
-def new_user_from_request(request):
+def ip():
+	return json.loads(requests.get('https://api.db-ip.com/v2/free/self').content)
+
+
+def authenticate_login(request):
+	user = auth.authenticate(request)
+	if user:
+		ip_data = ip()
+		user.ip_continent_name = ip_data['continentName']
+		user.ip_country_name = ip_data['countryName']
+		user.ip_state_prov = ip_data['stateProv']
+		user.ip_city = ip_data['city']
+		user.save()
+		auth.login(request, user)
+	return user
+
+
+def verify_update_line_info(request, user):  # for exisitng user with line id, access token already gotten
+	visitor = None
+	if request.user.groups.filter(id=3).exists():  # if visitor made this request to login by line
+		visitor = type(user).model.objects.get(pk=request.user.pk)  # get visitor account making the request
+	url = 'https://api.line.me/oauth2/v2.1/token'  # no matter if access token expired or not, refresh access token 1st
+	headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+	data = {
+		'grant_type': 'refresh_token',
+		'refresh_token': user.line_refresh_token,
+		'client_id': config('LOGIN_CHANNEL_ID'),
+		'client_secret': config('LOGIN_CHANNEL_SECRET'),
+	}
+	refreshAccessToken_response = json.loads(requests.post(url, headers=headers, data=data).content)
+	# if refresh token is expired, this is session login attempt, block attempt and force them to click the line
+	# login button and do a line login from the start
+	if 'error' in refreshAccessToken_response:
+		return None
+	user.line_access_token = refreshAccessToken_response['access_token']  # save new access token to user data
+	user.line_refresh_token = refreshAccessToken_response['refresh_token']  # also refresh token
+	url = 'https://api.line.me/oauth2/v2.1/verify?access_token=' + user.line_access_token  # first verify access token
+	verify_response = json.loads(requests.get(url).content)
+	if verify_response['client_id'] != config('LOGIN_CHANNEL_ID'):  # make sure verification not intercepted
+		return None  # client id can't be confirmed
+	url = 'https://api.line.me/v2/profile'  # get line profile info
+	headers = {'Authorization': 'Bearer ' + user.line_access_token}
+	profile_response = json.loads(requests.get(url, headers=headers).content)
+	if user.do_get_line_display_name:  # update display name with line profile name unless user set not to
+		user.display_name = profile_response['displayName']
+	if profile_response['userId'] == user.line_id:  # double check line id is correct and this wasnt somehow faked
+		user.save()
+		request.data['line_id'] = user.line_id
+		user = authenticate_login(request)  # login again just in case, and to get new location info
+		if user:  # logged into a user
+			if not user.groups.filter(id=3).exists() and visitor:  # if not visitor, but request made by visitor
+				visitor.delete()  # delete the visitor account that made the request
+				print('DELETED VISITOR')
+		return user
+	else:  # line id can't be confirmed
+		return None
+
+
+def new_visitor(request):
 	from app_name.viewsets import UserViewset, SecretsViewset
-	language = request.data['language']
-	random_secret = SecretsViewset.retrieve(SecretsViewset, None, 'random_secret').content.decode("utf-8")
-	if 'email' in request.data and 'password' in request.data:
-		display_name = request.data['display_name']
-		email = request.data['email']
-		password = request.data['password']
-		user = UserViewset.model.objects.create_user(
-			display_name=display_name, email=email, password=make_password(password), do_get_emails=True,
-			language=language, is_superuser=False, is_staff=False, random_secret=random_secret,
-		)
-		group = Group.objects.get(name='User')
-	elif 'line_id' in request.data:
-		display_name = request.data['display_name']
-		line_id = request.data['line_id']
-		line_access_token = request.data['line_access_token']
-		line_refresh_token = request.data['line_refresh_token']
-		user = UserViewset.model.objects.create_user(
-			display_name=display_name, line_id=line_id, line_access_token=line_access_token,
-			line_refresh_token=line_refresh_token, do_get_lines=True, do_get_line_display_name=True, language=language,
-			is_superuser=False, is_staff=False, random_secret=random_secret,
-		)
-		group = Group.objects.get(name='User')
-	#else:
-	#	user = UserViewset.model.objects.create_user(
-	#		language=language, is_superuser=False, is_staff=False, random_secret=random_secret,
-	#	)
-	#	group = Group.objects.get(name='Visitor')
+	print('ENTER NEW VISITOR')
+	ip_data = ip()
+	for i in range(1000):
+		random_secret = secrets.token_urlsafe(16)
+		try:
+			user = UserViewset.model.objects.get(random_secret=random_secret)
+		except UserViewset.model.MultipleObjectsReturned:
+			pass
+		except UserViewset.model.DoesNotExist:
+			break
+	user = UserViewset.model.objects.create_user(
+		ip_continent_name = ip_data['continentName'],
+		ip_country_name = ip_data['countryName'],
+		ip_state_prov = ip_data['stateProv'],
+		ip_city = ip_data['city'],
+		language = 'JP' if ip_data['countryName'] == 'Japan' else 'EN',
+		random_secret = random_secret,
+		display_name = 'Visitor',
+	)
+	user.save()
+	group = Group.objects.get(id=3)
 	group.user_set.add(user)
-	group.save()
+	request.data['random_secret'] = user.random_secret
+	auth.login(request, user)
+	return user

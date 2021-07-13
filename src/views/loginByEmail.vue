@@ -1,9 +1,9 @@
 <template>
 	<div>
 		<div v-if="!loading">
-			<menus-header/>
+			<menus-header @logoutLoading="loading=true"/>
 			<div class="box">
-				<form v-on:keyup.enter="showPassword = false; login()">
+				<form v-on:keyup.enter="login()">
 					<div>
 						<input :placeholder="t('EMAIL')" v-model="emailInput" type="text" class="box-item"
 							id="email" autocorrect="off" autocapitalize="none"/>
@@ -69,6 +69,8 @@
 		methods: {
 			t (w) { return translations.t(w) },
 			async login () {
+				this.showPassword = false  // cause problem with not remembering password because password setting gone?
+				this.loading = true
 				await apiFunctions.login({'email': this.emailInput, 'password': this.passwordInput})
 				this.$router.push({ name: 'home' })
 			},

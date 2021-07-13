@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div v-if="!loading">
-			<menus-header/>
+			<menus-header @logoutLoading="loading=true"/>
 			<div class="box">
 				<h1>experiment 1</h1>
 				<div><h2>{{$route.query.test}}</h2></div> <!--http://127.0.0.1:8080/experiment1?test=boi-->
@@ -10,7 +10,6 @@
 				<button v-on:click.prevent="lineConsumption()">lineConsumption</button>
 				<button v-on:click.prevent="linePush()">linePush</button>
 				<button v-on:click.prevent="lineBroadcast()">lineBroadcast</button>
-				<button v-on:click.prevent="lineLogin()">lineLogin</button>
 			</div>
 			<!--a href="https://lin.ee/UeSvNxR"><img height="36" border="0" src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png"></a-->
 		</div>
@@ -53,20 +52,6 @@
 			async loginChannelId () {
 				let response = await apiFunctions.loginChannelId()
 				return response
-			},
-			async state () {
-				let response = await apiFunctions.state()
-				return response
-			},
-			async lineLogin () {
-				let loginChannelId = await this.loginChannelId()
-				let state = await this.state()
-				store.state = state
-				let lineLoginRedirectUrl = 'http%3A%2F%2Feventhorizon.vip%2Flogin'
-				if (process.env.NODE_ENV == 'development') {
-					lineLoginRedirectUrl = 'http%3A%2F%2F127.0.0.1%3A8080%2Flogin'
-				}
-				window.location.replace(`https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=${loginChannelId}&redirect_uri=${lineLoginRedirectUrl}&state=${state}&bot_prompt=aggressive&scope=profile%20openid`)
 			},
 		} // methods
 	} // export

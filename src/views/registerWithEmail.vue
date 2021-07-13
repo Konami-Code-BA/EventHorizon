@@ -1,9 +1,9 @@
 <template>
 	<div>
 		<div v-if="!loading">
-			<menus-header/>
+			<menus-header @logoutLoading="loading=true"/>
 			<div class="box">
-				<form v-on:keyup.enter="registerByEmail()">
+				<form v-on:keyup.enter="registerWithEmail()">
 					<div>
 						<input :placeholder="t('USERNAME')" v-model="displayName" type="text" class="box-item"
 							id="username" autocorrect="off" autocapitalize="none"/>
@@ -46,7 +46,7 @@
 					<div v-if="showError" class="box-item" :class="{'shake' : shakeIt}" style="color: red">✘</div>
 					<div v-else class="box-item">✅</div>
 				</form>
-				<button v-on:click.prevent="registerByEmail()" class="box-item">
+				<button v-on:click.prevent="registerWithEmail()" class="box-item">
 					{{ t('REGISTER') }}
 				</button>
 			</div>
@@ -63,7 +63,7 @@
 	import apiFunctions from '@/functions/apiFunctions.js'
 	import functions from '@/functions/functions.js'
 	export default {
-		name: 'registerByEmail',
+		name: 'registerWithEmail',
 		components: {
 			modal,
 			menusHeader,
@@ -100,11 +100,27 @@
 				} else {
 					this.showError = true
 				}
-			}
+			},
+			//'emailInput' () {
+			//	if (this.emailInput.length >= 40) {
+			//		this.showError = true
+			//	} else {
+			//		this.showError = false
+			//	}
+			//},
+			//'password' () {
+			//	if (this.password.length >= 40) {
+			//		this.showError = true
+			//	} else {
+			//		this.showError = false
+			//	}
+			//},
 		},
 		methods: {
 			t (w) { return translations.t(w) },
-			async registerByEmail () {
+			async registerWithEmail () {
+				this.showPassword = false  // cause problem with not remembering password because password setting gone?
+				this.loading = true
 				if (this.passwordInput !== this.passwordInput2) {
 					this.shakeIt = true
 					setTimeout(() => { this.shakeIt = false; }, 1000);
@@ -112,7 +128,7 @@
 				}
 				this.showPassword = false
 				this.showPassword2 = false
-				await apiFunctions.registerByEmail(this.displayName, this.emailInput, this.passwordInput)
+				await apiFunctions.registerWithEmail(this.displayName, this.emailInput, this.passwordInput)
 				this.$router.push({ name: 'home' })
 			},
 			showButton () {

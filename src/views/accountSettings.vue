@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div v-if="!loading">
-			<menus-header/>
+			<menus-header @logoutLoading="loading=true"/>
 			<div class="box">
 				<div>
 					<h1>{{ t('SETTINGS') }}</h1>
