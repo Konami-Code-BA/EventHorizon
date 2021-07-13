@@ -23,13 +23,25 @@
 </script>
 <style scoped>
 .outside {
-	z-index: 9999;
 	position: fixed;
-	width: 1000%;
+	top: 0;
+	left: 0;
 	height: 1000%;
-	margin-left: -500%;
-	margin-top: -500%;
-	background-color: rgba(0, 0, 0, .5);
+	width: 1000%;
+	z-index: 9999;
+	background: rgba(0, 0, 0, 0.5);
+	transform: translate(-50%, -50%);
+}
+.outside2 {
+	z-index: 9999;
+    background: rgba(0, 0, 0, 0.5);
+    position: absolute !important;
+    left: 0 !important;
+    right: 0;
+    top: 0;
+    bottom: 0;
+  	width: 100% !important;
+  	max-width: 100% !important;
 	transition: opacity .3s ease;
 }
 </style>

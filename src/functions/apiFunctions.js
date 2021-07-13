@@ -96,6 +96,12 @@ export default {
             getEmail: store.user.do_get_emails,
         })
     },
+    async updateUserAlerts(name) {
+        await this.userApiFunction('patch', '/api/user/' + store.user.id + '/', {
+            command: 'update_user_alerts',
+            name: name,
+        })
+    },
     // LINE ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     async sendWebhook() {
         await this.lineApiFunction('post', '/webhook/', {

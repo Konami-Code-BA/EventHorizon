@@ -6,8 +6,14 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
 
 
-class Alert(models.Model):  # True = must show. False = don't show.
-	cookies = models.BooleanField(default=True)
+class Alert(models.Model):
+	name = models.CharField(max_length=40, default='', blank=True)
+	def __str__(self):
+		return self.name
+
+
+class AlertAdmin(admin.ModelAdmin):
+	list_display = ('name', 'id')
 
 
 class UserManager(BaseUserManager):
@@ -42,14 +48,12 @@ class User(AbstractUser):
 	is_line_friend = models.BooleanField(default=False, blank=True)
 	do_get_lines = models.BooleanField(default=False, blank=True)
 	random_secret = models.CharField(max_length=40, default='', blank=True)
-	ip_continent_name = models.CharField(max_length=40, default='', blank=True)
-	ip_country_name = models.CharField(max_length=40, default='', blank=True)
-	ip_state_prov = models.CharField(max_length=40, default='', blank=True)
-	ip_city = models.CharField(max_length=40, default='', blank=True)
 	username = models.CharField(max_length=40, unique=False, default='', blank=True)
 	visit_count = models.IntegerField(default=1, blank=True)
 	alerts = models.ManyToManyField(Alert, blank=True)
 	objects = UserManager()
+	def __str__(self):
+		return self.display_name
 
 
 class UserAdmin(admin.ModelAdmin):
@@ -58,8 +62,7 @@ class UserAdmin(admin.ModelAdmin):
 	fields = (
 		'id', 'display_name', 'email', 'do_get_emails', 'line_id', 'line_access_token', 'line_refresh_token',
 		'do_get_line_display_name', 'is_line_friend', 'do_get_lines', 'language', 'groups', 'user_permissions',
-		'is_staff', 'is_superuser', 'last_login', 'date_joined', 'ip_continent_name', 'ip_country_name',
-		'ip_state_prov', 'ip_city', 'visit_count', 'alerts', 'random_secret'
+		'is_staff', 'is_superuser', 'last_login', 'date_joined', 'visit_count', 'alerts', 'random_secret'
 	)
 
 
