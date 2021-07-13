@@ -1,5 +1,5 @@
 from rest_framework import viewsets, filters
-from .models import User
+from .models import User, Alert
 from .serializers import UserSerializer
 from rest_framework.response import Response
 from django.contrib import auth
@@ -39,6 +39,7 @@ class UserViewset(viewsets.ModelViewSet):
 			return None
 		user.language = request.data['language']
 		user.save()
+		return user
 	
 	def update_user_do_get_emails(self, request, pk):
 		try:
@@ -47,6 +48,7 @@ class UserViewset(viewsets.ModelViewSet):
 			return None
 		user.do_get_emails = request.data['do_get_emails']
 		user.save()
+		return user
 	
 	def update_user_is_line_friend(self, request, pk):
 		try:
@@ -55,6 +57,19 @@ class UserViewset(viewsets.ModelViewSet):
 			return None
 		user.is_line_friend = request.data['is_line_friend']
 		user.save()
+		return user
+	
+	def update_user_alerts(self, request, pk):
+		try:
+			user = self.model.objects.get(pk=pk)
+		except self.model.DoesNotExist:
+			return None
+		alert = Alert.objects.get(name=request.data['name'])
+		if user.alerts.filter(name=request.data['name']).exists():  # if user has this alert, remove it
+			alert.user_set.remove(user)
+		else:  # if user does not have this alert, add it
+			alert.user_set.add(user)
+		return user
 
 	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
 		return get_return_queryset(self, request, pk=pk)
