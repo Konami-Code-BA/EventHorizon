@@ -120,7 +120,7 @@ def authenticate_login(request):
 def verify_update_line_info(request, user):  # for exisitng user with line id, access token already gotten
 	visitor = None
 	if request.user.groups.filter(id=3).exists():  # if visitor made this request to login by line
-		visitor = type(user).model.objects.get(pk=request.user.pk)  # get visitor account making the request
+		visitor = type(user).objects.get(pk=request.user.pk)  # get visitor account making the request
 	url = 'https://api.line.me/oauth2/v2.1/token'  # no matter if access token expired or not, refresh access token 1st
 	headers = {'Content-Type': 'application/x-www-form-urlencoded'}
 	data = {
