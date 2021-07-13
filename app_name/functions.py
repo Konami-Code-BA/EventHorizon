@@ -74,7 +74,7 @@ def add_line_friend(line_id):
 		request.data = {'is_line_friend': True}
 		UserViewset.update_user_is_line_friend(UserViewset, request, user.pk)  # update user, is_line_friend: True
 	except UserViewset.model.DoesNotExist:  # if no user with this line id exists
-		# this wasn't done on the site, it was done in line so there is no visitor, ip, language, and can't make session
+		# this wasn't done on the site, it was done in line so there is no visitor, and can't make session
 		user = UserViewset.model.objects.create_user(  # create temporary line friend user
 			line_id = line_id,
 			do_get_lines = True,
@@ -100,18 +100,9 @@ def remove_line_friend(line_id):
 		pass
 
 
-def ip():
-	return json.loads(requests.get('https://api.db-ip.com/v2/free/self').content)
-
-
 def authenticate_login(request):
 	user = auth.authenticate(request)
 	if user:
-		ip_data = ip()
-		user.ip_continent_name = ip_data['continentName']
-		user.ip_country_name = ip_data['countryName']
-		user.ip_state_prov = ip_data['stateProv']
-		user.ip_city = ip_data['city']
 		user.save()
 		auth.login(request, user)
 	return user
@@ -161,7 +152,6 @@ def verify_update_line_info(request, user):  # for exisitng user with line id, a
 def new_visitor(request):
 	from app_name.viewsets import UserViewset, SecretsViewset
 	print('ENTER NEW VISITOR')
-	ip_data = ip()
 	for i in range(1000):
 		random_secret = secrets.token_urlsafe(16)
 		try:
@@ -171,11 +161,6 @@ def new_visitor(request):
 		except UserViewset.model.DoesNotExist:
 			break
 	user = UserViewset.model.objects.create_user(
-		ip_continent_name = ip_data['continentName'],
-		ip_country_name = ip_data['countryName'],
-		ip_state_prov = ip_data['stateProv'],
-		ip_city = ip_data['city'],
-		language = 'JP' if ip_data['countryName'] == 'Japan' else 'EN',
 		random_secret = random_secret,
 		display_name = 'Visitor',
 	)

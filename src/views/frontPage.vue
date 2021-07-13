@@ -27,14 +27,14 @@
 		</div>
 		<div class="loading" v-else></div>
 		<transition name="fade">
-			<modal v-show="showCookiesModal" @closeModals="showCookiesModal=false"
+			<modal v-show="showCookiesModal" @closeModals="closeCookiesModal()"
 				id="showCookiesModal">
 				<div slot="contents" class="showCookiesModal">
 					<div style="white-space: pre-line; text-align: center; font-weight: 400;">
 						{{t('This site uses cookies')}}
 					</div><br>
 					<div style="text-align: center">
-						<button v-on:click.prevent="showCookiesModal=false">
+						<button v-on:click.prevent="closeCookiesModal()">
 							<big>{{t('OK')}}</big>
 						</button>
 					</div><br><br>
@@ -62,7 +62,7 @@
 			return {
 				store: store,
 				loading: true,
-				showCookiesModal: true,
+				showCookiesModal: store.user.alerts.includes(1),
 			}
 		},
 		async mounted () {
@@ -70,7 +70,11 @@
 		},
 		methods: {
 			t (w) { return translations.t(w) },
-
+			async closeCookiesModal () {
+				this.showCookiesModal = false
+				console.log('store.user', store.user)
+				await apiFunctions.updateUserAlerts('Show Cookies')
+			},
 		}
 	}
 </script>

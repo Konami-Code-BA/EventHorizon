@@ -29,6 +29,7 @@
 			width: 100%;
 			margin-left: 50%;
 			transform: translate(-50%, 0%);
+			overflow: hidden;
 		}
 		/*[v-cloak] {
 			display: none;
@@ -61,7 +62,7 @@
 		.box-center {
 			text-align: center;
 		}
-		button, button:hover, button:active {
+		button, button:hover, button:active, button.pointer {
 			font-family: inherit;
 			color: inherit;
 			font-weight: inherit;
@@ -76,6 +77,7 @@
 			display: inline-flex;
 			align-items: center; 
 			justify-content: space-around;
+			cursor: pointer;
 		}
 		input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus,
 		input:-webkit-autofill:active, input[type=text], input[type=email], input[type=password],
@@ -99,13 +101,14 @@
   			color: #5841e9;
 			font-weight: inherit;
 		}
-		.no-border-button, .no-border-button:hover, .no-border-button:active {
+		.no-border-button, .no-border-button:hover, .no-border-button:active, .no-border-button.pointer {
 			border: none;
 			background: none;
 			/*transition-duration: 0.1s;*/
 			width: 100%;
 			height: inherit;
 			color: #d2e6ff;
+			cursor: pointer;
 		}
 		.small-button {
 			height: 19px !important;
