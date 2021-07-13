@@ -5,8 +5,8 @@
 			<div class="box">
 				<form v-on:keyup.enter="registerWithEmail()">
 					<div>
-						<input :placeholder="t('USERNAME')" v-model="displayName" type="text" class="box-item"
-							id="username" autocorrect="off" autocapitalize="none"/>
+						<input :placeholder="t('DISPLAY NAME')" v-model="displayName" type="text" class="box-item"
+							id="displayName" autocorrect="off" autocapitalize="none"/>
 					</div>
 					<div class="box-item"></div>
 					<div>
@@ -84,7 +84,7 @@
 		},
 		async mounted () {
 			this.loading = false
-			functions.focusCursor('username')
+			functions.focusCursor('displayName')
 		},
 		watch: {
 			'passwordInput2' () {

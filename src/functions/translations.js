@@ -30,9 +30,9 @@ export default {
             'EN': 'LOGOUT',
             'JP': 'ログアウト'
         },
-        'USERNAME': {
-            'EN': 'USERNAME',
-            'JP': 'ユーザー名'
+        'DISPLAY NAME': {
+            'EN': 'DISPLAY NAME',
+            'JP': '表示名'
         },
         'EMAIL': {
             'EN': 'EMAIL',

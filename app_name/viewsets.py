@@ -17,8 +17,6 @@ class UserViewset(viewsets.ModelViewSet):
 	serializer_class = UserSerializer
 	queryset = serializer_class.Meta.model.objects.all()
 	model = User
-	filter_backends = (filters.SearchFilter,)
-	search_fields = ['=email', '=username',]
 
 	def list(self, request):  # GET {prefix}/
 		return get_return_queryset(self, request)
