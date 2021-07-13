@@ -4,7 +4,7 @@ import store from '@/store'
 import apiFunctions from '@/functions/apiFunctions.js'
 import frontPage from '@/views/frontPage'
 import loginRegister from '@/views/loginRegister'
-import registerByEmail from '@/views/registerByEmail'
+import registerWithEmail from '@/views/registerWithEmail'
 import loginByEmail from '@/views/loginByEmail'
 import accountSettings from '@/views/accountSettings'
 import home from '@/views/home'
@@ -18,10 +18,15 @@ const router = new Router({
     mode: 'history',
     //beforeEach: (to, from, next) => {},
     routes: [{
-        //    path: '/',
-        //    redirect: { name: 'frontPage' },
-        //}, {
+        path: '',
+        redirect: { name: 'frontPage' },
+        meta: { userGroups: [] },
+    }, {
         path: '/',
+        redirect: { name: 'frontPage' },
+        meta: { userGroups: [] },
+    }, {
+        path: '/frontPage',
         name: 'frontPage',
         component: frontPage,
         meta: { userGroups: [] },
@@ -29,17 +34,17 @@ const router = new Router({
         path: '/loginRegister',
         name: 'loginRegister',
         component: loginRegister,
-        meta: { userGroups: [] }, //
+        meta: { userGroups: [1, 3, 5, ] }, // [1, 3, 5, ]
     }, {
-        path: '/registerByEmail',
-        name: 'registerByEmail',
-        component: registerByEmail,
-        meta: { userGroups: [] }, //
+        path: '/registerWithEmail',
+        name: 'registerWithEmail',
+        component: registerWithEmail,
+        meta: { userGroups: [1, 3, 5, ] },
     }, {
         path: '/loginByEmail',
         name: 'loginByEmail',
         component: loginByEmail,
-        meta: { userGroups: [] }, //
+        meta: { userGroups: [1, 3, 5, ] }, // [1, 3, 5, ]
     }, {
         path: '/experiment1',
         name: 'experiment1',
@@ -66,12 +71,7 @@ const router = new Router({
 router.beforeEach(
     async(to, from, next) => {
         await apiFunctions.login({})
-        if (store.user.ip_date && new Date().toISOString().slice(0, 10) !== store.user.ip_date.slice(0, 10)) {
-            await apiFunctions.ip()
-            if (store.user.display_name) {
-                await apiFunctions.updateUserLocation()
-            }
-        }
+        console.log('IN FUCKING INDEX', store.user)
         if (to.meta.userGroups.length === 0) {
             next()
             return
@@ -85,7 +85,7 @@ router.beforeEach(
                 }
             }
             // permission denied
-            if (['loginByEmail', 'frontPage', 'registerByEmail'].includes(from.name)) {
+            if (['loginRegister', 'loginByEmail', 'frontPage', 'registerWithEmail'].includes(from.name)) {
                 return
             } else {
                 next({ name: 'frontPage' })

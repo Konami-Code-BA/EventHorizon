@@ -1,4 +1,4 @@
-from rest_framework import viewsets, filters, permissions
+from rest_framework import viewsets, filters
 from .models import User
 from .serializers import UserSerializer
 from rest_framework.response import Response
@@ -6,9 +6,11 @@ from django.contrib import auth
 from django.conf import settings
 from decouple import config
 from django.core.mail import send_mail
-from app_name.functions import get_return_queryset, api_to_line, new_user_from_request
+from app_name.functions import get_return_queryset, verify_update_line_info, authenticate_login, new_visitor
 from django.http import HttpResponse
-import secrets
+import secrets, requests, json
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth.models import Group
 
 
 class UserViewset(viewsets.ModelViewSet):
@@ -55,18 +57,6 @@ class UserViewset(viewsets.ModelViewSet):
 			return None
 		user.is_line_friend = request.data['is_line_friend']
 		user.save()
-	
-	def update_user_location(self, request, pk):
-		try:
-			user = self.model.objects.get(pk=pk)
-		except self.model.DoesNotExist:
-			return None
-		user.ip_continent_name = request.data['ip_continent_name']
-		user.ip_country_name = request.data['ip_country_name']
-		user.ip_state_prov = request.data['ip_state_prov']
-		user.ip_city = request.data['ip_city']
-		user.ip_date = request.data['ip_date']
-		user.save()
 
 	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
 		return get_return_queryset(self, request, pk=pk)
@@ -74,33 +64,85 @@ class UserViewset(viewsets.ModelViewSet):
 	# CREATE ###########################################################################################################
 	def create(self, request):  # POST {prefix}/
 		user = eval(f"self.{request.data['command']}(request)")
+		if user:
+			request.user = user
 		return get_return_queryset(self, request, pk=request.user.pk)
 
-	def register_by_email(self, request):
-		user = new_user_from_request(request)
-		self.login(request)
-		return user
+	def register_with_email(self, request):
+		if ('email' in request.data and 'password' in request.data and 'display_name' in request.data and
+				request.data['email'] != '' and request.data['password'] != '' and request.data['display_name'] != ''):
+			try:  # check this email hasn't already been registered
+				user = self.model.objects.get(email=request.data['email'])
+				user = None  # if already registered, don't let them register another name wtih existing email
+			except self.model.DoesNotExist:  # if this email not already registered, turn visitor into user & add info
+				user = self.model.objects.get(pk=request.user.pk)  # get visitor account (already logged in)
+				user.groups.clear()  # clear visitor group
+				user.groups.add(2)  # change to user
+				print('CHANGED VISITOR')
+				user.display_name = request.data['display_name']  # add new user account info
+				user.email = request.data['email']
+				user.password = make_password(request.data['password'])
+				user.do_get_emails = True
+				user.is_superuser = False
+				user.is_staff = False
+				user.save()
+				user = authenticate_login(request)  # login user
+			return user
+		else:
+			return None
 
-	#def register_by_line(self, request):
-	#	display_name = request.data['display_name']
-	#	line = request.data['line_id']
-	#	line_access_token = request.data['line_access_token']
-	#	get_line = True
-	#	language = request.data['language']
-	#	user = User.objects.create_user(
-	#		display_name=display_name, line=line, line_access_token=line_access_token, get_line=get_line,
-	#		language=language,
-	#	)
-	#	user.save()
-	#	group = Group.objects.get(name='User')
-	#	group.user_set.add(user)
-	#	self.login(self, request)
-	#	return user
+	def line_new_device(self, request):
+		if config('PYTHON_ENV', default='production') == 'development':  # get url depending on dev or prod
+			uri = 'http://127.0.0.1:8080/loginRegister'
+		else:
+			uri = 'https://www.eventhorizon.vip/loginRegister'
+		url = 'https://api.line.me/oauth2/v2.1/token'  # use code to get access token
+		data = {
+			'grant_type': 'authorization_code',
+			'code': request.data['code'],
+			'redirect_uri': uri,
+			'client_id': config('LOGIN_CHANNEL_ID'),
+			'client_secret': config('LOGIN_CHANNEL_SECRET'),
+		}
+		headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+		getAccessToken_response = json.loads(requests.post(url, headers=headers, data=data).content)
+		url = 'https://api.line.me/v2/profile'  # use access token to get profile info
+		headers = {'Authorization': 'Bearer ' + getAccessToken_response['access_token']}
+		profile_response = json.loads(requests.get(url, headers=headers).content)
+		try:  # try to get a user with this user id, if there is one then set all the new data to their account
+			user = User.objects.get(line_id=profile_response['userId'])
+			user = verify_update_line_info(request, user)  # verify validity of current line data and put new data
+		except User.DoesNotExist:  # if there was no user with this id, turn visitor into user & add info
+			user = self.model.objects.get(pk=request.user.pk)  # get visitor account (already logged in)
+			user.groups.clear()  # clear visitor group
+			user.groups.add(2)  # change to user
+			print('CHANGED VISITOR')
+			user.display_name = profile_response['displayName']  # add new user account info
+			user.line_id = profile_response['userId']
+			user.line_access_token = getAccessToken_response['access_token']
+			user.line_refresh_token = getAccessToken_response['refresh_token']
+			user.do_get_lines = True
+			user.do_get_line_display_name = True
+			user.save()
+			user = authenticate_login(request)  # login user
+		return user
+		
 
 	def login(self, request):
-		user = auth.authenticate(request)
-		if user:
-			auth.login(request, user)
+		#return authenticate_login(request)  # FOR EMERGENCY LOGIN
+		visitor = None
+		if request.user.groups.filter(id=3).exists():  # if visitor made this request
+			visitor = self.model.objects.get(pk=request.user.pk)  # get current visitor
+		user = authenticate_login(request)  # it will try to login with email or line before session
+		if user:  # if logged into a user
+			if not user.groups.filter(id=3).exists() and visitor:  # if not visitor, but a visitor made the request
+				visitor.delete()  # delete the visitor account that made the request
+				print('DELETED VISITOR')
+			return user  # done
+		else:  # if couldn't log into a user, not even a visitor, make a new visitor
+			user = new_visitor(request)
+			request.user = user
+			user = authenticate_login(request)  # login user
 		return user
 
 	def logout(self, request):
@@ -126,11 +168,27 @@ class LineViewset(viewsets.ViewSet):
 		return Response(response)
 
 	def consumption(self, request):
-		response = api_to_line('consumption')
+		url = 'https://api.line.me/v2/bot/message/quota/consumption'
+		headers = {
+			'Content-Type': 'application/json',
+			'Authorization': 'Bearer ' + config('MESSAGING_CHANNEL_ACCESS_TOKEN'),
+		}
+		response = requests.get(url, headers=headers)
 		return response
 
 	def broadcast(self, request):
-		response = api_to_line('broadcast', message=request.data['message'])
+		url = 'https://api.line.me/v2/bot/message/broadcast'
+		headers = {
+			'Content-Type': 'application/json',
+			'Authorization': 'Bearer ' + config('MESSAGING_CHANNEL_ACCESS_TOKEN'),
+		}
+		data = json.dumps({
+			'messages': [{
+				"type": "text",
+				"text": request.data['message'],
+			}]
+		})
+		response = requests.post(url, headers=headers, data=data)
 		return response
 
 	def push(self, request):
@@ -138,72 +196,33 @@ class LineViewset(viewsets.ViewSet):
 			'mikey': config('MIKEY_LINE_USER_ID'),
 			'stu': config('STU_LINE_USER_ID'),
 		},
-		towho = mikeyOrStu[request.data['to']]
-		response = api_to_line('push', message=request.data['message'], towho=towho)
+		url = 'https://api.line.me/v2/bot/message/push'
+		headers = {
+			'Content-Type': 'application/json',
+			'Authorization': 'Bearer ' + config('MESSAGING_CHANNEL_ACCESS_TOKEN'),
+		}
+		data = json.dumps({
+			'to': mikeyOrStu[request.data['to']],
+			'messages': [{
+				"type": "text",
+				"text": request.data['message'],
+			}]
+		})
+		response = requests.post(url, headers=headers, data=data)
 		return response
-
-	def new_device(self, request):
-		if config('PYTHON_ENV', default='production') == 'development':
-			uri = 'http://127.0.0.1:8080/loginRegister'
-		else:
-			uri = 'https://www.eventhorizon.vip/loginRegister'
-		params = {
-			'grant_type': 'authorization_code',
-			'code': request.data['code'],
-			'redirect_uri': uri,
-			'client_id': config('LOGIN_CHANNEL_ID'),
-			'client_secret': config('LOGIN_CHANNEL_SECRET'),
-		}
-		getAccessToken_response =  api_to_line('getAccessToken', params=params)
-		params = {
-			'access_token': getAccessToken_response['access_token'],
-		}
-		profile_response = api_to_line('profile', params=params)
-		print('THIS FAR')
-		try:
-			user = User.objects.get(line_id=profile_response['userId'])
-			user.line_access_token = getAccessToken_response['access_token']
-			user.line_refresh_token = getAccessToken_response['refresh_token']
-			user.language = request.data['language']
-			user.random_secret = SecretsViewset.retrieve(SecretsViewset, None, 'random_secret').content.decode("utf-8")
-			if user.do_get_line_display_name:
-				user.display_name = profile_response['displayName']
-			user.save()
-		except User.DoesNotExist:
-			request.data['display_name'] = profile_response['displayName']
-			request.data['line_id'] = profile_response['userId']
-			request.data['line_access_token'] = getAccessToken_response['access_token']
-			request.data['line_refresh_token'] = getAccessToken_response['refresh_token']
-			user = new_user_from_request(request)
-		request.user = user
-		UserViewset.login(UserViewset, request)
-		return user
-		
-	def verify(self, request):
-		user = User.objects.get(pk=request.user.pk)
-		params = {
-			'access_token': user.line_access_token,
-		}
-		response = api_to_line('verify', params=params)
-		if response['client_id']==config('LOGIN_CHANNEL_ID') and response['expires_in'] > 0:
-			response = self.profile(request)
-		elif request.data['expires_in'] <= 0:
-			1
-
-	#def profile(self, request):
-	#	user = User.objects.get(pk=request.user.pk)
-	#	params = {
-	#		'access_token': user.line_access_token,
-	#	}
-	#	if request.data['client_id'] == config('LOGIN_CHANNEL_ID') and request.data['expires_in'] > 0:
-	#		response = api_to_line('profile', params=params)
-	#	elif request.data['expires_in'] <= 0:
-	#		# TODO need to do refresh of access token
-	#		response = None
-	#	return response
 
 
 class SecretsViewset(viewsets.ViewSet):
+	queryset = []
+	secrets_dict = {
+		'random_secret': secrets.token_urlsafe(16),
+		'login_channel_id': config('LOGIN_CHANNEL_ID'),
+	}
+	def retrieve(self, request, pk=None):
+		return HttpResponse(self.secrets_dict[pk])
+
+
+class AlertViewset(viewsets.ViewSet):
 	queryset = []
 	secrets_dict = {
 		'random_secret': secrets.token_urlsafe(16),

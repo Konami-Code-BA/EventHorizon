@@ -2,6 +2,12 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib import admin
 from django.contrib.auth.models import BaseUserManager
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth.models import Group
+
+
+class Alert(models.Model):  # True = must show. False = don't show.
+	cookies = models.BooleanField(default=True)
 
 
 class UserManager(BaseUserManager):
@@ -9,27 +15,40 @@ class UserManager(BaseUserManager):
 
 	def create_user(self, **extra_fields):
 		user = self.model(**extra_fields)
+		user.is_superuser = False
+		user.is_staff = False
 		user.save()
+		return user
+
+	def create_superuser(self, **extra_fields):
+		user = self.model(**extra_fields)
+		user.password = make_password(extra_fields['password'])
+		user.is_superuser = True
+		user.is_staff = True
+		user.save()
+		group = Group.objects.get(id=1)
+		group.user_set.add(user)
 		return user
 
 
 class User(AbstractUser):
-	display_name = models.CharField(max_length=40, default='', blank=False)
-	language = models.CharField(max_length=2, default='EN', blank=False)
-	do_get_emails = models.BooleanField(default=False, blank=False)
+	display_name = models.CharField(max_length=40, default='', blank=True)
+	language = models.CharField(max_length=2, default='EN', blank=True)
+	do_get_emails = models.BooleanField(default=False, blank=True)
 	line_id = models.CharField(max_length=40, default='', blank=True)
 	line_access_token = models.CharField(max_length=300, default='', blank=True)
 	line_refresh_token = models.CharField(max_length=40, default='', blank=True)
-	do_get_line_display_name = models.BooleanField(default=True, blank=False)
-	is_line_friend = models.BooleanField(default=False, blank=False)
-	do_get_lines = models.BooleanField(default=False, blank=False)
+	do_get_line_display_name = models.BooleanField(default=True, blank=True)
+	is_line_friend = models.BooleanField(default=False, blank=True)
+	do_get_lines = models.BooleanField(default=False, blank=True)
 	random_secret = models.CharField(max_length=40, default='', blank=True)
 	ip_continent_name = models.CharField(max_length=40, default='', blank=True)
 	ip_country_name = models.CharField(max_length=40, default='', blank=True)
 	ip_state_prov = models.CharField(max_length=40, default='', blank=True)
 	ip_city = models.CharField(max_length=40, default='', blank=True)
-	ip_date = models.CharField(max_length=40, default='', blank=True)
 	username = models.CharField(max_length=40, unique=False, default='', blank=True)
+	visit_count = models.IntegerField(default=1, blank=True)
+	alerts = models.ManyToManyField(Alert, blank=True)
 	objects = UserManager()
 
 
@@ -40,7 +59,7 @@ class UserAdmin(admin.ModelAdmin):
 		'id', 'display_name', 'email', 'do_get_emails', 'line_id', 'line_access_token', 'line_refresh_token',
 		'do_get_line_display_name', 'is_line_friend', 'do_get_lines', 'language', 'groups', 'user_permissions',
 		'is_staff', 'is_superuser', 'last_login', 'date_joined', 'ip_continent_name', 'ip_country_name',
-		'ip_state_prov', 'ip_city',
+		'ip_state_prov', 'ip_city', 'visit_count', 'alerts', 'random_secret'
 	)
 
 
