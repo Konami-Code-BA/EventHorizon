@@ -71,7 +71,6 @@ const router = new Router({
 router.beforeEach(
     async(to, from, next) => {
         await apiFunctions.login({})
-        console.log('IN FUCKING INDEX', store.user)
         if (to.meta.userGroups.length === 0) {
             next()
             return
