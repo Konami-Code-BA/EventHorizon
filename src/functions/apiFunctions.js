@@ -16,7 +16,6 @@ export default {
         let output = store.defaultUser
         await this.axiosCall[method](this.ApiBaseUrl + uri, data)
             .then(response => {
-                console.log('response', response)
                 if (response.data !== '' && data.command !== 'logout') {
                     output = response.data
                 }
@@ -67,7 +66,6 @@ export default {
     async login(data) {
         data['command'] = 'login'
         await this.userApiFunction('post', '/api/user/', data)
-        console.log('USER', store.user)
     },
     async lineNewDevice(code) {
         await this.lineApiFunction('post', '/api/user/', {

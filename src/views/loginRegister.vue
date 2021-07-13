@@ -46,11 +46,6 @@
 		//	}
 		//},
 		async mounted () {
-			console.log('code', this.$route.query.code)
-			console.log('friendship_status_changed', this.$route.query.friendship_status_changed)
-			console.log('state', this.$route.query.state)
-			console.log('error', this.$route.query.error)
-			console.log('error_description', this.$route.query.error_description)
 			await this.tryLineNewDevice()
 			this.loading = false
 		},
@@ -74,8 +69,6 @@
 				if (this.$route.query.code && this.stateCookie === this.$route.query.state) {
 					await apiFunctions.lineNewDevice(this.$route.query.code)
 					this.$router.push({ name: 'home' })
-				} else {
-					console.log('not logged in yet')
 				}
 			}
 		} // methods
