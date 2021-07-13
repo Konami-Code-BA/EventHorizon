@@ -32,9 +32,6 @@
 		data () {
 			return {
 				store: store,
-				usernameInput: '',
-				passwordInput: '',
-				showPassword: false,
 				loading: true,
 			}
 		},
