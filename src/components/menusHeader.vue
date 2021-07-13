@@ -1,9 +1,9 @@
 <template>
 	<div>
-		<div v-if="!loading">
+		<div>
 			<div class="header">
 				<div>
-					<button v-on:click.prevent="mainMenu=!mainMenu" class="no-border-button"
+					<button v-on:click.prevent="mainMenu=true" class="no-border-button"
 						v-if="isAuthenticatedUser">
 						<big>{{ t('MENU') }}</big>
 					</button>
@@ -13,7 +13,7 @@
 					</button>
 				</div>
 				<div>
-					<button v-on:click.prevent="languageMenu=!languageMenu" class="no-border-button">
+					<button v-on:click.prevent="languageMenu=true" class="no-border-button">
 							<big>A/文</big>
 					</button>
 				</div>
@@ -22,21 +22,21 @@
 				<img src="../assets/eventhorizon.png" class="logo">
 			</div>
 			<transition name="fade">
-				<modal class="mainMenu" v-show="mainMenu" @closeModals="languageMenu = false; mainMenu = false"
+				<modal v-show="mainMenu" @closeModals="languageMenu=false; mainMenu=false"
 					id="mainMenu">
-					<template v-slot:contents>
+					<div slot="contents" class="mainMenu">
 						<div style="text-align: right">
-							<button v-on:click.prevent="mainMenu=!mainMenu" class="close-button">
+							<button v-on:click.prevent="mainMenu=false" class="close-button">
 								{{'✖\n'}}
 							</button>
 						</div>
 						<div>
-							<button v-on:click.prevent="$router.push({ name: 'home' })" class="no-border-button">
+							<button v-on:click.prevent="$emit('logoutLoading'); $router.push({ name: 'home' })" class="no-border-button">
 								<big>{{ t('HOME') }}</big>
 							</button>
 						</div><br><br>
 						<div>
-							<button v-on:click.prevent="$router.push({ name: 'accountSettings' })"
+							<button v-on:click.prevent="$emit('logoutLoading'); $router.push({ name: 'accountSettings' })"
 								class="no-border-button">
 								<big>{{ t('SETTINGS') }}</big>
 							</button>
@@ -46,15 +46,15 @@
 								<big>{{ t('LOGOUT') }}</big>
 							</button>
 						</div><br>
-					</template>
+					</div>
 				</modal>
 			</transition>
 			<transition name="fade">
-				<modal class="languageMenu" v-show="languageMenu" @closeModals="languageMenu = false; mainMenu = false"
+				<modal v-show="languageMenu" @closeModals="languageMenu=false; mainMenu=false"
 					id="languageMenu">
-					<template v-slot:contents>
+					<div slot="contents" class="languageMenu">
 						<div style="text-align: right">
-							<button v-on:click.prevent="languageMenu=!languageMenu" class="close-button">
+							<button v-on:click.prevent="languageMenu=false" class="close-button">
 								{{'✖\n'}}
 							</button>
 						</div>
@@ -68,12 +68,9 @@
 								<big>日本語</big>
 							</button>
 						</div><br>
-					</template>
+					</div>
 				</modal>
 			</transition>
-		</div>
-		<div class="box" v-else>
-			Loading...
 		</div>
 	</div>
 </template>
@@ -97,61 +94,58 @@
 			modal,
 		},
 		props: {
-			isLoginPage: { default: false },
 		},
 		computed: {
-			isAuthenticatedUser () { return Boolean(store.user.display_name) },
+			isAuthenticatedUser () { return store.user.groups.includes(1) || store.user.groups.includes(2) },
 		},
 		async mounted () {
-			this.loading = false
 		},
 		methods: {
 			t (w) { return translations.t(w) },
 			async logout () {
+				this.$emit('logoutLoading')
 				this.mainMenu = false
 				await apiFunctions.logout()
 				this.$router.push({ name: 'frontPage' })
+				//location.reload()
 			},
 			async english () {
 				let lang = 'EN'
 				store.user.language = lang
 				this.languageMenu = false
-				if (store.user.display_name) {
-					await apiFunctions.updateUserLanguage()
-				}
+				await apiFunctions.updateUserLanguage()
 			},
 			async japanese () {
 				let lang = 'JP'
 				store.user.language = lang
 				this.languageMenu = false
-				if (store.user.display_name) {
-					await apiFunctions.updateUserLanguage()
-				}
+				await apiFunctions.updateUserLanguage()
 			},
 		}
 	}
 </script>
 <style scoped>
 	.mainMenu {
-		position: absolute;
+		position: fixed;
+		z-index: 10000;
+		background-color: #00022e;
+		border-radius: 15px;
 		padding: 20px;
 		width: 50%;
-		text-align: left;
-		top: 30px;
+		top: 40px;
 		left: 0;
 	}
 	.languageMenu {
-		position: absolute;
+		position: fixed;
+		z-index: 10000;
+		background-color: #00022e;
+		border-radius: 15px;
 		padding: 20px;
 		width: 50%;
-		text-align: left;
-		top: 30px;
+		top: 40px;
 		right: 0;
 	}
 	.languageIcon {
 		height: 16px;
-	}
-	.fade-enter-active, .fade-leave-active {
-		transition: opacity .3s;
 	}
 </style>

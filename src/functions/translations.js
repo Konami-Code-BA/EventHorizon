@@ -110,6 +110,22 @@ export default {
             'EN': 'COMING SOON',
             'JP': '近日公開'
         },
+        'LOGIN WITH EMAIL': {
+            'EN': 'LOGIN WITH EMAIL',
+            'JP': 'Eメールでログイン'
+        },
+        'REGISTER WITH EMAIL': {
+            'EN': 'REGISTER WITH EMAIL',
+            'JP': 'Eメールで登録'
+        },
+        'OK': {
+            'EN': 'OK',
+            'JP': '了解'
+        },
+        'This site uses cookies': {
+            'EN': 'This site\nuses cookies',
+            'JP': 'このサイトでは\nクッキーが使われています'
+        },
     },
 
     t: function(w) {

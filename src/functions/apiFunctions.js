@@ -16,6 +16,7 @@ export default {
         let output = store.defaultUser
         await this.axiosCall[method](this.ApiBaseUrl + uri, data)
             .then(response => {
+                console.log('response', response)
                 if (response.data !== '' && data.command !== 'logout') {
                     output = response.data
                 }
@@ -54,35 +55,27 @@ export default {
         return output
     },
     // USERS ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-    async registerByEmail(displayName, email, password) {
+    async registerWithEmail(displayName, email, password) {
         await this.userApiFunction('post', '/api/user/', {
-            command: 'register_by_email',
+            command: 'register_with_email',
             display_name: displayName,
             email: email,
             password: password,
             language: store.user.language,
         })
     },
-    //async registerByLine(line, lineAccessToken) {
-    //    await this.userApiFunction('post', '/api/user/', {
-    //        command: 'register_by_line',
-    //        line: line,
-    //        lineAccessToken: lineAccessToken,
-    //        language: store.user.language,
-    //    })
-    //},
     async login(data) {
         data['command'] = 'login'
-        console.log('login')
         await this.userApiFunction('post', '/api/user/', data)
+        console.log('USER', store.user)
     },
-    //async loginByLine(email, password) {
-    //    await this.userApiFunction('post', '/api/user/', {
-    //        command: 'login',
-    //		email: email,
-    //		password: password,
-    //    })
-    //},
+    async lineNewDevice(code) {
+        await this.lineApiFunction('post', '/api/user/', {
+            command: 'line_new_device',
+            code: code,
+            language: store.user.language,
+        })
+    },
     async logout() {
         await this.userApiFunction('post', '/api/user/', {
             command: 'logout',
@@ -103,16 +96,6 @@ export default {
         await this.userApiFunction('patch', '/api/user/' + store.user.id + '/', {
             command: 'update_user_do_get_emails',
             getEmail: store.user.do_get_emails,
-        })
-    },
-    async updateUserLocation() {
-        await this.userApiFunction('patch', '/api/user/' + store.user.id + '/', {
-            command: 'update_user_location',
-            ip_continent_name: store.user.ip_continent_name,
-            ip_country_name: store.user.ip_country_name,
-            ip_state_prov: store.user.ip_state_prov,
-            ip_city: store.user.ip_city,
-            ip_date: store.user.ip_date,
         })
     },
     // LINE ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -139,20 +122,6 @@ export default {
             message: 'sup this is a broadcast message',
         })
     },
-    //async lineGetAccessToken(code, state) {
-    //    await this.lineApiFunction('post', '/api/line/', {
-    //        command: 'get_access_token',
-    //        code: code,
-    //        state: state,
-    //    })
-    //},
-    async lineNewDevice(code) {
-        await this.lineApiFunction('post', '/api/line/', {
-            command: 'new_device',
-            code: code,
-            language: store.user.language,
-        })
-    },
     // SECRETS /////////////////////////////////////////////////////////////////////////////////////////////////////////
     async loginChannelId() {
         let response = await this.secretsApiFunction('login_channel_id')
@@ -161,19 +130,5 @@ export default {
     async state() {
         let response = await this.secretsApiFunction('random_secret')
         return response
-    },
-    async ip() {
-        axios.defaults.withCredentials = false
-        await this.axiosCall['get']('https://api.db-ip.com/v2/free/self')
-            .then(response => {
-                store.user.ip_continent_name = response.data['continentName']
-                store.user.ip_country_name = response.data['countryName']
-                store.user.ip_state_prov = response.data['stateProv']
-                store.user.ip_city = response.data['city']
-                store.user.ip_date = new Date().toISOString()
-            })
-            .catch(error => {
-                console.log(`ip ERROR:`, error)
-            })
     },
 }

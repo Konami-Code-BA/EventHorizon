@@ -1,9 +1,10 @@
 <template>
 	<div>
 		<div v-if="!loading">
-			<menus-header/>
+			<menus-header @logoutLoading="loading=true"/>
 			<div class="box">
 				<h1>{{ t('HOME') }}</h1>
+				<h2>{{ store.user.display_name }}</h2>
 				<div style="display: flex; align-items: center; color:grey"><h2>{{ t('UPCOMING EVENTS') }}</h2><small>　({{ t('COMING SOON') }})</small></div>
 				<div style="display: flex; align-items: center; color:grey"><h2>{{ t('MY EVENTS') }}</h2><small>　({{ t('COMING SOON') }})</small></div>
 				<div style="display: flex; align-items: center; color:grey"><h2>{{ t('TBA') }}</h2><small>　({{ t('COMING SOON') }})</small></div>

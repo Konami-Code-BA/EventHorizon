@@ -1,11 +1,11 @@
 <template>
 	<div>
 		<div v-if="!loading">
-			<menus-header/>
+			<menus-header @logoutLoading="loading=true"/>
 			<div class="box">
 				<div style="display: flex; width: 100%">
-					<button v-on:click.prevent="$router.push(name='loginByEmail')" class="box-item" style="flex-grow: 1">Login With Email</button>
-					<button v-on:click.prevent="$router.push(name='registerByEmail')" class="box-item" style="flex-grow: 1">Register With Email</button>
+					<button v-on:click.prevent="loading=true; $router.push(name='loginByEmail')" class="box-item" style="flex-grow: 1">{{t('LOGIN WITH EMAIL')}}</button>
+					<button v-on:click.prevent="loading=true; $router.push(name='registerWithEmail')" class="box-item" style="flex-grow: 1">{{t('REGISTER WITH EMAIL')}}</button>
 				</div>
 				<div class="box-item"></div>
 					<button v-on:click.prevent="loginByLine()" class="box-item line" style="flex-grow: 1">
@@ -51,7 +51,7 @@
 			console.log('state', this.$route.query.state)
 			console.log('error', this.$route.query.error)
 			console.log('error_description', this.$route.query.error_description)
-			this.tryLineNewDevice()
+			await this.tryLineNewDevice()
 			this.loading = false
 		},
 		methods: {
@@ -59,15 +59,8 @@
 			replaceAll (str, match, replace) {
 				return str.replace(new RegExp(match, 'g'), () => replace);
 			},
-			async loginChannelId () {
-				let response = await apiFunctions.loginChannelId()
-				return response
-			},
-			async state () {
-				let response = await apiFunctions.state()
-				return response
-			},
 			async loginByLine () {
+				this.loading = true
 				let loginChannelId = await apiFunctions.loginChannelId()
 				let state = await apiFunctions.state()
 				document.cookie = `state=${state}`;

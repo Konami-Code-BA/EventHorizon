@@ -36,6 +36,9 @@
 		.fade-enter, .fade-leave-to {
 			opacity: 0;
 		}
+		.fade-enter-active, .fade-leave-active {
+			transition: opacity .3s;
+		}
 		.logo {
 			width: 50%;
 			margin-left: 50%;
