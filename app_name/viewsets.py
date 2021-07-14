@@ -244,6 +244,8 @@ class SecretsViewset(viewsets.ViewSet):
 		'login_channel_id': config('LOGIN_CHANNEL_ID'),
 	}
 	def retrieve(self, request, pk=None):
+		print('getting secret', pk)
+		print('result is', self.secrets_dict[pk])
 		return HttpResponse(self.secrets_dict[pk])
 
 

@@ -63,7 +63,9 @@
 				this.loading = true
 				let loginChannelId = await apiFunctions.loginChannelId()
 				let state = await apiFunctions.state()
+				console.log('state', state)
 				document.cookie = `state=${state}`;
+				console.log('this.stateCookie', this.stateCookie)
 				let lineLoginRedirectUrl = 'https%3A%2F%2Fwww.eventhorizon.vip%2FloginRegister'
 				if (process.env.NODE_ENV == 'development') {
 					lineLoginRedirectUrl = 'http%3A%2F%2F127.0.0.1%3A8080%2FloginRegister'
