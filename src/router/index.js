@@ -70,23 +70,25 @@ const router = new Router({
 
 router.beforeEach(
     async(to, from, next) => {
-        await apiFunctions.login({})
-        if (to.meta.userGroups.length === 0) {
+        if (store.user.groups[0] === 100) { // if never logged in, not even to visitor account, login
+            await apiFunctions.login({})
+        }
+        if (to.meta.userGroups.length === 0) { // this path has no requirements, go ahead
             next()
             return
-        } else {
+        } else { // this path does have requirements for group permission
             for (let i = 0; i < to.meta.userGroups.length; i++) {
                 for (let j = 0; j < store.user.groups.length; j++) {
-                    if (to.meta.userGroups[i] === store.user.groups[j]) { // permission granted
+                    if (to.meta.userGroups[i] === store.user.groups[j]) { // permission granted, go ahead
                         next()
                         return
                     }
                 }
-            }
-            // permission denied
+            } // permission denied
+            // if path coming from is login, register, or front page, don't change pages on failure
             if (['loginRegister', 'loginWithEmail', 'frontPage', 'registerWithEmail'].includes(from.name)) {
                 return
-            } else {
+            } else { // any other page, when permission denied, get sent to front page
                 next({ name: 'frontPage' })
                 return
             }

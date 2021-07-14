@@ -60,7 +60,6 @@ export default {
             display_name: displayName,
             email: email,
             password: password,
-            language: store.user.language,
         })
     },
     async login(data) {
@@ -68,10 +67,9 @@ export default {
         await this.userApiFunction('post', '/api/user/', data)
     },
     async lineNewDevice(code) {
-        await this.lineApiFunction('post', '/api/user/', {
+        await this.userApiFunction('post', '/api/user/', {
             command: 'line_new_device',
             code: code,
-            language: store.user.language,
         })
     },
     async logout() {
