@@ -109,8 +109,10 @@ def authenticate_login(request):
 
 
 def verify_update_line_info(request, user):  # for exisitng user with line id, access token already gotten
+	print('step 7')
 	visitor = None
 	if request.user.groups.filter(id=3).exists():  # if visitor made this request to login by line
+		print('step 8')
 		visitor = type(user).objects.get(pk=request.user.pk)  # get visitor account making the request
 	url = 'https://api.line.me/oauth2/v2.1/token'  # no matter if access token expired or not, refresh access token 1st
 	headers = {'Content-Type': 'application/x-www-form-urlencoded'}
@@ -120,32 +122,45 @@ def verify_update_line_info(request, user):  # for exisitng user with line id, a
 		'client_id': config('LOGIN_CHANNEL_ID'),
 		'client_secret': config('LOGIN_CHANNEL_SECRET'),
 	}
+	print('step 9')
 	refreshAccessToken_response = json.loads(requests.post(url, headers=headers, data=data).content)
+	print('step 10')
 	# if refresh token is expired, this is session login attempt, block attempt and force them to click the line
 	# login button and do a line login from the start
 	if 'error' in refreshAccessToken_response:
+		print('step 11')
 		return None
 	user.line_access_token = refreshAccessToken_response['access_token']  # save new access token to user data
 	user.line_refresh_token = refreshAccessToken_response['refresh_token']  # also refresh token
 	url = 'https://api.line.me/oauth2/v2.1/verify?access_token=' + user.line_access_token  # first verify access token
+	print('step 12')
 	verify_response = json.loads(requests.get(url).content)
+	print('step 13')
 	if verify_response['client_id'] != config('LOGIN_CHANNEL_ID'):  # make sure verification not intercepted
+		print('step 14')
 		return None  # client id can't be confirmed
 	url = 'https://api.line.me/v2/profile'  # get line profile info
 	headers = {'Authorization': 'Bearer ' + user.line_access_token}
+	print('step 15')
 	profile_response = json.loads(requests.get(url, headers=headers).content)
+	print('step 16')
 	if user.do_get_line_display_name:  # update display name with line profile name unless user set not to
 		user.display_name = profile_response['displayName']
 	if profile_response['userId'] == user.line_id:  # double check line id is correct and this wasnt somehow faked
+		print('step 17')
 		user.save()
 		request.data['line_id'] = user.line_id
+		print('step 18', user.__dict__)
 		user = authenticate_login(request)  # login again just in case, and to get new location info
+		print('step 19', user.__dict__)
 		if user:  # logged into a user
+			print('step 20')
 			if not user.groups.filter(id=3).exists() and visitor:  # if not visitor, but request made by visitor
 				visitor.delete()  # delete the visitor account that made the request
 				print('DELETED VISITOR')
 		return user
 	else:  # line id can't be confirmed
+		print('step 21')
 		return None
 
 
