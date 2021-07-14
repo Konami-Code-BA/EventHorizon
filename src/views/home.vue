@@ -3,11 +3,15 @@
 		<div v-if="!loading">
 			<menus-header @logoutLoading="loading=true"/>
 			<div class="box">
-				<h1>{{ t('HOME') }}</h1>
-				<h2>{{ store.user.display_name }}</h2>
-				<div style="display: flex; align-items: center; color:grey"><h2>{{ t('UPCOMING EVENTS') }}</h2><small>　({{ t('COMING SOON') }})</small></div>
-				<div style="display: flex; align-items: center; color:grey"><h2>{{ t('MY EVENTS') }}</h2><small>　({{ t('COMING SOON') }})</small></div>
-				<div style="display: flex; align-items: center; color:grey"><h2>{{ t('TBA') }}</h2><small>　({{ t('COMING SOON') }})</small></div>
+				<div class="box-item" style="font-size: 36px;">{{ t('HOME') }}</div>
+				<div class="box-height"></div>
+				<div class="box-item" style="font-size: 24px;">{{ store.user.display_name }}</div>
+				<div class="box-height"></div>
+				<div class="box-item coming-soon-list"><div style="font-size: 16px;">{{ t('UPCOMING EVENTS') }}</div><small>({{ t('COMING SOON') }})</small></div>
+				<div class="box-height"></div>
+				<div class="box-item coming-soon-list"><div style="font-size: 16px;">{{ t('MY EVENTS') }}</div><small>({{ t('COMING SOON') }})</small></div>
+				<div class="box-height"></div>
+				<div class="box-item coming-soon-list"><div style="font-size: 16px;">{{ t('TBA') }}</div><small>({{ t('COMING SOON') }})</small></div>
 			</div>
 			<!--a href="https://lin.ee/UeSvNxR"><img height="36" border="0" src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png"></a-->
 		</div>
@@ -42,4 +46,10 @@
 	} // export
 </script>
 <style scoped>
+.coming-soon-list {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	color: grey;
+}
 </style>

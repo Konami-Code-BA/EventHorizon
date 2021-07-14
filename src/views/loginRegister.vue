@@ -3,10 +3,9 @@
 		<div v-if="!loading">
 			<menus-header @logoutLoading="loading=true"/>
 			<div class="box">
-				<div style="display: flex; width: 100%">
-					<button v-on:click.prevent="loading=true; $router.push(name='loginWithEmail')" class="box-item" style="flex-grow: 1">{{t('LOGIN WITH EMAIL')}}</button>
-					<button v-on:click.prevent="loading=true; $router.push(name='registerWithEmail')" class="box-item" style="flex-grow: 1">{{t('REGISTER WITH EMAIL')}}</button>
-				</div>
+				<button v-on:click.prevent="loading=true; $router.push(name='loginWithEmail')" class="box-item" style="flex-grow: 1">{{t('LOGIN WITH EMAIL')}}</button>
+				<div class="box-height"></div>
+				<button v-on:click.prevent="loading=true; $router.push(name='registerWithEmail')" class="box-item" style="flex-grow: 1">{{t('REGISTER WITH EMAIL')}}</button>
 				<div class="box-height"></div>
 					<button v-on:click.prevent="loginByLine()" class="line-coloring">
 						<div class="line-button">
@@ -15,7 +14,7 @@
 									<img src="../assets/line.png" class="line-img">
 								</div>
 								<div class="line-text">
-									Line
+									LINE
 								</div>
 							</div>
 						</div>
@@ -97,7 +96,7 @@
 		align-items: center;
 		justify-content: space-between;
 		height: inherit !important;
-		width: 100px;
+		width: 70px;
 	}
 	.line-img {
 		height: 26px;
