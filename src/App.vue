@@ -23,8 +23,8 @@
 			color: #d2e6ff;
 			font-weight: 600; /*400=normal, 700=bold*/
 			font-size: 16px;
-			-webkit-font-smoothing: antialiased;
-			-moz-osx-font-smoothing: grayscale;
+			/*-webkit-font-smoothing: antialiased;
+			-moz-osx-font-smoothing: grayscale;*/
 			background-color: #18002e; /*00033e 20003e*/
 			max-width: 500px;
 			width: 90%;
@@ -32,6 +32,9 @@
 			margin-left: 50%;
 			transform: translate(-50%, 0%);
 			overflow: hidden;
+			-webkit-appearance: none;
+			-moz-appearance: none;
+			appearance: none;
 		}
 		/*[v-cloak] {
 			display: none;
@@ -74,12 +77,14 @@
 			border: 1px solid #18002e;
 			border-radius: 15px;
 			height: 30px;
-			transition-duration: 0.3s;
 			padding: 10px;
 			display: flex;
 			align-items: center;
 			justify-content: space-around;
 			cursor: pointer;
+			-webkit-appearance: none;
+			-moz-appearance: none;
+			appearance: none;
 		}
 		input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus,
 		input:-webkit-autofill:active, input[type=text], input[type=email], input[type=password],
@@ -99,6 +104,9 @@
 			align-items: center;
 			justify-content: space-around;
 			outline: none !important;
+			-webkit-appearance: none;
+			-moz-appearance: none;
+			appearance: none;
 		}
 		::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
   			color: #5841e9;
@@ -114,7 +122,11 @@
 			height: 30px;
 			display: flex;
 			align-items: center;
+			text-align: middle;
 			justify-content: space-around;
+			-webkit-appearance: none;
+			-moz-appearance: none;
+			appearance: none;
 		}
 		.small-button {
 			height: 19px !important;
@@ -136,6 +148,7 @@
 			color: #d2e6ff;
 			display: flex;
 			align-items: center;
+			text-align: middle;
 			justify-content: space-around;
 		}
 		.header {
