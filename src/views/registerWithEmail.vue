@@ -8,12 +8,12 @@
 						<input :placeholder="t('DISPLAY NAME')" v-model="displayName" type="text" class="box-item"
 							id="displayName" autocorrect="off" autocapitalize="none"/>
 					</div>
-					<div class="box-item"></div>
+					<div class="box-height"></div>
 					<div>
 						<input :placeholder="t('EMAIL')" v-model="emailInput" type="email" class="box-item"
 							autocorrect="off" autocapitalize="none"/>
 					</div>
-					<div class="box-item"></div>
+					<div class="box-height"></div>
 					<div style="display: flex">
 						<input :placeholder="t('PASSWORD')" v-model="passwordInput"
 							:type="[showPassword ? 'text' : 'password']" class="box-item" style="flex-grow: 1"
@@ -28,7 +28,7 @@
 							</small>
 						</button>
 					</div>
-					<div class="box-item"></div>
+					<div class="box-height"></div>
 					<div style="display: flex">
 						<input :placeholder="t('PASSWORD CONFIRMATION')" v-model="passwordInput2"
 							:type="[showPassword2 ? 'text' : 'password']" class="box-item" style="flex-grow: 1"
@@ -43,8 +43,8 @@
 							</small>
 						</button>
 					</div>
-					<div v-if="showError" class="box-item" :class="{'shake' : shakeIt}" style="color: red">✘</div>
-					<div v-else class="box-item">✅</div>
+					<div v-if="showError" class="box-height" :class="{'shake' : shakeIt}" style="color: red">✘</div>
+					<div v-else class="box-height">✅</div>
 				</form>
 				<button v-on:click.prevent="registerWithEmail()" class="box-item">
 					{{ t('REGISTER') }}

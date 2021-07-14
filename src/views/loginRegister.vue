@@ -7,14 +7,18 @@
 					<button v-on:click.prevent="loading=true; $router.push(name='loginWithEmail')" class="box-item" style="flex-grow: 1">{{t('LOGIN WITH EMAIL')}}</button>
 					<button v-on:click.prevent="loading=true; $router.push(name='registerWithEmail')" class="box-item" style="flex-grow: 1">{{t('REGISTER WITH EMAIL')}}</button>
 				</div>
-				<div class="box-item"></div>
+				<div class="box-height"></div>
 					<button v-on:click.prevent="loginByLine()" class="line-coloring">
-					<div class="line-button">
-					<div class="line-alignment">
-						<div><img src="../assets/line.png" class="line-img"></div>
-						<div class="line-text">Line</div>
-					</div>
-					</div>
+						<div class="line-button">
+							<div class="line-alignment">
+								<div>
+									<img src="../assets/line.png" class="line-img">
+								</div>
+								<div class="line-text">
+									Line
+								</div>
+							</div>
+						</div>
 					</button>
 			</div>
 			<!--a href="https://lin.ee/UeSvNxR"><img height="36" border="0" src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png"></a-->
@@ -78,23 +82,20 @@
 </script>
 <style scoped>
 	.line-coloring {
-		background-color: #00c300;
+		background-color: #00b300;
 		color: white;
 		padding: 0;
-		text-align: center;
 	}
 	.line-button {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-    	background-size:cover;
 	}
 	.line-alignment {
 		display: flex;
 		flex-direction: row;
 		align-items: center;
 		justify-content: space-between;
-    	background-size:cover;
 		height: inherit !important;
 		width: 100px;
 	}
