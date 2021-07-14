@@ -53,7 +53,7 @@
 				<modal v-show="languageMenu" @closeModals="languageMenu=false; mainMenu=false"
 					id="languageMenu">
 					<div slot="contents" class="languageMenu">
-						<div style="text-align: right">
+						<div style="align-self: flex-end">
 							<button v-on:click.prevent="languageMenu=false" class="close-button">
 								{{'✖\n'}}
 							</button>
@@ -136,6 +136,8 @@
 		left: 0;
 	}
 	.languageMenu {
+		display: flex;
+		flex-direction: column;
 		position: fixed;
 		z-index: 10000;
 		background-color: #00022e;

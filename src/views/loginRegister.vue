@@ -4,13 +4,13 @@
 			<menus-header @logoutLoading="loading=true"/>
 			<div class="box">
 				<div style="display: flex; width: 100%">
-					<button v-on:click.prevent="loading=true; $router.push(name='loginByEmail')" class="box-item" style="flex-grow: 1">{{t('LOGIN WITH EMAIL')}}</button>
+					<button v-on:click.prevent="loading=true; $router.push(name='loginWithEmail')" class="box-item" style="flex-grow: 1">{{t('LOGIN WITH EMAIL')}}</button>
 					<button v-on:click.prevent="loading=true; $router.push(name='registerWithEmail')" class="box-item" style="flex-grow: 1">{{t('REGISTER WITH EMAIL')}}</button>
 				</div>
 				<div class="box-item"></div>
 					<button v-on:click.prevent="loginByLine()" class="box-item line" style="flex-grow: 1">
-					<div style="display: flex; height: 100%; width: 70px; align-items: center; justify-content: space-between;">
-						<img src="../assets/line.png" style="position: relative; height: 100%;">
+					<div style="display: flex; height: inherit; width: 70px; align-items: center; justify-content: space-between;">
+						<img src="../assets/line.png" style="position: relative; height: inherit;">
 						<div>Line</div>
 					</div>
 					</button>
