@@ -7,8 +7,10 @@
 					<h1>{{ t('SETTINGS') }}</h1>
 				</div>
 				<div style="display: flex; align-items: center;">
-					<h2>{{ t('GET EMAILS') }}</h2>
-					<input type="checkbox" v-model="store.user.getEmails" />
+					<button class="no-border-button" v-on:click.prevent="store.user.do_get_emails=!store.user.do_get_emails">
+						<h2>{{ t('GET EMAILS') }}&nbsp;</h2>
+					</button>
+					<input type="checkbox" v-model="store.user.do_get_emails" style="width: 24px; height: 24px;"/>
 				</div>
 				<!--div>
 					<h2>{{ t('CHANGE PASSWORD') }}</h2>
@@ -39,7 +41,7 @@
 			}
 		},
 		watch: {
-			async 'store.user.getEmails' () {
+			async 'store.user.do_get_emails' () {
 				await apiFunctions.updateUserDoGetEmails()
 			},
 		},

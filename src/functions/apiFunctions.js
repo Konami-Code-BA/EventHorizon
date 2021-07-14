@@ -93,7 +93,7 @@ export default {
     async updateUserDoGetEmails() {
         await this.userApiFunction('patch', '/api/user/' + store.user.id + '/', {
             command: 'update_user_do_get_emails',
-            getEmail: store.user.do_get_emails,
+            do_get_emails: store.user.do_get_emails,
         })
     },
     async updateUserAlerts(name) {

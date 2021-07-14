@@ -18,6 +18,7 @@
 			src: url(./assets/FuturaLT.woff);
 		}
 		body {
+			position: fixed;
 			font-family: Futura; /*Segoe UI*/
 			color: #d2e6ff;
 			font-weight: 600; /*400=normal, 700=bold*/
@@ -26,7 +27,8 @@
 			-moz-osx-font-smoothing: grayscale;
 			background-color: #18002e; /*00033e 20003e*/
 			max-width: 500px;
-			width: 100%;
+			width: 95%;
+			height: 95%;
 			margin-left: 50%;
 			transform: translate(-50%, 0%);
 			overflow: hidden;
@@ -75,7 +77,7 @@
 			transition-duration: 0.3s;
 			padding: 10px;
 			display: inline-flex;
-			align-items: center; 
+			align-items: center;
 			justify-content: space-around;
 			cursor: pointer;
 		}
@@ -105,10 +107,10 @@
 			border: none;
 			background: none;
 			/*transition-duration: 0.1s;*/
-			width: 100%;
-			height: inherit;
 			color: #d2e6ff;
 			cursor: pointer;
+			padding: 0;
+			height: 16px !important;
 		}
 		.small-button {
 			height: 19px !important;
@@ -122,7 +124,7 @@
 		td {
 			padding: 0;
 		}
-		.close-button {
+		.close-button, .close-button:hover, .close-button:active, .close-button.pointer {
 			border: none;
 			background: none;
 			height: 16px;
@@ -133,7 +135,7 @@
 			display: flex;
 			flex-direction: row;
 			justify-content: space-between;
-			height: inherit;
+			height: 16px;
 			padding-bottom: 10px;
 			color: #inherit;
 		}
@@ -158,12 +160,12 @@
 		/* Absolute Center Spinner */
 		.loading {
 			position: fixed;
-			z-index: 999;
+			z-index: 1000;
 			height: 2em;
 			width: 2em;
-			overflow: show;
-			margin-left: 50%;
-			margin-top: 50%;
+			bottom: 50%;
+			left: 50%;
+			transform: translate(-5px, -5px);
 		}
 		/* Transparent Overlay */
 		.loading:before {
@@ -174,7 +176,6 @@
 			left: 0;
 			width: 100%;
 			height: 100%;
-			background-color: rgba(0,0,0,0.3);
 		}
 		/* :not(:required) hides these rules from IE9 and below */
 		.loading:not(:required) {
