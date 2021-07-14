@@ -3,8 +3,8 @@ export default {
     translationsDict: {
         '': { '': '' },
         'EXPAND YOUR REACH TO NEW HORIZONS': {
-            'EN': 'EXPAND YOUR REACH TO NEW HORIZONS',
-            'JP': '新たな地平線への到達を目指して'
+            'EN': 'EXPAND YOUR REACH\nTO NEW HORIZONS',
+            'JP': '新たな地平線への\n到達を目指して'
         },
         'LOGIN': {
             'EN': 'LOGIN',

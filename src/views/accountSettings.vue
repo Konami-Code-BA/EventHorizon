@@ -9,7 +9,7 @@
 				<div class="dual-set">
 					<div>
 						<button class="no-border-button" v-on:click.prevent="store.user.do_get_emails=!store.user.do_get_emails">
-							<h2>{{ t('GET EMAILS') }}&nbsp;</h2>
+							<div style="font-size: 18px;">{{ t('GET EMAILS') }}&nbsp;</div>
 						</button>
 					</div>
 					<div>

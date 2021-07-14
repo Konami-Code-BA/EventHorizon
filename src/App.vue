@@ -22,7 +22,7 @@
 			font-family: Futura; /*Segoe UI*/
 			color: #d2e6ff;
 			font-weight: 600; /*400=normal, 700=bold*/
-			font-size: 14px;
+			font-size: 16px;
 			-webkit-font-smoothing: antialiased;
 			-moz-osx-font-smoothing: grayscale;
 			background-color: #18002e; /*00033e 20003e*/
