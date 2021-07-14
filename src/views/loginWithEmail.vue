@@ -8,7 +8,7 @@
 						<input :placeholder="t('EMAIL')" v-model="emailInput" type="text" class="box-item"
 							id="email" autocorrect="off" autocapitalize="none"/>
 					</div>
-					<div class="box-item"></div>
+					<div class="box-height"></div>
 					<div style="display: flex">
 						<input :placeholder="t('PASSWORD')" v-model="passwordInput"
 							:type="[showPassword ? 'text' : 'password']" class="box-item" style="flex-grow: 1"
@@ -24,7 +24,7 @@
 						</button>
 					</div>
 				</form>
-				<div class="box-item">
+				<div class="box-height">
 					<!--button class="no-border-button small-button" v-on:click.prevent="sendEmail()">
 						<small><small>{{t('FORGOT PASSWORD')}}</small></small>
 					</button-->
@@ -33,7 +33,6 @@
 					{{ t('LOGIN') }}
 				</button>
 			</div>
-			<div class="box-item"></div>
 			<!--a href="https://lin.ee/UeSvNxR"><img height="36" border="0" src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png"></a-->
 		</div>
 		<div class="loading" v-else></div>
