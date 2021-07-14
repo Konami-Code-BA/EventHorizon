@@ -58,7 +58,6 @@
 			box-sizing: border-box;
 			width: 100%;
 			max-width: 100%;
-			padding: 2px;
 			height: 30px;
 		}
 		.box-center {
@@ -71,14 +70,10 @@
 			font-size: inherit;
 			font-size: 16px;
 			background-color: #5300e1; /*000bff*/
-			outline: 1px solid #18002e;
-			border: none;
+			border: 1px solid #18002e;
 			border-radius: 15px;
 			height: 30px;
-			padding: 10px;
-			display: flex;
-			align-items: center;
-			justify-content: space-around;
+    		position: relative;
 			cursor: pointer;
 		}
 		input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus,
@@ -111,11 +106,7 @@
 			color: #d2e6ff;
 			cursor: pointer;
 			padding: 5px;
-			height: 30px;
-			display: flex;
-			align-items: center;
-			vertical-align: middle;
-			justify-content: space-around;
+			height: 60px;
 		}
 		.small-button {
 			height: 19px !important;
@@ -135,10 +126,8 @@
 			height: 30px;
 			padding: 5px;
 			color: #d2e6ff;
-			display: flex;
-			align-items: center;
-			text-align: middle;
 			justify-content: space-around;
+			height: 60px;
 		}
 		.header {
 			display: flex;
