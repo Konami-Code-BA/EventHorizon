@@ -132,7 +132,7 @@ export default {
         return response
     },
     async state() {
-        let response = await this.secretsApiFunction('random_secret')
+        let response = await this.secretsApiFunction('new_random_secret')
         return response
     },
 }

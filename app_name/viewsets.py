@@ -239,21 +239,15 @@ class LineViewset(viewsets.ViewSet):
 
 class SecretsViewset(viewsets.ViewSet):
 	queryset = []
-	secrets_dict = {
-		'random_secret': secrets.token_urlsafe(16),
-		'login_channel_id': config('LOGIN_CHANNEL_ID'),
-	}
 	def retrieve(self, request, pk=None):
-		print('getting secret', pk)
-		print('result is', self.secrets_dict[pk])
-		return HttpResponse(self.secrets_dict[pk])
+		secrets_dict = {
+			'new_random_secret': secrets.token_urlsafe(16),
+			'login_channel_id': config('LOGIN_CHANNEL_ID'),
+		}
+		return HttpResponse(secrets_dict[pk])
 
 
 class AlertViewset(viewsets.ViewSet):
 	queryset = []
-	secrets_dict = {
-		'random_secret': secrets.token_urlsafe(16),
-		'login_channel_id': config('LOGIN_CHANNEL_ID'),
-	}
 	def retrieve(self, request, pk=None):
-		return HttpResponse(self.secrets_dict[pk])
+		return HttpResponse('')
