@@ -58,7 +58,7 @@
 			modal,
 		},
 		computed: {
-			isAuthenticatedUser () { return store.user.groups.includes(1) || store.user.groups.includes(2) },
+			isAuthenticatedUser () { return [1, 2].includes(store.user.groups[0]) },
 		},
 		data () {
 			return {

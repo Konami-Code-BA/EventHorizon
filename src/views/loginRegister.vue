@@ -71,10 +71,20 @@
 				window.location.replace(`https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=${loginChannelId}&redirect_uri=${lineLoginRedirectUrl}&state=${state}&prompt=consent&bot_prompt=aggressive&scope=profile%20openid`)
 			},
 			async tryLineNewDevice () {
+				this.loading = true
+				console.log('this.$route.query.code', this.$route.query.code)
+				console.log('this.stateCookie', this.stateCookie)
+				console.log('this.$route.query.state', this.$route.query.state)
+				console.log('this.stateCookie === this.$route.query.state', this.stateCookie === this.$route.query.state)
 				if (this.$route.query.code && this.stateCookie === this.$route.query.state) {
+					console.log('step 1')
 					await apiFunctions.lineNewDevice(this.$route.query.code)
+					console.log('step 2')
 					this.$router.push({ name: 'home' })
+					console.log('step 3')
 				}
+				console.log('failure it seems')
+				this.loading = false
 			}
 		} // methods
 	} // export
