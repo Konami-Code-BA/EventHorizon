@@ -22,7 +22,7 @@
 			font-family: Futura; /*Segoe UI*/
 			color: #d2e6ff;
 			font-weight: 600; /*400=normal, 700=bold*/
-			font-size: 16px;
+			font-size: 14px;
 			-webkit-font-smoothing: antialiased;
 			-moz-osx-font-smoothing: grayscale;
 			background-color: #18002e; /*00033e 20003e*/
@@ -70,13 +70,15 @@
 			color: inherit;
 			font-weight: inherit;
 			font-size: inherit;
-			font-size: 16px;
+			font-size: inherit;
 			background-color: #5300e1;  /*000bff*/
 			border: 1px solid #18002e;  /*18002e*/
 			border-radius: 15px;
 			height: 30px;
 			cursor: pointer;
 			padding: 0;
+			padding-left: 3px;
+			padding-right: 3px;
 		}
 		input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus,
 		input:-webkit-autofill:active, input[type=text], input[type=email], input[type=password],
@@ -146,18 +148,23 @@
 
 		/* Absolute Center Spinner */
 		.loading {
+			content: '';
 			position: fixed;
+			display: inline-block;
+			left: 0;
 			z-index: 1000;
-			height: 2em;
-			width: 2em;
-			bottom: 50%;
-			left: 50%;
 			transform: translate(-5px, -5px);
+			margin-left: 50%;
+			margin-top: 50%;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
 		}
 		/* Transparent Overlay */
 		.loading:before {
 			content: '';
-			display: block;
+			display: inline-block;
 			position: fixed;
 			top: 0;
 			left: 0;
@@ -175,11 +182,10 @@
 		}
 		.loading:not(:required):after {
 			content: '';
-			display: block;
+			display: inline-block;
 			font-size: 10px;
 			width: 1em;
 			height: 1em;
-			margin-top: -0.5em;
 			-webkit-animation: spinner 1500ms infinite linear;
 			-moz-animation: spinner 1500ms infinite linear;
 			-ms-animation: spinner 1500ms infinite linear;
