@@ -58,6 +58,8 @@
 			box-sizing: border-box;
 			width: 100%;
 			max-width: 100%;
+		}
+		.box-height{
 			height: 30px;
 		}
 		.box-center {
@@ -69,12 +71,12 @@
 			font-weight: inherit;
 			font-size: inherit;
 			font-size: 16px;
-			background-color: #5300e1; /*000bff*/
-			border: 1px solid #18002e;
+			background-color: #5300e1;  /*000bff*/
+			border: 1px solid #18002e;  /*18002e*/
 			border-radius: 15px;
 			height: 30px;
-    		position: relative;
 			cursor: pointer;
+			padding: 0;
 		}
 		input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus,
 		input:-webkit-autofill:active, input[type=text], input[type=email], input[type=password],
@@ -89,10 +91,8 @@
 			background-color: #ffe07a;
  			-webkit-box-shadow: 0 0 0 30px #ffe07a inset;
 			height: 30px;
-			padding: 10px;
-			display: flex;
-			align-items: center;
-			justify-content: space-around;
+			padding: 0;
+			padding-left: 10px;
 			outline: none !important;
 		}
 		::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
@@ -100,13 +100,13 @@
 			font-weight: inherit;
 		}
 		.no-border-button, .no-border-button:hover, .no-border-button:active, .no-border-button.pointer {
-			border: 1px solid white;
+			border: none;
 			background: none;
 			/*transition-duration: 0.1s;*/
 			color: #d2e6ff;
 			cursor: pointer;
-			padding: 5px;
-			height: 60px;
+			height: 30px;
+			padding: 0;
 		}
 		.small-button {
 			height: 19px !important;
@@ -119,15 +119,6 @@
 		}
 		td {
 			padding: 0;
-		}
-		.close-button, .close-button:hover, .close-button:active, .close-button.pointer {
-			border: 1px solid white;
-			background: none;
-			height: 30px;
-			padding: 5px;
-			color: #d2e6ff;
-			justify-content: space-around;
-			height: 60px;
 		}
 		.header {
 			display: flex;
@@ -151,7 +142,6 @@
 		.wide-img {
 			width: 100%;
 		}
-
 		/* SPINNER */
 
 		/* Absolute Center Spinner */

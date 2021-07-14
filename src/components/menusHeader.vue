@@ -26,7 +26,7 @@
 					id="mainMenu">
 					<div slot="contents" class="mainMenu">
 						<div style="text-align: right">
-							<button v-on:click.prevent="mainMenu=false" class="close-button">
+							<button v-on:click.prevent="mainMenu=false" class="no-border-button">
 								{{'✖\n'}}
 							</button>
 						</div>
@@ -54,7 +54,7 @@
 					id="languageMenu">
 					<div slot="contents" class="languageMenu">
 						<div style="align-self: flex-end">
-							<button v-on:click.prevent="languageMenu=false" class="close-button">
+							<button v-on:click.prevent="languageMenu=false" class="no-border-button">
 								{{'✖\n'}}
 							</button>
 						</div>

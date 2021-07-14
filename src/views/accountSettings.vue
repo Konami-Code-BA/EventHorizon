@@ -6,11 +6,15 @@
 				<div>
 					<h1>{{ t('SETTINGS') }}</h1>
 				</div>
-				<div style="display: flex; align-items: center;">
-					<button class="no-border-button" v-on:click.prevent="store.user.do_get_emails=!store.user.do_get_emails">
-						<h2>{{ t('GET EMAILS') }}&nbsp;</h2>
-					</button>
-					<input type="checkbox" v-model="store.user.do_get_emails" style="width: 24px; height: 24px;"/>
+				<div class="dual-set">
+					<div>
+						<button class="no-border-button" v-on:click.prevent="store.user.do_get_emails=!store.user.do_get_emails">
+							<h2>{{ t('GET EMAILS') }}&nbsp;</h2>
+						</button>
+					</div>
+					<div>
+						<input type="checkbox" class="checkbox" v-model="store.user.do_get_emails"/>
+					</div>
 				</div>
 				<!--div>
 					<h2>{{ t('CHANGE PASSWORD') }}</h2>
@@ -54,4 +58,15 @@
 	} // export
 </script>
 <style scoped>
+.dual-set {
+	height: 24px;
+	display: flex;
+	flex-direction: row;
+	align-items: flex-end;
+	padding: 0;
+}
+.checkbox {
+	height: 20px;
+	width: 20px;
+}
 </style>
