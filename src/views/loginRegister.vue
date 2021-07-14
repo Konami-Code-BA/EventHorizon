@@ -8,10 +8,12 @@
 					<button v-on:click.prevent="loading=true; $router.push(name='registerWithEmail')" class="box-item" style="flex-grow: 1">{{t('REGISTER WITH EMAIL')}}</button>
 				</div>
 				<div class="box-item"></div>
-					<button v-on:click.prevent="loginByLine()" class="box-item line" style="flex-grow: 1">
-					<div style="display: flex; height: inherit; width: 70px; align-items: center; justify-content: space-between;">
-						<img src="../assets/line.png" style="position: relative; height: inherit;">
-						<div>Line</div>
+					<button v-on:click.prevent="loginByLine()" class="line-coloring">
+					<div class="line-button">
+					<div class="line-alignment">
+						<div><img src="../assets/line.png" class="line-img"></div>
+						<div class="line-text">Line</div>
+					</div>
 					</div>
 					</button>
 			</div>
@@ -75,8 +77,28 @@
 	} // export
 </script>
 <style scoped>
-	.line {
+	.line-coloring {
 		background-color: #00c300;
 		color: white;
+		padding: 0;
+		text-align: center;
+	}
+	.line-button {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+    	background-size:cover;
+	}
+	.line-alignment {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+    	background-size:cover;
+		height: inherit !important;
+		width: 100px;
+	}
+	.line-img {
+		height: 26px;
 	}
 </style>
