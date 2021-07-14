@@ -5,7 +5,7 @@ import apiFunctions from '@/functions/apiFunctions.js'
 import frontPage from '@/views/frontPage'
 import loginRegister from '@/views/loginRegister'
 import registerWithEmail from '@/views/registerWithEmail'
-import loginByEmail from '@/views/loginByEmail'
+import loginWithEmail from '@/views/loginWithEmail'
 import accountSettings from '@/views/accountSettings'
 import home from '@/views/home'
 import experiment1 from '@/views/experiment1'
@@ -41,9 +41,9 @@ const router = new Router({
         component: registerWithEmail,
         meta: { userGroups: [1, 3, 5, ] },
     }, {
-        path: '/loginByEmail',
-        name: 'loginByEmail',
-        component: loginByEmail,
+        path: '/loginWithEmail',
+        name: 'loginWithEmail',
+        component: loginWithEmail,
         meta: { userGroups: [1, 3, 5, ] }, // [1, 3, 5, ]
     }, {
         path: '/experiment1',
@@ -84,7 +84,7 @@ router.beforeEach(
                 }
             }
             // permission denied
-            if (['loginRegister', 'loginByEmail', 'frontPage', 'registerWithEmail'].includes(from.name)) {
+            if (['loginRegister', 'loginWithEmail', 'frontPage', 'registerWithEmail'].includes(from.name)) {
                 return
             } else {
                 next({ name: 'frontPage' })
