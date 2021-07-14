@@ -76,7 +76,7 @@
 			height: 30px;
 			transition-duration: 0.3s;
 			padding: 10px;
-			display: inline-flex;
+			display: flex;
 			align-items: center;
 			justify-content: space-around;
 			cursor: pointer;
@@ -95,8 +95,9 @@
  			-webkit-box-shadow: 0 0 0 30px #ffe07a inset;
 			height: 30px;
 			padding: 10px;
-			display: inline-flex;
+			display: flex;
 			align-items: center;
+			justify-content: space-around;
 			outline: none !important;
 		}
 		::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
@@ -111,8 +112,9 @@
 			cursor: pointer;
 			padding: 5px;
 			height: 30px;
-			display: inline-flex;
+			display: flex;
 			align-items: center;
+			justify-content: space-around;
 		}
 		.small-button {
 			height: 19px !important;
@@ -132,14 +134,14 @@
 			height: 30px;
 			padding: 5px;
 			color: #d2e6ff;
-			display: inline-flex;
+			display: flex;
 			align-items: center;
+			justify-content: space-around;
 		}
 		.header {
 			display: flex;
 			flex-direction: row;
 			justify-content: space-between;
-			height: 16px;
 			padding-bottom: 10px;
 			color: #inherit;
 		}
