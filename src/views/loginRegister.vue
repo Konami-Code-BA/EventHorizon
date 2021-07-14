@@ -10,7 +10,7 @@
 				<div class="box-item"></div>
 					<button v-on:click.prevent="loginByLine()" class="box-item line" style="flex-grow: 1">
 					<div style="display: flex; height: 100%; width: 70px; align-items: center; justify-content: space-between;">
-						<img src="../assets/line.png" style="height: inherit; width: inherit">
+						<img src="../assets/line.png" style="position: relative; height: 100%;">
 						<div>Line</div>
 					</div>
 					</button>
