@@ -27,8 +27,8 @@
 			-moz-osx-font-smoothing: grayscale;
 			background-color: #18002e; /*00033e 20003e*/
 			max-width: 500px;
-			width: 95%;
-			height: 95%;
+			width: 90%;
+			top: 10px;
 			margin-left: 50%;
 			transform: translate(-50%, 0%);
 			overflow: hidden;
@@ -104,13 +104,15 @@
 			font-weight: inherit;
 		}
 		.no-border-button, .no-border-button:hover, .no-border-button:active, .no-border-button.pointer {
-			border: none;
+			border: 1px solid white;
 			background: none;
 			/*transition-duration: 0.1s;*/
 			color: #d2e6ff;
 			cursor: pointer;
-			padding: 0;
-			height: 16px !important;
+			padding: 5px;
+			height: 30px;
+			display: inline-flex;
+			align-items: center;
 		}
 		.small-button {
 			height: 19px !important;
@@ -125,11 +127,13 @@
 			padding: 0;
 		}
 		.close-button, .close-button:hover, .close-button:active, .close-button.pointer {
-			border: none;
+			border: 1px solid white;
 			background: none;
-			height: 16px;
-			padding: 0;
+			height: 30px;
+			padding: 5px;
 			color: #d2e6ff;
+			display: inline-flex;
+			align-items: center;
 		}
 		.header {
 			display: flex;
