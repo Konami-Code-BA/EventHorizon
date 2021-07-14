@@ -67,10 +67,12 @@ export default {
         await this.userApiFunction('post', '/api/user/', data)
     },
     async lineNewDevice(code) {
+        console.log('lineNewDevice')
         await this.userApiFunction('post', '/api/user/', {
             command: 'line_new_device',
             code: code,
         })
+        console.log('lineNewDevice finished')
     },
     async logout() {
         await this.userApiFunction('post', '/api/user/', {
