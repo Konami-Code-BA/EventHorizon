@@ -130,6 +130,7 @@
 				this.showPassword2 = false
 				await apiFunctions.registerWithEmail(this.displayName, this.emailInput, this.passwordInput)
 				this.$router.push({ name: 'home' })
+				this.loading = false
 			},
 			showButton () {
 				functions.focusCursor('password')
