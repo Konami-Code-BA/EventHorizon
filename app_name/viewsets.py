@@ -11,6 +11,7 @@ from django.http import HttpResponse
 import secrets, requests, json
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
+from collections import namedtuple
 
 
 class UserViewset(viewsets.ModelViewSet):
@@ -30,13 +31,16 @@ class UserViewset(viewsets.ModelViewSet):
 	# PARTIAL_UPDATE ###################################################################################################
 	def partial_update(self, request, pk=None):  # PATCH {prefix}/{lookup}/
 		user = eval(f"self.{request.data['command']}(request, pk)")
+		request.user = user
 		return get_return_queryset(self, request, pk=pk)
 	
 	def update_user_language(self, request, pk):
 		try:
 			user = self.model.objects.get(pk=pk)
 		except self.model.DoesNotExist:
-			return None
+			user = namedtuple('user', 'error')
+			user.error = 'a user with this id could not be found'
+			return user
 		user.language = request.data['language']
 		user.save()
 		return user
@@ -45,7 +49,9 @@ class UserViewset(viewsets.ModelViewSet):
 		try:
 			user = self.model.objects.get(pk=pk)
 		except self.model.DoesNotExist:
-			return None
+			user = namedtuple('user', 'error')
+			user.error = 'a user with this id could not be found'
+			return user
 		user.do_get_emails = request.data['do_get_emails']
 		user.save()
 		return user
@@ -54,7 +60,9 @@ class UserViewset(viewsets.ModelViewSet):
 		try:
 			user = self.model.objects.get(pk=pk)
 		except self.model.DoesNotExist:
-			return None
+			user = namedtuple('user', 'error')
+			user.error = 'a user with this id could not be found'
+			return user
 		user.is_line_friend = request.data['is_line_friend']
 		user.save()
 		return user
@@ -63,7 +71,9 @@ class UserViewset(viewsets.ModelViewSet):
 		try:
 			user = self.model.objects.get(pk=pk)
 		except self.model.DoesNotExist:
-			return None
+			user = namedtuple('user', 'error')
+			user.error = 'a user with this id could not be found'
+			return user
 		alert = Alert.objects.get(name=request.data['name'])
 		if user.alerts.filter(name=request.data['name']).exists():  # if user has this alert, remove it
 			alert.user_set.remove(user)
@@ -77,16 +87,17 @@ class UserViewset(viewsets.ModelViewSet):
 	# CREATE ###########################################################################################################
 	def create(self, request):  # POST {prefix}/
 		user = eval(f"self.{request.data['command']}(request)")
-		if user:
-			request.user = user
-		return get_return_queryset(self, request, pk=request.user.pk)
+		request.user = user
+		return get_return_queryset(self, request)
 
 	def register_with_email(self, request):
 		if ('email' in request.data and 'password' in request.data and 'display_name' in request.data and
 				request.data['email'] != '' and request.data['password'] != '' and request.data['display_name'] != ''):
 			try:  # check this email hasn't already been registered
+				# if already registered, don't let them register another name with existing email
 				user = self.model.objects.get(email=request.data['email'])
-				user = None  # if already registered, don't let them register another name wtih existing email
+				user = namedtuple('user', 'error')
+				user.error = 'this email is already registered'
 			except self.model.DoesNotExist:  # if this email not already registered, turn visitor into user & add info
 				user = self.model.objects.get(pk=request.user.pk)  # get visitor account (already logged in)
 				user.groups.clear()  # clear visitor group
@@ -101,7 +112,9 @@ class UserViewset(viewsets.ModelViewSet):
 				user = authenticate_login(request)  # login user
 			return user
 		else:
-			return None
+			user = namedtuple('user', 'error')
+			user.error = 'email / password / display name are missing or empty'
+			return user
 
 	def line_new_device(self, request):
 		if config('PYTHON_ENV', default='production') == 'development':  # get url depending on dev or prod
@@ -145,7 +158,7 @@ class UserViewset(viewsets.ModelViewSet):
 		if request.user.groups.filter(id=3).exists():  # if visitor made this request
 			visitor = self.model.objects.get(pk=request.user.pk)  # get current visitor
 		user = authenticate_login(request)  # it will try to login with email or line before session
-		if user:  # if logged into a user
+		if not hasattr(user, 'error'):  # logged into a user
 			if not user.groups.filter(id=3).exists() and visitor:  # if not visitor, but a visitor made the request
 				visitor.delete()  # delete the visitor account that made the request
 			return user  # done

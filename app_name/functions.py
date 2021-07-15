@@ -1,7 +1,7 @@
 from rest_framework.response import Response
 import requests, json, secrets
 from decouple import config
-from collections import namedtuple
+from collections import namedtuple, OrderedDict
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
 from django.contrib import auth
@@ -16,32 +16,40 @@ def is_admin_or_this_user(request, pk):  # is admin, or is a user that matches t
 
 
 def get_return_queryset(self, request, pk=None):
-		if request.user.is_authenticated:  # is an authenticated user
-				if pk:  # trying to access one user
-						checker = is_admin_or_this_user(request, pk)  # check if is admin or is this user
-				else:  # trying to access all users
-						checker = is_admin(request)  # check if is admin
-				objects = self.serializer_class.Meta.model.objects
-				if checker:  # if accessing one user: is admin or is this user. if accessing all users, is admin
-						if pk:  # trying to access one user
-							try:
-								queryset = objects.get(pk=pk)  # get the user
-							except self.serializer_class.Meta.model.DoesNotExist:
-								queryset = None
-						else:  # trying to access all users
-								queryset = objects.all()  # get all users
-				else:  # is some user
-						if pk:  # trying to access one other user
-								queryset = None  # get nothing
-						else:  # trying to access all users
-								queryset = [request.user]  # get only himself
-		else:  # unauthenticated user
-				queryset = None  # get nothing
-		if queryset:
-			serializer_data = self.serializer_class(queryset, many=not bool(pk)).data
-		else:
-			serializer_data = None
-		return Response(serializer_data)
+	if hasattr(request.user, 'error'):  # not a user, just an error
+		queryset = [request.user]
+	elif request.user.is_authenticated:  # is an authenticated user
+		if pk:  # trying to access one user
+			checker = is_admin_or_this_user(request, pk)  # check if is admin or is this user
+		else:  # trying to access all users
+			checker = is_admin(request)  # check if is admin
+		objects = self.serializer_class.Meta.model.objects
+		if checker:  # if accessing one user: is admin or is this user. if accessing all users, is admin
+			if pk:  # trying to access one user
+				try:
+					queryset = objects.get(pk=pk)  # get the user
+				except self.serializer_class.Meta.model.DoesNotExist:
+					user = namedtuple('user', 'error')
+					user.error = 'a user with this id could not be found'
+					queryset = [user]
+			else:  # trying to access all users
+				queryset = objects.all()  # get all users
+		else:  # is some user
+			if pk:  # trying to access one other user
+				user = namedtuple('user', 'error')
+				user.error = 'you don\'t have permission to access other users'
+				queryset = [user]
+			else:  # trying to access all users
+				queryset = [request.user]  # get only himself
+	else:  # unauthenticated user
+		user = namedtuple('user', 'error')
+		user.error = 'you are not an authenticated user'
+		queryset = [user]
+	if hasattr(queryset[0], 'error'):
+		serializer_data = [OrderedDict([('error', queryset[0].error)])]
+	else:
+		serializer_data = self.serializer_class(queryset, many=True).data
+	return Response(serializer_data)
 
 
 def line_bot(line_body):
@@ -102,7 +110,7 @@ def remove_line_friend(line_id):
 
 def authenticate_login(request):
 	user = auth.authenticate(request)
-	if user:
+	if not hasattr(user, 'error'):
 		user.save()
 		auth.login(request, user)
 	return user
@@ -124,13 +132,17 @@ def verify_update_line_info(request, user):  # for exisitng user with line id, a
 	# if refresh token is expired, this is session login attempt, block attempt and force them to click the line
 	# login button and do a line login from the start
 	if 'error' in refreshAccessToken_response:
-		return None
+		user = namedtuple('user', 'error')
+		user.error = 'could not refresh access token'
+		return user
 	user.line_access_token = refreshAccessToken_response['access_token']  # save new access token to user data
 	user.line_refresh_token = refreshAccessToken_response['refresh_token']  # also refresh token
 	url = 'https://api.line.me/oauth2/v2.1/verify?access_token=' + user.line_access_token  # first verify access token
 	verify_response = json.loads(requests.get(url).content)
 	if verify_response['client_id'] != config('LOGIN_CHANNEL_ID'):  # make sure verification not intercepted
-		return None  # client id can't be confirmed
+		user = namedtuple('user', 'error')
+		user.error = 'could not verify client id when trying to verify access token'
+		return user  # client id can't be confirmed
 	url = 'https://api.line.me/v2/profile'  # get line profile info
 	headers = {'Authorization': 'Bearer ' + user.line_access_token}
 	profile_response = json.loads(requests.get(url, headers=headers).content)
@@ -140,12 +152,14 @@ def verify_update_line_info(request, user):  # for exisitng user with line id, a
 		user.save()
 		request.data['line_id'] = user.line_id
 		user = authenticate_login(request)  # login again just in case, and to get new location info
-		if user:  # logged into a user
+		if not hasattr(user, 'error'):  # logged into a user
 			if not user.groups.filter(id=3).exists() and visitor:  # if not visitor, but request made by visitor
 				visitor.delete()  # delete the visitor account that made the request
 		return user
 	else:  # line id can't be confirmed
-		return None
+		user = namedtuple('user', 'error')
+		user.error = 'could not verify line id after getting line profile info'
+		return user
 
 
 def new_visitor(request):

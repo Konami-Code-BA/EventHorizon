@@ -72,6 +72,7 @@
 				this.loading = true
 				await apiFunctions.login({'email': this.emailInput, 'password': this.passwordInput})
 				this.$router.push({ name: 'home' })
+				this.loading = false
 			},
 			showButton () {
 				functions.focusCursor('password')
