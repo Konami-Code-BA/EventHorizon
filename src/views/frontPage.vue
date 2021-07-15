@@ -74,7 +74,6 @@
 			t (w) { return translations.t(w) },
 			async closeCookiesModal () {
 				this.showCookiesModal = false
-				console.log('store.user', store.user)
 				await apiFunctions.updateUserAlerts('Show Cookies')
 			},
 		}

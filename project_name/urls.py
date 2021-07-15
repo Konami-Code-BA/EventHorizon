@@ -13,7 +13,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 	path('webhook/', line_webhook),
     path('', index, name='index'),
-    #path('frontPage/', index, name='index'),
+    path('frontPage/', index, name='index'),
     path('loginRegister/', index, name='index'),
     path('registerWithEmail/', index, name='index'),
     #path('login/', index, name='index'),
