@@ -63,9 +63,7 @@
 				this.loading = true
 				let loginChannelId = await apiFunctions.loginChannelId()
 				let state = await apiFunctions.state()
-				console.log('state', state)
 				document.cookie = `state=${state}`;
-				console.log('this.stateCookie', this.stateCookie)
 				let lineLoginRedirectUrl = 'https%3A%2F%2Fwww.eventhorizon.vip%2FloginRegister'
 				if (process.env.NODE_ENV == 'development') {
 					lineLoginRedirectUrl = 'http%3A%2F%2F127.0.0.1%3A8080%2FloginRegister'
@@ -74,18 +72,10 @@
 			},
 			async tryLineNewDevice () {
 				this.loading = true
-				console.log('this.$route.query.code', this.$route.query.code)
-				console.log('this.stateCookie', this.stateCookie)
-				console.log('this.$route.query.state', this.$route.query.state)
-				console.log('this.stateCookie === this.$route.query.state', this.stateCookie === this.$route.query.state)
 				if (this.$route.query.code && this.stateCookie === this.$route.query.state) {
-					console.log('step 1')
 					await apiFunctions.lineNewDevice(this.$route.query.code)
-					console.log('step 2')
 					this.$router.push({ name: 'home' })
-					console.log('step 3')
 				}
-				console.log('failure it seems')
 				this.loading = false
 			}
 		} // methods
