@@ -13,15 +13,18 @@ export default {
     },
     // API /////////////////////////////////////////////////////////////////////////////////////////////////////////////
     async userApiFunction(method, uri, data) {
-        let output = store.defaultUser
+        let output = store.user
         await this.axiosCall[method](this.ApiBaseUrl + uri, data)
             .then(response => {
-                if (response.data !== '' && data.command !== 'logout') {
-                    output = response.data
+                if (!('error' in response.data[0]) && data.command !== 'logout') {
+                    console.log(`success - userApiFunction ${data.command}`)
+                    output = response.data[0]
+                } else if ('error' in response.data[0]) {
+                    console.log(`*INTERNAL ERROR* - userApiFunction ${data.command}:`, response.data[0]['error'])
                 }
             })
             .catch(error => {
-                console.log(`${data.command} ERROR:`, error)
+                console.log(`*API ERROR* - userApiFunction ${data.command}:`, error)
             })
             .finally(() => {
                 store.user = output
@@ -31,12 +34,15 @@ export default {
         let output = null
         await this.axiosCall[method](this.ApiBaseUrl + uri, data)
             .then(response => {
-                if (response.data !== '') {
+                if (!('error' in response.data)) {
+                    console.log(`success - lineApiFunction ${data.command}`)
                     output = response.data
+                } else {
+                    console.log(`*INTERNAL ERROR* - lineApiFunction ${data.command}:`, response.data['error'])
                 }
             })
             .catch(error => {
-                console.log(`${data.command} ERROR:`, error)
+                console.log(`*API ERROR* - lineApiFunction ${data.command}:`, error)
             })
         return output
     },
@@ -44,12 +50,15 @@ export default {
         let output = null
         await this.axiosCall['get'](this.ApiBaseUrl + '/api/secrets/' + toGet + '/')
             .then(response => {
-                if (response.data !== '') {
+                if (!('error' in response.data)) {
+                    console.log(`success - secretsApiFunction ${toGet}`)
                     output = response.data
+                } else {
+                    console.log(`*INTERNAL ERROR* - secretsApiFunction ${toGet}:`, response.data['error'])
                 }
             })
             .catch(error => {
-                console.log(`${toGet} ERROR:`, error)
+                console.log(`*API ERROR* - secretsApiFunction ${toGet}:`, error)
             })
         return output
     },
