@@ -6,7 +6,8 @@ from django.contrib import auth
 from django.conf import settings
 from decouple import config
 from django.core.mail import send_mail
-from app_name.functions import get_return_queryset, verify_update_line_info, authenticate_login, new_visitor
+from app_name.functions import (get_return_queryset, verify_update_line_info, authenticate_login, new_visitor, 
+	merge_email_into_line_account)
 from django.http import HttpResponse
 import secrets, requests, json
 from django.contrib.auth.hashers import make_password
@@ -80,6 +81,40 @@ class UserViewset(viewsets.ModelViewSet):
 		else:  # if user does not have this alert, add it
 			alert.user_set.add(user)
 		return user
+	
+	def register_email(self, request, pk):
+		if ('email' in request.data and 'password' in request.data and request.data['email'] != '' and
+				request.data['password'] != ''):
+			try:  # get the current user
+				current_user = self.model.objects.get(pk=pk)
+				if current_user.groups.filter(id=3).exists():  # if user is visitor, should be in register_with_email
+					user = namedtuple('user', 'error')
+					user.error = 'something strange happened... a visitor should not be able to run this'
+					return user
+			except self.model.DoesNotExist:  # if can't get current user
+				user = namedtuple('user', 'error')
+				user.error = 'a user with this id could not be found'
+				return user
+			try:  # check if a user with the new email exists
+				existing_user = self.model.objects.get(email=request.data['email'])
+				# if existing user with this email does exist, check their password, and if its good too, merge accounts
+				if existing_user.check_password(request.data['password']):  # if password matches too
+					current_user = merge_email_into_line_account(current_user, existing_user)  # merge accounts
+					return current_user
+				else:  # if password doesn't match
+					user = namedtuple('user', 'error')
+					user.error = 'this email is already registered and this isn\'t the correct password for it'
+					return user
+			except self.model.DoesNotExist:  # if exisiting user with this email doesnt exist, add email to current user
+				current_user.email = request.data['email']
+				current_user.password = make_password(request.data['password'])
+				current_user.do_get_emails = True
+				current_user.save()
+				return current_user
+		else:  # missing email / password info
+			user = namedtuple('user', 'error')
+			user.error = 'missing email / password info'
+			return user
 
 	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
 		return get_return_queryset(self, request, pk=pk)
@@ -102,6 +137,7 @@ class UserViewset(viewsets.ModelViewSet):
 				user = self.model.objects.get(pk=request.user.pk)  # get visitor account (already logged in)
 				user.groups.clear()  # clear visitor group
 				user.groups.add(2)  # change to user
+				print('CHANGE VISITOR')
 				user.display_name = request.data['display_name']  # add new user account info
 				user.email = request.data['email']
 				user.password = make_password(request.data['password'])
@@ -136,11 +172,14 @@ class UserViewset(viewsets.ModelViewSet):
 		profile_response = json.loads(requests.get(url, headers=headers).content)
 		try:  # try to get a user with this user id, if there is one then set all the new data to their account
 			user = User.objects.get(line_id=profile_response['userId'])
+			user.line_access_token = getAccessToken_response['access_token']
+			user.line_refresh_token = getAccessToken_response['refresh_token']
 			user = verify_update_line_info(request, user)  # verify validity of current line data and put new data
 		except User.DoesNotExist:  # if there was no user with this id, turn visitor into user & add info
 			user = self.model.objects.get(pk=request.user.pk)  # get visitor account (already logged in)
 			user.groups.clear()  # clear visitor group
 			user.groups.add(2)  # change to user
+			print('CHANGE VISITOR')
 			user.display_name = profile_response['displayName']  # add new user account info
 			user.line_id = profile_response['userId']
 			user.line_access_token = getAccessToken_response['access_token']
@@ -153,28 +192,34 @@ class UserViewset(viewsets.ModelViewSet):
 		
 
 	def login(self, request):
-		#return authenticate_login(request)  # FOR EMERGENCY LOGIN
-		visitor = None
-		if request.user.groups.filter(id=3).exists():  # if visitor made this request
-			visitor = self.model.objects.get(pk=request.user.pk)  # get current visitor
-		user = authenticate_login(request)  # it will try to login with email or line before session
-		if not hasattr(user, 'error'):  # logged into a user
-			if not user.groups.filter(id=3).exists() and visitor:  # if not visitor, but a visitor made the request
-				visitor.delete()  # delete the visitor account that made the request
-			return user  # done
-		else:  # if couldn't log into a user, not even a visitor, make a new visitor
+		#return authenticate_login(request)  # FOR EMERGENCY LOGIN (also in backends)
+		visitor = False
+		try:
+			user = self.model.objects.get(pk=request.user.pk)  # get current user that made this request
+			if user.groups.filter(id=3).exists():  # if visitor made this request, remember that
+				visitor = request.user
+		except self.model.DoesNotExist:  # if there is no currently existing user or visitor, make a new visitor
 			user = new_visitor(request)
 			request.user = user
-			user = authenticate_login(request)  # login user
-		return user
+		user = authenticate_login(request)  # it will try to login with email or line before loggin in by session
+		if not hasattr(user, 'error'):  # if logged into a user
+			user.visit_count += 1  # add to the visit count
+			user.save()
+			if not user.groups.filter(id=3).exists() and visitor:  # if not visitor, but a visitor made the request
+				visitor.delete()  # delete the visitor account that made the request
+				print('DELETE VISITOR')
+			return user  # done
+		else:  # if couldn't login to anything, probably got an error, so return user anyway
+			return user
 
 	def logout(self, request):
 		try:
 			user = self.model.objects.get(pk=request.user.pk)
 			auth.logout(request)
-			return user
 		except self.model.DoesNotExist:
-			return
+			user = namedtuple('user', 'error')
+			user.error = 'a user with this id could not be found'
+		return user
 	
 	def send_email(self, request):
 		subject = 'Test sending email from site from mikey'
@@ -243,9 +288,3 @@ class SecretsViewset(viewsets.ViewSet):
 			'login_channel_id': config('LOGIN_CHANNEL_ID'),
 		}
 		return HttpResponse(secrets_dict[pk])
-
-
-class AlertViewset(viewsets.ViewSet):
-	queryset = []
-	def retrieve(self, request, pk=None):
-		return HttpResponse('')
