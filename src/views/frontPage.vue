@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div v-if="!loading">
-			<menus-header @logoutLoading="loading=true"/>
+			<menus-header @startLoading="loading=true" @endLoading="loading=false"/>
 			<div class="box">
 				<div style="text-align: center; font-size: 32px;">EVENT HORIZON</div>
 				<div class="box-height"></div>
@@ -29,14 +29,13 @@
 		</div>
 		<div class="loading" v-else></div>
 		<transition name="fade">
-			<modal v-show="showCookiesModal" @closeModals="closeCookiesModal()"
-				id="showCookiesModal">
-				<div slot="contents" class="showCookiesModal">
+			<modal v-show="showCookiesModal" @closeModals="closeCookiesModal()">
+				<div slot="contents" class="cookiesModal">
 					<div style="white-space: pre-line; text-align: center; font-weight: 400;">
 						{{t('This site uses cookies')}}
 					</div><br>
 					<div style="text-align: center">
-						<button v-on:click.prevent="closeCookiesModal()">
+						<button v-on:click.prevent="closeCookiesModal()" style="width: 100%">
 							<big>{{t('OK')}}</big>
 						</button>
 					</div><br><br>
@@ -80,7 +79,7 @@
 	}
 </script>
 <style scoped>
-	.showCookiesModal {
+	.cookiesModal {
 		position: fixed;
 		z-index: 10000;
 		background-color: #00022e;

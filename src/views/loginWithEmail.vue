@@ -1,14 +1,14 @@
 <template>
 	<div>
 		<div v-if="!loading">
-			<menus-header @logoutLoading="loading=true"/>
+			<menus-header @startLoading="loading=true" @endLoading="loading=false"/>
 			<div class="box">
 				<form v-on:keyup.enter="login()">
 					<div>
 						<input :placeholder="t('EMAIL')" v-model="emailInput" type="text" class="box-item"
 							id="email" autocorrect="off" autocapitalize="none"/>
 					</div>
-					<div class="box-height"></div>
+					<div class="box-height"><small>{{emailError}}</small></div>
 					<div style="display: flex">
 						<input :placeholder="t('PASSWORD')" v-model="passwordInput"
 							:type="[showPassword ? 'text' : 'password']" class="box-item" style="flex-grow: 1"
@@ -24,14 +24,13 @@
 						</button>
 					</div>
 				</form>
-				<div class="box-height">
-					<!--button class="no-border-button small-button" v-on:click.prevent="sendEmail()">
-						<small><small>{{t('FORGOT PASSWORD')}}</small></small>
-					</button-->
-				</div>
+				<div class="box-height"><small>{{passwordError}}</small></div>
 				<button v-on:click.prevent="login()" class="box-item">
 					{{ t('LOGIN') }}
 				</button>
+				<!--button class="no-border-button small-button" v-on:click.prevent="sendEmail()">
+					<small><small>{{t('FORGOT PASSWORD')}}</small></small>
+				</button-->
 			</div>
 			<!--a href="https://lin.ee/UeSvNxR"><img height="36" border="0" src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png"></a-->
 		</div>
@@ -59,6 +58,8 @@
 				emailInput: '',
 				passwordInput: '',
 				showPassword: false,
+				emailError: '',
+				passwordError: '',
 			}
 		},
 		async mounted () {
@@ -68,11 +69,19 @@
 		methods: {
 			t (w) { return translations.t(w) },
 			async login () {
-				this.showPassword = false  // cause problem with not remembering password because password setting gone?
-				this.loading = true
-				await apiFunctions.login({'email': this.emailInput, 'password': this.passwordInput})
-				this.$router.push({ name: 'home' })
-				this.loading = false
+				if (this.checkInputs()) {
+					this.showPassword = false
+					this.loading = true
+					let error = await apiFunctions.login({'email': this.emailInput, 'password': this.passwordInput})
+					if (!error) {
+						this.$router.push({ name: 'home' })
+					} else if (error === 'this email is not registered') {
+						this.emailError = error
+					} else if (error === 'incorrect password') {
+						this.passwordError = error
+					}
+					this.loading = false
+				}
 			},
 			showButton () {
 				functions.focusCursor('password')
@@ -80,7 +89,17 @@
 			},
 			async sendEmail() {
 				await apiFunctions.sendEmail()
-			}
+			},
+			checkInputs () {
+				if (this.passwordInput === '' || this.emailInput === '' || !this.emailInput.includes('@') ||
+						!this.emailInput.includes('.')) {
+					//this.showError = true
+					return true
+				} else {
+					//this.showError = false
+					return false
+				}
+			},
 			//goToPage2 () {
 			//	this.$router.push({ name: 'pageTwo', params: { thruParams: 'this was sent from the login page' } })
 			//},

@@ -2,9 +2,9 @@ from rest_framework.response import Response
 import requests, json, secrets
 from decouple import config
 from collections import namedtuple, OrderedDict
-from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
 from django.contrib import auth
+from .models import Alert
 
 
 def is_admin(request):  # is staff and is in the Admin group
@@ -27,7 +27,7 @@ def get_return_queryset(self, request, pk=None):
 		if checker:  # if accessing one user: is admin or is this user. if accessing all users, is admin
 			if pk:  # trying to access one user
 				try:
-					queryset = objects.get(pk=pk)  # get the user
+					queryset = [objects.get(pk=pk)]  # get the user
 				except self.serializer_class.Meta.model.DoesNotExist:
 					user = namedtuple('user', 'error')
 					user.error = 'a user with this id could not be found'
@@ -133,7 +133,7 @@ def verify_update_line_info(request, user):  # for exisitng user with line id, a
 	# login button and do a line login from the start
 	if 'error' in refreshAccessToken_response:
 		user = namedtuple('user', 'error')
-		user.error = 'could not refresh access token'
+		user.error = refreshAccessToken_response['error']
 		return user
 	user.line_access_token = refreshAccessToken_response['access_token']  # save new access token to user data
 	user.line_refresh_token = refreshAccessToken_response['refresh_token']  # also refresh token
@@ -155,6 +155,7 @@ def verify_update_line_info(request, user):  # for exisitng user with line id, a
 		if not hasattr(user, 'error'):  # logged into a user
 			if not user.groups.filter(id=3).exists() and visitor:  # if not visitor, but request made by visitor
 				visitor.delete()  # delete the visitor account that made the request
+				print('DELETE VISITOR')
 		return user
 	else:  # line id can't be confirmed
 		user = namedtuple('user', 'error')
@@ -179,6 +180,27 @@ def new_visitor(request):
 	user.save()
 	group = Group.objects.get(id=3)
 	group.user_set.add(user)
+	alert = Alert.objects.get(name='Show Cookies')
+	alert.user_set.add(user)
+	print('NEW VISITOR')
 	request.data['random_secret'] = user.random_secret
 	auth.login(request, user)
 	return user
+
+
+def merge_email_into_line_account(current_user, existing_user):
+	current_user.password = existing_user.password
+	# last_login remains current_user's
+	current_user.email = existing_user.email
+	# is_active remains current_user's (true)
+	if existing_user.date_joined < current_user.date_joined:
+		current_user.date_joined = existing_user.date_joined
+	# display_name remains current_user's
+	# language remains current_user's
+	current_user.do_get_emails = True
+	# all line things remain current user's
+	# random_secret remains current_user's
+	current_user.visit_count += existing_user.visit_count
+	current_user.save()
+	existing_user.delete()
+	return current_user

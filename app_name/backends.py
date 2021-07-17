@@ -8,9 +8,9 @@ from collections import namedtuple
 class UserBackend(BaseAuthentication):
 	UserModel = get_user_model()
 	def authenticate(self, request):
-		#return self.UserModel.objects.get(email='mdsimeone@gmail.com')  # FOR EMERGENCY LOGIN
+		#return self.UserModel.objects.filter(email='mdsimeone@gmail.com').first()  # FOR EMERGENCY LOGIN
 		if ('email' in request.data and 'password' in request.data and request.data['email'] != '' and
-				request.data['password'] != ''):  # when logging in or registering by email
+				request.data['password'] != ''):  # email
 			try:
 				user = self.UserModel.objects.get(email=request.data['email'])
 				if user.check_password(request.data['password']):
@@ -23,7 +23,7 @@ class UserBackend(BaseAuthentication):
 				user = namedtuple('user', 'error')
 				user.error = 'this email is not registered'
 				return user
-		elif 'line_id' in request.data and request.data['line_id'] != '':  # when new line device
+		elif 'line_id' in request.data and request.data['line_id'] != '':  # new line
 			try:
 				user = self.UserModel.objects.get(line_id=request.data['line_id'])
 
@@ -32,7 +32,7 @@ class UserBackend(BaseAuthentication):
 				user = namedtuple('user', 'error')
 				user.error = 'this line_id is not registered'
 				return user
-		elif 'random_secret' in request.data and request.data['random_secret'] != '':  # when loggin in by random_secret
+		elif 'random_secret' in request.data and request.data['random_secret'] != '':  # random_secret
 			try:
 				user = self.UserModel.objects.get(random_secret=request.data['random_secret'])
 				return user
@@ -52,9 +52,9 @@ class UserBackend(BaseAuthentication):
 				user = namedtuple('user', 'error')
 				user.error = 'this session\'s user_id is not registered (fake session)'
 				return user
-		else:
+		else:  # missing email / password / line id / random secret / session info
 			user = namedtuple('user', 'error')
-			user.error = 'no email / password / line id / random secret / session info of any kind'
+			user.error = 'missing email / password / line id / random secret / session info'
 			return user
 
 	def get_user(self, user_id):
