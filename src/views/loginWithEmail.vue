@@ -69,7 +69,7 @@
 		methods: {
 			t (w) { return translations.t(w) },
 			async login () {
-				if (this.checkInputs()) {
+				if (!this.inputsHaveErrors()) {
 					this.showPassword = false
 					this.loading = true
 					let error = await apiFunctions.login({'email': this.emailInput, 'password': this.passwordInput})
@@ -90,7 +90,7 @@
 			async sendEmail() {
 				await apiFunctions.sendEmail()
 			},
-			checkInputs () {
+			inputsHaveErrors () {
 				if (this.passwordInput === '' || this.emailInput === '' || !this.emailInput.includes('@') ||
 						!this.emailInput.includes('.')) {
 					//this.showError = true
