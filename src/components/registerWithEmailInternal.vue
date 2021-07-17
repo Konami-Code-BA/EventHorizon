@@ -88,15 +88,15 @@
 			}
 		},
 		watch: {
-			'passwordInput2' () { this.checkInputs() },
-			'passwordInput' () { this.checkInputs() },
-			'emailInput' () { this.checkInputs() },
-			'displayName' () { this.checkInputs() },
+			'passwordInput2' () { this.inputsHaveErrors() },
+			'passwordInput' () { this.inputsHaveErrors() },
+			'emailInput' () { this.inputsHaveErrors() },
+			'displayName' () { this.inputsHaveErrors() },
 		},
 		methods: {
 			t (w) { return translations.t(w) },
 			async registerWithEmail () {
-				if (this.checkInputs()) {
+				if (this.inputsHaveErrors()) {
 					this.shakeFunction()
 					return
 				}
@@ -134,7 +134,7 @@
 				functions.focusCursor('password2')
 				this.showPassword2 = !this.showPassword2
 			},
-			checkInputs () {
+			inputsHaveErrors () {
 				if (this.passwordInput !== this.passwordInput2 || this.passwordInput === '' ||
 						this.passwordInput2 === '' || this.emailInput === '' || !this.emailInput.includes('@') ||
 						!this.emailInput.includes('.') || (this.includeDisplayName && this.displayName === '')) {
