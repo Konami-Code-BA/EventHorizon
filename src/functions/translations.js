@@ -42,8 +42,8 @@ export default {
             'EN': 'PASSWORD',
             'JP': 'パスワード'
         },
-        'PASSWORD CONFIRMATION': {
-            'EN': 'PASSWORD CONFIRMATION',
+        'PASSWORD (AGAIN)': {
+            'EN': 'PASSWORD (AGAIN)',
             'JP': 'パスワード確認'
         },
         "PASSWORDS DON'T MATCH": {

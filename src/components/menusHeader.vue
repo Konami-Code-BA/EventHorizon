@@ -22,8 +22,7 @@
 				<img src="../assets/eventhorizon.png" class="logo">
 			</div>
 			<transition name="fade">
-				<modal v-show="mainMenu" @closeModals="languageMenu=false; mainMenu=false"
-					id="mainMenu">
+				<modal v-show="mainMenu" @closeModals="languageMenu=false; mainMenu=false">
 					<div slot="contents" class="mainMenu">
 						<div style="text-align: right">
 							<button v-on:click.prevent="mainMenu=false" class="no-border-button">
@@ -50,8 +49,7 @@
 				</modal>
 			</transition>
 			<transition name="fade">
-				<modal v-show="languageMenu" @closeModals="languageMenu=false; mainMenu=false"
-					id="languageMenu">
+				<modal v-show="languageMenu" @closeModals="languageMenu=false; mainMenu=false">
 					<div slot="contents" class="languageMenu">
 						<div style="align-self: flex-end">
 							<button v-on:click.prevent="languageMenu=false" class="no-border-button">
@@ -103,11 +101,11 @@
 		methods: {
 			t (w) { return translations.t(w) },
 			async logout () {
-				this.$emit('logoutLoading')
+				this.$emit('startLoading')
 				this.mainMenu = false
 				await apiFunctions.logout()
 				this.$router.push({ name: 'frontPage' })
-				//location.reload()
+				this.$emit('endLoading')
 			},
 			async english () {
 				let lang = 'EN'
