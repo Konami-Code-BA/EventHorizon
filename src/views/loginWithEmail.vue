@@ -73,6 +73,7 @@
 					this.showPassword = false
 					this.loading = true
 					let error = await apiFunctions.login({'email': this.emailInput, 'password': this.passwordInput})
+					this.loading = false
 					if (!error) {
 						this.$router.push({ name: 'home' })
 					} else if (error === 'this email is not registered') {
@@ -80,7 +81,6 @@
 					} else if (error === 'incorrect password') {
 						this.passwordError = error
 					}
-					this.loading = false
 				}
 			},
 			showButton () {
