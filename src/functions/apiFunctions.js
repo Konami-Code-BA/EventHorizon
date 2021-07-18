@@ -5,7 +5,7 @@ axios.defaults.xsrfHeaderName = "X-CSRFToken"
     //axios.defaults.headers.common['X-CSRFToken'] = csrftoken
 import axios from 'axios'
 export default {
-    get ApiBaseUrl() { return process.env.NODE_ENV == 'development' ? 'http://127.0.0.1:8000' : '' },
+    get ApiBaseUrl() { return process.env.PYTHON_ENV == 'development' ? 'http://127.0.0.1:8000' : '' },
     axiosCall: {
         post: axios.post,
         patch: axios.patch,
