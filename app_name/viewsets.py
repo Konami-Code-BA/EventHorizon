@@ -153,6 +153,7 @@ class UserViewset(viewsets.ModelViewSet):
 			return user
 
 	def line_new_device(self, request):
+		print('line_new_device START')
 		if config('PYTHON_ENV', default='production') == 'development':  # get url depending on dev or prod
 			uri = 'http://127.0.0.1:8080/loginRegister'
 		else:
@@ -167,14 +168,17 @@ class UserViewset(viewsets.ModelViewSet):
 		}
 		headers = {'Content-Type': 'application/x-www-form-urlencoded'}
 		getAccessToken_response = json.loads(requests.post(url, headers=headers, data=data).content)
+		print('line_new_device finished: getAccessToken_response')
 		url = 'https://api.line.me/v2/profile'  # use access token to get profile info
 		headers = {'Authorization': 'Bearer ' + getAccessToken_response['access_token']}
 		profile_response = json.loads(requests.get(url, headers=headers).content)
+		print('line_new_device finished: profile_response')
 		try:  # try to get a user with this user id, if there is one then set all the new data to their account
 			user = User.objects.get(line_id=profile_response['userId'])
 			user.line_access_token = getAccessToken_response['access_token']
 			user.line_refresh_token = getAccessToken_response['refresh_token']
 			user = verify_update_line_info(request, user)  # verify validity of current line data and put new data
+			print('line_new_device finished: verify_update_line_info')
 		except User.DoesNotExist:  # if there was no user with this id, turn visitor into user & add info
 			user = self.model.objects.get(pk=request.user.pk)  # get visitor account (already logged in)
 			user.groups.clear()  # clear visitor group
@@ -187,7 +191,10 @@ class UserViewset(viewsets.ModelViewSet):
 			user.do_get_lines = True
 			user.do_get_line_display_name = True
 			user.save()
+			print('line_new_device finished: user.save')
 			user = authenticate_login(request)  # login user
+			print('line_new_device finished: authenticate_login')
+		print('line_new_device END')
 		return user
 		
 
