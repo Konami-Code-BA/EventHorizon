@@ -30,12 +30,12 @@
 							</button>
 						</div>
 						<div>
-							<button v-on:click.prevent="$emit('logoutLoading'); $router.push({ name: 'home' })" class="no-border-button">
+							<button v-on:click.prevent="$router.push({ name: 'home' })" class="no-border-button">
 								<big>{{ t('HOME') }}</big>
 							</button>
 						</div><br><br>
 						<div>
-							<button v-on:click.prevent="$emit('logoutLoading'); $router.push({ name: 'accountSettings' })"
+							<button v-on:click.prevent="$router.push({ name: 'accountSettings' })"
 								class="no-border-button">
 								<big>{{ t('SETTINGS') }}</big>
 							</button>
@@ -104,8 +104,8 @@
 				this.$emit('startLoading')
 				this.mainMenu = false
 				await apiFunctions.logout()
-				this.$router.push({ name: 'frontPage' })
 				this.$emit('endLoading')
+				this.$router.push({ name: 'frontPage' })
 			},
 			async english () {
 				let lang = 'EN'

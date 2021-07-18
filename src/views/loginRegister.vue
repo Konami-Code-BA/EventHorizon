@@ -3,9 +3,9 @@
 		<div v-if="!loading">
 			<menus-header @startLoading="loading=true" @endLoading="loading=false"/>
 			<div class="box">
-				<button v-on:click.prevent="loading=true; $router.push(name='loginWithEmail')" class="box-item" style="flex-grow: 1">{{t('LOGIN WITH EMAIL')}}</button>
+				<button v-on:click.prevent="$router.push({ name: 'loginWithEmail' })" class="box-item" style="flex-grow: 1">{{t('LOGIN WITH EMAIL')}}</button>
 				<div class="box-height"></div>
-				<button v-on:click.prevent="loading=true; $router.push(name='registerWithEmail')" class="box-item" style="flex-grow: 1">{{t('REGISTER WITH EMAIL')}}</button>
+				<button v-on:click.prevent="$router.push({ name: 'registerWithEmail' })" class="box-item" style="flex-grow: 1">{{t('REGISTER WITH EMAIL')}}</button>
 				<div class="box-height"></div>
 					<button v-on:click.prevent="loginByLine()" class="line-coloring">
 						<div class="line-button">
@@ -73,12 +73,12 @@
 				window.location.replace(`https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=${loginChannelId}&redirect_uri=${lineLoginRedirectUrl}&state=${state}&prompt=consent&bot_prompt=aggressive&scope=profile%20openid`)
 			},
 			async tryLineNewDevice () {
-				this.loading = true
-				if (this.$route.query.code && this.stateCookie === this.$route.query.state) {
+					if (this.$route.query.code && this.stateCookie === this.$route.query.state) {
+					this.loading = true
 					await apiFunctions.lineNewDevice(this.$route.query.code)
+					this.loading = false
 					this.$router.push({ name: 'home' })
 				}
-				this.loading = false
 			}
 		} // methods
 	} // export
