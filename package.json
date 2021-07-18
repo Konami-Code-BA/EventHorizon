@@ -11,6 +11,7 @@
     },
     "dependencies": {
         "axios": "^0.21.1",
+        "dotenv": "^10.0.0",
         "vue": "^2.6.12",
         "vue-cli": "^2.9.6",
         "vue-router": "^3.0.1",
