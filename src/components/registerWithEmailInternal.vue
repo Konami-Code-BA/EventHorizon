@@ -110,21 +110,18 @@
 				} else {
 					error = await apiFunctions.registerWithEmail(this.emailInput, this.passwordInput)
 				}
+				this.$emit('endLoading')
 				if (!error) {
 					this.$router.push({ name: 'home' })
-					this.$emit('endLoading')
 				} else if (error == "this email is already registered and this isn't the correct password for it") {
-					this.$emit('endLoading')
 					this.passwordError = error
 					this.showError = true
 					this.shakeFunction()
 				} else if (error == "this email is already registered") {
-					this.$emit('endLoading')
 					this.emailError = error
 					this.showError = true
 					this.shakeFunction()
 				}
-				this.$emit('endLoading')
 			},
 			showButton () {
 				functions.focusCursor('password')
