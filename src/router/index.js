@@ -72,6 +72,11 @@ router.beforeEach(
     async(to, from, next) => {
         if (store.user.groups[0] === 100) { // if never logged in, not even to visitor account, login
             await apiFunctions.login({})
+            if (store.user.groups.includes(3)) {
+                console.log('visitor')
+            } else {
+                console.log('user')
+            }
         }
         if (to.meta.userGroups.length === 0) { // this path has no requirements, go ahead
             next()
