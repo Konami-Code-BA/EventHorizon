@@ -52,7 +52,6 @@
 		//},
 		async mounted () {
 			await this.tryLineNewDevice()
-			this.loading = false
 		},
 		methods: {
 			t (w) { return translations.t(w) },
@@ -73,8 +72,10 @@
 				window.location.replace(`https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=${loginChannelId}&redirect_uri=${lineLoginRedirectUrl}&state=${state}&prompt=consent&bot_prompt=aggressive&scope=profile%20openid`)
 			},
 			async tryLineNewDevice () {
-					if (this.$route.query.code && this.stateCookie === this.$route.query.state) {
+				console.log('tryLineNewDevice')
+				if (this.$route.query.code && this.stateCookie === this.$route.query.state) {
 					this.loading = true
+					console.log('apiFunctions.lineNewDevice')
 					await apiFunctions.lineNewDevice(this.$route.query.code)
 					this.loading = false
 					this.$router.push({ name: 'home' })
