@@ -157,7 +157,7 @@ class UserViewset(viewsets.ModelViewSet):
 		if config('PYTHON_ENV', default='production') == 'development':  # get url depending on dev or prod
 			uri = 'http://127.0.0.1:8080/loginRegister'
 		elif config('PYTHON_ENV', default='production') == 'test':
-			uri = 'https://www.event-horizon-test.herokuapp.com/loginRegister'
+			uri = 'https://event-horizon-test.herokuapp.com/loginRegister'
 		else:
 			uri = 'https://www.eventhorizon.vip/loginRegister'
 		url = 'https://api.line.me/oauth2/v2.1/token'  # use code to get access token
