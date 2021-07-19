@@ -52,6 +52,7 @@
 		//},
 		async mounted () {
 			await this.tryLineNewDevice()
+			this.loading = false
 		},
 		methods: {
 			t (w) { return translations.t(w) },
