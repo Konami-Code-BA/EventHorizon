@@ -174,13 +174,13 @@ class UserViewset(viewsets.ModelViewSet):
 		url = 'https://api.line.me/v2/profile'  # use access token to get profile info
 		print("getAccessToken_response", getAccessToken_response)
 		headers = {'Authorization': 'Bearer ' + getAccessToken_response['access_token']}
-		#profile_response = json.loads(requests.get(url, headers=headers).content)
-		profile_response = requests.get(url, headers=headers)
-		print('1', profile_response)
-		profile_response = profile_response.content
-		print('2', profile_response)
-		profile_response = json.loads(profile_response)
-		print('3', profile_response)
+		profile_response = json.loads(requests.get(url, headers=headers).content)
+		#profile_response = requests.get(url, headers=headers)
+		#print('1', profile_response)
+		#profile_response = profile_response.content
+		#print('2', profile_response)
+		#profile_response = json.loads(profile_response)
+		#print('3', profile_response)
 		print('PRINT line_new_device finished: profile_response')
 		try:  # try to get a user with this user id, if there is one then set all the new data to their account
 			user = User.objects.get(line_id=profile_response['userId'])
