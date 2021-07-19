@@ -13,6 +13,7 @@ import secrets, requests, json
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
 from collections import namedtuple
+from boto.s3.connection import S3Connection
 
 
 class UserViewset(viewsets.ModelViewSet):
