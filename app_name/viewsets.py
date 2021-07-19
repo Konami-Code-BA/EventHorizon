@@ -154,7 +154,7 @@ class UserViewset(viewsets.ModelViewSet):
 
 	def line_new_device(self, request):
 		print('PRINT line_new_device START')
-		if config('PYTHON_ENV', default='production') == 'development':  # get url depending on dev or prod
+		if config('PYTHON_ENV', default='production') == 'development':  # get url depending on dev, test, or prod
 			uri = 'http://127.0.0.1:8080/loginRegister'
 		elif config('PYTHON_ENV', default='production') == 'test':
 			uri = 'https://event-horizon-test.herokuapp.com/loginRegister'
@@ -169,6 +169,9 @@ class UserViewset(viewsets.ModelViewSet):
 			'client_secret': config('LOGIN_CHANNEL_SECRET'),
 		}
 		headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+		print("config('PYTHON_ENV', default='production')", config('PYTHON_ENV', default='production'))
+		print("config('PYTHON_ENV', default='production') == 'test'", config('PYTHON_ENV', default='production') == 'test')
+		print('uri =', uri)
 		getAccessToken_response = json.loads(requests.post(url, headers=headers, data=data).content)
 		print('PRINT line_new_device finished: getAccessToken_response')
 		url = 'https://api.line.me/v2/profile'  # use access token to get profile info
