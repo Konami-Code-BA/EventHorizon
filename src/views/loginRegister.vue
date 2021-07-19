@@ -74,7 +74,9 @@
 			},
 			async tryLineNewDevice () {
 				console.log('tryLineNewDevice')
-				if (this.$route.query.code && this.stateCookie === this.$route.query.state) {
+				let cookie = this.stateCookie
+				document.cookie = "state= ; expires = Thu, 01 Jan 1970 00:00:00 GMT"
+				if (this.$route.query.code && cookie === this.$route.query.state) {
 					this.loading = true
 					console.log('apiFunctions.lineNewDevice')
 					await apiFunctions.lineNewDevice(this.$route.query.code)
