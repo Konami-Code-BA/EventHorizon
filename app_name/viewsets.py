@@ -172,7 +172,7 @@ class UserViewset(viewsets.ModelViewSet):
 		getAccessToken_response = json.loads(requests.post(url, headers=headers, data=data).content)
 		print('PRINT line_new_device finished: getAccessToken_response')
 		url = 'https://api.line.me/v2/profile'  # use access token to get profile info
-		print("getAccessToken_response['access_token']", getAccessToken_response['access_token'])
+		print("getAccessToken_response", getAccessToken_response)
 		headers = {'Authorization': 'Bearer ' + getAccessToken_response['access_token']}
 		#profile_response = json.loads(requests.get(url, headers=headers).content)
 		profile_response = requests.get(url, headers=headers)
