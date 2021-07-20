@@ -1,4 +1,4 @@
-To be programmed, to be reprogrammed, programmed but not confirmed in development, programmed and tested in development, tested in test env, tested in production on pc, tested on android, tested on iOS
+To be programmed, ~~to be reprogrammed~~, programmed but not confirmed in development, programmed and tested in development, tested in test env on pc, tested on android, tested on iOS and sent to production
 
 - Modals: pop-ups that open over the page
   - Entire background is darkened
@@ -96,3 +96,11 @@ To be programmed, to be reprogrammed, programmed but not confirmed in developmen
   - Upcoming features in grey
 - Account Settings Settings Page
 
+- <r>TODO:</r> Important thing to do
+- <o>TODO:</o> Less important thing to do
+- <g>DONE:</g>
+<style>
+r { color: Red }
+o { color: Orange }
+g { color: Green }
+</style>
