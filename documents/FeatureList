@@ -1,0 +1,98 @@
+To be programmed, to be reprogrammed, programmed but not confirmed in development, programmed and tested in development, tested in test env, tested in production on pc, tested on android, tested on iOS
+
+- Modals: pop-ups that open over the page
+  - Entire background is darkened
+  - No scroll bar for the background
+  - X close button at top right: closes the modal
+  - Clicking outside the modal: closes the modal
+  - Clicking on some selection within the modal closes the modal if appropriate
+- Menus Header: at the top of every page
+  - Top left button
+    - If not logged in: login / register button
+      - Takes you to Login Register page
+    - If logged in: menu button
+      - Opens menu modal
+        - Home
+          - Takes you to the Home page (if you aren’t already on the Home page)
+        - Settings
+          - Takes you to the Settings page (if you aren’t already on the Settings page)
+        - Logout
+          - Logs you out
+          - Takes you back to the Front page (if you aren’t already on the Front page)
+  - Top right button: language change
+    - Opens language modal
+      - Modal is positioned top right under the language change button
+      - Language buttons aligned left: on click…
+        - Change the language of the site
+        - Change the language of the user in the database to be remembered every time you login (default language is English)
+  - Event Horizon Logo: under buttons, center top
+- FrontPage Front Page
+  - Some titles
+    - Login / register button
+    - Takes you to the Login Register page
+- Login Register Page
+  - Login with email button
+    - Takes you to Login With Email page
+  - Register with email button
+    - Takes you to Register With Email page
+  - Line button
+    - Takes you to line URL to login or register to the site using line
+    - After the line pages are done, if you have logged in, takes you to the Home page
+- Login With Email Page
+  - Email input box
+    - When the page opens, the cursor is put into the email input box automatically
+  - Password input box with show button on the right side
+    - Show button
+      - Click once to show password, and button becomes Hide
+      - Click Hide to hide the password, and button becomes Show
+      - After clicking it the cursor is returned to the password input box
+  - Login button: on click… 
+    - Logs you in
+    - Takes you to the Home page
+    - If email doesn’t fit requirements, a shaking error is shown below email input
+      - Requirements
+        - Must be of the shape a@b.c
+        - No /[{()}]\”’:;
+      - Error message: not an acceptable email address
+    - If email is not registered, a shaking error is shown below email input
+      - Error message: this email is not registered 
+    - If password is incorrect, a shaking error is show below password input
+      - Error message: incorrect password
+    - If any error is fixed the error message is dynamically withdrawn instantly
+- Register With Email Page 
+  - Display name input box
+    - When the page opens, the cursor is put into the display name input box automatically
+  - Email input box
+  - Password input box with show button on the right side
+    - Set to type=password so browsers will offer to remember the password
+    - Text is displayed as dots
+    - Show button
+      - Click once to show password, and button becomes Hide
+      - Click Hide to hide the password, and button becomes Show
+      - After clicking it the cursor is returned to the password input box
+  - Login button: on click…
+    - Logs you in
+    - Takes you to the Home page
+    - Sets show password buttons to hide, so that the password is registered as a password and the computer will ask if you want to remember it
+    - If the display name doesn’t fit requirements, a shaking error is shown below the display name input
+      - Requirements
+        - No symbols
+        - Less than 40 characters
+    - If email doesn’t fit requirements, a shaking error is shown below email input
+      - Requirements
+        - Must be of the shape a@b.c 
+        - No symbols
+        - Less than 40 characters
+      - Error message: not an acceptable email address
+    - If email is not registered, a shaking error is shown below email input
+      - Error message: this email is not registered 
+    - If the password is over 40 characters long, error message
+    - If password is incorrect, a shaking error is show below password input
+      - Error message: incorrect password
+    - If any error is fixed the error message is dynamically withdrawn instantly
+- Home Page
+  - Home title
+  - User display name
+  - Upcoming features in grey
+- Account Settings Settings Page
+
