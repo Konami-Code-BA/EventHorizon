@@ -39,6 +39,7 @@
 			}
 		},
 		async mounted () {
+			console.log('store.user', store.user)
 			this.displayName = store.user.display_name
 			this.loading = false
 		},
