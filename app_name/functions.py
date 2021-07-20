@@ -109,10 +109,16 @@ def remove_line_friend(line_id):
 
 
 def authenticate_login(request):
+	print('STEP 5.1')
 	user = auth.authenticate(request)
+	print('STEP 5.2')
 	if not hasattr(user, 'error'):
+		print('STEP 5.3')
 		user.save()
+		print('STEP 5.4')
 		auth.login(request, user)
+		print('STEP 5.5')
+	print('STEP 5.6')
 	return user
 
 
