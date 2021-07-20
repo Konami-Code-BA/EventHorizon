@@ -206,11 +206,13 @@ class UserViewset(viewsets.ModelViewSet):
 			user = new_visitor(request)
 			request.user = user
 		user = authenticate_login(request)  # it will try to login with email or line before loggin in by session
+		print('USER IS', user.display_name)
 		if not hasattr(user, 'error'):  # if logged into a user
 			user.visit_count += 1  # add to the visit count
 			user.save()
 			if not user.groups.filter(id=3).exists() and visitor:  # if not visitor, but a visitor made the request
 				visitor.delete()  # delete the visitor account that made the request
+			print('USER IS', user.display_name)
 			return user  # done
 		else:  # if couldn't login to anything, probably got an error, so return user anyway
 			return user
