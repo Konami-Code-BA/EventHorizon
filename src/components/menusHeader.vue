@@ -26,7 +26,7 @@
 					<div slot="contents" class="mainMenu">
 						<div style="text-align: right">
 							<button v-on:click.prevent="mainMenu=false" class="no-border-button">
-								{{'✖\n'}}
+								✖
 							</button>
 						</div>
 						<div>
@@ -53,7 +53,7 @@
 					<div slot="contents" class="languageMenu">
 						<div style="align-self: flex-end">
 							<button v-on:click.prevent="languageMenu=false" class="no-border-button">
-								{{'✖\n'}}
+								✖
 							</button>
 						</div>
 						<div>
@@ -126,7 +126,8 @@
 	.mainMenu {
 		position: fixed;
 		z-index: 10000;
-		background-color: #00022e;
+		background-color: #18002e;
+		border: 1px solid #5300e1;
 		border-radius: 15px;
 		padding: 20px;
 		width: 50%;
@@ -138,7 +139,8 @@
 		flex-direction: column;
 		position: fixed;
 		z-index: 10000;
-		background-color: #00022e;
+		background-color: #18002e;
+		border: 1px solid #5300e1;
 		border-radius: 15px;
 		padding: 20px;
 		width: 50%;
