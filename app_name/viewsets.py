@@ -154,7 +154,7 @@ class UserViewset(viewsets.ModelViewSet):
 	def line_new_device(self, request):
 		if config('PYTHON_ENV', default='production') == 'development':  # get url depending on dev, test, or prod
 			uri = 'http://127.0.0.1:8080/loginRegister'
-		elif config('PYTHON_ENV', default='production') == '\'"test"\'':
+		elif config('PYTHON_ENV', default='production') == 'test':
 			uri = 'https://event-horizon-test.herokuapp.com/loginRegister'
 		else:
 			uri = 'https://www.eventhorizon.vip/loginRegister'
