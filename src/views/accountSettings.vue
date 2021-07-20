@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div v-show="!loading">
-			<menus-header @startLoading="loading=true" @endLoading="loading=false"/>
+			<menus-header/>
 			<div class="box">
 				<div>
 					<h1>{{ t('SETTINGS') }}</h1>

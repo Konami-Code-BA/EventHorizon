@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div v-if="!loading">
-			<menus-header @startLoading="loading=true" @endLoading="loading=false"/>
+			<menus-header/>
 			<div class="box">
 				<div style="text-align: center; font-size: 32px;">EVENT HORIZON</div>
 				<div class="box-height"></div>

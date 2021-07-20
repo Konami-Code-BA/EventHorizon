@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div v-if="!loading">
-			<menus-header @startLoading="loading=true" @endLoading="loading=false"/>
+			<menus-header/>
 			<div class="box">
 				<form v-on:keyup.enter="login()">
 					<div>
