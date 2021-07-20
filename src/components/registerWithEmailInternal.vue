@@ -4,8 +4,8 @@
 			<div v-if="includeDisplayName">
 				<input :placeholder="t('DISPLAY NAME')" v-model="displayName" type="text" class="box-item"
 					id="displayName" autocorrect="off" autocapitalize="none"/>
+				<div class="box-height"></div>
 			</div>
-			<div class="box-height"></div>
 			<div>
 				<input :placeholder="t('EMAIL')" v-model="emailInput" type="email" class="box-item"
 					autocorrect="off" autocapitalize="none" id="email"/>

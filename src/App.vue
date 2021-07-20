@@ -67,7 +67,7 @@
 		}
 		button, button:hover, button:active, button.pointer {
 			font-family: inherit;
-			color: inherit;
+			color: #ffe07a;
 			font-weight: inherit;
 			font-size: inherit;
 			font-size: inherit;
@@ -105,7 +105,7 @@
 			border: none;
 			background: none;
 			/*transition-duration: 0.1s;*/
-			color: #d2e6ff;
+			color: #ffe07a;
 			cursor: pointer;
 			height: 30px;
 			padding: 0;
