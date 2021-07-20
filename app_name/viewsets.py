@@ -156,7 +156,7 @@ class UserViewset(viewsets.ModelViewSet):
 		print('PRINT line_new_device START')
 		if config('PYTHON_ENV', default='production') == 'development':  # get url depending on dev, test, or prod
 			uri = 'http://127.0.0.1:8080/loginRegister'
-		elif config('PYTHON_ENV', default='production') == 'test':
+		elif config('PYTHON_ENV', default='production') == '\'"test"\'':
 			uri = 'https://event-horizon-test.herokuapp.com/loginRegister'
 		else:
 			uri = 'https://www.eventhorizon.vip/loginRegister'
@@ -172,9 +172,10 @@ class UserViewset(viewsets.ModelViewSet):
 		print("normal string", 'PYTHON_ENV')
 		print("double string", '"PYTHON_ENV"')
 		print("other double string", "'PYTHON_ENV'")
+		print("triple string", '\'"PYTHON_ENV"\'')
 		print("config('PYTHON_ENV')", config('PYTHON_ENV'))
 		print("config('PYTHON_ENV', default='production')", config('PYTHON_ENV', default='production'))
-		print("config('PYTHON_ENV', default='production') == 'test'", config('PYTHON_ENV', default='production') == 'test')
+		print("config('PYTHON_ENV', default='production') == 'test'", config('PYTHON_ENV', default='production') == '\'"test"\'')
 		print('uri =', uri)
 		getAccessToken_response = json.loads(requests.post(url, headers=headers, data=data).content)
 		print('PRINT line_new_device finished: getAccessToken_response')
