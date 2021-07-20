@@ -133,7 +133,7 @@ def verify_update_line_info(request, user):  # for exisitng user with line id, a
 	# login button and do a line login from the start
 	if 'error' in refreshAccessToken_response:
 		user = namedtuple('user', 'error')
-		user.error = refreshAccessToken_response['error']
+		user.error = refreshAccessToken_response['error_description']
 		return user
 	user.line_access_token = refreshAccessToken_response['access_token']  # save new access token to user data
 	user.line_refresh_token = refreshAccessToken_response['refresh_token']  # also refresh token
