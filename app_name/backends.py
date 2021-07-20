@@ -23,10 +23,19 @@ class UserBackend(BaseAuthentication):
 				user = namedtuple('user', 'error')
 				user.error = 'this email is not registered'
 				return user
+			except self.UserModel.MultipleObjectsReturned:
+				user = self.UserModel.objects.filter(email=request.data['email'])[1]
+				user.delete()
+				user = namedtuple('user', 'error')
+				user.error = 'there were multiple users, deleted one'
+				return user
+			except BaseException as error:
+				user = namedtuple('user', 'error')
+				user.error = error
+				return user
 		elif 'line_id' in request.data and request.data['line_id'] != '':  # new line
 			try:
 				user = self.UserModel.objects.get(line_id=request.data['line_id'])
-
 				return user
 			except self.UserModel.DoesNotExist:
 				user = namedtuple('user', 'error')
