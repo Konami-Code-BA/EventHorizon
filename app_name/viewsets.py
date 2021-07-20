@@ -6,13 +6,12 @@ from django.contrib import auth
 from django.conf import settings
 from decouple import config
 from django.core.mail import send_mail
-from app_name.functions import (get_return_queryset, verify_update_line_info, authenticate_login, new_visitor, 
-	merge_email_into_line_account)
+from app_name.functions import verify_update_line_info, authenticate_login, new_visitor, merge_email_into_line_account
 from django.http import HttpResponse
 import secrets, requests, json
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
-from collections import namedtuple
+from collections import namedtuple, OrderedDict
 
 
 class UserViewset(viewsets.ModelViewSet):
@@ -21,19 +20,23 @@ class UserViewset(viewsets.ModelViewSet):
 	model = User
 
 	def list(self, request):  # GET {prefix}/
-		return get_return_queryset(self, request)
+		return request.user
 
 	def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
-		return get_return_queryset(self, request, pk=pk)
+		return request.user
 
 	def update(self, request, pk=None):  # PUT {prefix}/{lookup}/
-		return get_return_queryset(self, request, pk=pk)
+		return request.user
 
 	# PARTIAL_UPDATE ###################################################################################################
 	def partial_update(self, request, pk=None):  # PATCH {prefix}/{lookup}/
 		user = eval(f"self.{request.data['command']}(request, pk)")
-		request.user = user
-		return get_return_queryset(self, request, pk=pk)
+		self.queryset = [user]
+		if hasattr(self.queryset[0], 'error'):
+			serializer_data = [OrderedDict([('error', self.queryset[0].error)])]
+		else:
+			serializer_data = self.serializer_class(self.queryset, many=True).data
+		return Response(serializer_data)
 	
 	def update_user_language(self, request, pk):
 		try:
@@ -117,13 +120,17 @@ class UserViewset(viewsets.ModelViewSet):
 			return user
 
 	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
-		return get_return_queryset(self, request, pk=pk)
+		return request.user
 
 	# CREATE ###########################################################################################################
 	def create(self, request):  # POST {prefix}/
 		user = eval(f"self.{request.data['command']}(request)")
-		request.user = user
-		return get_return_queryset(self, request)
+		self.queryset = [user]
+		if hasattr(self.queryset[0], 'error'):
+			serializer_data = [OrderedDict([('error', self.queryset[0].error)])]
+		else:
+			serializer_data = self.serializer_class(self.queryset, many=True).data
+		return Response(serializer_data)
 
 	def register_with_email(self, request):
 		if ('email' in request.data and 'password' in request.data and 'display_name' in request.data and

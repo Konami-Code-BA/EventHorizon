@@ -35,6 +35,7 @@
 			return {
 				store: store,
 				loading: true,
+				displayName: '',
 			}
 		},
 		async mounted () {
