@@ -126,6 +126,10 @@ export default {
             'EN': 'This site\nuses cookies',
             'JP': 'このサイトでは\nクッキーが使われています'
         },
+        'ADD EMAIL ADDRESS': {
+            'EN': 'ADD EMAIL ADDRESS',
+            'JP': 'Eメールアドレスを追加する'
+        },
     },
 
     t: function(w) {
