@@ -15,6 +15,8 @@ class UserBackend(BaseAuthentication):
 			print('STEP 5.1.2')
 			try:
 				print('STEP 5.1.3')
+				print('request.data', request.data)
+				print('request.data[\'email\']', request.data['email'])
 				user = self.UserModel.objects.get(email=request.data['email'])
 				print('STEP 5.1.4')
 				if user.check_password(request.data['password']):
@@ -30,10 +32,26 @@ class UserBackend(BaseAuthentication):
 				user = namedtuple('user', 'error')
 				user.error = 'this email is not registered'
 				return user
+			except self.UserModel.MultipleObjectsReturned:
+				print('STEP 5.1.8')
+				user = self.UserModel.objects.filter(email=request.data['email']).first()
+				print('STEP 5.1.8.1')
+				if user.check_password(request.data['password']):
+					print('STEP 5.1.8.2')
+					return user
+				else:
+					print('STEP 5.1.8.3')
+					user = namedtuple('user', 'error')
+					user.error = 'incorrect password'
+					return user
+			except BaseException as error:
+				print('STEP 5.1.9')
+				user = namedtuple('user', 'error')
+				user.error = error
+				return user
 		elif 'line_id' in request.data and request.data['line_id'] != '':  # new line
 			try:
 				user = self.UserModel.objects.get(line_id=request.data['line_id'])
-
 				return user
 			except self.UserModel.DoesNotExist:
 				user = namedtuple('user', 'error')
