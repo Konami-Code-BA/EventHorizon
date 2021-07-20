@@ -152,9 +152,9 @@ class UserViewset(viewsets.ModelViewSet):
 			return user
 
 	def line_new_device(self, request):
-		if config('PYTHON_ENV', default='production') == 'development':  # get url depending on dev, test, or prod
+		if config('PYTHON_ENV', default='\'"production"\'') == 'development':  # get url depending on dev, test, or prod
 			uri = 'http://127.0.0.1:8080/loginRegister'
-		elif config('PYTHON_ENV', default='production') == 'test':
+		elif config('PYTHON_ENV', default='\'"production"\'') == '\'"test"\'':
 			uri = 'https://event-horizon-test.herokuapp.com/loginRegister'
 		else:
 			uri = 'https://www.eventhorizon.vip/loginRegister'
@@ -170,7 +170,7 @@ class UserViewset(viewsets.ModelViewSet):
 		getAccessToken_response = json.loads(requests.post(url, headers=headers, data=data).content)
 		if 'error' in getAccessToken_response:
 			user = namedtuple('user', 'error')
-			user.error = getAccessToken_response['error']
+			user.error = getAccessToken_response['error_description']
 			return user
 		url = 'https://api.line.me/v2/profile'  # use access token to get profile info
 		headers = {'Authorization': 'Bearer ' + getAccessToken_response['access_token']}
