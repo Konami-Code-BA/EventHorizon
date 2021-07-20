@@ -63,17 +63,17 @@
 				this.loading = true
 				let loginChannelId = await apiFunctions.loginChannelId()
 				let state = await apiFunctions.state()
-				document.cookie = `state=${state}`;
+				document.cookie = `state=${state}; path=/`
 				let lineLoginRedirectUrl = 'https%3A%2F%2Fwww.eventhorizon.vip%2FloginRegister'
 				if (process.env.PYTHON_ENV == 'development') {
 					lineLoginRedirectUrl = 'http%3A%2F%2F127.0.0.1%3A8080%2FloginRegister'
-				} else if (process.env.PYTHON_ENV == 'test') {
+				} else if (process.env.PYTHON_ENV == '"test"') {
 					lineLoginRedirectUrl = 'https%3A%2F%2Fevent-horizon-test.herokuapp.com%2FloginRegister'
 				}
 				window.location.replace(`https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=${loginChannelId}&redirect_uri=${lineLoginRedirectUrl}&state=${state}&prompt=consent&bot_prompt=aggressive&scope=profile%20openid`)
 			},
 			async tryLineNewDevice () {
-					if (this.$route.query.code && this.stateCookie === this.$route.query.state) {
+				if (this.$route.query.code && this.stateCookie === this.$route.query.state) {
 					this.loading = true
 					await apiFunctions.lineNewDevice(this.$route.query.code)
 					this.loading = false
