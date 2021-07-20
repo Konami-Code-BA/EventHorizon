@@ -67,7 +67,7 @@
 				let lineLoginRedirectUrl = 'https%3A%2F%2Fwww.eventhorizon.vip%2FloginRegister'
 				if (process.env.PYTHON_ENV == 'development') {
 					lineLoginRedirectUrl = 'http%3A%2F%2F127.0.0.1%3A8080%2FloginRegister'
-				} else if (process.env.PYTHON_ENV == 'test') {
+				} else if (process.env.PYTHON_ENV == '"test"') {
 					lineLoginRedirectUrl = 'https%3A%2F%2Fevent-horizon-test.herokuapp.com%2FloginRegister'
 				}
 				window.location.replace(`https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=${loginChannelId}&redirect_uri=${lineLoginRedirectUrl}&state=${state}&prompt=consent&bot_prompt=aggressive&scope=profile%20openid`)
