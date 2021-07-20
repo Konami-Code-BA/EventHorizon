@@ -33,6 +33,7 @@ export default {
             })
             .finally(() => {
                 store.user = output
+                console.log('USER IS', output.display_name)
             })
         return error
     },
