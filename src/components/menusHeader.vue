@@ -3,12 +3,10 @@
 		<div>
 			<div class="header">
 				<div>
-					<button v-on:click.prevent="mainMenu=true" class="no-border-button"
-						v-if="isAuthenticatedUser">
+					<button v-on:click.prevent="mainMenu=true" class="no-border-button" v-if="isAuthenticatedUser">
 						<big>{{ t('MENU') }}</big>
 					</button>
-					<button v-on:click.prevent="$router.push({ name: 'loginRegister' })" class="no-border-button"
-						v-else>
+					<button v-on:click.prevent="goToLoginRegister()" class="no-border-button" v-else>
 						<big>{{ t('LOGIN / REGISTER') }}</big>
 					</button>
 				</div>
@@ -30,13 +28,13 @@
 							</button>
 						</div>
 						<div>
-							<button v-on:click.prevent="$router.push({ name: 'home' })" class="no-border-button">
+							<button v-on:click.prevent="goToHome()"
+									class="no-border-button">
 								<big>{{ t('HOME') }}</big>
 							</button>
 						</div><br><br>
 						<div>
-							<button v-on:click.prevent="$router.push({ name: 'accountSettings' })"
-								class="no-border-button">
+							<button v-on:click.prevent="goToAccountSettings()" class="no-border-button">
 								<big>{{ t('SETTINGS') }}</big>
 							</button>
 						</div><br><br>
@@ -84,8 +82,6 @@
 				store: store,
 				mainMenu: false,
 				languageMenu: false,
-				loading: true,
-				reload: false,
 			}
 		},
 		components: {
@@ -101,11 +97,11 @@
 		methods: {
 			t (w) { return translations.t(w) },
 			async logout () {
-				this.$emit('startLoading')
-				this.mainMenu = false
 				await apiFunctions.logout()
-				this.$emit('endLoading')
-				this.$router.push({ name: 'frontPage' })
+				if (this.$route.name !== 'frontPage') {
+					this.$router.push({ name: 'frontPage' })
+				}
+				this.mainMenu = false
 			},
 			async english () {
 				let lang = 'EN'
@@ -118,6 +114,25 @@
 				store.user.language = lang
 				this.languageMenu = false
 				await apiFunctions.updateUserLanguage()
+			},
+			goToHome () {
+				if (this.$route.name !== 'home') {
+					this.$router.push({ name: 'home' })
+				} else {
+					this.mainMenu = false
+				}
+			},
+			goToLoginRegister () {
+				if (this.$route.name !== 'loginRegister') {
+					this.$router.push({ name: 'loginRegister' })
+				}
+			},
+			goToAccountSettings () {
+				if (this.$route.name !== 'accountSettings') {
+					this.$router.push({ name: 'accountSettings' })
+				} else {
+					this.mainMenu = false
+				}
 			},
 		}
 	}
