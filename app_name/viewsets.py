@@ -137,7 +137,6 @@ class UserViewset(viewsets.ModelViewSet):
 				user = self.model.objects.get(pk=request.user.pk)  # get visitor account (already logged in)
 				user.groups.clear()  # clear visitor group
 				user.groups.add(2)  # change to user
-				print('CHANGE VISITOR')
 				user.display_name = request.data['display_name']  # add new user account info
 				user.email = request.data['email']
 				user.password = make_password(request.data['password'])
@@ -153,11 +152,10 @@ class UserViewset(viewsets.ModelViewSet):
 			return user
 
 	def line_new_device(self, request):
-		print('line_new_device START')
-		if config('PYTHON_ENV', default='production') == 'development':  # get url depending on dev or prod
+		if config('PYTHON_ENV', default='production') == 'development':  # get url depending on dev, test, or prod
 			uri = 'http://127.0.0.1:8080/loginRegister'
 		elif config('PYTHON_ENV', default='production') == 'test':
-			uri = 'https://www.event-horizon-test.herokuapp.com/loginRegister'
+			uri = 'https://event-horizon-test.herokuapp.com/loginRegister'
 		else:
 			uri = 'https://www.eventhorizon.vip/loginRegister'
 		url = 'https://api.line.me/oauth2/v2.1/token'  # use code to get access token
@@ -170,22 +168,22 @@ class UserViewset(viewsets.ModelViewSet):
 		}
 		headers = {'Content-Type': 'application/x-www-form-urlencoded'}
 		getAccessToken_response = json.loads(requests.post(url, headers=headers, data=data).content)
-		print('line_new_device finished: getAccessToken_response')
+		if 'error' in getAccessToken_response:
+			user = namedtuple('user', 'error')
+			user.error = getAccessToken_response['error']
+			return user
 		url = 'https://api.line.me/v2/profile'  # use access token to get profile info
 		headers = {'Authorization': 'Bearer ' + getAccessToken_response['access_token']}
 		profile_response = json.loads(requests.get(url, headers=headers).content)
-		print('line_new_device finished: profile_response')
 		try:  # try to get a user with this user id, if there is one then set all the new data to their account
 			user = User.objects.get(line_id=profile_response['userId'])
 			user.line_access_token = getAccessToken_response['access_token']
 			user.line_refresh_token = getAccessToken_response['refresh_token']
 			user = verify_update_line_info(request, user)  # verify validity of current line data and put new data
-			print('line_new_device finished: verify_update_line_info')
 		except User.DoesNotExist:  # if there was no user with this id, turn visitor into user & add info
 			user = self.model.objects.get(pk=request.user.pk)  # get visitor account (already logged in)
 			user.groups.clear()  # clear visitor group
 			user.groups.add(2)  # change to user
-			print('CHANGE VISITOR')
 			user.display_name = profile_response['displayName']  # add new user account info
 			user.line_id = profile_response['userId']
 			user.line_access_token = getAccessToken_response['access_token']
@@ -193,10 +191,7 @@ class UserViewset(viewsets.ModelViewSet):
 			user.do_get_lines = True
 			user.do_get_line_display_name = True
 			user.save()
-			print('line_new_device finished: user.save')
 			user = authenticate_login(request)  # login user
-			print('line_new_device finished: authenticate_login')
-		print('line_new_device END')
 		return user
 		
 
@@ -216,7 +211,6 @@ class UserViewset(viewsets.ModelViewSet):
 			user.save()
 			if not user.groups.filter(id=3).exists() and visitor:  # if not visitor, but a visitor made the request
 				visitor.delete()  # delete the visitor account that made the request
-				print('DELETE VISITOR')
 			return user  # done
 		else:  # if couldn't login to anything, probably got an error, so return user anyway
 			return user
