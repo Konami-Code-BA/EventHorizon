@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div v-if="!loading">
-			<menus-header @startLoading="loading=true" @endLoading="loading=false"/>
+			<menus-header/>
 			<div class="box">
 				<div class="box-item" style="font-size: 36px;">{{ t('HOME') }}</div>
 				<div class="box-height"></div>
