@@ -25,7 +25,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ## SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('PYTHON_ENV', default='production') == 'development'  # need to make sure this works
 SECRET_KEY = config('SECRET_KEY')
-ALLOWED_HOSTS = ['event-horizon-jp.herokuapp.com/', 'localhost', 'eventhorizon.vip/']
+ALLOWED_HOSTS = [
+	'event-horizon-jp.herokuapp.com/',
+	'event-horizon-test.herokuapp.com/',
+	'localhost',
+	'eventhorizon.vip/'
+]
+
 CORS_ALLOW_CREDENTIALS = True
 CSRF_COOKIE_NAME = 'XSRF-TOKEN'
 
@@ -34,6 +40,7 @@ CORS_ALLOWED_ORIGINS  = (  # need to figure out how to use this correctly
 	'http://127.0.0.1:8080',
 	'http://127.0.0.1:8000',
 	'https://event-horizon-jp.herokuapp.com',
+	'https://event-horizon-test.herokuapp.com',
 	'http://eventhorizon.vip',
 	'https://eventhorizon.vip',
 )
