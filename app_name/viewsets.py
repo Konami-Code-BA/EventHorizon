@@ -197,22 +197,34 @@ class UserViewset(viewsets.ModelViewSet):
 
 	def login(self, request):
 		#return authenticate_login(request)  # FOR EMERGENCY LOGIN (also in backends)
+		print('STEP 1')
 		visitor = False
 		try:
+			print('STEP 2')
 			user = self.model.objects.get(pk=request.user.pk)  # get current user that made this request
 			if user.groups.filter(id=3).exists():  # if visitor made this request, remember that
+				print('STEP 3')
 				visitor = request.user
 		except self.model.DoesNotExist:  # if there is no currently existing user or visitor, make a new visitor
+			print('STEP 4')
 			user = new_visitor(request)
 			request.user = user
+		print('STEP 5')
 		user = authenticate_login(request)  # it will try to login with email or line before loggin in by session
+		print('STEP 6')
 		if not hasattr(user, 'error'):  # if logged into a user
+			print('STEP 7')
 			user.visit_count += 1  # add to the visit count
+			print('STEP 8')
 			user.save()
+			print('STEP 9')
 			if not user.groups.filter(id=3).exists() and visitor:  # if not visitor, but a visitor made the request
+				print('STEP 10')
 				visitor.delete()  # delete the visitor account that made the request
+			print('STEP 11')
 			return user  # done
 		else:  # if couldn't login to anything, probably got an error, so return user anyway
+			print('STEP 12')
 			return user
 
 	def logout(self, request):
