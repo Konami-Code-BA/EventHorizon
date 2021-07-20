@@ -79,7 +79,6 @@ router.beforeEach(
                 console.log('user')
             }
         }
-        console.log(to.meta)
         if (to.meta.userGroups.length === 0) { // this path has no requirements, go ahead
             next()
             return
