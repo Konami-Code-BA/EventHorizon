@@ -15,41 +15,42 @@ def is_admin_or_this_user(request, pk):  # is admin, or is a user that matches t
 	return is_admin(request) or int(pk) == request.user.pk
 
 
-def get_return_queryset(self, request, pk=None):
-	if hasattr(request.user, 'error'):  # not a user, just an error
-		queryset = [request.user]
-	elif request.user.is_authenticated:  # is an authenticated user
-		if pk:  # trying to access one user
-			checker = is_admin_or_this_user(request, pk)  # check if is admin or is this user
-		else:  # trying to access all users
-			checker = is_admin(request)  # check if is admin
-		objects = self.serializer_class.Meta.model.objects
-		if checker:  # if accessing one user: is admin or is this user. if accessing all users, is admin
-			if pk:  # trying to access one user
-				try:
-					queryset = [objects.get(pk=pk)]  # get the user
-				except self.serializer_class.Meta.model.DoesNotExist:
-					user = namedtuple('user', 'error')
-					user.error = 'a user with this id could not be found'
-					queryset = [user]
-			else:  # trying to access all users
-				queryset = objects.all()  # get all users
-		else:  # is some user
-			if pk:  # trying to access one other user
-				user = namedtuple('user', 'error')
-				user.error = 'you don\'t have permission to access other users'
-				queryset = [user]
-			else:  # trying to access all users
-				queryset = [request.user]  # get only himself
-	else:  # unauthenticated user
-		user = namedtuple('user', 'error')
-		user.error = 'you are not an authenticated user'
-		queryset = [user]
-	if hasattr(queryset[0], 'error'):
-		serializer_data = [OrderedDict([('error', queryset[0].error)])]
-	else:
-		serializer_data = self.serializer_class(queryset, many=True).data
-	return Response(serializer_data)
+# this doesnt work anymore, also im not sure how necessary it is. keeping it for now tho in case i want it later
+#def get_return_queryset(self, request, pk=None):
+#	if hasattr(request.user, 'error'):  # not a user, just an error
+#		queryset = [request.user]
+#	elif request.user.is_authenticated:  # is an authenticated user
+#		if pk:  # trying to access one user
+#			checker = is_admin_or_this_user(request, pk)  # check if is admin or is this user
+#		else:  # trying to access all users
+#			checker = is_admin(request)  # check if is admin
+#		objects = self.serializer_class.Meta.model.objects
+#		if checker:  # if accessing one user: is admin or is this user. if accessing all users, is admin
+#			if pk:  # trying to access one user
+#				try:
+#					queryset = [objects.get(pk=pk)]  # get the user
+#				except self.serializer_class.Meta.model.DoesNotExist:
+#					user = namedtuple('user', 'error')
+#					user.error = 'a user with this id could not be found'
+#					queryset = [user]
+#			else:  # trying to access all users
+#				queryset = objects.all()  # get all users
+#		else:  # is some user
+#			if pk:  # trying to access one other user
+#				user = namedtuple('user', 'error')
+#				user.error = 'you don\'t have permission to access other users'
+#				queryset = [user]
+#			else:  # trying to access all users
+#				queryset = [request.user]  # get only himself
+#	else:  # unauthenticated user
+#		user = namedtuple('user', 'error')
+#		user.error = 'you are not an authenticated user'
+#		queryset = [user]
+#	if hasattr(queryset[0], 'error'):
+#		serializer_data = [OrderedDict([('error', queryset[0].error)])]
+#	else:
+#		serializer_data = self.serializer_class(queryset, many=True).data
+#	return Response(serializer_data)
 
 
 def line_bot(line_body):
@@ -113,7 +114,6 @@ def authenticate_login(request):
 	if not hasattr(user, 'error'):
 		user.save()
 		auth.login(request, user)
-	print('USER IS2', user.display_name)
 	return user
 
 
