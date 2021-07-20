@@ -169,13 +169,6 @@ class UserViewset(viewsets.ModelViewSet):
 			'client_secret': config('LOGIN_CHANNEL_SECRET'),
 		}
 		headers = {'Content-Type': 'application/x-www-form-urlencoded'}
-		print("normal string", 'PYTHON_ENV')
-		print("double string", '"PYTHON_ENV"')
-		print("other double string", "'PYTHON_ENV'")
-		print("triple string", '\'"PYTHON_ENV"\'')
-		print("config('PYTHON_ENV')", config('PYTHON_ENV'))
-		print("config('PYTHON_ENV', default='production')", config('PYTHON_ENV', default='production'))
-		print("config('PYTHON_ENV', default='production') == 'test'", config('PYTHON_ENV', default='production') == '\'"test"\'')
 		print('uri =', uri)
 		getAccessToken_response = json.loads(requests.post(url, headers=headers, data=data).content)
 		print('PRINT line_new_device finished: getAccessToken_response')
