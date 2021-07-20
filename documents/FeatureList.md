@@ -96,11 +96,4 @@ To be programmed, ~~to be reprogrammed~~, programmed but not confirmed in develo
   - Upcoming features in grey
 - Account Settings Settings Page
 
-- <r>TODO:</r> Important thing to do
-- <o>TODO:</o> Less important thing to do
-- <g>DONE:</g>
-<style>
-r { color: Red }
-o { color: Orange }
-g { color: Green }
-</style>
+<span style="color: red">TODO:</span>
