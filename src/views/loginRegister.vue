@@ -71,7 +71,7 @@
 					lineLoginRedirectUrl = 'https%3A%2F%2Fevent-horizon-test.herokuapp.com%2FloginRegister'
 				}
 				console.log("process.env.PYTHON_ENV", process.env.PYTHON_ENV)
-				console.log("process.env.PYTHON_ENV == 'test'", process.env.PYTHON_ENV == 'test')
+				console.log("process.env.PYTHON_ENV == 'test'", process.env.PYTHON_ENV == '"test"')
 				console.log("lineLoginRedirectUrl", lineLoginRedirectUrl)
 				setTimeout(() => { window.location.replace(`https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=${loginChannelId}&redirect_uri=${lineLoginRedirectUrl}&state=${state}&prompt=consent&bot_prompt=aggressive&scope=profile%20openid`); }, 10000);
 				//window.location.replace(`https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=${loginChannelId}&redirect_uri=${lineLoginRedirectUrl}&state=${state}&prompt=consent&bot_prompt=aggressive&scope=profile%20openid`)
