@@ -14,7 +14,7 @@ class UserBackend(BaseAuthentication):
 			try:
 				user = self.UserModel.objects.get(email=request.data['email'])
 				if user.check_password(request.data['password']):
-					print('USER IS', user.display_name)
+					print('USER IS1', user.display_name)
 					return user
 				else:
 					user = namedtuple('user', 'error')

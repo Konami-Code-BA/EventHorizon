@@ -113,7 +113,7 @@ def authenticate_login(request):
 	if not hasattr(user, 'error'):
 		user.save()
 		auth.login(request, user)
-	print('USER IS', user.display_name)
+	print('USER IS2', user.display_name)
 	return user
 
 
