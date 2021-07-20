@@ -8,40 +8,28 @@ from collections import namedtuple
 class UserBackend(BaseAuthentication):
 	UserModel = get_user_model()
 	def authenticate(self, request):
-		print('STEP 5.1.1')
 		#return self.UserModel.objects.filter(email='mdsimeone@gmail.com').first()  # FOR EMERGENCY LOGIN
 		if ('email' in request.data and 'password' in request.data and request.data['email'] != '' and
 				request.data['password'] != ''):  # email
-			print('STEP 5.1.2')
 			try:
-				print('STEP 5.1.3')
-				print('request.data', request.data)
-				print('request.data[\'email\']', request.data['email'])
 				user = self.UserModel.objects.get(email=request.data['email'])
-				print('STEP 5.1.4')
 				if user.check_password(request.data['password']):
-					print('STEP 5.1.5')
 					return user
 				else:
-					print('STEP 5.1.6')
 					user = namedtuple('user', 'error')
 					user.error = 'incorrect password'
 					return user
 			except self.UserModel.DoesNotExist:
-				print('STEP 5.1.7')
 				user = namedtuple('user', 'error')
 				user.error = 'this email is not registered'
 				return user
 			except self.UserModel.MultipleObjectsReturned:
-				print('STEP 5.1.8')
 				user = self.UserModel.objects.filter(email=request.data['email'])[1]
 				user.delete()
-				print('STEP 5.1.8.1')
 				user = namedtuple('user', 'error')
 				user.error = 'there were multiple users, deleted one'
 				return user
 			except BaseException as error:
-				print('STEP 5.1.9')
 				user = namedtuple('user', 'error')
 				user.error = error
 				return user
