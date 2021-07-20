@@ -9,11 +9,12 @@
 				<div class="dual-set">
 					<div>
 						<button class="no-border-button" v-on:click.prevent="do_get_emails=!do_get_emails">
-							<div style="font-size: 18px;">{{ t('GET EMAILS') }}&nbsp;</div>
+							<div style="font-size: 18px;" v-if="store.user.email === ''">{{ t('ADD EMAIL ADDRESS') }}&nbsp;</div>
+							<div style="font-size: 18px;" v-if="store.user.email !== ''">{{ t('GET EMAILS') }}&nbsp;</div>
 						</button>
 					</div>
 					<div>
-						<input type="checkbox" class="checkbox" v-model="do_get_emails"/>
+						<input type="checkbox" v-if="store.user.email !== ''" class="checkbox" v-model="do_get_emails"/>
 					</div>
 				</div>
 				<!--div>
@@ -24,6 +25,11 @@
 			<transition name="fade">
 				<modal v-show="showAddEmailModal" @closeModals="closeAddEmailModal()">
 					<div slot="contents" class="addEmailModal">
+						<div style="text-align: right">
+							<button v-on:click.prevent="closeAddEmailModal()" class="no-border-button">
+								✖
+							</button>
+						</div>
 						<register-with-email-internal @startLoading="loading=true" @endLoading="loading=false" :includeDisplayName="false"/>
 					</div>
 				</modal>
@@ -102,10 +108,11 @@
 	.addEmailModal {
 		position: fixed;
 		z-index: 10000;
-		background-color: #00022e;
+		background-color: #18002e;
 		border-radius: 15px;
+		border: 1px solid #5300e1;
 		padding: 20px;
-		width: 95%;
+		width: 85%;
 		height: 100%;
 		top: 50%;
 		left: 50%;
