@@ -34,16 +34,12 @@ class UserBackend(BaseAuthentication):
 				return user
 			except self.UserModel.MultipleObjectsReturned:
 				print('STEP 5.1.8')
-				user = self.UserModel.objects.filter(email=request.data['email']).first()
+				user = self.UserModel.objects.filter(email=request.data['email'])[1]
+				user.delete()
 				print('STEP 5.1.8.1')
-				if user.check_password(request.data['password']):
-					print('STEP 5.1.8.2')
-					return user
-				else:
-					print('STEP 5.1.8.3')
-					user = namedtuple('user', 'error')
-					user.error = 'incorrect password'
-					return user
+				user = namedtuple('user', 'error')
+				user.error = 'there were multiple users, deleted one'
+				return user
 			except BaseException as error:
 				print('STEP 5.1.9')
 				user = namedtuple('user', 'error')
