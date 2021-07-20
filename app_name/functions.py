@@ -109,14 +109,10 @@ def remove_line_friend(line_id):
 
 
 def authenticate_login(request):
-	print('PRINT authenticate_login START')
 	user = auth.authenticate(request)
-	print('PRINT authenticate_login finished: authenticate')
 	if not hasattr(user, 'error'):
 		user.save()
 		auth.login(request, user)
-		print('PRINT authenticate_login finished: login')
-	print('PRINT authenticate_login END')
 	return user
 
 
@@ -133,45 +129,36 @@ def verify_update_line_info(request, user):  # for exisitng user with line id, a
 		'client_secret': config('LOGIN_CHANNEL_SECRET'),
 	}
 	refreshAccessToken_response = json.loads(requests.post(url, headers=headers, data=data).content)
-	print('PRINT verify_update_line_info finished: refreshAccessToken_response')
 	# if refresh token is expired, this is session login attempt, block attempt and force them to click the line
 	# login button and do a line login from the start
 	if 'error' in refreshAccessToken_response:
 		user = namedtuple('user', 'error')
 		user.error = refreshAccessToken_response['error']
-		print('PRINT verify_update_line_info finished: refreshAccessToken_response[\'error\']')
 		return user
 	user.line_access_token = refreshAccessToken_response['access_token']  # save new access token to user data
 	user.line_refresh_token = refreshAccessToken_response['refresh_token']  # also refresh token
 	url = 'https://api.line.me/oauth2/v2.1/verify?access_token=' + user.line_access_token  # first verify access token
 	verify_response = json.loads(requests.get(url).content)
-	print('PRINT verify_update_line_info finished: verify_response')
 	if verify_response['client_id'] != config('LOGIN_CHANNEL_ID'):  # make sure verification not intercepted
 		user = namedtuple('user', 'error')
 		user.error = 'could not verify client id when trying to verify access token'
-		print('PRINT verify_update_line_info finished: could not verify client id when trying to verify access token')
 		return user  # client id can't be confirmed
 	url = 'https://api.line.me/v2/profile'  # get line profile info
 	headers = {'Authorization': 'Bearer ' + user.line_access_token}
 	profile_response = json.loads(requests.get(url, headers=headers).content)
-	print('PRINT verify_update_line_info finished: profile_response')
 	if user.do_get_line_display_name:  # update display name with line profile name unless user set not to
 		user.display_name = profile_response['displayName']
 	if profile_response['userId'] == user.line_id:  # double check line id is correct and this wasnt somehow faked
 		user.save()
-		print('PRINT verify_update_line_info finished: user.save')
 		request.data['line_id'] = user.line_id
 		user = authenticate_login(request)  # login again just in case, and to get new location info
-		print('PRINT verify_update_line_info finished: authenticate_login')
 		if not hasattr(user, 'error'):  # logged into a user
 			if not user.groups.filter(id=3).exists() and visitor:  # if not visitor, but request made by visitor
 				visitor.delete()  # delete the visitor account that made the request
-				print('PRINT verify_update_line_info finished: visitor.delete')
 		return user
 	else:  # line id can't be confirmed
 		user = namedtuple('user', 'error')
 		user.error = 'could not verify line id after getting line profile info'
-		print('PRINT verify_update_line_info finished: could not verify line id after getting line profile info')
 		return user
 
 
@@ -196,7 +183,6 @@ def new_visitor(request):
 	alert.user_set.add(user)
 	request.data['random_secret'] = user.random_secret
 	auth.login(request, user)
-	print('PRINT new_visitor END')
 	return user
 
 
