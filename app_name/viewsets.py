@@ -6,8 +6,7 @@ from django.contrib import auth
 from django.conf import settings
 from decouple import config
 from django.core.mail import send_mail
-from app_name.functions import (get_return_queryset, verify_update_line_info, authenticate_login, new_visitor, 
-	merge_email_into_line_account)
+from app_name.functions import verify_update_line_info, authenticate_login, new_visitor, merge_email_into_line_account
 from django.http import HttpResponse
 import secrets, requests, json
 from django.contrib.auth.hashers import make_password
@@ -21,13 +20,13 @@ class UserViewset(viewsets.ModelViewSet):
 	model = User
 
 	def list(self, request):  # GET {prefix}/
-		return get_return_queryset(self, request)
+		return request.user
 
 	def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
-		return get_return_queryset(self, request, pk=pk)
+		return request.user
 
 	def update(self, request, pk=None):  # PUT {prefix}/{lookup}/
-		return get_return_queryset(self, request, pk=pk)
+		return request.user
 
 	# PARTIAL_UPDATE ###################################################################################################
 	def partial_update(self, request, pk=None):  # PATCH {prefix}/{lookup}/
@@ -121,7 +120,7 @@ class UserViewset(viewsets.ModelViewSet):
 			return user
 
 	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
-		return get_return_queryset(self, request, pk=pk)
+		return request.user
 
 	# CREATE ###########################################################################################################
 	def create(self, request):  # POST {prefix}/
@@ -214,17 +213,11 @@ class UserViewset(viewsets.ModelViewSet):
 			user = new_visitor(request)
 			request.user = user
 		user = authenticate_login(request)  # it will try to login with email or line before loggin in by session
-		print('USER IS3', user.display_name)
 		if not hasattr(user, 'error'):  # if logged into a user
-			print(user.visit_count)
 			user.visit_count += 1  # add to the visit count
-			print(user.visit_count)
-			print('USER IS4', user.display_name)
 			user.save()
-			print('USER IS5', user.display_name)
 			if not user.groups.filter(id=3).exists() and visitor:  # if not visitor, but a visitor made the request
 				visitor.delete()  # delete the visitor account that made the request
-			print('USER IS6', user.display_name)
 			return user  # done
 		else:  # if couldn't login to anything, probably got an error, so return user anyway
 			return user

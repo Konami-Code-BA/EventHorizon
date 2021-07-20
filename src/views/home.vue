@@ -5,7 +5,7 @@
 			<div class="box">
 				<div class="box-item" style="font-size: 36px;">{{ t('HOME') }}</div>
 				<div class="box-height"></div>
-				<div class="box-item" style="font-size: 24px;">{{ displayName }}</div>
+				<div class="box-item" style="font-size: 24px;">{{ store.user.display_name }}</div>
 				<div class="box-height"></div>
 				<div class="box-item coming-soon-list"><div style="font-size: 16px;">{{ t('UPCOMING EVENTS') }}</div><small>({{ t('COMING SOON') }})</small></div>
 				<div class="box-height"></div>
@@ -39,8 +39,6 @@
 			}
 		},
 		async mounted () {
-			console.log('store.user', store.user)
-			this.displayName = store.user.display_name
 			this.loading = false
 		},
 		methods: {
