@@ -82,7 +82,7 @@ def line_webhook(request):
 
 	#line_body = received_message_1
 	#line_body = received_message_2
-	line_body = new_follower_1
+	#line_body = new_follower_1
 	#line_body = lost_follower_1
 
 	replyToken, reply = line_bot(line_body)
