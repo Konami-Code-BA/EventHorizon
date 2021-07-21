@@ -65,7 +65,7 @@
 		.box-center {
 			text-align: center;
 		}
-		button, button:hover, button:active, button.pointer {
+		button, button:hover, button:active, button.pointer, a, a:hover, a:active, a.pointer {
 			font-family: inherit;
 			color: #ffe07a;
 			font-weight: inherit;
@@ -79,6 +79,7 @@
 			padding: 0;
 			padding-left: 3px;
 			padding-right: 3px;
+  			text-decoration: none;
 		}
 		input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus,
 		input:-webkit-autofill:active, input[type=text], input[type=email], input[type=password],
