@@ -5,7 +5,7 @@
 				<input :placeholder="t('DISPLAY NAME')" v-model="displayNameInput" type="text" class="box-item"
 					id="displayName" autocorrect="off" autocapitalize="none"/>
 				<div class="box-height" :class="{'shake' : shakeIt}" style="color: red">
-					<small>{{displayNameError}}</small>
+					<small>{{t(displayNameError)}}</small>
 				</div>
 			</div>
 			<div>
@@ -13,7 +13,7 @@
 					autocorrect="off" autocapitalize="none" id="email"/>
 			</div>
 			<div class="box-height" :class="{'shake' : shakeIt}" style="color: red">
-				<small>{{emailError}}</small>
+				<small>{{t(emailError)}}</small>
 			</div>
 			<div style="display: flex">
 				<input :placeholder="t('PASSWORD')" v-model="passwordInput"
@@ -30,7 +30,7 @@
 				</button>
 			</div>
 			<div class="box-height" :class="{'shake' : shakeIt}" style="color: red">
-				<small>{{passwordError}}</small>
+				<small>{{t(passwordError)}}</small>
 			</div>
 			<div style="display: flex">
 				<input :placeholder="t('PASSWORD (AGAIN)')" v-model="password2Input"
@@ -47,7 +47,7 @@
 				</button>
 			</div>
 			<div class="box-height" :class="{'shake' : shakeIt}" style="color: red">
-				<small>{{password2Error}}</small>
+				<small>{{t(password2Error)}}</small>
 			</div>
 		</form>
 		<button v-on:click.prevent="registerWithEmail()" class="box-item">
@@ -94,7 +94,9 @@
 			this.passwordHasErrors()
 			this.password2HasErrors()
 			this.emailHasErrors()
-			this.displayNameHasErrors()
+			if (this.includeDisplayName) {
+				this.displayNameHasErrors()
+			}
 		},
 		watch: {
 			'passwordInput' () { this.passwordHasErrors(); this.password2HasErrors() },
@@ -116,18 +118,19 @@
 				this.$emit('startLoading')
 				let error = null
 				if (this.includeDisplayName) {
-					error = await apiFunctions.registerWithEmail(this.emailInput, this.passwordInput, this.displayNameInput)
+					error = await apiFunctions.registerWithEmail(this.emailInput, this.passwordInput,
+							this.displayNameInput)
 				} else {
 					error = await apiFunctions.registerWithEmail(this.emailInput, this.passwordInput)
 				}
 				this.$emit('endLoading')
 				if (!error) {
 					this.$router.push({ name: 'home' })
-				} else if (error == "this email is already registered and this isn't the correct password for it") {
+				} else if (error == 'This email is already registered and this isn\'t the correct password for it') {
 					this.passwordError = error
 					this.showError = true
 					this.shakeFunction()
-				} else if (error == "this email is already registered") {
+				} else if (error == "This email is already registered") {
 					this.emailError = error
 					this.showError = true
 					this.shakeFunction()
@@ -143,13 +146,13 @@
 			},
 			passwordHasErrors() {
 				if (this.passwordInput.length < 1 ) {
-					this.passwordError = this.t('Required')
+					this.passwordError = 'Required'
 					return true
 				} else if (this.passwordInput.length < 4) {
-					this.passwordError = this.t('Must be 4 characters or more')
+					this.passwordError = 'Must be 4 characters or more'
 					return true
-				} else if (this.passwordInput.length > 75 || this.password2Input.length > 75) {
-					this.passwordError = this.t('Must be 75 characters or less')
+				} else if (this.passwordInput.length > 75) {
+					this.passwordError = 'Must be 75 characters or less'
 					return true
 				} else {
 					this.passwordError = ''
@@ -158,10 +161,10 @@
 			},
 			password2HasErrors() {
 				if (this.password2Input.length < 1 ) {
-					this.password2Error = this.t('Required')
+					this.password2Error = 'Required'
 					return true
 				} else if (this.passwordInput !== this.password2Input) {
-					this.password2Error = this.t('Passwords don\'t match')
+					this.password2Error = 'Passwords don\'t match'
 					return true
 				} else {
 					this.password2Error = ''
@@ -169,15 +172,18 @@
 				}
 			},
 			emailHasErrors() {
-				console.log(this.emailInput.length)
+				if (this.passwordError
+						=== 'This email is already registered and this isn\'t the correct password for it') {
+					this.passwordError = ''
+				}
 				if (this.emailInput.length < 1) {
-					this.emailError = this.t('Required')
+					this.emailError = 'Required'
 					return true
 				} else if (this.hasInvalidEmailStructure() || this.hasIllegalSymbols(this.emailInput)) {
-					this.emailError = this.t('This is an impossible email')
+					this.emailError = 'This is an impossible email'
 					return true
 				} else if (this.emailInput.length > 75) {
-					this.emailError = this.t('Must be 75 characters or less')
+					this.emailError = 'Must be 75 characters or less'
 					return true
 				} else {
 					this.emailError = ''
@@ -186,13 +192,13 @@
 			},
 			displayNameHasErrors() {
 				if (this.displayNameInput.length < 1) {
-					this.displayNameError = this.t('Required')
+					this.displayNameError = 'Required'
 					return true
 				} else if (this.hasIllegalSymbols(this.displayNameInput)) {
-					this.displayNameError = this.t('Only these symbols are allowed: . _ - @')
+					this.displayNameError = 'Only these symbols are allowed: . _ - @'
 					return true
 				} else if (this.displayNameInput.length > 40) {
-					this.displayNameError = this.t('Must be 40 characters or less')
+					this.displayNameError = 'Must be 40 characters or less'
 					return true
 				} else {
 					this.displayNameError = ''
@@ -232,22 +238,4 @@
 	} // export
 </script>
 <style scoped>
-	.shake {
-		animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
-		transform: translate3d(0, 0, 0);
-	}
-	@keyframes shake {
-		10%, 90% {
-		transform: translate3d(-1px, 0, 0);
-		}
-		20%, 80% {
-		transform: translate3d(2px, 0, 0);
-		}
-		30%, 50%, 70% {
-		transform: translate3d(-4px, 0, 0);
-		}
-		40%, 60% {
-		transform: translate3d(4px, 0, 0);
-		}
-	}
 </style>
