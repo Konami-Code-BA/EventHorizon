@@ -17,11 +17,11 @@ class UserBackend(BaseAuthentication):
 					return user
 				else:
 					user = namedtuple('user', 'error')
-					user.error = 'incorrect password'
+					user.error = 'Incorrect password'
 					return user
 			except self.UserModel.DoesNotExist:
 				user = namedtuple('user', 'error')
-				user.error = 'this email is not registered'
+				user.error = 'This email is not registered'
 				return user
 			except self.UserModel.MultipleObjectsReturned:
 				user = self.UserModel.objects.filter(email=request.data['email'])[1]

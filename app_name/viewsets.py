@@ -106,7 +106,7 @@ class UserViewset(viewsets.ModelViewSet):
 					return current_user
 				else:  # if password doesn't match
 					user = namedtuple('user', 'error')
-					user.error = 'this email is already registered and this isn\'t the correct password for it'
+					user.error = 'This email is already registered and this isn\'t the correct password for it'
 					return user
 			except self.model.DoesNotExist:  # if exisiting user with this email doesnt exist, add email to current user
 				current_user.email = request.data['email']
@@ -139,7 +139,7 @@ class UserViewset(viewsets.ModelViewSet):
 				# if already registered, don't let them register another name with existing email
 				user = self.model.objects.get(email=request.data['email'])
 				user = namedtuple('user', 'error')
-				user.error = 'this email is already registered'
+				user.error = 'This email is already registered'
 			except self.model.DoesNotExist:  # if this email not already registered, turn visitor into user & add info
 				user = self.model.objects.get(pk=request.user.pk)  # get visitor account (already logged in)
 				user.groups.clear()  # clear visitor group

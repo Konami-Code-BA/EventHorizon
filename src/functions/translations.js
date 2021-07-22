@@ -36,7 +36,7 @@ export default {
         },
         'EMAIL': {
             'EN': 'EMAIL',
-            'JP': 'Eメール'
+            'JP': 'メール'
         },
         'PASSWORD': {
             'EN': 'PASSWORD',
@@ -45,10 +45,6 @@ export default {
         'PASSWORD (AGAIN)': {
             'EN': 'PASSWORD (AGAIN)',
             'JP': 'パスワード確認'
-        },
-        "PASSWORDS DON'T MATCH": {
-            'EN': "PASSWORDS DON'T MATCH",
-            'JP': 'パスワードが一致しません'
         },
         "FORGOT PASSWORD": {
             'EN': "FORGOT PASSWORD",
@@ -66,10 +62,6 @@ export default {
             'EN': 'LANGUAGE',
             'JP': '言語'
         },
-        'GO TO REGISTRATION': {
-            'EN': 'GO TO REGISTRATION',
-            'JP': '登録画面へ'
-        },
         'HOME': {
             'EN': 'HOME',
             'JP': 'ホーム'
@@ -80,7 +72,7 @@ export default {
         },
         'GET EMAILS': {
             'EN': 'GET EMAILS',
-            'JP': 'Eメール送信'
+            'JP': 'メール送信'
         },
         'UPCOMING EVENTS': {
             'EN': 'UPCOMING EVENTS',
@@ -100,11 +92,11 @@ export default {
         },
         'LOGIN WITH EMAIL': {
             'EN': 'LOGIN WITH EMAIL',
-            'JP': 'Eメールでログイン'
+            'JP': 'メールでログイン'
         },
         'REGISTER WITH EMAIL': {
             'EN': 'REGISTER WITH EMAIL',
-            'JP': 'Eメールで登録'
+            'JP': 'メールで登録'
         },
         'OK': {
             'EN': 'OK',
@@ -116,15 +108,15 @@ export default {
         },
         'ADD EMAIL ADDRESS': {
             'EN': 'ADD EMAIL ADDRESS',
-            'JP': 'Eメールアドレスを追加する'
+            'JP': 'メールアドレスを追加する'
         },
         'Password can\'t be empty': {
             'EN': 'Password can\'t be empty',
-            'JP': 'Eメールアドレスを追加する'
+            'JP': 'メールアドレスを追加する'
         },
         'Password confirmation can\'t be empty': {
             'EN': 'Password confirmation can\'t be empty',
-            'JP': 'Eメールアドレスを追加する'
+            'JP': 'メールアドレスを追加する'
         },
         'Must be 4 characters or more': {
             'EN': 'Must be 4 characters or more',
@@ -136,7 +128,7 @@ export default {
         },
         'This is an impossible email': {
             'EN': 'This is an impossible email',
-            'JP': '無効なEメールアドレス'
+            'JP': '無効なメールアドレス'
         },
         'Must be 75 characters or less': {
             'EN': 'Must be 75 characters or less',
@@ -153,6 +145,22 @@ export default {
         'Must be 40 characters or less': {
             'EN': 'Must be 40 characters or less',
             'JP': '40文字以下'
+        },
+        'This email is not registered': {
+            'EN': 'This email is not registered',
+            'JP': '未登録のメールアドレス'
+        },
+        'Incorrect password': {
+            'EN': 'Incorrect password',
+            'JP': 'パスワード相違'
+        },
+        'This email is already registered': {
+            'EN': 'This email is already registered',
+            'JP': '登録済のメールアドレス'
+        },
+        'This email is already registered and this isn\'t the correct password for it': {
+            'EN': 'This email is already registered and this isn\'t the correct password for it',
+            'JP': '登録済のメールアドレスとパスワードが一致しません'
         },
     },
 
