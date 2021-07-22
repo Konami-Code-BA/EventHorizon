@@ -2,11 +2,11 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import store from '@/store'
 import apiFunctions from '@/functions/apiFunctions.js'
-import frontPage from '@/views/frontPage'
+import front from '@/views/front'
 import loginRegister from '@/views/loginRegister'
 import registerWithEmail from '@/views/registerWithEmail'
 import loginWithEmail from '@/views/loginWithEmail'
-import accountSettings from '@/views/accountSettings'
+import settings from '@/views/settings'
 import home from '@/views/home'
 import experiment1 from '@/views/experiment1'
 import experiment2 from '@/views/experiment2'
@@ -19,16 +19,16 @@ const router = new Router({
     //beforeEach: (to, from, next) => {},
     routes: [{
         path: '',
-        redirect: { name: 'frontPage' },
+        redirect: { name: 'front' },
         meta: { userGroups: [] },
     }, {
         path: '/',
-        redirect: { name: 'frontPage' },
+        redirect: { name: 'front' },
         meta: { userGroups: [] },
     }, {
-        path: '/frontPage',
-        name: 'frontPage',
-        component: frontPage,
+        path: '/front',
+        name: 'front',
+        component: front,
         meta: { userGroups: [] },
     }, {
         path: '/loginRegister',
@@ -56,9 +56,9 @@ const router = new Router({
         component: experiment2,
         meta: { userGroups: [1, ] },
     }, {
-        path: '/accountSettings',
-        name: 'accountSettings',
-        component: accountSettings,
+        path: '/settings',
+        name: 'settings',
+        component: settings,
         meta: { userGroups: [1, 2, ] },
     }, {
         path: '/home',
@@ -92,10 +92,10 @@ router.beforeEach(
                 }
             } // permission denied
             // if path coming from is login, register, or front page, don't change pages on failure
-            if (['loginRegister', 'loginWithEmail', 'frontPage', 'registerWithEmail'].includes(from.name)) {
+            if (['loginRegister', 'loginWithEmail', 'front', 'registerWithEmail'].includes(from.name)) {
                 return
             } else { // any other page, when permission denied, get sent to front page
-                next({ name: 'frontPage' })
+                next({ name: 'front' })
                 return
             }
         }

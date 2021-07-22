@@ -2,8 +2,8 @@ import store from '@/store.js'
 export default {
     translationsDict: {
         '': { '': '' },
-        'EXPAND YOUR REACH TO NEW HORIZONS': {
-            'EN': 'EXPAND YOUR REACH\nTO NEW HORIZONS',
+        'REACH OUT TO NEW HORIZONS': {
+            'EN': 'REACH OUT\nTO NEW HORIZONS',
             'JP': '新たな地平線への\n到達を目指して'
         },
         'LOGIN': {
@@ -70,18 +70,6 @@ export default {
             'EN': 'GO TO REGISTRATION',
             'JP': '登録画面へ'
         },
-        'LOGGED IN': {
-            'EN': 'LOGGED IN ✅',
-            'JP': 'ログインした✅'
-        },
-        'LOGGED OUT': {
-            'EN': 'LOGGED OUT 👋',
-            'JP': 'ログアウトした👋'
-        },
-        'REGISTERED': {
-            'EN': 'REGISTERED ✅',
-            'JP': '登録した✅'
-        },
         'HOME': {
             'EN': 'HOME',
             'JP': 'ホーム'
@@ -129,6 +117,42 @@ export default {
         'ADD EMAIL ADDRESS': {
             'EN': 'ADD EMAIL ADDRESS',
             'JP': 'Eメールアドレスを追加する'
+        },
+        'Password can\'t be empty': {
+            'EN': 'Password can\'t be empty',
+            'JP': 'Eメールアドレスを追加する'
+        },
+        'Password confirmation can\'t be empty': {
+            'EN': 'Password confirmation can\'t be empty',
+            'JP': 'Eメールアドレスを追加する'
+        },
+        'Must be 4 characters or more': {
+            'EN': 'Must be 4 characters or more',
+            'JP': '4文字以上'
+        },
+        'Passwords don\'t match': {
+            'EN': 'Passwords don\'t match',
+            'JP': 'パスワードが不一致'
+        },
+        'This is an impossible email': {
+            'EN': 'This is an impossible email',
+            'JP': '無効なEメールアドレス'
+        },
+        'Must be 75 characters or less': {
+            'EN': 'Must be 75 characters or less',
+            'JP': '75文字以下'
+        },
+        'Required': {
+            'EN': 'Required',
+            'JP': '必須項目'
+        },
+        'Only these symbols are allowed: . _ - @': {
+            'EN': 'Only these symbols are allowed: . _ - @',
+            'JP': '記号は次の中から使用可: . _ - @'
+        },
+        'Must be 40 characters or less': {
+            'EN': 'Must be 40 characters or less',
+            'JP': '40文字以下'
         },
     },
 
