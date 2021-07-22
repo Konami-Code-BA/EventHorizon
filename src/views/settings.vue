@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div v-show="!loading">
-			<menus-header/>
+			<menus-header @startLoading="loading=true" @endLoading="loading=false"/>
 			<div class="box">
 				<div>
 					<h1>{{ t('SETTINGS') }}</h1>
@@ -47,7 +47,7 @@
 	import apiFunctions from '@/functions/apiFunctions.js'
 	import functions from '@/functions/functions.js'
 	export default {
-		name: 'accountSettings',
+		name: 'settings',
 		components: {
 			menusHeader,
 			modal,

@@ -2,9 +2,11 @@
 	<div>
 		<form v-on:keyup.enter="registerWithEmail()">
 			<div v-if="includeDisplayName">
-				<input :placeholder="t('DISPLAY NAME')" v-model="displayName" type="text" class="box-item"
+				<input :placeholder="t('DISPLAY NAME')" v-model="displayNameInput" type="text" class="box-item"
 					id="displayName" autocorrect="off" autocapitalize="none"/>
-				<div class="box-height"></div>
+				<div class="box-height" :class="{'shake' : shakeIt}" style="color: red">
+					<small>{{displayNameError}}</small>
+				</div>
 			</div>
 			<div>
 				<input :placeholder="t('EMAIL')" v-model="emailInput" type="email" class="box-item"
@@ -27,9 +29,11 @@
 					</small>
 				</button>
 			</div>
-			<div class="box-height"></div>
+			<div class="box-height" :class="{'shake' : shakeIt}" style="color: red">
+				<small>{{passwordError}}</small>
+			</div>
 			<div style="display: flex">
-				<input :placeholder="t('PASSWORD (AGAIN)')" v-model="passwordInput2"
+				<input :placeholder="t('PASSWORD (AGAIN)')" v-model="password2Input"
 					:type="[showPassword2 ? 'text' : 'password']" class="box-item" style="flex-grow: 1"
 					id="password2" autocorrect="off" autocapitalize="none"/>
 				<button v-on:click.prevent="showButton2()" class="box-item" style="width: 70px"
@@ -42,10 +46,9 @@
 					</small>
 				</button>
 			</div>
-			<div v-if="showError" class="box-height" :class="{'shake' : shakeIt}" style="color: red">
-				✘&nbsp;<small>{{passwordError}}</small>
+			<div class="box-height" :class="{'shake' : shakeIt}" style="color: red">
+				<small>{{password2Error}}</small>
 			</div>
-			<div v-else class="box-height">✅</div>
 		</form>
 		<button v-on:click.prevent="registerWithEmail()" class="box-item">
 			{{ t('REGISTER') }}
@@ -65,16 +68,18 @@
 			return {
 				store: store,
 				loading: true,
-				displayName: '',
+				displayNameInput: '',
 				emailInput: '',
 				passwordInput: '',
-				passwordInput2: '',
+				password2Input: '',
 				showPassword: false,
 				showPassword2: false,
 				shakeIt: false,
 				showError: true,
 				passwordError: '',
+				password2Error: '',
 				emailError: '',
+				displayNameError: '',
 			}
 		},
 		props: {
@@ -86,17 +91,22 @@
 			} else {
 				functions.focusCursor('email')
 			}
+			this.passwordHasErrors()
+			this.password2HasErrors()
+			this.emailHasErrors()
+			this.displayNameHasErrors()
 		},
 		watch: {
-			'passwordInput2' () { this.inputsHaveErrors() },
-			'passwordInput' () { this.inputsHaveErrors() },
-			'emailInput' () { this.inputsHaveErrors() },
-			'displayName' () { this.inputsHaveErrors() },
+			'passwordInput' () { this.passwordHasErrors(); this.password2HasErrors() },
+			'password2Input' () { this.password2HasErrors() },
+			'emailInput' () { this.emailHasErrors() },
+			'displayNameInput' () { this.displayNameHasErrors() },
 		},
 		methods: {
 			t (w) { return translations.t(w) },
 			async registerWithEmail () {
-				if (this.inputsHaveErrors()) {
+				if (this.passwordError.length > 0 || this.password2Error.length > 0 || this.emailError.length > 0
+						|| this.displayNameError.length > 0) {
 					this.shakeFunction()
 					return
 				}
@@ -106,7 +116,7 @@
 				this.$emit('startLoading')
 				let error = null
 				if (this.includeDisplayName) {
-					error = await apiFunctions.registerWithEmail(this.emailInput, this.passwordInput, this.displayName)
+					error = await apiFunctions.registerWithEmail(this.emailInput, this.passwordInput, this.displayNameInput)
 				} else {
 					error = await apiFunctions.registerWithEmail(this.emailInput, this.passwordInput)
 				}
@@ -131,16 +141,88 @@
 				functions.focusCursor('password2')
 				this.showPassword2 = !this.showPassword2
 			},
-			inputsHaveErrors () {
-				if (this.passwordInput !== this.passwordInput2 || this.passwordInput === '' ||
-						this.passwordInput2 === '' || this.emailInput === '' || !this.emailInput.includes('@') ||
-						!this.emailInput.includes('.') || (this.includeDisplayName && this.displayName === '')) {
-					this.showError = true
+			passwordHasErrors() {
+				if (this.passwordInput.length < 1 ) {
+					this.passwordError = this.t('Required')
+					return true
+				} else if (this.passwordInput.length < 4) {
+					this.passwordError = this.t('Must be 4 characters or more')
+					return true
+				} else if (this.passwordInput.length > 75 || this.password2Input.length > 75) {
+					this.passwordError = this.t('Must be 75 characters or less')
 					return true
 				} else {
-					this.showError = false
+					this.passwordError = ''
 					return false
 				}
+			},
+			password2HasErrors() {
+				if (this.password2Input.length < 1 ) {
+					this.password2Error = this.t('Required')
+					return true
+				} else if (this.passwordInput !== this.password2Input) {
+					this.password2Error = this.t('Passwords don\'t match')
+					return true
+				} else {
+					this.password2Error = ''
+					return false
+				}
+			},
+			emailHasErrors() {
+				console.log(this.emailInput.length)
+				if (this.emailInput.length < 1) {
+					this.emailError = this.t('Required')
+					return true
+				} else if (this.hasInvalidEmailStructure() || this.hasIllegalSymbols(this.emailInput)) {
+					this.emailError = this.t('This is an impossible email')
+					return true
+				} else if (this.emailInput.length > 75) {
+					this.emailError = this.t('Must be 75 characters or less')
+					return true
+				} else {
+					this.emailError = ''
+					return false
+				}
+			},
+			displayNameHasErrors() {
+				if (this.displayNameInput.length < 1) {
+					this.displayNameError = this.t('Required')
+					return true
+				} else if (this.hasIllegalSymbols(this.displayNameInput)) {
+					this.displayNameError = this.t('Only these symbols are allowed: . _ - @')
+					return true
+				} else if (this.displayNameInput.length > 40) {
+					this.displayNameError = this.t('Must be 40 characters or less')
+					return true
+				} else {
+					this.displayNameError = ''
+					return false
+				}
+			},
+			hasIllegalSymbols (value) {
+				let symbols = '`~!#$%^&*()+=[{]}\\|;:\'",<>/?'
+				for (let i = 0; i < symbols.length; i++) {
+					if (value.includes(symbols[i])) {
+						return true
+					}
+				}
+				return false
+			},
+			hasInvalidEmailStructure () {
+				let atSplit = this.emailInput.split('@')
+				if (atSplit.length != 2) {
+					return true
+				}
+				let [mailPrefix, mailDomain] = atSplit
+				let periodSplit = mailDomain.split('.')
+				if (periodSplit.length != 2) {
+					return true
+				}
+				let [domainPrefix, domainSuffix] = periodSplit
+				if (mailPrefix.length < 1 || domainPrefix.length < 1 || domainSuffix.length < 2) {
+					return true
+				}
+				return false
 			},
 			shakeFunction () {
 				this.shakeIt = true

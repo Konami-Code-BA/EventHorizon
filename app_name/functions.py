@@ -155,6 +155,8 @@ def verify_update_line_info(request, user):  # for exisitng user with line id, a
 		user = authenticate_login(request)  # login again just in case, and to get new location info
 		if not hasattr(user, 'error'):  # logged into a user
 			if not user.groups.filter(id=3).exists() and visitor:  # if not visitor, but request made by visitor
+				user.visit_count += visitor.visit_count
+				user.save()
 				visitor.delete()  # delete the visitor account that made the request
 		return user
 	else:  # line id can't be confirmed

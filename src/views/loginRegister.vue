@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div v-if="!loading">
-			<menus-header/>
+			<menus-header @startLoading="loading=true" @endLoading="loading=false"/>
 			<div class="box">
 				<button v-on:click.prevent="$router.push({ name: 'loginWithEmail' })" class="box-item" style="flex-grow: 1">{{t('LOGIN WITH EMAIL')}}</button>
 				<div class="box-height"></div>
@@ -20,7 +20,7 @@
 					</div>
 				</button>
 				<div class="box-height"></div>
-				<a href="https://lin.ee/UeSvNxR" class="line-coloring">
+				<!--a href="https://lin.ee/UeSvNxR" class="line-coloring">
 					<div class="line-button">
 						<div class="line-alignment">
 							<div>
@@ -31,7 +31,7 @@
 							</div>
 						</div>
 					</div>
-				</a>
+				</a-->
 			</div>
 		</div>
 		<div class="loading" v-else></div>
@@ -111,7 +111,7 @@
 		display: flex;
 		flex-direction: row;
 		align-items: center;
-		width: 150px;
+		width: 90px;
 		justify-content: space-between;
 		height: inherit !important;
 	}
