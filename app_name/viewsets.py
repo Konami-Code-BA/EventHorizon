@@ -217,6 +217,8 @@ class UserViewset(viewsets.ModelViewSet):
 			user.visit_count += 1  # add to the visit count
 			user.save()
 			if not user.groups.filter(id=3).exists() and visitor:  # if not visitor, but a visitor made the request
+				user.visit_count += visitor.visit_count
+				user.save()
 				visitor.delete()  # delete the visitor account that made the request
 			return user  # done
 		else:  # if couldn't login to anything, probably got an error, so return user anyway
