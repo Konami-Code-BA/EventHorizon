@@ -186,6 +186,9 @@ class UserViewset(viewsets.ModelViewSet):
 			user = User.objects.get(line_id=profile_response['userId'])
 			user.line_access_token = getAccessToken_response['access_token']
 			user.line_refresh_token = getAccessToken_response['refresh_token']
+			if user.groups.filter(id=5).exists():  # if this user is a temp line friend
+				user.groups.clear()  # clear temp line friend group
+				user.groups.add(2)  # change to user
 			user = verify_update_line_info(request, user)  # verify validity of current line data and put new data
 		except User.DoesNotExist:  # if there was no user with this id, turn visitor into user & add info
 			user = self.model.objects.get(pk=request.user.pk)  # get visitor account (already logged in)
