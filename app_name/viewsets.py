@@ -106,7 +106,7 @@ class UserViewset(viewsets.ModelViewSet):
 					return current_user
 				else:  # if password doesn't match
 					user = namedtuple('user', 'error')
-					user.error = 'This email is already registered and this isn\'t the correct password for it'
+					user.error = 'Incorrect password for this email'
 					return user
 			except self.model.DoesNotExist:  # if exisiting user with this email doesnt exist, add email to current user
 				current_user.email = request.data['email']
