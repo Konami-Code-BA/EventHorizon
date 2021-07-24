@@ -145,6 +145,11 @@
 		.wide-img {
 			width: 100%;
 		}
+		.error-text {
+			font-weight: 400; /*400=normal, 700=bold*/
+			font-size: 12px;
+			color: red;
+		}
 
 		/* LOADING SPINNER */
 

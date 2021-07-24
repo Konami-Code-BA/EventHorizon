@@ -158,9 +158,9 @@ export default {
             'EN': 'This email is already registered',
             'JP': '登録済のメールアドレス'
         },
-        'This email is already registered and this isn\'t the correct password for it': {
-            'EN': 'This email is already registered and this isn\'t the correct password for it',
-            'JP': '登録済のメールアドレスとパスワードが一致しません'
+        'Incorrect password for this email': {
+            'EN': 'Incorrect password for this email',
+            'JP': '登録済のメールアドレスとパスワード相違'
         },
     },
 
