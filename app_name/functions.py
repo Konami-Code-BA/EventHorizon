@@ -60,7 +60,6 @@ def line_bot(line_body):
 		reply = 'Thank you for following!'
 		add_line_friend(events['source']['userId'])
 	if events['type'] == 'unfollow':
-		reply = 'Thank you for following!'
 		remove_line_friend(events['source']['userId'])
 	elif events['type'] == 'message':  # its a message (not a follow etc)
 		if events['message']['type'] == 'text':  # its a text message (not an image etc)
