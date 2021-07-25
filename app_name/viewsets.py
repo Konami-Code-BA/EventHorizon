@@ -61,14 +61,18 @@ class UserViewset(viewsets.ModelViewSet):
 		return user
 	
 	def update_user_is_line_friend(self, request, pk):
+		print("update_user_is_line_friend")
+		print("pk", pk)
 		try:
 			user = self.model.objects.get(pk=pk)
 		except self.model.DoesNotExist:
 			user = namedtuple('user', 'error')
 			user.error = 'a user with this id could not be found'
 			return user
+		print("request.data['is_line_friend']", request.data['is_line_friend'])
 		user.is_line_friend = request.data['is_line_friend']
 		user.save()
+		print("user.is_line_friend", user.is_line_friend)
 		return user
 	
 	def update_user_alerts(self, request, pk):
