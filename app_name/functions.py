@@ -55,14 +55,15 @@ def is_admin_or_this_user(request, pk):  # is admin, or is a user that matches t
 
 def line_bot(line_body):
 	replyToken, reply, received = None, None, None
-	events = line_body['events'][0]
+	if len(line_body['events']) > 0:
+		events = line_body['events'][0]
+	else: 
+		return replyToken, reply
 	print("events['type']", events['type'])
 	if events['type'] == 'follow':
-		print("add_line_friend")
 		reply = 'Thank you for following!'
 		add_line_friend(events['source']['userId'])
 	if events['type'] == 'unfollow':
-		print("remove_line_friend")
 		remove_line_friend(events['source']['userId'])
 	elif events['type'] == 'message':  # its a message (not a follow etc)
 		if events['message']['type'] == 'text':  # its a text message (not an image etc)
@@ -81,10 +82,9 @@ def add_line_friend(line_id):
 	from app_name.viewsets import UserViewset
 	try:  # if user with this line id exists
 		user = UserViewset.model.objects.get(line_id=line_id)
-		request = namedtuple('request', 'data')
-		request.data = {'is_line_friend': True}
-		print("add_line_friend1")
-		UserViewset.update_user_is_line_friend(UserViewset, request, user.pk)  # update user, is_line_friend: True
+		user.is_line_friend = True
+		user.do_get_lines = True
+		user.save()
 	except UserViewset.model.DoesNotExist:  # if no user with this line id exists
 		# this wasn't done on the site, it was done in line so there is no visitor, and can't make session
 		user = UserViewset.model.objects.create_user(  # create temporary line friend user
@@ -104,9 +104,7 @@ def remove_line_friend(line_id):
 	from app_name.viewsets import UserViewset
 	try:  # if user with this line id exists
 		user = UserViewset.model.objects.get(line_id=line_id)
-		request = namedtuple('request', 'data')
-		request.data = {'is_line_friend': False}
-		UserViewset.update_user_is_line_friend(UserViewset, request, user.pk)  # update user, is_line_friend: False
+		user.is_line_friend = False
 		user.do_get_lines = False
 		user.save()
 		print("remove_line_friend1")
