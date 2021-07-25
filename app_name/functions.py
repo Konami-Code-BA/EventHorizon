@@ -59,7 +59,6 @@ def line_bot(line_body):
 		events = line_body['events'][0]
 	else: 
 		return replyToken, reply
-	print("events['type']", events['type'])
 	if events['type'] == 'follow':
 		reply = 'Thank you for following!'
 		add_line_friend(events['source']['userId'])
@@ -97,7 +96,7 @@ def add_line_friend(line_id):
 		)
 		user.groups.add(5)  # temp line friend
 		user.save()
-		print("add_line_friend2")
+		print('ADDED NEW TEMP LINE FRIEND')
 
 
 def remove_line_friend(line_id):
@@ -107,10 +106,8 @@ def remove_line_friend(line_id):
 		user.is_line_friend = False
 		user.do_get_lines = False
 		user.save()
-		print("remove_line_friend1")
 	except UserViewset.model.DoesNotExist:  # this is basically not possible
-		print("remove_line_friend2")
-		#pass
+		pass
 
 
 def authenticate_login(request):
