@@ -56,10 +56,13 @@ def is_admin_or_this_user(request, pk):  # is admin, or is a user that matches t
 def line_bot(line_body):
 	replyToken, reply, received = None, None, None
 	events = line_body['events'][0]
+	print("events['type']", events['type'])
 	if events['type'] == 'follow':
+		print("add_line_friend")
 		reply = 'Thank you for following!'
 		add_line_friend(events['source']['userId'])
 	if events['type'] == 'unfollow':
+		print("remove_line_friend")
 		remove_line_friend(events['source']['userId'])
 	elif events['type'] == 'message':  # its a message (not a follow etc)
 		if events['message']['type'] == 'text':  # its a text message (not an image etc)
@@ -75,11 +78,12 @@ def line_bot(line_body):
 
 
 def add_line_friend(line_id):
-	from app_name.viewsets import UserViewset, SecretsViewset
+	from app_name.viewsets import UserViewset
 	try:  # if user with this line id exists
 		user = UserViewset.model.objects.get(line_id=line_id)
 		request = namedtuple('request', 'data')
 		request.data = {'is_line_friend': True}
+		print("add_line_friend1")
 		UserViewset.update_user_is_line_friend(UserViewset, request, user.pk)  # update user, is_line_friend: True
 	except UserViewset.model.DoesNotExist:  # if no user with this line id exists
 		# this wasn't done on the site, it was done in line so there is no visitor, and can't make session
@@ -93,6 +97,7 @@ def add_line_friend(line_id):
 		)
 		user.groups.add(5)  # temp line friend
 		user.save()
+		print("add_line_friend2")
 
 
 def remove_line_friend(line_id):
@@ -104,8 +109,10 @@ def remove_line_friend(line_id):
 		UserViewset.update_user_is_line_friend(UserViewset, request, user.pk)  # update user, is_line_friend: False
 		user.do_get_lines = False
 		user.save()
+		print("remove_line_friend1")
 	except UserViewset.model.DoesNotExist:  # this is basically not possible
-		pass
+		print("remove_line_friend2")
+		#pass
 
 
 def authenticate_login(request):
