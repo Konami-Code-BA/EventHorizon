@@ -15,11 +15,8 @@ def index(request):
 @csrf_exempt
 def line_webhook(request):  # https://developers.line.biz/en/reference/messaging-api/#message-event
 	line_body = json.loads(request.body.decode('utf-8'))
-	print('line_body', line_body)
 	replyToken, reply = line_bot(line_body)
 	response = "Don't need to send a reply"
-	print('replyToken', replyToken)
-	print('reply', reply)
 	if replyToken and reply:
 		url = 'https://api.line.me/v2/bot/message/reply'
 		headers = {
@@ -34,5 +31,4 @@ def line_webhook(request):  # https://developers.line.biz/en/reference/messaging
 			}]
 		})
 		response = requests.post(url, headers=headers, data=data)
-	print('response', response)
 	return HttpResponse(response)

@@ -198,10 +198,11 @@ class UserViewset(viewsets.ModelViewSet):
 			user.line_id = profile_response['userId']
 			user.line_access_token = getAccessToken_response['access_token']
 			user.line_refresh_token = getAccessToken_response['refresh_token']
-			user.do_get_lines = True
 			user.do_get_line_display_name = True
 			user.save()
+			print('SAVED USER')
 			user = authenticate_login(request)  # login user
+			print('LOGGED IN')
 		return user
 		
 
