@@ -60,14 +60,14 @@ class UserViewset(viewsets.ModelViewSet):
 		user.save()
 		return user
 	
-	def update_user_is_line_friend(self, request, pk):
+	def update_user_do_get_lines(self, request, pk):
 		try:
 			user = self.model.objects.get(pk=pk)
 		except self.model.DoesNotExist:
 			user = namedtuple('user', 'error')
 			user.error = 'a user with this id could not be found'
 			return user
-		user.is_line_friend = request.data['is_line_friend']
+		user.do_get_lines = request.data['do_get_lines']
 		user.save()
 		return user
 	
@@ -106,7 +106,7 @@ class UserViewset(viewsets.ModelViewSet):
 					return current_user
 				else:  # if password doesn't match
 					user = namedtuple('user', 'error')
-					user.error = 'this email is already registered and this isn\'t the correct password for it'
+					user.error = 'Incorrect password for this email'
 					return user
 			except self.model.DoesNotExist:  # if exisiting user with this email doesnt exist, add email to current user
 				current_user.email = request.data['email']
@@ -139,7 +139,7 @@ class UserViewset(viewsets.ModelViewSet):
 				# if already registered, don't let them register another name with existing email
 				user = self.model.objects.get(email=request.data['email'])
 				user = namedtuple('user', 'error')
-				user.error = 'this email is already registered'
+				user.error = 'This email is already registered'
 			except self.model.DoesNotExist:  # if this email not already registered, turn visitor into user & add info
 				user = self.model.objects.get(pk=request.user.pk)  # get visitor account (already logged in)
 				user.groups.clear()  # clear visitor group
@@ -186,6 +186,10 @@ class UserViewset(viewsets.ModelViewSet):
 			user = User.objects.get(line_id=profile_response['userId'])
 			user.line_access_token = getAccessToken_response['access_token']
 			user.line_refresh_token = getAccessToken_response['refresh_token']
+			if user.groups.filter(id=5).exists():  # if this user is a temp line friend
+				user.groups.clear()  # clear temp line friend group
+				user.groups.add(2)  # change to user
+			print('changing temp line friend to user')
 			user = verify_update_line_info(request, user)  # verify validity of current line data and put new data
 		except User.DoesNotExist:  # if there was no user with this id, turn visitor into user & add info
 			user = self.model.objects.get(pk=request.user.pk)  # get visitor account (already logged in)
@@ -195,10 +199,11 @@ class UserViewset(viewsets.ModelViewSet):
 			user.line_id = profile_response['userId']
 			user.line_access_token = getAccessToken_response['access_token']
 			user.line_refresh_token = getAccessToken_response['refresh_token']
-			user.do_get_lines = True
 			user.do_get_line_display_name = True
 			user.save()
+			print('SAVED USER')
 			user = authenticate_login(request)  # login user
+			print('LOGGED IN')
 		return user
 		
 
@@ -217,6 +222,8 @@ class UserViewset(viewsets.ModelViewSet):
 			user.visit_count += 1  # add to the visit count
 			user.save()
 			if not user.groups.filter(id=3).exists() and visitor:  # if not visitor, but a visitor made the request
+				user.visit_count += visitor.visit_count
+				user.save()
 				visitor.delete()  # delete the visitor account that made the request
 			return user  # done
 		else:  # if couldn't login to anything, probably got an error, so return user anyway
