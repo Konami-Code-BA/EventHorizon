@@ -65,7 +65,7 @@
 		.box-center {
 			text-align: center;
 		}
-		button, button:hover, button:active, button.pointer {
+		button, button:hover, button:active, button.pointer, a, a:hover, a:active, a.pointer {
 			font-family: inherit;
 			color: #ffe07a;
 			font-weight: inherit;
@@ -79,6 +79,7 @@
 			padding: 0;
 			padding-left: 3px;
 			padding-right: 3px;
+  			text-decoration: none;
 		}
 		input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus,
 		input:-webkit-autofill:active, input[type=text], input[type=email], input[type=password],
@@ -144,7 +145,13 @@
 		.wide-img {
 			width: 100%;
 		}
-		/* SPINNER */
+		.error-text {
+			font-weight: 400; /*400=normal, 700=bold*/
+			font-size: 12px;
+			color: red;
+		}
+
+		/* LOADING SPINNER */
 
 		/* Absolute Center Spinner */
 		.loading {
@@ -260,5 +267,26 @@
 				transform: rotate(360deg);
 			}
 		}
+
+	/* SHAKE */
+		
+	.shake {
+		animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
+		transform: translate3d(0, 0, 0);
+	}
+	@keyframes shake {
+		10%, 90% {
+		transform: translate3d(-1px, 0, 0);
+		}
+		20%, 80% {
+		transform: translate3d(2px, 0, 0);
+		}
+		30%, 50%, 70% {
+		transform: translate3d(-4px, 0, 0);
+		}
+		40%, 60% {
+		transform: translate3d(4px, 0, 0);
+		}
+	}
 	}
 </style>

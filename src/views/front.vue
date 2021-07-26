@@ -1,11 +1,11 @@
 <template>
 	<div>
 		<div v-if="!loading">
-			<menus-header/>
+			<menus-header @startLoading="loading=true" @endLoading="loading=false"/>
 			<div class="box">
 				<div style="text-align: center; font-size: 32px;">EVENT HORIZON</div>
 				<div class="box-height"></div>
-				<div style="text-align: center; font-size: 24px; white-space: pre-line">{{ t('EXPAND YOUR REACH TO NEW HORIZONS') }}</div>
+				<div style="text-align: center; font-size: 24px; white-space: pre-line">{{ t('REACH OUT TO NEW HORIZONS') }}</div>
 				<div class="box-height"></div>
 				<!--div class="container">
 					<img src="../assets/pexels-photo-event1.jpg" class="wide-img">
@@ -31,6 +31,11 @@
 		<transition name="fade">
 			<modal v-show="showCookiesModal" @closeModals="closeCookiesModal()">
 				<div slot="contents" class="cookiesModal">
+					<div style="align-self: flex-end">
+						<button v-on:click.prevent="closeCookiesModal()" class="no-border-button">
+							✖
+						</button>
+					</div>
 					<div style="white-space: pre-line; text-align: center; font-weight: 400;">
 						{{t('This site uses cookies')}}
 					</div><br>
@@ -51,7 +56,7 @@
 	import apiFunctions from '@/functions/apiFunctions.js'
 	import modal from '@/components/modal'
 	export default {
-		name: 'frontPage',
+		name: 'front',
 		components: {
 			menusHeader,
 			modal,
@@ -81,8 +86,11 @@
 <style scoped>
 	.cookiesModal {
 		position: fixed;
+		display: flex;
+		flex-direction: column;
 		z-index: 10000;
-		background-color: #00022e;
+		background-color: #18002e;
+		border: 1px solid #5300e1;
 		border-radius: 15px;
 		padding: 20px;
 		width: 50%;

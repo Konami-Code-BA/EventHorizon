@@ -55,12 +55,14 @@ def is_admin_or_this_user(request, pk):  # is admin, or is a user that matches t
 
 def line_bot(line_body):
 	replyToken, reply, received = None, None, None
-	events = line_body['events'][0]
+	if len(line_body['events']) > 0:
+		events = line_body['events'][0]
+	else: 
+		return replyToken, reply
 	if events['type'] == 'follow':
 		reply = 'Thank you for following!'
 		add_line_friend(events['source']['userId'])
 	if events['type'] == 'unfollow':
-		reply = 'Thank you for following!'
 		remove_line_friend(events['source']['userId'])
 	elif events['type'] == 'message':  # its a message (not a follow etc)
 		if events['message']['type'] == 'text':  # its a text message (not an image etc)
@@ -76,12 +78,12 @@ def line_bot(line_body):
 
 
 def add_line_friend(line_id):
-	from app_name.viewsets import UserViewset, SecretsViewset
+	from app_name.viewsets import UserViewset
 	try:  # if user with this line id exists
 		user = UserViewset.model.objects.get(line_id=line_id)
-		request = namedtuple('request', 'data')
-		request.data = {'is_line_friend': True}
-		UserViewset.update_user_is_line_friend(UserViewset, request, user.pk)  # update user, is_line_friend: True
+		user.is_line_friend = True
+		user.do_get_lines = True
+		user.save()
 	except UserViewset.model.DoesNotExist:  # if no user with this line id exists
 		# this wasn't done on the site, it was done in line so there is no visitor, and can't make session
 		user = UserViewset.model.objects.create_user(  # create temporary line friend user
@@ -94,15 +96,14 @@ def add_line_friend(line_id):
 		)
 		user.groups.add(5)  # temp line friend
 		user.save()
+		print('ADDED NEW TEMP LINE FRIEND')
 
 
 def remove_line_friend(line_id):
 	from app_name.viewsets import UserViewset
 	try:  # if user with this line id exists
 		user = UserViewset.model.objects.get(line_id=line_id)
-		request = namedtuple('request', 'data')
-		request.data = {'is_line_friend': False}
-		UserViewset.update_user_is_line_friend(UserViewset, request, user.pk)  # update user, is_line_friend: False
+		user.is_line_friend = False
 		user.do_get_lines = False
 		user.save()
 	except UserViewset.model.DoesNotExist:  # this is basically not possible
@@ -155,6 +156,8 @@ def verify_update_line_info(request, user):  # for exisitng user with line id, a
 		user = authenticate_login(request)  # login again just in case, and to get new location info
 		if not hasattr(user, 'error'):  # logged into a user
 			if not user.groups.filter(id=3).exists() and visitor:  # if not visitor, but request made by visitor
+				user.visit_count += visitor.visit_count
+				user.save()
 				visitor.delete()  # delete the visitor account that made the request
 		return user
 	else:  # line id can't be confirmed
