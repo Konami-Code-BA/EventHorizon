@@ -1,30 +1,43 @@
 <template>
 	<div>
 		<div v-if="!loading">
-			<menus-header/>
+			<menus-header @startLoading="loading=true" @endLoading="loading=false"/>
 			<div class="box">
 				<button v-on:click.prevent="$router.push({ name: 'loginWithEmail' })" class="box-item" style="flex-grow: 1">{{t('LOGIN WITH EMAIL')}}</button>
 				<div class="box-height"></div>
 				<button v-on:click.prevent="$router.push({ name: 'registerWithEmail' })" class="box-item" style="flex-grow: 1">{{t('REGISTER WITH EMAIL')}}</button>
 				<div class="box-height"></div>
-					<button v-on:click.prevent="loginByLine()" class="line-coloring">
-						<div class="line-button">
-							<div class="line-alignment">
-								<div>
-									<img src="../assets/line.png" class="line-img">
-								</div>
-								<div class="line-text">
-									LINE
-								</div>
+				<button v-on:click.prevent="loginByLine()" class="line-coloring">
+					<div class="line-button">
+						<div class="line-alignment">
+							<div>
+								<img src="../assets/line.png" class="line-img">
+							</div>
+							<div>
+								LINE
 							</div>
 						</div>
-					</button>
+					</div>
+				</button>
+				<div class="box-height"></div>
+				<!--a href="https://lin.ee/UeSvNxR" class="line-coloring">
+					<div class="line-button">
+						<div class="line-alignment">
+							<div>
+								<img src="../assets/line.png" class="line-img">
+							</div>
+							<div style="white-space: nowrap">
+								ADD FRIEND
+							</div>
+						</div>
+					</div>
+				</a-->
 			</div>
-			<!--a href="https://lin.ee/UeSvNxR"><img height="36" border="0" src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png"></a-->
 		</div>
 		<div class="loading" v-else></div>
 	</div>
 </template>
+<script src="https://www.line-website.com/social-plugins/js/thirdparty/loader.min.js" async="async" defer="defer"></script>
 <script>
 	import store from '@/store.js'
 	import menusHeader from '@/components/menusHeader.vue'
@@ -98,9 +111,9 @@
 		display: flex;
 		flex-direction: row;
 		align-items: center;
+		width: 90px;
 		justify-content: space-between;
 		height: inherit !important;
-		width: 70px;
 	}
 	.line-img {
 		height: 26px;

@@ -34,7 +34,7 @@
 							</button>
 						</div><br><br>
 						<div>
-							<button v-on:click.prevent="goToAccountSettings()" class="no-border-button">
+							<button v-on:click.prevent="goToSettings()" class="no-border-button">
 								<big>{{ t('SETTINGS') }}</big>
 							</button>
 						</div><br><br>
@@ -97,11 +97,13 @@
 		methods: {
 			t (w) { return translations.t(w) },
 			async logout () {
+				this.$emit('startLoading')
 				await apiFunctions.logout()
-				if (this.$route.name !== 'frontPage') {
-					this.$router.push({ name: 'frontPage' })
+				if (this.$route.name !== 'front') {
+					this.$router.push({ name: 'front' })
+				} else {
+					location.reload();
 				}
-				this.mainMenu = false
 			},
 			async english () {
 				let lang = 'EN'
@@ -127,9 +129,9 @@
 					this.$router.push({ name: 'loginRegister' })
 				}
 			},
-			goToAccountSettings () {
-				if (this.$route.name !== 'accountSettings') {
-					this.$router.push({ name: 'accountSettings' })
+			goToSettings () {
+				if (this.$route.name !== 'settings') {
+					this.$router.push({ name: 'settings' })
 				} else {
 					this.mainMenu = false
 				}
