@@ -3,52 +3,77 @@
 		<div>
 			<div class="header">
 				<div>
-					<button v-on:click.prevent="mainMenu=true" class="no-border-button" v-if="isAuthenticatedUser">
-						<big>{{ t('MENU') }}</big>
-					</button>
-					<button v-on:click.prevent="goToLoginRegister()" class="no-border-button" v-else>
-						<big>{{ t('LOGIN / REGISTER') }}</big>
+					<button v-on:click.prevent="languageMenu=true" class="no-border-button">
+							A/文
 					</button>
 				</div>
 				<div>
-					<button v-on:click.prevent="languageMenu=true" class="no-border-button">
-							<big>A/文</big>
+					<button v-on:click.prevent="goToFront()" class="no-border-button">
+						<div>EVENT</div>
+						<div v-if="this.$route.name != 'front'">
+							<img src="../assets/eventhorizon.png" class="icon">
+						</div>
+						<div v-else>
+							&nbsp;
+						</div>
+						<div>HORIZON</div>
+					</button>
+				</div>
+				<div>
+					<button v-on:click.prevent="mainMenu=true" class="no-border-button">
+						|||
 					</button>
 				</div>
 			</div>
 			<div>
-				<img src="../assets/eventhorizon.png" class="logo">
+				<img src="../assets/eventhorizon.png" class="logo" v-if="this.$route.name === 'front'">
+				<div v-else>
+					<div class="box-height"></div>
+					<div class="box-height"></div>
+				</div>
 			</div>
 			<transition name="fade">
 				<modal v-show="mainMenu" @closeModals="languageMenu=false; mainMenu=false">
-					<div slot="contents" class="mainMenu">
-						<div style="text-align: right">
+					<div slot="contents" class="main menu">
+						<div style="align-self: flex-end">
 							<button v-on:click.prevent="mainMenu=false" class="no-border-button">
 								✖
 							</button>
 						</div>
 						<div>
-							<button v-on:click.prevent="goToHome()"
-									class="no-border-button">
-								<big>{{ t('HOME') }}</big>
+							<button v-on:click.prevent="goToLoginRegister()" class="no-border-button"
+									v-if="!isAuthenticatedUser">
+								{{ t('LOGIN / REGISTER') }}
 							</button>
-						</div><br><br>
+						</div>
+						<div class="box-height"></div>
 						<div>
-							<button v-on:click.prevent="goToSettings()" class="no-border-button">
-								<big>{{ t('SETTINGS') }}</big>
+							<button v-on:click.prevent="goToHome()" class="no-border-button"
+									v-if="isAuthenticatedUser">
+								{{ t('HOME') }}
 							</button>
-						</div><br><br>
+						</div>
+						<div class="box-height"></div>
 						<div>
-							<button v-on:click.prevent="logout()" class="no-border-button">
-								<big>{{ t('LOGOUT') }}</big>
+							<button v-on:click.prevent="goToSettings()" class="no-border-button"
+									v-if="isAuthenticatedUser">
+								{{ t('SETTINGS') }}
 							</button>
-						</div><br>
+						</div>
+						<div class="box-height"></div>
+						<div>
+							<button v-on:click.prevent="logout()" class="no-border-button"
+									v-if="isAuthenticatedUser">
+								{{ t('LOGOUT') }}
+							</button>
+						</div>
+						<div class="box-height"></div>
 					</div>
 				</modal>
 			</transition>
 			<transition name="fade">
 				<modal v-show="languageMenu" @closeModals="languageMenu=false; mainMenu=false">
-					<div slot="contents" class="languageMenu">
+					<div slot="contents" class="language menu">
 						<div style="align-self: flex-end">
 							<button v-on:click.prevent="languageMenu=false" class="no-border-button">
 								✖
@@ -56,14 +81,16 @@
 						</div>
 						<div>
 							<button v-on:click.prevent="english()" class="no-border-button">
-								<big>ENGLISH</big>
+								ENGLISH
 							</button>
-						</div><br><br>
+						</div>
+						<div class="box-height"></div>
 						<div>
 							<button v-on:click.prevent="japanese()" class="no-border-button">
-								<big>日本語</big>
+								日本語
 							</button>
-						</div><br>
+						</div>
+						<div class="box-height"></div>
 					</div>
 				</modal>
 			</transition>
@@ -124,6 +151,11 @@
 					this.mainMenu = false
 				}
 			},
+			goToFront () {
+				if (this.$route.name !== 'front') {
+					this.$router.push({ name: 'front' })
+				}
+			},
 			goToLoginRegister () {
 				if (this.$route.name !== 'loginRegister') {
 					this.$router.push({ name: 'loginRegister' })
@@ -140,18 +172,7 @@
 	}
 </script>
 <style scoped>
-	.mainMenu {
-		position: fixed;
-		z-index: 10000;
-		background-color: #18002e;
-		border: 1px solid #5300e1;
-		border-radius: 15px;
-		padding: 20px;
-		width: 50%;
-		top: 40px;
-		left: 0;
-	}
-	.languageMenu {
+	.menu {
 		display: flex;
 		flex-direction: column;
 		position: fixed;
@@ -162,7 +183,12 @@
 		padding: 20px;
 		width: 50%;
 		top: 40px;
+	}
+	.main {
 		right: 0;
+	}
+	.language {
+		left: 0;
 	}
 	.languageIcon {
 		height: 16px;

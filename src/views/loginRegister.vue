@@ -3,11 +3,11 @@
 		<div v-if="!loading">
 			<menus-header @startLoading="loading=true" @endLoading="loading=false"/>
 			<div class="box">
-				<button v-on:click.prevent="$router.push({ name: 'loginWithEmail' })" class="box-item" style="flex-grow: 1">{{t('LOGIN WITH EMAIL')}}</button>
+				<button v-on:click.prevent="$router.push({ name: 'loginWithEmail' })" class="button box-item" style="flex-grow: 1">{{t('LOGIN WITH EMAIL')}}</button>
 				<div class="box-height"></div>
-				<button v-on:click.prevent="$router.push({ name: 'registerWithEmail' })" class="box-item" style="flex-grow: 1">{{t('REGISTER WITH EMAIL')}}</button>
+				<button v-on:click.prevent="$router.push({ name: 'registerWithEmail' })" class="button box-item" style="flex-grow: 1">{{t('REGISTER WITH EMAIL')}}</button>
 				<div class="box-height"></div>
-				<button v-on:click.prevent="loginByLine()" class="line-coloring">
+				<button v-on:click.prevent="loginByLine()" class="button line-coloring">
 					<div class="line-button">
 						<div class="line-alignment">
 							<div>
@@ -74,8 +74,8 @@
 			},
 			async loginByLine () {
 				this.loading = true
-				let loginChannelId = await apiFunctions.loginChannelId()
-				let state = await apiFunctions.state()
+				let loginChannelId = await apiFunctions.secretsApiFunction('login_channel_id')
+				let state = await apiFunctions.secretsApiFunction('new_random_secret')
 				document.cookie = `state=${state}; path=/`
 				let lineLoginRedirectUrl = 'https%3A%2F%2Fwww.eventhorizon.vip%2FloginRegister'
 				if (process.env.PYTHON_ENV == 'development') {
@@ -102,11 +102,6 @@
 		color: white;
 		padding: 0;
 	}
-	.line-button {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
 	.line-alignment {
 		display: flex;
 		flex-direction: row;
@@ -116,6 +111,7 @@
 		height: inherit !important;
 	}
 	.line-img {
-		height: 26px;
+		height: 28px;
+		transform: translate(0, 2px);
 	}
 </style>
