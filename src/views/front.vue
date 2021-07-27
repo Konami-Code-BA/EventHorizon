@@ -19,10 +19,10 @@
 					<img src="../assets/pexels-photo-event4.jpeg" class="wide-img">
 					<h2 class="contained" style="background-color: #4e1713;">Hello</h2>
 				</div-->
-				<button v-on:click.prevent="$router.push({ name: 'loginRegister' })" class="box-item" v-if="!isAuthenticatedUser">
+				<button v-on:click.prevent="$router.push({ name: 'loginRegister' })" class="button box-item" v-if="!isAuthenticatedUser">
 					{{ t('LOGIN / REGISTER') }}
 				</button>
-				<button v-on:click.prevent="$router.push({ name: 'home' })" class="box-item" v-else>
+				<button v-on:click.prevent="$router.push({ name: 'home' })" class="button box-item" v-else>
 					{{ t('HOME') }}
 				</button>
 			</div>
@@ -40,7 +40,7 @@
 						{{t('This site uses cookies')}}
 					</div><br>
 					<div style="text-align: center">
-						<button v-on:click.prevent="closeCookiesModal()" style="width: 100%">
+						<button v-on:click.prevent="closeCookiesModal()" class="button" style="width: 100%">
 							<big>{{t('OK')}}</big>
 						</button>
 					</div><br><br>

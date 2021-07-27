@@ -143,11 +143,4 @@ export default {
             message: 'sup this is a broadcast message',
         })
     },
-    // SECRETS /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    async loginChannelId() {
-        return await this.secretsApiFunction('login_channel_id')
-    },
-    async state() {
-        return await this.secretsApiFunction('new_random_secret')
-    },
 }

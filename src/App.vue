@@ -20,7 +20,7 @@
 		body {
 			position: fixed;
 			font-family: Futura; /*Segoe UI*/
-			color: #d2e6ff;
+			color: #95c4ff; /*b4d5ff*/
 			font-weight: 600; /*400=normal, 700=bold*/
 			font-size: 16px;
 			-webkit-font-smoothing: antialiased;
@@ -47,12 +47,14 @@
 			margin-left: 50%;
 			transform: translate(-50%, 0%);
 		}
+		.icon {
+			position: relative;
+			height: 30px;
+		}
 		.box {
 			width: 100%;
 			display: flex;
-			flex-flow: column wrap;
-			align-content: space-between;
-			justify-content: space-between;
+			flex-direction: column;
 		}
 		.box-item {
 			box-sizing: border-box;
@@ -65,11 +67,10 @@
 		.box-center {
 			text-align: center;
 		}
-		button, button:hover, button:active, button.pointer, a, a:hover, a:active, a.pointer {
+		.button, .button:hover, .button:active, .button.pointer, .a, .a:hover, .a:active, .a.pointer {
 			font-family: inherit;
 			color: #ffe07a;
 			font-weight: inherit;
-			font-size: inherit;
 			font-size: inherit;
 			background-color: #5300e1;  /*000bff*/
 			border: 1px solid #18002e;  /*18002e*/
@@ -80,6 +81,10 @@
 			padding-left: 3px;
 			padding-right: 3px;
   			text-decoration: none;
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			justify-content: center;
 		}
 		input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus,
 		input:-webkit-autofill:active, input[type=text], input[type=email], input[type=password],
@@ -110,6 +115,14 @@
 			cursor: pointer;
 			height: 30px;
 			padding: 0;
+			font-family: inherit;
+			font-weight: inherit;
+			font-size: inherit;
+  			text-decoration: none;
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			justify-content: center;
 		}
 		.small-button {
 			height: 19px !important;
@@ -128,7 +141,7 @@
 			flex-direction: row;
 			justify-content: space-between;
 			padding-bottom: 10px;
-			color: #inherit;
+			color: inherit;
 		}
 		.container {
 			position: relative;
