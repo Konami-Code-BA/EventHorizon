@@ -84,3 +84,13 @@ class SessionAdmin(admin.ModelAdmin):
     _session_data.allow_tags = True
     list_display = ['user', 'session_key', '_session_data', 'expire_date']
     readonly_fields = ['_session_data']
+
+
+#class Event(models.Model):
+#	name = models.CharField(max_length=40, default='', blank=True)
+#	def __str__(self):
+#		return self.name
+
+
+#class EventAdmin(admin.ModelAdmin):
+#	list_display = ('name', 'id')

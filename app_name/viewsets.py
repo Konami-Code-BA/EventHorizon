@@ -303,5 +303,6 @@ class SecretsViewset(viewsets.ViewSet):
 		secrets_dict = {
 			'new_random_secret': secrets.token_urlsafe(16),
 			'login_channel_id': config('LOGIN_CHANNEL_ID'),
+			'google_maps_api_key': config('GOOGLE_MAPS_API_KEY'),
 		}
 		return HttpResponse(secrets_dict[pk])
