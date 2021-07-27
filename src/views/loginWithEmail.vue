@@ -15,7 +15,7 @@
 						<input :placeholder="t('PASSWORD')" v-model="passwordInput"
 							:type="[showPassword ? 'text' : 'password']" class="box-item" style="flex-grow: 1"
 							id="password" autocorrect="off" autocapitalize="none"/>
-						<button v-on:click.prevent="showButton()" class="box-item" style="width: 70px"
+						<button v-on:click.prevent="showButton()" class="button box-item" style="width: 70px"
 							id="show" type="button">
 							<small v-if="!showPassword">
 								{{ t('SHOW') }}
@@ -29,7 +29,7 @@
 				<div class="box-height" :class="{'shake' : shakeIt}" style="color: red">
 					<small>{{t(passwordError)}}</small>
 				</div>
-				<button v-on:click.prevent="login()" class="box-item">
+				<button v-on:click.prevent="login()" class="button box-item">
 					{{ t('LOGIN') }}
 				</button>
 				<!--button class="no-border-button small-button" v-on:click.prevent="sendEmail()">

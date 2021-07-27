@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="box">
 		<form v-on:keyup.enter="registerWithEmail()">
 			<div v-if="includeDisplayName">
 				<input :placeholder="t('DISPLAY NAME')" v-model="displayNameInput" type="text" class="box-item"
@@ -19,7 +19,7 @@
 				<input :placeholder="t('PASSWORD')" v-model="passwordInput"
 					:type="[showPassword ? 'text' : 'password']" class="box-item" style="flex-grow: 1"
 					id="password" autocorrect="off" autocapitalize="none"/>
-				<button v-on:click.prevent="showButton()" class="box-item" style="width: 70px; font-weight: 400"
+				<button v-on:click.prevent="showButton()" class="button box-item" style="width: 70px; font-weight: 400"
 					id="show" type="button">
 					<small v-if="!showPassword">
 						{{ t('SHOW') }}
@@ -36,7 +36,7 @@
 				<input :placeholder="t('PASSWORD (AGAIN)')" v-model="password2Input"
 					:type="[showPassword2 ? 'text' : 'password']" class="box-item" style="flex-grow: 1"
 					id="password2" autocorrect="off" autocapitalize="none"/>
-				<button v-on:click.prevent="showButton2()" class="box-item" style="width: 70px; font-weight: 400"
+				<button v-on:click.prevent="showButton2()" class="button box-item" style="width: 70px; font-weight: 400"
 					id="show" type="button">
 					<small v-if="!showPassword2">
 						{{ t('SHOW') }}
@@ -50,7 +50,7 @@
 				{{t(password2Error)}}
 			</div>
 		</form>
-		<button v-on:click.prevent="registerWithEmail()" class="box-item">
+		<button v-on:click.prevent="registerWithEmail()" class="button box-item">
 			{{ t('REGISTER') }}
 		</button>
 	</div>
