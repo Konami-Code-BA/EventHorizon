@@ -9,7 +9,7 @@ from django.contrib.auth import views as auth_views
 
 
 urlpatterns = [
-    path(f'api/', include(router.urls)),
+    path('api/', include(router.urls)),
     path('admin/', admin.site.urls),
 	path('webhook/', line_webhook),
     path('', index, name='index'),
@@ -18,7 +18,9 @@ urlpatterns = [
     path('registerWithEmail/', index, name='index'),
     path('loginWithEmail/', index, name='index'),
     path('settings/', index, name='index'),
-    path('home/', index, name='index'),
+    path('hostAdmin/', index, name='index'),
+    path('hostProfile/', index, name='index'),
+    path('guestHome/', index, name='index'),
     path('experiment1/', index, name='index'),
     path('experiment2/', index, name='index'),
     path('password_reset/', auth_views.PasswordResetDoneView.as_view(template_name='password_reset.html'), name='password_reset'),

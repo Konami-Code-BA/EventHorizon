@@ -4,6 +4,9 @@ from django.contrib import admin
 from django.contrib.auth.models import BaseUserManager
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
+from datetime import datetime
+
+from django.db.models.fields import TextField
 
 
 class Alert(models.Model):
@@ -86,11 +89,29 @@ class SessionAdmin(admin.ModelAdmin):
     readonly_fields = ['_session_data']
 
 
-#class Event(models.Model):
-#	name = models.CharField(max_length=40, default='', blank=True)
-#	def __str__(self):
-#		return self.name
+class Event(models.Model):
+	name = models.CharField(max_length=40, default='', blank=True)
+	description = models.TextField(default='', blank=True)
+	address = models.CharField(max_length=120, default='', blank=True)
+	venue_name = models.CharField(max_length=120, default='', blank=True)
+	latitude = models.DecimalField(max_digits=23, decimal_places=20, default=0, blank=True)
+	longitude = models.DecimalField(max_digits=23, decimal_places=20, default=0, blank=True)
+	date_time = models.DateTimeField(default=datetime.today(), blank=True)
+	include_time = models.BooleanField(default=False, blank=True)
+	hosts = models.ManyToManyField(User, blank=True, related_name='hosts')
+	confirmed_guests = models.ManyToManyField(User, blank=True, related_name='confirmed_guests')
+	interested_guests = models.ManyToManyField(User, blank=True, related_name='interested_guests')
+	unconfirmed_guests = models.ManyToManyField(User, blank=True, related_name='unconfirmed_guests')
+	is_private = models.BooleanField(default=True, blank=True)
+
+	def __str__(self):
+		return self.name
 
 
-#class EventAdmin(admin.ModelAdmin):
-#	list_display = ('name', 'id')
+class EventAdmin(admin.ModelAdmin):
+	readonly_fields = ('id',)
+	list_display = ('name', 'id')
+	fields = (
+		'id', 'name', 'description', 'is_private', 'address', 'venue_name', 'latitude', 'longitude', 'date_time',
+		'include_time', 'hosts', 'confirmed_guests',
+	)

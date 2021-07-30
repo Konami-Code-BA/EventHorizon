@@ -1,6 +1,6 @@
 from rest_framework import viewsets, filters
-from .models import User, Alert
-from .serializers import UserSerializer
+from .models import Alert
+from .serializers import UserSerializer, EventSerializer
 from rest_framework.response import Response
 from django.contrib import auth
 from django.conf import settings
@@ -14,10 +14,11 @@ from django.contrib.auth.models import Group
 from collections import namedtuple, OrderedDict
 
 
+# USER VIEW SET ########################################################################################################
 class UserViewset(viewsets.ModelViewSet):
 	serializer_class = UserSerializer
-	queryset = serializer_class.Meta.model.objects.all()
-	model = User
+	model = serializer_class.Meta.model
+	queryset = model.objects.all()
 
 	def list(self, request):  # GET {prefix}/
 		return request.user
@@ -28,7 +29,7 @@ class UserViewset(viewsets.ModelViewSet):
 	def update(self, request, pk=None):  # PUT {prefix}/{lookup}/
 		return request.user
 
-	# PARTIAL_UPDATE ###################################################################################################
+	# PARTIAL_UPDATE ###############################################################################
 	def partial_update(self, request, pk=None):  # PATCH {prefix}/{lookup}/
 		user = eval(f"self.{request.data['command']}(request, pk)")
 		self.queryset = [user]
@@ -120,9 +121,9 @@ class UserViewset(viewsets.ModelViewSet):
 			return user
 
 	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
-		return request.user
+		return Response()
 
-	# CREATE ###########################################################################################################
+	# CREATE #######################################################################################
 	def create(self, request):  # POST {prefix}/
 		user = eval(f"self.{request.data['command']}(request)")
 		self.queryset = [user]
@@ -183,7 +184,7 @@ class UserViewset(viewsets.ModelViewSet):
 		headers = {'Authorization': 'Bearer ' + getAccessToken_response['access_token']}
 		profile_response = json.loads(requests.get(url, headers=headers).content)
 		try:  # try to get a user with this user id, if there is one then set all the new data to their account
-			user = User.objects.get(line_id=profile_response['userId'])
+			user = self.model.objects.get(line_id=profile_response['userId'])
 			user.line_access_token = getAccessToken_response['access_token']
 			user.line_refresh_token = getAccessToken_response['refresh_token']
 			if user.groups.filter(id=5).exists():  # if this user is a temp line friend
@@ -191,7 +192,7 @@ class UserViewset(viewsets.ModelViewSet):
 				user.groups.add(2)  # change to user
 			print('changing temp line friend to user')
 			user = verify_update_line_info(request, user)  # verify validity of current line data and put new data
-		except User.DoesNotExist:  # if there was no user with this id, turn visitor into user & add info
+		except self.model.DoesNotExist:  # if there was no user with this id, turn visitor into user & add info
 			user = self.model.objects.get(pk=request.user.pk)  # get visitor account (already logged in)
 			user.groups.clear()  # clear visitor group
 			user.groups.add(2)  # change to user
@@ -246,6 +247,7 @@ class UserViewset(viewsets.ModelViewSet):
 		send_mail(subject, message, email_from, recipient_list, fail_silently=False)
 
 
+# LINE VIEW SET ########################################################################################################
 class LineViewset(viewsets.ViewSet):
 	queryset = []
 	def create(self, request):
@@ -297,12 +299,35 @@ class LineViewset(viewsets.ViewSet):
 		return response
 
 
+# SECRETS VIEW SET #####################################################################################################
 class SecretsViewset(viewsets.ViewSet):
 	queryset = []
-	def retrieve(self, request, pk=None):
+	def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
 		secrets_dict = {
 			'new_random_secret': secrets.token_urlsafe(16),
 			'login_channel_id': config('LOGIN_CHANNEL_ID'),
 			'google_maps_api_key': config('GOOGLE_MAPS_API_KEY'),
 		}
-		return HttpResponse(secrets_dict[pk])
+		return Response(secrets_dict[pk])
+
+
+# EVENTS VIEW SET #####################################################################################################
+class EventsViewset(viewsets.ViewSet):
+	serializer_class = EventSerializer
+	model = serializer_class.Meta.model
+	queryset = []
+	def create(self, request):  # POST {prefix}/
+		return Response()
+	def partial_update(self, request, pk=None):  # PATCH {prefix}/{lookup}/
+		return Response()
+	def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
+		return Response()
+	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
+		return Response()
+	def list(self, request):  # GET {prefix}/
+		print('hERE')
+		self.queryset = self.model.objects.all()
+		serializer_data = self.serializer_class(self.queryset, many=True).data
+		return Response(serializer_data)
+	def update(self, request, pk=None):  # PUT {prefix}/{lookup}/
+		return Response()
