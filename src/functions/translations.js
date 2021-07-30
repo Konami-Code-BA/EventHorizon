@@ -162,6 +162,10 @@ export default {
             'EN': 'Incorrect password for this email',
             'JP': '登録済のメールアドレスとパスワード相違'
         },
+        'CREATE EVENT': {
+            'EN': 'CREATE EVENT',
+            'JP': 'イベント作成'
+        },
     },
 
     t: function(w) {

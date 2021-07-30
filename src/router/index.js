@@ -7,7 +7,9 @@ import loginRegister from '@/views/loginRegister'
 import registerWithEmail from '@/views/registerWithEmail'
 import loginWithEmail from '@/views/loginWithEmail'
 import settings from '@/views/settings'
-import home from '@/views/home'
+import hostAdmin from '@/views/hostAdmin'
+import hostProfile from '@/views/hostProfile'
+import guestHome from '@/views/guestHome'
 import experiment1 from '@/views/experiment1'
 import experiment2 from '@/views/experiment2'
 
@@ -61,9 +63,19 @@ const router = new Router({
         component: settings,
         meta: { userGroups: [1, 2, ] },
     }, {
-        path: '/home',
-        name: 'home',
-        component: home,
+        path: '/hostAdmin',
+        name: 'hostAdmin',
+        component: hostAdmin,
+        meta: { userGroups: [1, 2, ] },
+    }, {
+        path: '/hostProfile',
+        name: 'hostProfile',
+        component: hostProfile,
+        meta: { userGroups: [1, 2, ] },
+    }, {
+        path: '/guestHome',
+        name: 'guestHome',
+        component: guestHome,
         meta: { userGroups: [1, 2, ] },
     }, ]
 })
