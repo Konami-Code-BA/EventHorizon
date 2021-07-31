@@ -1,50 +1,46 @@
 <template>
 	<div>
-		<div v-if="!loading">
-			<menus-header @startLoading="loading=true" @endLoading="loading=false"/>
-			<div class="box">
-				<form v-on:keyup.enter="login()">
-					<div>
-						<input :placeholder="t('EMAIL')" v-model="emailInput" type="text" class="box-item"
-							id="email" autocorrect="off" autocapitalize="none"/>
-					</div>
-					<div class="box-height" :class="{'shake' : shakeIt}" style="color: red">
-						<small>{{t(emailError)}}</small>
-					</div>
-					<div style="display: flex">
-						<input :placeholder="t('PASSWORD')" v-model="passwordInput"
-							:type="[showPassword ? 'text' : 'password']" class="box-item" style="flex-grow: 1"
-							id="password" autocorrect="off" autocapitalize="none"/>
-						<button v-on:click.prevent="showButton()" class="button box-item" style="width: 70px"
-							id="show" type="button">
-							<small v-if="!showPassword">
-								{{ t('SHOW') }}
-							</small>
-							<small v-else>
-								{{ t('HIDE') }}
-							</small>
-						</button>
-					</div>
-				</form>
-				<div class="box-height" :class="{'shake' : shakeIt}" style="color: red">
-					<small>{{t(passwordError)}}</small>
+		<div class="box">
+			<form v-on:keyup.enter="login()">
+				<div>
+					<input :placeholder="t('EMAIL')" v-model="emailInput" type="text" class="box-item"
+						id="email" autocorrect="off" autocapitalize="none"/>
 				</div>
-				<button v-on:click.prevent="login()" class="button box-item">
-					{{ t('LOGIN') }}
-				</button>
-				<!--button class="no-border-button small-button" v-on:click.prevent="sendEmail()">
-					<small><small>{{t('FORGOT PASSWORD')}}</small></small>
-				</button-->
+				<div class="box-height" :class="{'shake' : shakeIt}" style="color: red">
+					<small>{{t(emailError)}}</small>
+				</div>
+				<div style="display: flex">
+					<input :placeholder="t('PASSWORD')" v-model="passwordInput"
+						:type="[showPassword ? 'text' : 'password']" class="box-item" style="flex-grow: 1"
+						id="password" autocorrect="off" autocapitalize="none"/>
+					<button v-on:click.prevent="showButton()" class="button box-item" style="width: 70px"
+						id="show" type="button">
+						<small v-if="!showPassword">
+							{{ t('SHOW') }}
+						</small>
+						<small v-else>
+							{{ t('HIDE') }}
+						</small>
+					</button>
+				</div>
+			</form>
+			<div class="box-height" :class="{'shake' : shakeIt}" style="color: red">
+				<small>{{t(passwordError)}}</small>
 			</div>
-			<!--a href="https://lin.ee/UeSvNxR"><img height="36" border="0" src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png"></a-->
+			<button v-on:click.prevent="login()" class="button box-item">
+				{{ t('LOGIN') }}
+			</button>
+			<!--button class="no-border-button small-button" v-on:click.prevent="sendEmail()">
+				<small><small>{{t('FORGOT PASSWORD')}}</small></small>
+			</button-->
 		</div>
-		<div class="loading" v-else></div>
+		<!--a href="https://lin.ee/UeSvNxR"><img height="36" border="0" src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png"></a-->
 	</div>
 </template>
 <script src="https://smtpjs.com/v3/smtp.js"></script>
 <script>
 	import store from '@/store.js'
-	import menusHeader from '@/components/menusHeader.vue'
+	import appHeader from '@/components/appHeader.vue'
 	import modal from '@/components/modal.vue'
 	import translations from '@/functions/translations.js'
 	import apiFunctions from '@/functions/apiFunctions.js'
@@ -52,13 +48,12 @@
 	export default {
 		name: 'loginWithEmail',
 		components: {
-			menusHeader,
+			appHeader,
 			modal,
 		},
 		data () {
 			return {
 				store: store,
-				loading: true,
 				emailInput: '',
 				shakeIt: false,
 				passwordInput: '',
@@ -70,7 +65,7 @@
 		async mounted () {
 			this.passwordHasErrors()
 			this.emailHasErrors()
-			this.loading = false
+			this.$emit('endLoading')
 			functions.focusCursor('email')
 		},
 		watch: {
@@ -85,9 +80,9 @@
 					return
 				}
 				this.showPassword = false
-				this.loading = true
+				this.$emit('startLoading')
 				let error = await apiFunctions.login({'email': this.emailInput, 'password': this.passwordInput})
-				this.loading = false
+				this.$emit('endLoading')
 				if (!error) {
 					this.$router.push({ name: 'home' })
 				} else if (error === 'This email is not registered') {

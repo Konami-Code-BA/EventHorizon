@@ -1,13 +1,29 @@
 <template>
-  <div id="app">
-    <router-view :key="$route.fullPath"/>
-  </div>
+	<div id="app">
+		<div v-show="!loading">
+			<app-header @startLoading="loading=true" @endLoading="loading=false"/>
+			<router-view @startLoading="loading=true" @endLoading="loading=false" :key="$route.fullPath"/>
+			<app-footer @startLoading="loading=true" @endLoading="loading=false"/>
+		</div>
+		<div class="loading" v-show="loading"></div>
+	</div>
 </template>
 
 <script>
 	import store from '@/store'
+	import appHeader from '@/components/appHeader.vue'
+	import appFooter from '@/components/appFooter.vue'
 	export default {
 		name: 'App',
+		components: {
+			appHeader,
+			appFooter,
+		},
+		data () {
+			return {
+				loading: true,
+			}
+		},
 	}
 </script>
 
@@ -26,9 +42,9 @@
 			-webkit-font-smoothing: antialiased;
 			-moz-osx-font-smoothing: grayscale;
 			background-color: #18002e; /*00033e 20003e*/
-			max-width: 500px;
-			width: 90%;
-			top: 10px;
+			min-width: 250px;
+			width: 80%;
+			height: 100%;
 			margin-left: 50%;
 			transform: translate(-50%, 0%);
 			overflow: hidden;
@@ -135,13 +151,6 @@
 		}
 		td {
 			padding: 0;
-		}
-		.header {
-			display: flex;
-			flex-direction: row;
-			justify-content: space-between;
-			padding-bottom: 10px;
-			color: inherit;
 		}
 		.container {
 			position: relative;

@@ -1,20 +1,21 @@
 <template>
 	<div>
-		<div v-show="!loading">
-			<menus-header @startLoading="loading=true" @endLoading="loading=false"/>
-			<div class="box">
-				<h1>experiment 1</h1>
-				<div id="map_canvas" style="height: 400px; width: 100%;"></div>
-				<div><img src="http://maps.google.com/mapfiles/ms/icons/green-dot.png"/></div>
-				<div><img src="http://maps.google.com/mapfiles/ms/icons/red-dot.png"/></div>
+		<div class="box">
+			<h1>experiment 1</h1>
+			<div id="map_canvas" style="height: 400px; width: 100%;"></div>
+			<div style="background-color: white">
+				<img src="http://maps.google.com/mapfiles/ms/icons/green-dot.png"/>
+			</div>
+			<div style="background-color: white">
+				<img src="http://maps.google.com/mapfiles/ms/icons/red-dot.png"/>
 			</div>
 		</div>
-		<div class="loading"  v-show="loading"></div>
 	</div>
 </template>
 <script>
 	import store from '@/store.js'
-	import menusHeader from '@/components/menusHeader.vue'
+	import appHeader from '@/components/appHeader.vue'
+	import appFooter from '@/components/appFooter.vue'
 	import modal from '@/components/modal.vue'
 	import translations from '@/functions/translations.js'
 	import apiFunctions from '@/functions/apiFunctions.js'
@@ -22,13 +23,13 @@
 	export default {
 		name: 'experiment1',
 		components: {
-			menusHeader,
+			appHeader,
+			appFooter,
 			modal,
 		},
 		data () {
 			return {
 				store: store,
-				loading: true,
 			}
 		},
 		async mounted () {
@@ -38,10 +39,22 @@
 			script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap`
 			script.async = true
 			document.head.appendChild(script)
-			window.initMap = async function() {
+			window.initMap = this.initMap
+			this.$emit('endLoading')
+		},
+		methods: {
+			t (w) { return translations.t(w) },
+			async initMap () {
 				let bounds = new google.maps.LatLngBounds()
-				let map = new google.maps.Map(document.getElementById("map_canvas"), { mapTypeId: 'roadmap' })
-				map.setTilt(45)
+				let map = new google.maps.Map(
+					document.getElementById("map_canvas"),
+					{
+						mapTypeId: 'roadmap',
+      					streetViewControl: false,
+						clickableIcons: false,
+						controlSize: 30,
+						tilt: 45,
+					})
 				let infowindow = new google.maps.InfoWindow({ map: map })
 				let events = await apiFunctions.getAllEvents()
 				for ( let i = 0; i < events.length; i++) {
@@ -70,7 +83,7 @@
 						-moz-osx-font-smoothing: grayscale;
 					"`
 					let infowindowContents = '<a '
-						+ 'href="' + apiFunctions.apiBaseUrl + '/experiment2/?id=' + events[i]['id'] + '"' + styles + '>'
+						+ 'href="' + apiFunctions.apiBaseUrl + '/event/?id=' + events[i]['id'] + '"' + styles + '>'
 						+ events[i]['name'] + '</a>'
 					if (events[i]['is_private']) {
 						let randSign = Math.random() > .5 ? 1 : -1
@@ -80,7 +93,6 @@
 						icon = 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
 						infowindowContents = '<span ' + styles + '>' + events[i]['name'] + '</span>'
 					}
-					console.log(infowindowContents)
 					let position = new google.maps.LatLng(
 						result.geometry.location.lat() + randLat,
 						result.geometry.location.lng() + randLng
@@ -104,10 +116,6 @@
 					google.maps.event.removeListener(boundsListener)
 				})
 			}
-			this.loading = false
-		},
-		methods: {
-			t (w) { return translations.t(w) },
 		} // methods
 	} // export
 </script>
