@@ -67,7 +67,6 @@
 		data () {
 			return {
 				store: store,
-				loading: true,
 				displayNameInput: '',
 				emailInput: '',
 				passwordInput: '',
