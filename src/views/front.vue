@@ -1,33 +1,29 @@
 <template>
 	<div>
-		<div v-if="!loading">
-			<menus-header @startLoading="loading=true" @endLoading="loading=false"/>
-			<div class="box">
-				<div style="text-align: center; font-size: 32px;">EVENT HORIZON</div>
-				<div class="box-height"></div>
-				<div style="text-align: center; font-size: 24px; white-space: pre-line">{{ t('REACH OUT TO NEW HORIZONS') }}</div>
-				<div class="box-height"></div>
-				<!--div class="container">
-					<img src="../assets/pexels-photo-event1.jpg" class="wide-img">
-					<h2 class="contained" style="background-color: #94877f;">FIND EVENTS. HAVE FUN.</h2>
-				</div>
-				<div class="container">
-					<img src="../assets/pexels-photo-event2.jpeg" class="wide-img">
-					<h2 class="contained" style="background-color: #574944;">MEET PEOPLE. NETWORK.</h2>
-				</div>
-				<div class="container">
-					<img src="../assets/pexels-photo-event4.jpeg" class="wide-img">
-					<h2 class="contained" style="background-color: #4e1713;">Hello</h2>
-				</div-->
-				<button v-on:click.prevent="$router.push({ name: 'loginRegister' })" class="button box-item" v-if="!isAuthenticatedUser">
-					{{ t('LOGIN / REGISTER') }}
-				</button>
-				<button v-on:click.prevent="$router.push({ name: 'home' })" class="button box-item" v-else>
-					{{ t('HOME') }}
-				</button>
+		<div class="box">
+			<div style="text-align: center; font-size: 32px;">EVENT HORIZON</div>
+			<div class="box-height"></div>
+			<div style="text-align: center; font-size: 24px; white-space: pre-line">{{ t('REACH OUT TO NEW HORIZONS') }}</div>
+			<div class="box-height"></div>
+			<!--div class="container">
+				<img src="../assets/pexels-photo-event1.jpg" class="wide-img">
+				<h2 class="contained" style="background-color: #94877f;">FIND EVENTS. HAVE FUN.</h2>
 			</div>
+			<div class="container">
+				<img src="../assets/pexels-photo-event2.jpeg" class="wide-img">
+				<h2 class="contained" style="background-color: #574944;">MEET PEOPLE. NETWORK.</h2>
+			</div>
+			<div class="container">
+				<img src="../assets/pexels-photo-event4.jpeg" class="wide-img">
+				<h2 class="contained" style="background-color: #4e1713;">Hello</h2>
+			</div-->
+			<button v-on:click.prevent="$router.push({ name: 'loginRegister' })" class="button box-item" v-if="!isAuthenticatedUser">
+				{{ t('LOGIN / REGISTER') }}
+			</button>
+			<button v-on:click.prevent="$router.push({ name: 'guestHome' })" class="button box-item" v-else>
+				{{ t('HOME') }}
+			</button>
 		</div>
-		<div class="loading" v-else></div>
 		<transition name="fade">
 			<modal v-show="showCookiesModal" @closeModals="closeCookiesModal()">
 				<div slot="contents" class="cookiesModal">
@@ -51,14 +47,14 @@
 </template>
 <script>
 	import store from '@/store.js'
-	import menusHeader from '@/components/menusHeader.vue'
+	import appHeader from '@/components/appHeader.vue'
 	import translations from '@/functions/translations.js'
 	import apiFunctions from '@/functions/apiFunctions.js'
 	import modal from '@/components/modal'
 	export default {
 		name: 'front',
 		components: {
-			menusHeader,
+			appHeader,
 			modal,
 		},
 		computed: {
@@ -67,12 +63,11 @@
 		data () {
 			return {
 				store: store,
-				loading: true,
 				showCookiesModal: store.user.alerts.includes(1),
 			}
 		},
 		async mounted () {
-			this.loading = false
+			this.$emit('endLoading')
 		},
 		methods: {
 			t (w) { return translations.t(w) },

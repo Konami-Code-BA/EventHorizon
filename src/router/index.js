@@ -12,6 +12,7 @@ import hostProfile from '@/views/hostProfile'
 import guestHome from '@/views/guestHome'
 import experiment1 from '@/views/experiment1'
 import experiment2 from '@/views/experiment2'
+import event from '@/views/event'
 
 Vue.use(Router)
 
@@ -72,6 +73,11 @@ const router = new Router({
         name: 'hostProfile',
         component: hostProfile,
         meta: { userGroups: [1, 2, ] },
+    }, {
+        path: '/event',
+        name: 'event',
+        component: event,
+        meta: { userGroups: [1, ] },
     }, {
         path: '/guestHome',
         name: 'guestHome',

@@ -1,46 +1,46 @@
 <template>
 	<div>
-		<div v-show="!loading">
-			<menus-header @startLoading="loading=true" @endLoading="loading=false"/>
-			<div class="box">
+		<div class="box">
+			<div>
+				<h1>{{ t('SETTINGS') }}</h1>
+			</div>
+			<div class="dual-set">
 				<div>
-					<h1>{{ t('SETTINGS') }}</h1>
+					<button class="no-border-button" v-on:click.prevent="do_get_emails=!do_get_emails">
+						<div style="font-size: 18px;" v-if="store.user.email === ''">{{ t('ADD EMAIL ADDRESS') }}&nbsp;</div>
+						<div style="font-size: 18px;" v-if="store.user.email !== ''">{{ t('GET EMAILS') }}&nbsp;</div>
+					</button>
 				</div>
-				<div class="dual-set">
-					<div>
-						<button class="no-border-button" v-on:click.prevent="do_get_emails=!do_get_emails">
-							<div style="font-size: 18px;" v-if="store.user.email === ''">{{ t('ADD EMAIL ADDRESS') }}&nbsp;</div>
-							<div style="font-size: 18px;" v-if="store.user.email !== ''">{{ t('GET EMAILS') }}&nbsp;</div>
+				<div>
+					<input type="checkbox" v-if="store.user.email !== ''" class="checkbox" v-model="do_get_emails"/>
+				</div>
+			</div>
+			<!--div>
+				<h2>{{ t('CHANGE PASSWORD') }}</h2>
+			</div-->
+		</div>
+		<!--a href="https://lin.ee/UeSvNxR"><img height="36" border="0" src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png"></a-->
+		<transition name="fade">
+			<modal v-show="showAddEmailModal" @closeModals="closeAddEmailModal()">
+				<div slot="contents" class="addEmailModal">
+					<div style="text-align: right">
+						<button v-on:click.prevent="closeAddEmailModal()" class="no-border-button">
+							✖
 						</button>
 					</div>
-					<div>
-						<input type="checkbox" v-if="store.user.email !== ''" class="checkbox" v-model="do_get_emails"/>
-					</div>
+					<register-with-email-internal
+						@startLoading="$emit('startLoading')"
+						@endLoading="$emit('endLoading')"
+						:includeDisplayName="false"
+					/>
 				</div>
-				<!--div>
-					<h2>{{ t('CHANGE PASSWORD') }}</h2>
-				</div-->
-			</div>
-			<!--a href="https://lin.ee/UeSvNxR"><img height="36" border="0" src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png"></a-->
-			<transition name="fade">
-				<modal v-show="showAddEmailModal" @closeModals="closeAddEmailModal()">
-					<div slot="contents" class="addEmailModal">
-						<div style="text-align: right">
-							<button v-on:click.prevent="closeAddEmailModal()" class="no-border-button">
-								✖
-							</button>
-						</div>
-						<register-with-email-internal @startLoading="loading=true" @endLoading="loading=false" :includeDisplayName="false"/>
-					</div>
-				</modal>
-			</transition>
-		</div>
-		<div class="loading" v-show="loading"></div>
+			</modal>
+		</transition>
 	</div>
 </template>
 <script>
 	import store from '@/store.js'
-	import menusHeader from '@/components/menusHeader.vue'
+	import appHeader from '@/components/appHeader.vue'
 	import registerWithEmailInternal from '@/components/registerWithEmailInternal.vue'
 	import modal from '@/components/modal.vue'
 	import translations from '@/functions/translations.js'
@@ -49,14 +49,13 @@
 	export default {
 		name: 'settings',
 		components: {
-			menusHeader,
+			appHeader,
 			modal,
 			registerWithEmailInternal,
 		},
 		data () {
 			return {
 				store: store,
-				loading: true,
 				do_get_emails: store.user.do_get_emails,
 				showAddEmailModal: false,
 			}
@@ -76,13 +75,11 @@
 				}
 			},
 			async 'store.user.do_get_emails' () {  // if store.user.do_get_emails changes, update it in the DB
-				if (!this.loading) {
-					await apiFunctions.updateUserDoGetEmails()  // update it in the DB
-				}
+				await apiFunctions.updateUserDoGetEmails()  // update it in the DB
 			},
 		},
 		async mounted () {
-			this.loading = false
+			this.$emit('endLoading')
 		},
 		methods: {
 			t (w) { return translations.t(w) },

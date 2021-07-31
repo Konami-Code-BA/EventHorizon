@@ -1,46 +1,42 @@
 <template>
 	<div>
-		<div v-if="!loading">
-			<menus-header @startLoading="loading=true" @endLoading="loading=false"/>
-			<div class="box">
-				<button v-on:click.prevent="$router.push({ name: 'loginWithEmail' })" class="button box-item" style="flex-grow: 1">{{t('LOGIN WITH EMAIL')}}</button>
-				<div class="box-height"></div>
-				<button v-on:click.prevent="$router.push({ name: 'registerWithEmail' })" class="button box-item" style="flex-grow: 1">{{t('REGISTER WITH EMAIL')}}</button>
-				<div class="box-height"></div>
-				<button v-on:click.prevent="loginByLine()" class="button line-coloring">
-					<div class="line-button">
-						<div class="line-alignment">
-							<div>
-								<img src="../assets/line.png" class="line-img">
-							</div>
-							<div>
-								LINE
-							</div>
+		<div class="box">
+			<button v-on:click.prevent="$router.push({ name: 'loginWithEmail' })" class="button box-item" style="flex-grow: 1">{{t('LOGIN WITH EMAIL')}}</button>
+			<div class="box-height"></div>
+			<button v-on:click.prevent="$router.push({ name: 'registerWithEmail' })" class="button box-item" style="flex-grow: 1">{{t('REGISTER WITH EMAIL')}}</button>
+			<div class="box-height"></div>
+			<button v-on:click.prevent="loginByLine()" class="button line-coloring">
+				<div class="line-button">
+					<div class="line-alignment">
+						<div>
+							<img src="../assets/line.png" class="line-img">
+						</div>
+						<div>
+							LINE
 						</div>
 					</div>
-				</button>
-				<div class="box-height"></div>
-				<!--a href="https://lin.ee/UeSvNxR" class="line-coloring">
-					<div class="line-button">
-						<div class="line-alignment">
-							<div>
-								<img src="../assets/line.png" class="line-img">
-							</div>
-							<div style="white-space: nowrap">
-								ADD FRIEND
-							</div>
+				</div>
+			</button>
+			<div class="box-height"></div>
+			<!--a href="https://lin.ee/UeSvNxR" class="line-coloring">
+				<div class="line-button">
+					<div class="line-alignment">
+						<div>
+							<img src="../assets/line.png" class="line-img">
+						</div>
+						<div style="white-space: nowrap">
+							ADD FRIEND
 						</div>
 					</div>
-				</a-->
-			</div>
+				</div>
+			</a-->
 		</div>
-		<div class="loading" v-else></div>
 	</div>
 </template>
 <script src="https://www.line-website.com/social-plugins/js/thirdparty/loader.min.js" async="async" defer="defer"></script>
 <script>
 	import store from '@/store.js'
-	import menusHeader from '@/components/menusHeader.vue'
+	import appHeader from '@/components/appHeader.vue'
 	import modal from '@/components/modal.vue'
 	import translations from '@/functions/translations.js'
 	import apiFunctions from '@/functions/apiFunctions.js'
@@ -48,13 +44,12 @@
 	export default {
 		name: 'experiment1',
 		components: {
-			menusHeader,
+			appHeader,
 			modal,
 		},
 		data () {
 			return {
 				store: store,
-				loading: true,
 				stateCookie: JSON.parse('{"' + this.replaceAll(this.replaceAll(document.cookie, '=', '": "'), '; ', '", "') + '"}')['state']
 			}
 		},
@@ -65,7 +60,7 @@
 		//},
 		async mounted () {
 			await this.tryLineNewDevice()
-			this.loading = false
+			this.$emit('endLoading')
 		},
 		methods: {
 			t (w) { return translations.t(w) },
@@ -73,7 +68,7 @@
 				return str.replace(new RegExp(match, 'g'), () => replace);
 			},
 			async loginByLine () {
-				this.loading = true
+				this.$emit('startLoading')
 				let loginChannelId = await apiFunctions.secretsApiFunction('login_channel_id')
 				let state = await apiFunctions.secretsApiFunction('new_random_secret')
 				document.cookie = `state=${state}; path=/`
@@ -87,9 +82,9 @@
 			},
 			async tryLineNewDevice () {
 				if (this.$route.query.code && this.stateCookie === this.$route.query.state) {
-					this.loading = true
+					this.$emit('startLoading')
 					await apiFunctions.lineNewDevice(this.$route.query.code)
-					this.loading = false
+					this.$emit('endLoading')
 					this.$router.push({ name: 'home' })
 				}
 			}
