@@ -1,10 +1,10 @@
 <template>
 	<div>
-		<div class="footer">
-			<img src="../assets/homeIcon.png" class="menuIcon"/>
-			<img src="../assets/homeIcon.png" class="menuIcon"/>
-			<img src="../assets/homeIcon.png" class="menuIcon"/>
-			<img src="../assets/homeIcon.png" class="menuIcon"/>
+		<div class="header-footer footer">
+			<img src="../assets/homeIcon.png"/>
+			<img src="../assets/homeIcon.png"/>
+			<img src="../assets/homeIcon.png"/>
+			<img src="../assets/homeIcon.png"/>
 		</div>
 	</div>
 </template>
@@ -83,18 +83,4 @@
 	}
 </script>
 <style scoped>
-	.footer {
-		position: fixed;
-		padding-bottom: 15px;
-		color: inherit;
-		bottom: 0;
-		width: 100%;
-		display: flex;
-		flex-direction: row;
-		align-content: center;
-		justify-content: space-between;
-	}
-	.menuIcon {
-		height: 30px;
-	}
 </style>
