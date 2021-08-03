@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<div class="header">
+		<div class="header-footer header">
 			<div>
 				<button v-on:click.prevent="languageMenu=true" class="no-border-button">
 						A/文
@@ -23,9 +23,6 @@
 					|||
 				</button>
 			</div>
-		</div>
-		<div v-if="this.$route.name === 'front'">
-			<img src="../assets/eventhorizon.png" class="logo">
 		</div>
 		<transition name="fade">
 			<modal v-show="mainMenu" @closeModals="languageMenu=false; mainMenu=false">
@@ -166,19 +163,13 @@
 	}
 </script>
 <style scoped>
-	.header {
-		display: flex;
-		flex-direction: row;
-		justify-content: space-between;
-		padding-bottom: 10px;
-		color: inherit;
-	}
 	.menu {
+		position: fixed;
 		display: flex;
 		flex-direction: column;
-		position: fixed;
+		align-items: flex-start;
 		z-index: 10000;
-		background-color: #18002e;
+		background-color: #0b0015;
 		border: 1px solid #5300e1;
 		border-radius: 15px;
 		padding: 20px;

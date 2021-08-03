@@ -1,9 +1,16 @@
 <template>
 	<div id="app">
-		<div v-show="!loading">
-			<app-header @startLoading="loading=true" @endLoading="loading=false"/>
-			<router-view @startLoading="loading=true" @endLoading="loading=false" :key="$route.fullPath"/>
-			<app-footer @startLoading="loading=true" @endLoading="loading=false"/>
+		<div v-show="!loading" class="app">
+			<div>
+				<app-header @startLoading="loading=true" @endLoading="loading=false"/>
+			</div>
+			<div>
+				<router-view @startLoading="loading=true" @endLoading="loading=false" :key="$route.fullPath"
+						class="router"/>
+			</div>
+			<div>
+				<app-footer @startLoading="loading=true" @endLoading="loading=false"/>
+			</div>
 		</div>
 		<div class="loading" v-show="loading"></div>
 	</div>
@@ -33,8 +40,17 @@
 			font-family: Futura;
 			src: url(./assets/FuturaLT.woff);
 		}
+		html {
+			-webkit-box-sizing: border-box;
+			-moz-box-sizing: border-box;
+			box-sizing: border-box;
+		}
+		*, *:before, *:after {
+			-webkit-box-sizing: inherit;
+			-moz-box-sizing: inherit;
+			box-sizing: inherit;
+		}
 		body {
-			position: fixed;
 			font-family: Futura; /*Segoe UI*/
 			color: #95c4ff; /*b4d5ff*/
 			font-weight: 600; /*400=normal, 700=bold*/
@@ -42,12 +58,45 @@
 			-webkit-font-smoothing: antialiased;
 			-moz-osx-font-smoothing: grayscale;
 			background-color: #18002e; /*00033e 20003e*/
-			min-width: 250px;
-			width: 80%;
-			height: 100%;
-			margin-left: 50%;
-			transform: translate(-50%, 0%);
-			overflow: hidden;
+			margin: 0;
+			padding: 0;
+		}
+		.app {
+			position: fixed;
+			display: flex;
+			flex-direction: column;
+			width: 100%;
+		}
+		.header-footer {
+			position: fixed;
+			color: inherit;
+			width: 100%;
+			display: flex;
+			flex-direction: row;
+			align-content: center;
+			justify-content: space-around;
+			height: 30px;
+			border: 2px solid #95c4ff;
+			background-color: #0b0015; /*00033e 18002e*/
+		}
+		.header {
+			top: 0;
+		}
+		.router {
+			position: fixed;
+			top: 30px;
+			bottom: 30px;
+			overflow-y: auto;
+			width: 100%;
+		}
+		.footer {
+			bottom: 0;
+		}
+		.main {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			width: 100%;
 		}
 		/*[v-cloak] {
 			display: none;
@@ -58,24 +107,9 @@
 		.fade-enter-active, .fade-leave-active {
 			transition: opacity .3s;
 		}
-		.logo {
-			width: 50%;
-			margin-left: 50%;
-			transform: translate(-50%, 0%);
-		}
 		.icon {
 			position: relative;
 			height: 30px;
-		}
-		.box {
-			width: 100%;
-			display: flex;
-			flex-direction: column;
-		}
-		.box-item {
-			box-sizing: border-box;
-			width: 100%;
-			max-width: 100%;
 		}
 		.box-height{
 			height: 30px;
