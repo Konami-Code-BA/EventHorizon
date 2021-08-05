@@ -1,17 +1,14 @@
 <template>
-	<div>
-		<div class="box">
-			<div class="box-item" style="font-size: 36px;">{{ t('HOME') }}</div>
-			<div class="box-height"></div>
-			<div class="box-item" style="font-size: 24px;">{{ store.user.display_name }}</div>
-			<div class="box-height"></div>
-			<div class="box-item coming-soon-list"><div style="font-size: 16px;">{{ t('UPCOMING EVENTS') }}</div><small>({{ t('COMING SOON') }})</small></div>
-			<div class="box-height"></div>
-			<div class="box-item coming-soon-list"><div style="font-size: 16px;">{{ t('MY EVENTS') }}</div><small>({{ t('COMING SOON') }})</small></div>
-			<div class="box-height"></div>
-			<div class="box-item coming-soon-list"><div style="font-size: 16px;">{{ t('TBA') }}</div><small>({{ t('COMING SOON') }})</small></div>
-		</div>
-		<!--a href="https://lin.ee/UeSvNxR"><img height="36" border="0" src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png"></a-->
+	<div class="main">
+		<div style="font-size: 36px;">{{ t('HOME') }}</div>
+		<div class="line-height"></div>
+		<div style="font-size: 24px;">{{ store.user.display_name }}</div>
+		<div class="line-height"></div>
+		<div class="coming-soon-list"><div style="font-size: 16px;">{{ t('UPCOMING EVENTS') }}</div><small>({{ t('COMING SOON') }})</small></div>
+		<div class="line-height"></div>
+		<div class="coming-soon-list"><div style="font-size: 16px;">{{ t('MY EVENTS') }}</div><small>({{ t('COMING SOON') }})</small></div>
+		<div class="line-height"></div>
+		<div class="coming-soon-list"><div style="font-size: 16px;">{{ t('TBA') }}</div><small>({{ t('COMING SOON') }})</small></div>
 	</div>
 </template>
 <script>
@@ -44,8 +41,10 @@
 <style scoped>
 .coming-soon-list {
 	display: flex;
+	flex-direction: row;
 	align-items: center;
 	justify-content: space-between;
+	width: 100%;
 	color: grey;
 }
 </style>

@@ -73,21 +73,24 @@
 			width: 100%;
 			display: flex;
 			flex-direction: row;
-			align-content: center;
+			align-items: center;
 			justify-content: space-around;
 			height: 30px;
-			border: 2px solid #95c4ff;
-			background-color: #0b0015; /*00033e 18002e*/
+			background-color: rgba(0, 0, 0, .5);
+			box-shadow: 0 0 1px rgba(255, 255, 255, .5);
+			z-index: 2;
 		}
 		.header {
 			top: 0;
 		}
 		.router {
 			position: fixed;
-			top: 30px;
-			bottom: 30px;
-			overflow-y: auto;
+			top: 31px;
+			bottom: 31px;
+			overflow-y: scroll;
 			width: 100%;
+			padding-left: 7px;
+			z-index: 1;
 		}
 		.footer {
 			bottom: 0;
@@ -97,25 +100,16 @@
 			flex-direction: column;
 			align-items: center;
 			width: 100%;
+			z-index: 1;
 		}
 		/*[v-cloak] {
 			display: none;
 		}*/
-		.fade-enter, .fade-leave-to {
-			opacity: 0;
-		}
-		.fade-enter-active, .fade-leave-active {
-			transition: opacity .3s;
-		}
 		.icon {
-			position: relative;
-			height: 30px;
+			height: 16px;
 		}
-		.box-height{
+		.line-height{
 			height: 30px;
-		}
-		.box-center {
-			text-align: center;
 		}
 		.button, .button:hover, .button:active, .button.pointer, .a, .a:hover, .a:active, .a.pointer {
 			font-family: inherit;
@@ -131,6 +125,7 @@
 			padding-left: 3px;
 			padding-right: 3px;
   			text-decoration: none;
+			width: 80%;
 			display: flex;
 			flex-direction: row;
 			align-items: center;
@@ -160,7 +155,6 @@
 		.no-border-button, .no-border-button:hover, .no-border-button:active, .no-border-button.pointer {
 			border: none;
 			background: none;
-			/*transition-duration: 0.1s;*/
 			color: #ffe07a;
 			cursor: pointer;
 			height: 30px;
@@ -205,6 +199,21 @@
 			font-weight: 400; /*400=normal, 700=bold*/
 			font-size: 12px;
 			color: red;
+		}
+		.fade-enter-active, .fade-leave-active {
+			transition: opacity .3s; 
+		}
+		.fade-enter, .fade-leave-to {
+			opacity: 0;
+		}
+		::-webkit-scrollbar {
+			-webkit-appearance: none;
+			width: 7px;
+		}
+		::-webkit-scrollbar-thumb {
+			border-radius: 4px;
+			background-color: rgba(0, 0, 0, .5);
+			box-shadow: 0 0 1px rgba(255, 255, 255, .5);
 		}
 
 		/* LOADING SPINNER */

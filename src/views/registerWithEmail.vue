@@ -1,12 +1,9 @@
 <template>
-	<div>
-		<div>
-			<register-with-email-internal
-				@startLoading="$emit('startLoading')"
-				@endLoading="$emit('endLoading')"
-			/>
-		</div>
-		<!--a href="https://lin.ee/UeSvNxR"><img height="36" border="0" src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png"></a-->
+	<div class="main">
+		<register-with-email-internal
+			@startLoading="$emit('startLoading')"
+			@endLoading="$emit('endLoading')"
+		/>
 	</div>
 </template>
 <script>

@@ -2,12 +2,12 @@
 	<div>
 		<div class="main">
 			<div>
-				<img src="../assets/eventhorizon.png" style="max-width: 300px;">
+				<img src="../assets/eventhorizon.png" style="max-width: 300px; z-index: 1;">
 			</div>
 			<div style="text-align: center; font-size: 32px;">EVENT HORIZON</div>
-			<div class="box-height"/>
+			<div class="line-height"/>
 			<div style="text-align: center; font-size: 24px; white-space: pre-line">{{ t('REACH OUT TO NEW HORIZONS') }}</div>
-			<div class="box-height"/>
+			<div class="line-height"/>
 			<!--div class="container">
 				<img src="../assets/pexels-photo-event1.jpg" class="wide-img">
 				<h2 class="contained" style="background-color: #94877f;">FIND EVENTS. HAVE FUN.</h2>
@@ -20,14 +20,12 @@
 				<img src="../assets/pexels-photo-event4.jpeg" class="wide-img">
 				<h2 class="contained" style="background-color: #4e1713;">Hello</h2>
 			</div-->
-			<div>
-				<button v-on:click.prevent="$router.push({ name: 'loginRegister' })" class="button box-item" v-if="!isAuthenticatedUser">
+				<button v-on:click.prevent="$router.push({ name: 'loginRegister' })" class="button" v-if="!isAuthenticatedUser">
 					{{ t('LOGIN / REGISTER') }}
 				</button>
-				<button v-on:click.prevent="$router.push({ name: 'guestHome' })" class="button box-item" v-else>
+				<button v-on:click.prevent="$router.push({ name: 'guestHome' })" class="button" v-else>
 					{{ t('HOME') }}
 				</button>
-			</div>
 		</div>
 		<transition name="fade">
 			<modal v-show="showCookiesModal" @closeModals="closeCookiesModal()">
