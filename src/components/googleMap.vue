@@ -1,71 +1,21 @@
 <template>
-	<div>
-		<div class="main">
-			<div>
-				<img src="../assets/eventhorizonLogo.png" style="max-width: 200px; max-height: 200px;">
-			</div>
-			<div style="font-size: 32px; margin-bottom: 10px;">EVENT HORIZON</div>
-			<div style="width: 100%;">
-				<tabs :tab-no="4">
-					<div slot="1">
-						<span style="font-size: 20px; white-space: pre-line; margin-bottom: 10px;">{{ t('EVENTS') }}:</span>
-					</div>
-					<div slot="2">
-						<img src="../assets/mapIcon.png" class="icon"/>
-					</div>
-					<div slot="3">
-						<img src="../assets/calendarIcon.png" class="icon"/>
-					</div>
-					<div slot="4">
-						<img src="../assets/threeBarsHIcon.png" class="icon"/>
-					</div>
-				</tabs>
-			</div>
-			<div id="map_canvas" style="width: 100%; height: 100%;"></div>
-			<div style="font-size: 20px; white-space: pre-line; margin-bottom: 10px;">{{ t('REACH OUT TO NEW HORIZONS') }}</div>
-		</div>
-		<transition name="fade">
-			<modal v-show="showCookiesModal" @closeModals="closeCookiesModal()">
-				<div slot="contents" class="cookiesModal">
-					<div style="align-self: flex-end">
-						<button v-on:click.prevent="closeCookiesModal()" class="no-border-button">
-							✖
-						</button>
-					</div>
-					<div style="white-space: pre-line; text-align: center; font-weight: 400;">
-						{{t('This site uses cookies')}}
-					</div><br>
-					<div style="text-align: center">
-						<button v-on:click.prevent="closeCookiesModal()" class="button" style="width: 100%">
-							<big>{{t('OK')}}</big>
-						</button>
-					</div><br><br>
-				</div>
-			</modal>
-		</transition>
-	</div>
+	<div id="map_canvas" style="width: 100%; height: 100%"/>
 </template>
 <script>
-	import store from '@/store.js'
-	import modal from '@/components/modal.vue'
-	import tabs from '@/components/tabs.vue'
-	import translations from '@/functions/translations.js'
 	import apiFunctions from '@/functions/apiFunctions.js'
-	import functions from '@/functions/functions.js'
 	export default {
-		name: 'experiment1',
-		components: {
-			modal,
-			tabs,
-		},
+		name: 'googleMap',
 		data () {
 			return {
-				store: store,
-				showCookiesModal: store.user.alerts.includes(1),
 			}
 		},
+		components: {
+		},
+		props: {
+		},
+		computed: {
+		},
 		async mounted () {
-        	//setTimeout(() => { }, 2000)
 			let apiKey = await apiFunctions.secretsApiFunction('google_maps_api_key')
 			let script = document.createElement('script')
 			script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap`
@@ -75,11 +25,6 @@
 			this.$emit('endLoading')
 		},
 		methods: {
-			t (w) { return translations.t(w) },
-			async closeCookiesModal () {
-				this.showCookiesModal = false
-				await apiFunctions.updateUserAlerts('Show Cookies')
-			},
 			async initMap () {
 				let bounds = new google.maps.LatLngBounds()
 				let map = new google.maps.Map(
@@ -152,11 +97,11 @@
 					google.maps.event.removeListener(boundsListener)
 				})
 			}
-		} // methods
-	} // export
+		}
+	}
 </script>
 <style scoped>
-.maps-link:link, .maps-link:visited, .maps-link:hover, .maps-link:active {
-  text-decoration: none;
-}
+	.maps-link:link, .maps-link:visited, .maps-link:hover, .maps-link:active {
+		text-decoration: none;
+	}
 </style>

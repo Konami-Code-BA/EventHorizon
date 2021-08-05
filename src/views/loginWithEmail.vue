@@ -37,7 +37,6 @@
 <script src="https://smtpjs.com/v3/smtp.js"></script>
 <script>
 	import store from '@/store.js'
-	import appHeader from '@/components/appHeader.vue'
 	import modal from '@/components/modal.vue'
 	import translations from '@/functions/translations.js'
 	import apiFunctions from '@/functions/apiFunctions.js'
@@ -45,7 +44,6 @@
 	export default {
 		name: 'loginWithEmail',
 		components: {
-			appHeader,
 			modal,
 		},
 		data () {

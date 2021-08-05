@@ -36,33 +36,11 @@
 		props: {
 		},
 		computed: {
-			isAuthenticatedUser () { return [1, 2].includes(store.user.groups[0]) },
 		},
 		async mounted () {
 		},
 		methods: {
 			t (w) { return translations.t(w) },
-			async logout () {
-				this.$emit('startLoading')
-				await apiFunctions.logout()
-				if (this.$route.name !== 'front') {
-					this.$router.push({ name: 'front' })
-				} else {
-					location.reload();
-				}
-			},
-			async english () {
-				let lang = 'EN'
-				store.user.language = lang
-				this.languageMenu = false
-				await apiFunctions.updateUserLanguage()
-			},
-			async japanese () {
-				let lang = 'JP'
-				store.user.language = lang
-				this.languageMenu = false
-				await apiFunctions.updateUserLanguage()
-			},
 			goToHome () {
 				if (this.$route.name !== 'home') {
 					this.$router.push({ name: 'home' })

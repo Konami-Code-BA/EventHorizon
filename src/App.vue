@@ -68,17 +68,16 @@
 			width: 100%;
 		}
 		.header-footer {
+			font-size: 20px;
 			position: fixed;
-			color: inherit;
 			width: 100%;
 			display: flex;
 			flex-direction: row;
-			align-items: center;
+			align-items: flex-end;
 			justify-content: space-around;
 			height: 30px;
 			background-color: rgba(0, 0, 0, .5);
 			box-shadow: 0 0 1px rgba(255, 255, 255, .5);
-			z-index: 2;
 		}
 		.header {
 			top: 0;
@@ -89,7 +88,7 @@
 			bottom: 31px;
 			overflow-y: scroll;
 			width: 100%;
-			padding-left: 7px;
+			padding-left: 10px;
 			z-index: 1;
 		}
 		.footer {
@@ -100,13 +99,14 @@
 			flex-direction: column;
 			align-items: center;
 			width: 100%;
+			height: 100%;
 			z-index: 1;
 		}
 		/*[v-cloak] {
 			display: none;
 		}*/
 		.icon {
-			height: 16px;
+			height: 20px;
 		}
 		.line-height{
 			height: 30px;
@@ -208,7 +208,7 @@
 		}
 		::-webkit-scrollbar {
 			-webkit-appearance: none;
-			width: 7px;
+			width: 10px;
 		}
 		::-webkit-scrollbar-thumb {
 			border-radius: 4px;

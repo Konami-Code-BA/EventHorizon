@@ -3,8 +3,8 @@ export default {
     translationsDict: {
         '': { '': '' },
         'REACH OUT TO NEW HORIZONS': {
-            'EN': 'REACH OUT\nTO NEW HORIZONS',
-            'JP': '新たな地平線への\n到達を目指して'
+            'EN': 'REACH OUT TO NEW HORIZONS',
+            'JP': '新たな地平線へ到達して'
         },
         'LOGIN': {
             'EN': 'LOGIN',
@@ -165,6 +165,58 @@ export default {
         'CREATE EVENT': {
             'EN': 'CREATE EVENT',
             'JP': 'イベント作成'
+        },
+        'EVENTS': {
+            'EN': 'EVENTS',
+            'JP': 'イベント'
+        },
+        'month 0': {
+            'EN': 'JAN',
+            'JP': '1月'
+        },
+        'month 1': {
+            'EN': 'FEB',
+            'JP': '2月'
+        },
+        'month 2': {
+            'EN': 'MAR',
+            'JP': '3月'
+        },
+        'month 3': {
+            'EN': 'APR',
+            'JP': '4月'
+        },
+        'month 4': {
+            'EN': 'MAY',
+            'JP': '5月'
+        },
+        'month 5': {
+            'EN': 'JUN',
+            'JP': '6月'
+        },
+        'month 6': {
+            'EN': 'JUL',
+            'JP': '7月'
+        },
+        'month 7': {
+            'EN': 'AUG',
+            'JP': '8月'
+        },
+        'month 8': {
+            'EN': 'SEP',
+            'JP': '9月'
+        },
+        'month 9': {
+            'EN': 'OCT',
+            'JP': '10月'
+        },
+        'month 10': {
+            'EN': 'NOV',
+            'JP': '11月'
+        },
+        'month 11': {
+            'EN': 'DEC',
+            'JP': '12月'
         },
     },
 
