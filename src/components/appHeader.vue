@@ -10,7 +10,7 @@
 				<button v-on:click.prevent="goToFront()" class="no-border-button">
 					<div>EVENT</div>
 					<div v-if="this.$route.name != 'front'">
-						<img src="../assets/eventhorizon.png" class="icon">
+						<img src="../assets/eventhorizonTopIcon.png" class="line-height">
 					</div>
 					<div v-else>
 						&nbsp;
@@ -20,7 +20,7 @@
 			</div>
 			<div>
 				<button v-on:click.prevent="mainMenu=true" class="no-border-button">
-					|||
+					<img src="../assets/threeBarsIcon.png" class="icon"/>
 				</button>
 			</div>
 		</div>
@@ -38,28 +38,28 @@
 							{{ t('LOGIN / REGISTER') }}
 						</button>
 					</div>
-					<div class="box-height"></div>
+					<div class="line-height"></div>
 					<div>
 						<button v-on:click.prevent="goToHome()" class="no-border-button"
 								v-if="isAuthenticatedUser">
 							{{ t('HOME') }}
 						</button>
 					</div>
-					<div class="box-height"></div>
+					<div class="line-height"></div>
 					<div>
 						<button v-on:click.prevent="goToSettings()" class="no-border-button"
 								v-if="isAuthenticatedUser">
 							{{ t('SETTINGS') }}
 						</button>
 					</div>
-					<div class="box-height"></div>
+					<div class="line-height"></div>
 					<div>
 						<button v-on:click.prevent="logout()" class="no-border-button"
 								v-if="isAuthenticatedUser">
 							{{ t('LOGOUT') }}
 						</button>
 					</div>
-					<div class="box-height"></div>
+					<div class="line-height"></div>
 				</div>
 			</modal>
 		</transition>
@@ -76,13 +76,13 @@
 							ENGLISH
 						</button>
 					</div>
-					<div class="box-height"></div>
+					<div class="line-height"></div>
 					<div>
 						<button v-on:click.prevent="japanese()" class="no-border-button">
 							日本語
 						</button>
 					</div>
-					<div class="box-height"></div>
+					<div class="line-height"></div>
 				</div>
 			</modal>
 		</transition>

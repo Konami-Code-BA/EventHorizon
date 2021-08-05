@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<div class="box">
+		<div class="main">
 			<h1>experiment 1</h1>
 			<div id="map_canvas" style="height: 400px; width: 100%;"></div>
 			<div style="background-color: white">

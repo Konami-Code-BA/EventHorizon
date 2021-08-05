@@ -1,9 +1,8 @@
 <template>
 	<div>
-		<div class="box">
+		<div class="main">
 			<h1>experiment 2</h1>
 		</div>
-		<!--a href="https://lin.ee/UeSvNxR"><img height="36" border="0" src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png"></a-->
 	</div>
 </template>
 <script>
