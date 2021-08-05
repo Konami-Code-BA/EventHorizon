@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<div class="box">
+		<div class="main">
 			<div>
 				<h1>{{ t('SETTINGS') }}</h1>
 			</div>
@@ -10,7 +10,6 @@
 				</button>
 			</div>
 		</div>
-		<!--a href="https://lin.ee/UeSvNxR"><img height="36" border="0" src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png"></a-->
 		<transition name="fade">
 			<modal v-show="showCreateEventModal" @closeModals="showCreateEventModal=false">
 				<div slot="contents" class="createEventModal">

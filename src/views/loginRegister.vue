@@ -1,36 +1,34 @@
 <template>
-	<div>
-		<div class="box">
-			<button v-on:click.prevent="$router.push({ name: 'loginWithEmail' })" class="button box-item" style="flex-grow: 1">{{t('LOGIN WITH EMAIL')}}</button>
-			<div class="box-height"></div>
-			<button v-on:click.prevent="$router.push({ name: 'registerWithEmail' })" class="button box-item" style="flex-grow: 1">{{t('REGISTER WITH EMAIL')}}</button>
-			<div class="box-height"></div>
-			<button v-on:click.prevent="loginByLine()" class="button line-coloring">
-				<div class="line-button">
-					<div class="line-alignment">
-						<div>
-							<img src="../assets/line.png" class="line-img">
-						</div>
-						<div>
-							LINE
-						</div>
+	<div class="main">
+		<button v-on:click.prevent="$router.push({ name: 'loginWithEmail' })" class="button" style="flex-grow: 1">{{t('LOGIN WITH EMAIL')}}</button>
+		<div class="line-height"></div>
+		<button v-on:click.prevent="$router.push({ name: 'registerWithEmail' })" class="button" style="flex-grow: 1">{{t('REGISTER WITH EMAIL')}}</button>
+		<div class="line-height"></div>
+		<button v-on:click.prevent="loginByLine()" class="button line-coloring">
+			<div class="line-button">
+				<div class="line-alignment">
+					<div>
+						<img src="../assets/line.png" class="line-img">
+					</div>
+					<div>
+						LINE
 					</div>
 				</div>
-			</button>
-			<div class="box-height"></div>
-			<!--a href="https://lin.ee/UeSvNxR" class="line-coloring">
-				<div class="line-button">
-					<div class="line-alignment">
-						<div>
-							<img src="../assets/line.png" class="line-img">
-						</div>
-						<div style="white-space: nowrap">
-							ADD FRIEND
-						</div>
+			</div>
+		</button>
+		<div class="line-height"></div>
+		<!--a href="https://lin.ee/UeSvNxR" class="line-coloring">
+			<div class="line-button">
+				<div class="line-alignment">
+					<div>
+						<img src="../assets/line.png" class="line-img">
+					</div>
+					<div style="white-space: nowrap">
+						ADD FRIEND
 					</div>
 				</div>
-			</a-->
-		</div>
+			</div>
+		</a-->
 	</div>
 </template>
 <script src="https://www.line-website.com/social-plugins/js/thirdparty/loader.min.js" async="async" defer="defer"></script>

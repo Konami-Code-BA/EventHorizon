@@ -1,40 +1,37 @@
 <template>
-	<div>
-		<div class="box">
-			<form v-on:keyup.enter="login()">
-				<div>
-					<input :placeholder="t('EMAIL')" v-model="emailInput" type="text" class="box-item"
-						id="email" autocorrect="off" autocapitalize="none"/>
-				</div>
-				<div class="box-height" :class="{'shake' : shakeIt}" style="color: red">
-					<small>{{t(emailError)}}</small>
-				</div>
-				<div style="display: flex">
-					<input :placeholder="t('PASSWORD')" v-model="passwordInput"
-						:type="[showPassword ? 'text' : 'password']" class="box-item" style="flex-grow: 1"
-						id="password" autocorrect="off" autocapitalize="none"/>
-					<button v-on:click.prevent="showButton()" class="button box-item" style="width: 70px"
-						id="show" type="button">
-						<small v-if="!showPassword">
-							{{ t('SHOW') }}
-						</small>
-						<small v-else>
-							{{ t('HIDE') }}
-						</small>
-					</button>
-				</div>
-			</form>
-			<div class="box-height" :class="{'shake' : shakeIt}" style="color: red">
-				<small>{{t(passwordError)}}</small>
+	<div class="main">
+		<form v-on:keyup.enter="login()">
+			<div>
+				<input :placeholder="t('EMAIL')" v-model="emailInput" type="text"
+					id="email" autocorrect="off" autocapitalize="none"/>
 			</div>
-			<button v-on:click.prevent="login()" class="button box-item">
-				{{ t('LOGIN') }}
-			</button>
-			<!--button class="no-border-button small-button" v-on:click.prevent="sendEmail()">
-				<small><small>{{t('FORGOT PASSWORD')}}</small></small>
-			</button-->
+			<div class="line-height" :class="{'shake' : shakeIt}" style="color: red">
+				<small>{{t(emailError)}}</small>
+			</div>
+			<div style="display: flex">
+				<input :placeholder="t('PASSWORD')" v-model="passwordInput"
+					:type="[showPassword ? 'text' : 'password']" style="flex-grow: 1"
+					id="password" autocorrect="off" autocapitalize="none"/>
+				<button v-on:click.prevent="showButton()" class="button" style="width: 70px"
+					id="show" type="button">
+					<small v-if="!showPassword">
+						{{ t('SHOW') }}
+					</small>
+					<small v-else>
+						{{ t('HIDE') }}
+					</small>
+				</button>
+			</div>
+		</form>
+		<div class="line-height" :class="{'shake' : shakeIt}" style="color: red">
+			<small>{{t(passwordError)}}</small>
 		</div>
-		<!--a href="https://lin.ee/UeSvNxR"><img height="36" border="0" src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png"></a-->
+		<button v-on:click.prevent="login()" class="button">
+			{{ t('LOGIN') }}
+		</button>
+		<!--button class="no-border-button small-button" v-on:click.prevent="sendEmail()">
+			<small><small>{{t('FORGOT PASSWORD')}}</small></small>
+		</button-->
 	</div>
 </template>
 <script src="https://smtpjs.com/v3/smtp.js"></script>

@@ -1,10 +1,18 @@
 <template>
 	<div>
 		<div class="header-footer footer">
-			<img src="../assets/homeIcon.png"/>
-			<img src="../assets/homeIcon.png"/>
-			<img src="../assets/homeIcon.png"/>
-			<img src="../assets/homeIcon.png"/>
+			<div>
+				<img src="../assets/homeIcon.png" class="icon"/>
+			</div>
+			<div>
+				<img src="../assets/homeIcon.png" class="icon"/>
+			</div>
+			<div>
+				<img src="../assets/profileIcon.png" class="icon"/>
+			</div>
+			<div>
+				<img src="../assets/gearIcon.png" class="icon"/>
+			</div>
 		</div>
 	</div>
 </template>

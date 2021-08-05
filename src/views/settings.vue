@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<div class="box">
+		<div class="main">
 			<div>
 				<h1>{{ t('SETTINGS') }}</h1>
 			</div>
@@ -19,7 +19,6 @@
 				<h2>{{ t('CHANGE PASSWORD') }}</h2>
 			</div-->
 		</div>
-		<!--a href="https://lin.ee/UeSvNxR"><img height="36" border="0" src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png"></a-->
 		<transition name="fade">
 			<modal v-show="showAddEmailModal" @closeModals="closeAddEmailModal()">
 				<div slot="contents" class="addEmailModal">
@@ -95,6 +94,7 @@
 		height: 24px;
 		display: flex;
 		flex-direction: row;
+		align-self: flex-start;
 		align-items: flex-end;
 		padding: 0;
 	}
