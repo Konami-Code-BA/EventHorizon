@@ -18,7 +18,7 @@
 		async mounted () {
 			let apiKey = await apiFunctions.secretsApiFunction('google_maps_api_key')
 			let script = document.createElement('script')
-			script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap`
+			script.src = `https://maps.googleapis.com/maps/api/js?v=weekly&key=${apiKey}&callback=initMap`
 			script.async = true
 			document.head.appendChild(script)
 			window.initMap = this.initMap
