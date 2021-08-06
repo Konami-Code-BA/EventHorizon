@@ -36,6 +36,6 @@
 		justify-content: space-around;
 		height: 30px;
 		background-color: rgba(0, 0, 0, .2);
-		box-shadow: 0 0 1px rgba(255, 255, 255, .5);
+		border: 1px solid rgba(255, 255, 255, .1);
 	}
 </style>
