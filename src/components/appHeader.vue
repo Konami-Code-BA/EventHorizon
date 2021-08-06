@@ -1,34 +1,56 @@
 <template>
 	<div>
-		<div class="header-footer header">
-			<div>
-				<button v-on:click.prevent="languageMenu=true" class="no-border-button">
-						A/文
-				</button>
-			</div>
-			<div>
-				<button v-on:click.prevent="goToFront()" class="no-border-button">
-					<div>EVENT</div>
-					<div v-if="this.$route.name != 'front'">
-						<img src="../assets/eventhorizonTopIcon.png" class="line-height">
+		<div class="header" style="width: 100%;">
+			<tabs :num-tabs="3" :initial="0" @on-click="selectedTab = $event"
+					style="background-color: rgba(0, 0, 0, .5);">
+				<div slot="1" style="vertical-align: bottom;">
+					A/文
+				</div>
+				<div slot="2">
+					<div style="display: flex; flex-direction: row; align-items: center;">
+						<div>EVENT</div>
+						<div v-if="this.$route.name != 'front'">
+							<img src="../assets/eventhorizonTopIcon.png" style="height: 20px; vertical-align: middle;">
+						</div>
+						<div v-else>
+							&nbsp;
+						</div>
+						<div>HORIZON</div>
 					</div>
-					<div v-else>
-						&nbsp;
-					</div>
-					<div>HORIZON</div>
-				</button>
-			</div>
-			<div>
-				<button v-on:click.prevent="mainMenu=true" class="no-border-button">
-					<img src="../assets/threeBarsIcon.png" class="icon"/>
-				</button>
-			</div>
+				</div>
+				<div slot="3">
+					<img src="../assets/threeBarsIcon.png" class="icon" style="height: 16px; margin-bottom: 3px;"/>
+				</div>
+			</tabs>
 		</div>
 		<transition name="fade">
-			<modal v-show="mainMenu" @closeModals="languageMenu=false; mainMenu=false">
-				<div slot="contents" class="main menu">
+			<modal v-show="selectedTab === 1" @closeModals="selectedTab = 0">
+				<div slot="contents" class="language menu">
 					<div style="align-self: flex-end">
-						<button v-on:click.prevent="mainMenu=false" class="no-border-button">
+						<button v-on:click.prevent="selectedTab = 0" class="no-border-button">
+							✖
+						</button>
+					</div>
+					<div>
+						<button v-on:click.prevent="english()" class="no-border-button">
+							ENGLISH
+						</button>
+					</div>
+					<div class="line-height"></div>
+					<div>
+						<button v-on:click.prevent="japanese()" class="no-border-button">
+							日本語
+						</button>
+					</div>
+					<div class="line-height"></div>
+				</div>
+			</modal>
+		</transition>
+		<transition name="fade">
+			<modal v-show="selectedTab === 3" @closeModals="selectedTab = 0">
+				<div slot="contents" class="threeBars menu">
+					<div style="align-self: flex-end">
+						<button v-on:click.prevent="selectedTab = 0" class="no-border-button">
 							✖
 						</button>
 					</div>
@@ -63,34 +85,12 @@
 				</div>
 			</modal>
 		</transition>
-		<transition name="fade">
-			<modal v-show="languageMenu" @closeModals="languageMenu=false; mainMenu=false">
-				<div slot="contents" class="language menu">
-					<div style="align-self: flex-end">
-						<button v-on:click.prevent="languageMenu=false" class="no-border-button">
-							✖
-						</button>
-					</div>
-					<div>
-						<button v-on:click.prevent="english()" class="no-border-button">
-							ENGLISH
-						</button>
-					</div>
-					<div class="line-height"></div>
-					<div>
-						<button v-on:click.prevent="japanese()" class="no-border-button">
-							日本語
-						</button>
-					</div>
-					<div class="line-height"></div>
-				</div>
-			</modal>
-		</transition>
 	</div>
 </template>
 <script>
 	import store from '@/store'
 	import modal from '@/components/modal'
+	import tabs from '@/components/tabs.vue'
 	import translations from '@/functions/translations.js'
 	import apiFunctions from '@/functions/apiFunctions.js'
 	export default {
@@ -98,17 +98,24 @@
 		data () {
 			return {
 				store: store,
-				mainMenu: false,
-				languageMenu: false,
+				selectedTab: 0,
 			}
 		},
 		components: {
 			modal,
+			tabs,
 		},
 		props: {
 		},
 		computed: {
 			isAuthenticatedUser () { return [1, 2].includes(store.user.groups[0]) },
+		},
+		watch: {
+			'selectedTab' () {
+				if (this.selectedTab === 2) {
+					this.goToFront()
+				}
+			},
 		},
 		async mounted () {
 		},
@@ -176,7 +183,7 @@
 		width: 50%;
 		top: 40px;
 	}
-	.main {
+	.threeBars {
 		right: 0;
 	}
 	.language {

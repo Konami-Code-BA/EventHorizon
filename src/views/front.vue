@@ -6,29 +6,23 @@
 			</div>
 			<div style="font-size: 38px; margin-bottom: 5px;">EVENT HORIZON</div>
 			<div style="width: 100%;">
-				<tabs :tab-no="4">
+				<tabs :num-tabs="4" :not-buttons="[1]" :initial="2" @on-click="selectedTab = $event" style="background-color: rgba(0, 0, 0, .2);">
 					<div slot="1">
-						<span style="font-size: 20px; white-space: pre-line; margin-bottom: 10px;">{{ t('EVENTS') }}:</span>
+						<span style="font-size: 20px;">{{ t('EVENTS') }}:</span>
 					</div>
 					<div slot="2">
-						<button v-on:click.prevent="selectedTab = 'map'" class="no-border-button">
-							<img src="../assets/mapIcon.png" class="icon"/>
-						</button>
+						<img src="../assets/mapIcon.png" class="icon"/>
 					</div>
 					<div slot="3">
-						<button v-on:click.prevent="selectedTab = 'calendar'" class="no-border-button">
-							<img src="../assets/calendarIcon.png" class="icon"/>
-						</button>
+						<img src="../assets/calendarIcon.png" class="icon" style="vertical-align: bottom"/>
 					</div>
 					<div slot="4">
-						<button v-on:click.prevent="selectedTab = 'list'" class="no-border-button">
-							<img src="../assets/threeBarsHIcon.png" class="icon"/>
-						</button>
+						<img src="../assets/threeBarsHIcon.png" class="icon" style="vertical-align: bottom"/>
 					</div>
 				</tabs>
 			</div>
-			<google-map style="width: 100%; height: 100%; margin-bottom: 5px;" v-show="selectedTab==='map'"/>
-			<events-calendar style="width: 100%; height: 100%; margin-bottom: 5px;" v-show="selectedTab==='calendar'"/>
+			<google-map class="viewer" v-show="selectedTab==2"/>
+			<events-calendar class="viewer" v-show="selectedTab==3"/>
 			<div style="font-size: 20px; margin-bottom: 10px;">
 				{{ t('REACH OUT TO NEW HORIZONS') }}
 			</div>
@@ -74,7 +68,7 @@
 			return {
 				store: store,
 				showCookiesModal: store.user.alerts.includes(1),
-				selectedTab: 'map',
+				selectedTab: 2,
 			}
 		},
 		async mounted () {
@@ -90,4 +84,10 @@
 	} // export
 </script>
 <style scoped>
+	.viewer {
+		width: 100%;
+		height: 100%;
+		margin-bottom: 5px;
+		border: 1px solid rgba(255, 255, 255, .1);
+	}
 </style>

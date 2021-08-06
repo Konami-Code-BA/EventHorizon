@@ -67,19 +67,8 @@
 			flex-direction: column;
 			width: 100%;
 		}
-		.header-footer {
-			font-size: 20px;
-			position: fixed;
-			width: 100%;
-			display: flex;
-			flex-direction: row;
-			align-items: flex-end;
-			justify-content: space-around;
-			height: 30px;
-			background-color: rgba(0, 0, 0, .5);
-			box-shadow: 0 0 1px rgba(255, 255, 255, .5);
-		}
 		.header {
+			position: fixed;
 			top: 0;
 		}
 		.router {
@@ -92,6 +81,7 @@
 			z-index: 1;
 		}
 		.footer {
+			position: fixed;
 			bottom: 0;
 		}
 		.main {
@@ -107,6 +97,7 @@
 		}*/
 		.icon {
 			height: 20px;
+			vertical-align: bottom;
 		}
 		.line-height{
 			height: 30px;
@@ -213,7 +204,7 @@
 		::-webkit-scrollbar-thumb {
 			border-radius: 4px;
 			background-color: rgba(0, 0, 0, .5);
-			box-shadow: 0 0 1px rgba(255, 255, 255, .5);
+			border: 1px solid rgba(255, 255, 255, .1);
 		}
 
 		/* LOADING SPINNER */
