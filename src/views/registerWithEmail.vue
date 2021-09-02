@@ -1,9 +1,11 @@
 <template>
-	<div class="main">
-		<register-with-email-internal
-			@startLoading="$emit('startLoading')"
-			@endLoading="$emit('endLoading')"
-		/>
+	<div class="main" style="justify-content: center">
+		<div>
+			<register-with-email-internal
+				@startLoading="$emit('startLoading')"
+				@endLoading="$emit('endLoading')"
+			/>
+		</div>
 	</div>
 </template>
 <script>

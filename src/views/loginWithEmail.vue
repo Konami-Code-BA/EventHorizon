@@ -1,5 +1,5 @@
 <template>
-	<div class="main">
+	<div class="main" style="justify-content: center">
 		<form v-on:keyup.enter="login()">
 			<div>
 				<input :placeholder="t('EMAIL')" v-model="emailInput" type="text"

@@ -60,21 +60,18 @@
 							{{ t('LOGIN / REGISTER') }}
 						</button>
 					</div>
-					<div class="line-height"></div>
 					<div>
 						<button v-on:click.prevent="goToHome()" class="no-border-button"
 								v-if="isAuthenticatedUser">
 							{{ t('HOME') }}
 						</button>
 					</div>
-					<div class="line-height"></div>
 					<div>
 						<button v-on:click.prevent="goToSettings()" class="no-border-button"
 								v-if="isAuthenticatedUser">
 							{{ t('SETTINGS') }}
 						</button>
 					</div>
-					<div class="line-height"></div>
 					<div>
 						<button v-on:click.prevent="logout()" class="no-border-button"
 								v-if="isAuthenticatedUser">
@@ -133,38 +130,38 @@
 			async english () {
 				let lang = 'EN'
 				store.user.language = lang
-				this.languageMenu = false
+				this.selectedTab = 0
 				await apiFunctions.updateUserLanguage()
 			},
 			async japanese () {
 				let lang = 'JP'
 				store.user.language = lang
-				this.languageMenu = false
+				this.selectedTab = 0
 				await apiFunctions.updateUserLanguage()
 			},
 			goToHome () {
 				if (this.$route.name !== 'guestHome') {
 					this.$router.push({ name: 'guestHome' })
-				} else {
-					this.mainMenu = false
 				}
+				this.selectedTab = 0
 			},
 			goToFront () {
 				if (this.$route.name !== 'front') {
 					this.$router.push({ name: 'front' })
 				}
+				this.selectedTab = 0
 			},
 			goToLoginRegister () {
 				if (this.$route.name !== 'loginRegister') {
 					this.$router.push({ name: 'loginRegister' })
 				}
+				this.selectedTab = 0
 			},
 			goToSettings () {
 				if (this.$route.name !== 'settings') {
 					this.$router.push({ name: 'settings' })
-				} else {
-					this.mainMenu = false
 				}
+				this.selectedTab = 0
 			},
 		}
 	}

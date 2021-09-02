@@ -1,8 +1,8 @@
 <template>
-	<div class="main">
-		<button v-on:click.prevent="$router.push({ name: 'loginWithEmail' })" class="button" style="flex-grow: 1">{{t('LOGIN WITH EMAIL')}}</button>
+	<div class="main" style="justify-content: center">
+		<button v-on:click.prevent="$router.push({ name: 'loginWithEmail' })" class="button">{{t('LOGIN WITH EMAIL')}}</button>
 		<div class="line-height"></div>
-		<button v-on:click.prevent="$router.push({ name: 'registerWithEmail' })" class="button" style="flex-grow: 1">{{t('REGISTER WITH EMAIL')}}</button>
+		<button v-on:click.prevent="$router.push({ name: 'registerWithEmail' })" class="button">{{t('REGISTER WITH EMAIL')}}</button>
 		<div class="line-height"></div>
 		<button v-on:click.prevent="loginByLine()" class="button line-coloring">
 			<div class="line-button">
@@ -16,7 +16,6 @@
 				</div>
 			</div>
 		</button>
-		<div class="line-height"></div>
 		<!--a href="https://lin.ee/UeSvNxR" class="line-coloring">
 			<div class="line-button">
 				<div class="line-alignment">
