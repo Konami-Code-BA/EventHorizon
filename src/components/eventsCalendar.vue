@@ -3,11 +3,11 @@
 		<div style="width: 100%; height: 100%" v-show="selectedDate === 0">
 			<div class="days">
 				<button v-on:click.prevent="changeMonth(-1)" class="no-border-button">
-					<
+					{{'<'}}
 				</button>
 				{{ selectedYear }} {{ t('month ' + selectedMonth) }}
 				<button v-on:click.prevent="changeMonth(1)" class="no-border-button">
-					>
+					{{'>'}}
 				</button>
 			</div>
 			<div style="height: 87%">
@@ -36,11 +36,11 @@
 					MONTH
 				</button>
 				<button v-on:click.prevent="changeDay(-1)" class="no-border-button">
-					<
+					{{'<'}}
 				</button>
 				{{ selectedYear }}/{{ selectedMonth + 1 }}/{{ selectedDate.getDate() }}
 				<button v-on:click.prevent="changeDay(1)" class="no-border-button">
-					>
+					{{'>'}}
 				</button>
 				<div style="width: 80px"/>
 			</div>
