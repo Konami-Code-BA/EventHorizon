@@ -4,7 +4,7 @@ export default {
         '': { '': '' },
         'REACH OUT TO NEW HORIZONS': {
             'EN': 'REACH OUT TO NEW HORIZONS',
-            'JP': '新たな地平線へ到達して'
+            'JP': '新たな地平線を求めて'
         },
         'LOGIN': {
             'EN': 'LOGIN',
@@ -217,6 +217,46 @@ export default {
         'month 11': {
             'EN': 'DEC',
             'JP': '12月'
+        },
+        'day 0': {
+            'EN': 'Su',
+            'JP': '日'
+        },
+        'day 1': {
+            'EN': 'Mo',
+            'JP': '月'
+        },
+        'day 2': {
+            'EN': 'Tu',
+            'JP': '火'
+        },
+        'day 3': {
+            'EN': 'We',
+            'JP': '水'
+        },
+        'day 4': {
+            'EN': 'Th',
+            'JP': '木'
+        },
+        'day 5': {
+            'EN': 'Fr',
+            'JP': '金'
+        },
+        'day 6': {
+            'EN': 'Sa',
+            'JP': '土'
+        },
+        'NO EVENTS': {
+            'EN': 'NO EVENTS',
+            'JP': 'イベント無し'
+        },
+        'MONTH VIEW': {
+            'EN': 'MONTH',
+            'JP': '月表示'
+        },
+        'TODAY': {
+            'EN': 'TODAY',
+            'JP': '今日'
         },
     },
 

@@ -8,7 +8,7 @@
 			<div style="width: 100%;">
 				<tabs :num-tabs="4" :not-buttons="[1]" :initial="2" @on-click="selectedTab = $event" style="background-color: rgba(0, 0, 0, .2);">
 					<div slot="1">
-						<span style="font-size: 20px;">{{ t('EVENTS') }}:</span>
+						<span style="font-size: 15px">{{ t('EVENTS') }}:</span>
 					</div>
 					<div slot="2">
 						<img src="../assets/mapIcon.png" class="icon"/>
