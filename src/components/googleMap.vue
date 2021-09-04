@@ -3,6 +3,7 @@
 </template>
 <script>
 	import apiFunctions from '@/functions/apiFunctions.js'
+	import translations from '@/functions/translations.js'
 	export default {
 		name: 'googleMap',
 		data () {
@@ -25,6 +26,7 @@
 			this.$emit('endLoading')
 		},
 		methods: {
+			t (w) { return translations.t(w) },
 			async initMap () {
 				let bounds = new google.maps.LatLngBounds()
 				let map = new google.maps.Map(
@@ -38,12 +40,68 @@
 					})
 				let infowindow = new google.maps.InfoWindow({ map: map })
 				let events = await apiFunctions.getAllEvents()
-				for ( let i = 0; i < events.length; i++) {
+				for (let i = 0; i < events.length; i++) {
 					let dateTime = Date.parse(events[i]['date_time'])
 					if (dateTime < Date.now()) {
-						continue
+						events.splice(i, 1)
+						i--
 					}
-					let address = events[i]['address']
+				}
+				if (events.length != 0) {
+					for (let i = 0; i < events.length; i++) {
+						let address = events[i]['address']
+						let geocoder = new google.maps.Geocoder()
+						var result
+						await geocoder.geocode( { 'address': address }, function(results, status) {
+							if (status == google.maps.GeocoderStatus.OK) {
+								result = results[0]
+							} else {
+								alert('Geocode was not successful for the following reason: ' + status)
+							}
+						})
+						let [randLat, randLng] = [0, 0]
+						let icon = 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
+						let styles = `style="
+							text-decoration: none;
+							color: blue;
+							font-weight: 600;
+							font-size: 16px;
+							-webkit-font-smoothing: antialiased;
+							-moz-osx-font-smoothing: grayscale;
+						"`
+						let infowindowContents = '<a '
+							+ 'href="' + apiFunctions.apiBaseUrl + '/event/?id=' + events[i]['id'] + '"' + styles + '>'
+							+ events[i]['name'] + '</a>'
+						if (events[i]['is_private']) {
+							let randSign = Math.random() > .5 ? 1 : -1
+							randLat = Math.random() / 250 * randSign
+							randSign = Math.random() > .5 ? 1 : -1
+							randLng = Math.random() / 300 * randSign
+							icon = 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+							infowindowContents = '<span ' + styles + '>' + events[i]['name'] + '</span>'
+						}
+						let position = new google.maps.LatLng(
+							result.geometry.location.lat() + randLat,
+							result.geometry.location.lng() + randLng
+						)
+						let marker = new google.maps.Marker({
+							position: position,
+							map: map,
+							icon: icon
+						})
+						google.maps.event.addListener(marker, 'click', function() {
+							infowindow.setContent(infowindowContents)
+							infowindow.open(map, this)
+						})
+						google.maps.event.addListener(map, "click", function() {
+							infowindow.close()
+						})
+						bounds.extend(position)
+						map.fitBounds(bounds)
+						map.setZoom(12)
+					}
+				} else {
+					let address = '東京都千代田区千代田１−1'
 					let geocoder = new google.maps.Geocoder()
 					var result
 					await geocoder.geocode( { 'address': address }, function(results, status) {
@@ -54,26 +112,6 @@
 						}
 					})
 					let [randLat, randLng] = [0, 0]
-					let icon = 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
-					let styles = `style="
-						text-decoration: none;
-						color: blue;
-						font-weight: 600;
-						font-size: 16px;
-						-webkit-font-smoothing: antialiased;
-						-moz-osx-font-smoothing: grayscale;
-					"`
-					let infowindowContents = '<a '
-						+ 'href="' + apiFunctions.apiBaseUrl + '/event/?id=' + events[i]['id'] + '"' + styles + '>'
-						+ events[i]['name'] + '</a>'
-					if (events[i]['is_private']) {
-						let randSign = Math.random() > .5 ? 1 : -1
-						randLat = Math.random() / 250 * randSign
-						randSign = Math.random() > .5 ? 1 : -1
-						randLng = Math.random() / 300 * randSign
-						icon = 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
-						infowindowContents = '<span ' + styles + '>' + events[i]['name'] + '</span>'
-					}
 					let position = new google.maps.LatLng(
 						result.geometry.location.lat() + randLat,
 						result.geometry.location.lng() + randLng
@@ -81,17 +119,18 @@
 					let marker = new google.maps.Marker({
 						position: position,
 						map: map,
-						icon: icon
-					})
-					google.maps.event.addListener(marker, 'click', function() {
-						infowindow.setContent(infowindowContents)
-						infowindow.open(map, this)
-					})
-					google.maps.event.addListener(map, "click", function() {
-						infowindow.close()
+						icon: 'http://maps.google.com/mapfiles/ms/icons/empty.png',
+						label: {
+							color: 'rgba(0, 0, 0, 0.7)',
+   							//highlight: 'rgba(0, 0, 0, 0.5)',
+							fontWeight: 'bold',
+							text: this.t('NO EVENTS'),
+							fontSize: '40px',
+						},
 					})
 					bounds.extend(position)
 					map.fitBounds(bounds)
+					map.setZoom(12)
 				}
 				var boundsListener = google.maps.event.addListener((map), 'bounds_changed', function(event) {
 					google.maps.event.removeListener(boundsListener)

@@ -1,17 +1,22 @@
 <template>
 	<div>
-		<div style="width: 100%; height: 100%" v-show="selectedDate === 0">
-			<div class="days">
+		<div style="width: 100%; height: 100%; padding-left: 5px; padding-right: 5px" v-show="selectedDate === 0">
+			<div style="width: 100%; display: flex; flex-direction: row; align-items: center;
+					justify-content: space-between">
 				<button v-on:click.prevent="changeMonth(-1)" class="no-border-button">
 					{{'<'}}
 				</button>
+				<button v-on:click.prevent="goToToday()" class="no-border-button" style="width: 40px; font-size: 10px">
+					{{t('TODAY')}}
+				</button>
 				{{ selectedYear }} {{ t('month ' + selectedMonth) }}
+				<div style="width: 40px"/>
 				<button v-on:click.prevent="changeMonth(1)" class="no-border-button">
 					{{'>'}}
 				</button>
 			</div>
 			<div style="height: 87%">
-				<div class="weeks"> 
+				<div class="weeks">
 					<div v-for="week in 6" style="margin-bottom: 5px;">
 						<div class="days">
 							<div v-for="day in 7">
@@ -30,27 +35,49 @@
 				</div>
 			</div>
 		</div>
-		<div style="width: 100%; height: 100%" v-if="selectedDate != 0">
-			<div class="days">
-				<button v-on:click.prevent="selectedDate = 0" class="no-border-button" style="width: 80px">
-					MONTH
-				</button>
+		<div style="width: 100%; height: 100%; padding-left: 5px; padding-right: 5px" v-if="selectedDate != 0">
+			<div style="width: 100%; display: flex; flex-direction: row; align-items: center;
+					justify-content: space-between">
 				<button v-on:click.prevent="changeDay(-1)" class="no-border-button">
 					{{'<'}}
 				</button>
-				{{ selectedYear }}/{{ selectedMonth + 1 }}/{{ selectedDate.getDate() }}
+				<button v-on:click.prevent="selectedDate = 0" class="no-border-button"
+						style="width: 40px; font-size: 10px">
+					{{t('MONTH VIEW')}}
+				</button>
+				<div style="display: flex; flex-direction: row; align-items: center; justify-content: center">
+					<div style="width: 40px; text-align: center">
+						{{ selectedYear }}
+					</div>
+					/
+					<div style="width: 20px; text-align: center">
+						{{ selectedMonth + 1 }}
+					</div>
+					/
+					<div style="width: 20px; text-align: center">
+						{{ selectedDate.getDate() }}
+					</div>
+					&nbsp;
+					<div style="width: 25px; text-align: center">
+						{{ t('day ' + selectedDate.getDay()) }}
+					</div>
+				</div>
+				<div style="width: 40px"/>
 				<button v-on:click.prevent="changeDay(1)" class="no-border-button">
 					{{'>'}}
 				</button>
-				<div style="width: 80px"/>
 			</div>
 			<div style="height: 87%">
-				<div v-if="dayHasEvent(selectedDate)">
-					{{ selectedDate.getDate() }}
-				</div>
-				<div v-else>
-					NO EVENTS
-				</div>
+				<ul v-if="getEventsFromDate(selectedDate).length > 0" style="list-style-type: none">
+					<li v-for="event in getEventsFromDate(selectedDate)">
+						{{ event['name'] }}
+					</li>
+				</ul>
+				<ul v-else style="list-style-type: none">
+					<li>
+						{{t('NO EVENTS')}}
+					</li>
+				</ul>
 			</div>
 		</div>
 	</div>
@@ -65,7 +92,7 @@
 				selectedMonth: 0,  // note: month goes from 0 to 11 (so dumb)
 				selectedYear: 0,
 				selectedDate: 0,
-				eventDates: [],
+				eventDates: {},
 				events: [],
 			}
 		},
@@ -84,17 +111,24 @@
 		async mounted () {
 			this.selectedMonth = this.today.getMonth()  // note: month goes from 0 to 11 (so dumb)
 			this.selectedYear = this.today.getYear() - 100 + 2000
-			this.events = await apiFunctions.getAllEvents()
-			for ( let i = 0; i < this.events.length; i++) {
-				let date = new Date(this.events[i]['date_time'])
-				let dateTime = new Date(
-					date.getYear() - 100 + 2000, date.getMonth(), date.getDate(), 0, 0, 0, 0
-				).getTime()
-				this.eventDates.push(dateTime)
-			}
+			await this.getAllEvents()
 		},
 		methods: {
 			t (w) { return translations.t(w) },
+			async getAllEvents () {
+				this.events = await apiFunctions.getAllEvents()
+				for ( let i = 0; i < this.events.length; i++) {
+					let date = new Date(this.events[i]['date_time'])
+					let dateTime = new Date(
+						date.getYear() - 100 + 2000, date.getMonth(), date.getDate(), 0, 0, 0, 0
+					).getTime()
+					if (dateTime.toString() in this.eventDates) {
+						this.eventDates[dateTime.toString()].push(this.events[i])
+					} else {
+						this.eventDates[dateTime.toString()] = [this.events[i]]
+					}
+				}
+			},
 			getDateOfCalendarLocation (calendarLocation) {
 				let today = this.today
 				let dayOfWeekOfFirstOfMonth = new Date(
@@ -118,13 +152,15 @@
 					this.selectedDate.getYear() - 100 + 2000, this.selectedDate.getMonth(),
 					this.selectedDate.getDate() + change, 0, 0, 0, 0
 				)
+				this.selectedMonth = this.selectedDate.getMonth()
+				this.selectedYear = this.selectedDate.getYear() - 100 + 2000
 			},
-			dayHasEvent (date) {
+			getEventsFromDate (date) {
 				let dayTime = date.getTime()
-				if (this.eventDates.includes(dayTime)) {
-					return true
+				if (dayTime.toString() in this.eventDates) {
+					return this.eventDates[dayTime.toString()]
 				} else {
-					return false
+					return []
 				}
 			},
 			dayStyling (week, day) {
@@ -138,7 +174,7 @@
 					week > 3 && dayDate <= 14
 				)) {
 					style['color'] = 'grey !important'
-				} else if (!this.dayHasEvent(date)) {
+				} else if (this.getEventsFromDate(date).length == 0) {
 					style['color'] = '#95c4ff !important'
 					style['cursor'] = 'initial !important';
 				} else {
@@ -150,9 +186,13 @@
 				return style		
 			},
 			selectDate (date) {
-				if (this.dayHasEvent(date)) {
+				if (this.getEventsFromDate(date).length > 0) {
 					this.selectedDate = date
 				}
+			},
+			goToToday () {
+				this.selectedMonth = this.today.getMonth()
+				this.selectedYear = this.today.getYear() - 100 + 2000
 			},
 		}
 	}

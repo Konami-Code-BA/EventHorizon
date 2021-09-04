@@ -23,7 +23,7 @@
 				</div>
 			</tabs>
 		</div>
-		<transition name="fade">
+		<!--transition name="fade"-->
 			<modal v-show="selectedTab === 1" @closeModals="selectedTab = 0">
 				<div slot="contents" class="language menu">
 					<div style="align-self: flex-end">
@@ -45,8 +45,8 @@
 					<div class="line-height"></div>
 				</div>
 			</modal>
-		</transition>
-		<transition name="fade">
+		<!--/transition>
+		<transition name="fade"-->
 			<modal v-show="selectedTab === 3" @closeModals="selectedTab = 0">
 				<div slot="contents" class="threeBars menu">
 					<div style="align-self: flex-end">
@@ -81,7 +81,7 @@
 					<div class="line-height"></div>
 				</div>
 			</modal>
-		</transition>
+		<!--/transition-->
 	</div>
 </template>
 <script>
