@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div v-if="loaded">
 		<div style="width: 100%; height: 100%; padding-left: 5px; padding-right: 5px" v-show="selectedDate === 0">
 			<div style="width: 100%; display: flex; flex-direction: row; align-items: center;
 					justify-content: space-between">
@@ -70,7 +70,9 @@
 			<div style="height: 87%">
 				<ul v-if="getEventsFromDate(selectedDate).length > 0" style="list-style-type: none">
 					<li v-for="event in getEventsFromDate(selectedDate)">
-						{{ event['name'] }}
+						<button v-on:click.prevent="$emit('openEventModal', event['id'])" class="no-border-button">
+							{{ event['name'] }}
+						</button>
 					</li>
 				</ul>
 				<ul v-else style="list-style-type: none">
@@ -84,7 +86,6 @@
 </template>
 <script>
 	import translations from '@/functions/translations.js'
-	import apiFunctions from '@/functions/apiFunctions.js'
 	export default {
 		name: 'eventsCalendar',
 		data () {
@@ -93,13 +94,14 @@
 				selectedYear: 0,
 				selectedDate: 0,
 				eventDates: {},
-				events: [],
+				loaded: false,
 			}
 		},
 		components: {
 		},
 		props: {
 			tabNo: {},
+			events: { default: null },
 		},
 		computed: {
 			today () {
@@ -108,24 +110,24 @@
 		},
 		watch: {
 		},
-		async mounted () {
+		created () {
 			this.selectedMonth = this.today.getMonth()  // note: month goes from 0 to 11 (so dumb)
 			this.selectedYear = this.today.getYear() - 100 + 2000
-			await this.getAllEvents()
+			this.getAllEvents()
+			this.loaded = true
 		},
 		methods: {
 			t (w) { return translations.t(w) },
-			async getAllEvents () {
-				this.events = await apiFunctions.getAllEvents()
+			getAllEvents () {
 				for ( let i = 0; i < this.events.length; i++) {
-					let date = new Date(this.events[i]['date_time'])
-					let dateTime = new Date(
-						date.getYear() - 100 + 2000, date.getMonth(), date.getDate(), 0, 0, 0, 0
+					let dateTime = new Date(this.events[i]['date_time'])
+					let date = new Date(
+						dateTime.getYear() - 100 + 2000, dateTime.getMonth(), dateTime.getDate(), 0, 0, 0, 0
 					).getTime()
-					if (dateTime.toString() in this.eventDates) {
-						this.eventDates[dateTime.toString()].push(this.events[i])
+					if (date in this.eventDates) {
+						this.eventDates[date].push(this.events[i])
 					} else {
-						this.eventDates[dateTime.toString()] = [this.events[i]]
+						this.eventDates[date] = [this.events[i]]
 					}
 				}
 			},
@@ -137,10 +139,11 @@
 				let startOfMonth = new Date(
 					this.selectedYear, this.selectedMonth, 1-dayOfWeekOfFirstOfMonth, 0, 0, 0, 0
 				)
-				return new Date(
+				let date = new Date(
 					startOfMonth.getYear() - 100 + 2000, startOfMonth.getMonth(),
 					startOfMonth.getDate() + calendarLocation, 0, 0, 0, 0
 				)
+				return date
 			},
 			changeMonth (change) {
 				let date = new Date(this.selectedYear, this.selectedMonth + change, 1, 0, 0, 0, 0)
@@ -157,8 +160,8 @@
 			},
 			getEventsFromDate (date) {
 				let dayTime = date.getTime()
-				if (dayTime.toString() in this.eventDates) {
-					return this.eventDates[dayTime.toString()]
+				if (dayTime in this.eventDates) {
+					return this.eventDates[dayTime]
 				} else {
 					return []
 				}
