@@ -7,7 +7,8 @@
 					A/文
 				</div>
 				<div slot="2">
-					<div style="display: flex; flex-direction: row; align-items: center;">
+					<button class="no-border-button" style="display: flex; flex-direction: row; align-items: center;"
+							v-on:click.prevent="goToFront()">
 						<div>EVENT</div>
 						<div v-if="this.$route.name != 'front'">
 							<img src="../assets/eventhorizonTopIcon.png" style="height: 20px; vertical-align: middle;">
@@ -16,72 +17,68 @@
 							&nbsp;
 						</div>
 						<div>HORIZON</div>
-					</div>
+					</button>
 				</div>
 				<div slot="3">
 					<img src="../assets/threeBarsIcon.png" class="icon" style="height: 16px; margin-bottom: 3px;"/>
 				</div>
 			</tabs>
 		</div>
-		<!--transition name="fade"-->
-			<modal v-show="selectedTab === 1" @closeModals="selectedTab = 0">
-				<div slot="contents" class="language menu">
-					<div style="align-self: flex-end">
-						<button v-on:click.prevent="selectedTab = 0" class="no-border-button">
-							✖
-						</button>
-					</div>
-					<div>
-						<button v-on:click.prevent="english()" class="no-border-button">
-							ENGLISH
-						</button>
-					</div>
-					<div class="line-height"></div>
-					<div>
-						<button v-on:click.prevent="japanese()" class="no-border-button">
-							日本語
-						</button>
-					</div>
-					<div class="line-height"></div>
+		<modal v-show="selectedTab === 1" @closeModals="selectedTab = 0">
+			<div slot="contents" class="language menu">
+				<div style="align-self: flex-end">
+					<button v-on:click.prevent="selectedTab = 0" class="no-border-button">
+						✖
+					</button>
 				</div>
-			</modal>
-		<!--/transition>
-		<transition name="fade"-->
-			<modal v-show="selectedTab === 3" @closeModals="selectedTab = 0">
-				<div slot="contents" class="threeBars menu">
-					<div style="align-self: flex-end">
-						<button v-on:click.prevent="selectedTab = 0" class="no-border-button">
-							✖
-						</button>
-					</div>
-					<div>
-						<button v-on:click.prevent="goToLoginRegister()" class="no-border-button"
-								v-if="!isAuthenticatedUser">
-							{{ t('LOGIN / REGISTER') }}
-						</button>
-					</div>
-					<div>
-						<button v-on:click.prevent="goToHome()" class="no-border-button"
-								v-if="isAuthenticatedUser">
-							{{ t('HOME') }}
-						</button>
-					</div>
-					<div>
-						<button v-on:click.prevent="goToSettings()" class="no-border-button"
-								v-if="isAuthenticatedUser">
-							{{ t('SETTINGS') }}
-						</button>
-					</div>
-					<div>
-						<button v-on:click.prevent="logout()" class="no-border-button"
-								v-if="isAuthenticatedUser">
-							{{ t('LOGOUT') }}
-						</button>
-					</div>
-					<div class="line-height"></div>
+				<div>
+					<button v-on:click.prevent="english()" class="no-border-button">
+						ENGLISH
+					</button>
 				</div>
-			</modal>
-		<!--/transition-->
+				<div class="line-height"></div>
+				<div>
+					<button v-on:click.prevent="japanese()" class="no-border-button">
+						日本語
+					</button>
+				</div>
+				<div class="line-height"></div>
+			</div>
+		</modal>
+		<modal v-show="selectedTab === 3" @closeModals="selectedTab = 0">
+			<div slot="contents" class="threeBars menu">
+				<div style="align-self: flex-end">
+					<button v-on:click.prevent="selectedTab = 0" class="no-border-button">
+						✖
+					</button>
+				</div>
+				<div>
+					<button v-on:click.prevent="goToLoginRegister()" class="no-border-button"
+							v-if="!isAuthenticatedUser">
+						{{ t('LOGIN / REGISTER') }}
+					</button>
+				</div>
+				<div>
+					<button v-on:click.prevent="goToHome()" class="no-border-button"
+							v-if="isAuthenticatedUser">
+						{{ t('HOME') }}
+					</button>
+				</div>
+				<div>
+					<button v-on:click.prevent="goToSettings()" class="no-border-button"
+							v-if="isAuthenticatedUser">
+						{{ t('SETTINGS') }}
+					</button>
+				</div>
+				<div>
+					<button v-on:click.prevent="logout()" class="no-border-button"
+							v-if="isAuthenticatedUser">
+						{{ t('LOGOUT') }}
+					</button>
+				</div>
+				<div class="line-height"></div>
+			</div>
+		</modal>
 	</div>
 </template>
 <script>
@@ -121,11 +118,7 @@
 			async logout () {
 				this.$emit('startLoading')
 				await apiFunctions.logout()
-				if (this.$route.name !== 'front') {
-					this.$router.push({ name: 'front' })
-				} else {
-					location.reload();
-				}
+				this.goToFront()
 			},
 			async english () {
 				let lang = 'EN'
@@ -148,6 +141,8 @@
 			goToFront () {
 				if (this.$route.name !== 'front') {
 					this.$router.push({ name: 'front' })
+				} else {
+					location.reload()
 				}
 				this.selectedTab = 0
 			},

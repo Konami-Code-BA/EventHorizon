@@ -10,18 +10,16 @@
 				</button>
 			</div>
 		</div>
-		<transition name="fade">
-			<modal v-show="showCreateEventModal" @closeModals="showCreateEventModal=false">
-				<div slot="contents" class="createEventModal">
-					<div style="text-align: right">
-						<button v-on:click.prevent="showCreateEventModal=false" class="no-border-button">
-							✖
-						</button>
-					</div>
-					<create-event @startLoading="$emit('startLoading')" @endLoading="$emit('endLoading')"/>
+		<modal v-show="showCreateEventModal" @closeModals="showCreateEventModal=false">
+			<div slot="contents" class="createEventModal">
+				<div style="text-align: right">
+					<button v-on:click.prevent="showCreateEventModal=false" class="no-border-button">
+						✖
+					</button>
 				</div>
-			</modal>
-		</transition>
+				<create-event @startLoading="$emit('startLoading')" @endLoading="$emit('endLoading')"/>
+			</div>
+		</modal>
 	</div>
 </template>
 <script>

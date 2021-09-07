@@ -19,22 +19,20 @@
 				<h2>{{ t('CHANGE PASSWORD') }}</h2>
 			</div-->
 		</div>
-		<transition name="fade">
-			<modal v-show="showAddEmailModal" @closeModals="closeAddEmailModal()">
-				<div slot="contents" class="addEmailModal">
-					<div style="text-align: right">
-						<button v-on:click.prevent="closeAddEmailModal()" class="no-border-button">
-							✖
-						</button>
-					</div>
-					<register-with-email-internal
-						@startLoading="$emit('startLoading')"
-						@endLoading="$emit('endLoading')"
-						:includeDisplayName="false"
-					/>
+		<modal v-show="showAddEmailModal" @closeModals="closeAddEmailModal()">
+			<div slot="contents" class="addEmailModal">
+				<div style="text-align: right">
+					<button v-on:click.prevent="closeAddEmailModal()" class="no-border-button">
+						✖
+					</button>
 				</div>
-			</modal>
-		</transition>
+				<register-with-email-internal
+					@startLoading="$emit('startLoading')"
+					@endLoading="$emit('endLoading')"
+					:includeDisplayName="false"
+				/>
+			</div>
+		</modal>
 	</div>
 </template>
 <script>
