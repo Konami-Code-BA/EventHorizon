@@ -321,11 +321,12 @@ class EventsViewset(viewsets.ViewSet):
 	def partial_update(self, request, pk=None):  # PATCH {prefix}/{lookup}/
 		return Response()
 	def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
-		return Response()
+		self.queryset = self.model.objects.get(pk=pk)
+		serializer_data = self.serializer_class(self.queryset, many=False).data
+		return Response(serializer_data)
 	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
 		return Response()
 	def list(self, request):  # GET {prefix}/
-		print('hERE')
 		self.queryset = self.model.objects.all()
 		serializer_data = self.serializer_class(self.queryset, many=True).data
 		return Response(serializer_data)

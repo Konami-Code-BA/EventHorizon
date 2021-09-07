@@ -12,7 +12,6 @@ import hostProfile from '@/views/hostProfile'
 import guestHome from '@/views/guestHome'
 import experiment1 from '@/views/experiment1'
 import experiment2 from '@/views/experiment2'
-import event from '@/views/event'
 
 Vue.use(Router)
 
@@ -31,6 +30,11 @@ const router = new Router({
     }, {
         path: '/front',
         name: 'front',
+        component: front,
+        meta: { userGroups: [] },
+    }, {
+        path: '/front/:id',
+        name: 'frontEvent',
         component: front,
         meta: { userGroups: [] },
     }, {
@@ -74,11 +78,6 @@ const router = new Router({
         component: hostProfile,
         meta: { userGroups: [1, 2, ] },
     }, {
-        path: '/event',
-        name: 'event',
-        component: event,
-        meta: { userGroups: [1, ] },
-    }, {
         path: '/guestHome',
         name: 'guestHome',
         component: guestHome,
@@ -110,7 +109,7 @@ router.beforeEach(
                 }
             } // permission denied
             // if path coming from is login, register, or front page, don't change pages on failure
-            if (['loginRegister', 'loginWithEmail', 'front', 'registerWithEmail'].includes(from.name)) {
+            if (['loginRegister', 'loginWithEmail', 'front', 'frontEvent', 'registerWithEmail'].includes(from.name)) {
                 return
             } else { // any other page, when permission denied, get sent to front page
                 next({ name: 'front' })

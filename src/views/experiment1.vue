@@ -24,25 +24,23 @@
 			<div id="map_canvas" style="width: 100%; height: 100%;"></div>
 			<div style="font-size: 20px; white-space: pre-line; margin-bottom: 10px;">{{ t('REACH OUT TO NEW HORIZONS') }}</div>
 		</div>
-		<transition name="fade">
-			<modal v-show="showCookiesModal" @closeModals="closeCookiesModal()">
-				<div slot="contents" class="cookiesModal">
-					<div style="align-self: flex-end">
-						<button v-on:click.prevent="closeCookiesModal()" class="no-border-button">
-							✖
-						</button>
-					</div>
-					<div style="white-space: pre-line; text-align: center; font-weight: 400;">
-						{{t('This site uses cookies')}}
-					</div><br>
-					<div style="text-align: center">
-						<button v-on:click.prevent="closeCookiesModal()" class="button" style="width: 100%">
-							<big>{{t('OK')}}</big>
-						</button>
-					</div><br><br>
+		<modal v-show="showCookiesModal" @closeModals="closeCookiesModal()">
+			<div slot="contents" class="cookiesModal">
+				<div style="align-self: flex-end">
+					<button v-on:click.prevent="closeCookiesModal()" class="no-border-button">
+						✖
+					</button>
 				</div>
-			</modal>
-		</transition>
+				<div style="white-space: pre-line; text-align: center; font-weight: 400;">
+					{{t('This site uses cookies')}}
+				</div><br>
+				<div style="text-align: center">
+					<button v-on:click.prevent="closeCookiesModal()" class="button" style="width: 100%">
+						<big>{{t('OK')}}</big>
+					</button>
+				</div><br><br>
+			</div>
+		</modal>
 	</div>
 </template>
 <script>

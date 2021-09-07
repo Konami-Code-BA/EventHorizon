@@ -64,9 +64,13 @@ export default {
             })
         return output
     },
-    async eventsApiFunction() {
+    async eventsApiFunction(method, pk = null) {
         let output = null
-        await this.axiosCall['get'](this.apiBaseUrl + '/api/events/')
+        let id = ''
+        if (pk) {
+            id = pk.toString() + '/'
+        }
+        await this.axiosCall[method](this.apiBaseUrl + '/api/events/' + id)
             .then(response => {
                 console.log(`success - eventsApiFunction`)
                 output = response.data
@@ -157,6 +161,9 @@ export default {
     },
     // LINE ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     async getAllEvents() {
-        return await this.eventsApiFunction()
+        return await this.eventsApiFunction('get')
+    },
+    async getEvent(pk) {
+        return await this.eventsApiFunction('get', pk)
     },
 }
