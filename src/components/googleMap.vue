@@ -15,15 +15,12 @@
 		props: {
 			events: { default: null },
 			selectedEventId: { default: null },
+			script: {},
 		},
 		computed: {
 		},
 		async mounted () {
-			let apiKey = await apiFunctions.secretsApiFunction('google_maps_api_key')
-			let script = document.createElement('script')
-			script.src = `https://maps.googleapis.com/maps/api/js?v=weekly&key=${apiKey}&callback=initMap`
-			script.async = true
-			document.head.appendChild(script)
+			document.head.appendChild(this.script)
 			window.initMap = this.initMap
 			window.openEventModal = this.openEventModal
 			this.$emit('endLoading')
@@ -52,7 +49,6 @@
 					}
 				}
 				if (this.events.length != 0) {
-					console.log('length', this.events.length)
 					for (let i = 0; i < this.events.length; i++) {
 						let address = this.events[i]['address']
 						let geocoder = new google.maps.Geocoder()
@@ -73,7 +69,6 @@
 							randSign = Math.random() > .5 ? 1 : -1
 							randLng = Math.random() / 300 * randSign
 							icon = 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
-							console.log(i, this.events[i]['name'])
 						} else {
 							eventName = this.events[i]['name']
 						}
@@ -105,6 +100,7 @@
 						})
 						markers[this.events[i]['id']] = marker
 						google.maps.event.addListener(marker, 'click', function() {
+							infowindow.close()
 							infowindow.setContent(infowindowContents[i])
 							infowindow.open(map, this)
 						})

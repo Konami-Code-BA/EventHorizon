@@ -26,7 +26,7 @@
 	position: fixed;
 	height: 100%;
 	width: 100%;
-	z-index: 9999;
+	z-index: 99;
 	background: rgba(0, 0, 0, 0.7);
 }
 </style>

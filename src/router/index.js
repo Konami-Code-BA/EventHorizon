@@ -2,14 +2,15 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import store from '@/store'
 import apiFunctions from '@/functions/apiFunctions.js'
-import front from '@/views/front'
+import events from '@/views/events'
+import profile from '@/views/profile'
+import people from '@/views/people'
+import search from '@/views/search'
+import addEvent from '@/views/addEvent'
+import settings from '@/views/settings'
 import loginRegister from '@/views/loginRegister'
 import registerWithEmail from '@/views/registerWithEmail'
 import loginWithEmail from '@/views/loginWithEmail'
-import settings from '@/views/settings'
-import hostAdmin from '@/views/hostAdmin'
-import hostProfile from '@/views/hostProfile'
-import guestHome from '@/views/guestHome'
 import experiment1 from '@/views/experiment1'
 import experiment2 from '@/views/experiment2'
 
@@ -21,22 +22,47 @@ const router = new Router({
     //beforeEach: (to, from, next) => {},
     routes: [{
         path: '',
-        redirect: { name: 'front' },
+        redirect: { name: 'events' },
         meta: { userGroups: [] },
     }, {
         path: '/',
-        redirect: { name: 'front' },
+        redirect: { name: 'events' },
         meta: { userGroups: [] },
     }, {
-        path: '/front',
-        name: 'front',
-        component: front,
+        path: '/events',
+        name: 'events',
+        component: events,
         meta: { userGroups: [] },
     }, {
-        path: '/front/:id',
-        name: 'frontEvent',
-        component: front,
+        path: '/events/:id',
+        name: 'event',
+        component: events,
         meta: { userGroups: [] },
+    }, {
+        path: '/profile',
+        name: 'profile',
+        component: profile,
+        meta: { userGroups: [1, 2, ] },
+    }, {
+        path: '/people',
+        name: 'people',
+        component: people,
+        meta: { userGroups: [1, 2, ] },
+    }, {
+        path: '/search',
+        name: 'search',
+        component: search,
+        meta: { userGroups: [1, 2, ] },
+    }, {
+        path: '/addEvent',
+        name: 'addEvent',
+        component: addEvent,
+        meta: { userGroups: [1, 2, ] },
+    }, {
+        path: '/settings',
+        name: 'settings',
+        component: settings,
+        meta: { userGroups: [1, 2, ] },
     }, {
         path: '/loginRegister',
         name: 'loginRegister',
@@ -62,26 +88,6 @@ const router = new Router({
         name: 'experiment2',
         component: experiment2,
         meta: { userGroups: [1, ] },
-    }, {
-        path: '/settings',
-        name: 'settings',
-        component: settings,
-        meta: { userGroups: [1, 2, ] },
-    }, {
-        path: '/hostAdmin',
-        name: 'hostAdmin',
-        component: hostAdmin,
-        meta: { userGroups: [1, 2, ] },
-    }, {
-        path: '/hostProfile',
-        name: 'hostProfile',
-        component: hostProfile,
-        meta: { userGroups: [1, 2, ] },
-    }, {
-        path: '/guestHome',
-        name: 'guestHome',
-        component: guestHome,
-        meta: { userGroups: [1, 2, ] },
     }, ]
 })
 
@@ -93,7 +99,7 @@ router.beforeEach(
             if (store.user.groups.includes(3)) {
                 console.log('visitor')
             } else {
-                console.log('user')
+                console.log('existing user')
             }
         }
         if (to.meta.userGroups.length === 0) { // this path has no requirements, go ahead
@@ -108,11 +114,11 @@ router.beforeEach(
                     }
                 }
             } // permission denied
-            // if path coming from is login, register, or front page, don't change pages on failure
-            if (['loginRegister', 'loginWithEmail', 'front', 'frontEvent', 'registerWithEmail'].includes(from.name)) {
+            // if path coming from is login, register, or events page, don't change pages on failure
+            if (['loginRegister', 'loginWithEmail', 'events', 'event', 'registerWithEmail'].includes(from.name)) {
                 return
-            } else { // any other page, when permission denied, get sent to front page
-                next({ name: 'front' })
+            } else { // any other page, when permission denied, get sent to events page
+                next({ name: 'events' })
                 return
             }
         }

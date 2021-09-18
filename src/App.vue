@@ -70,6 +70,7 @@
 		.header {
 			position: fixed;
 			top: 0;
+			z-index: 2;
 		}
 		.router {
 			position: fixed;
@@ -83,6 +84,7 @@
 		.footer {
 			position: fixed;
 			bottom: 0;
+			z-index: 2;
 		}
 		.main {
 			display: flex;

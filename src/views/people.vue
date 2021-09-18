@@ -1,6 +1,6 @@
 <template>
 	<div class="main">
-		<div style="font-size: 36px;">{{ t('HOME') }}</div>
+		<div style="font-size: 36px;">PEOPLE</div>
 		<div class="line-height"></div>
 		<div style="font-size: 24px;">{{ store.user.display_name }}</div>
 		<div class="line-height"></div>
@@ -19,7 +19,7 @@
 	import apiFunctions from '@/functions/apiFunctions.js'
 	import functions from '@/functions/functions.js'
 	export default {
-		name: 'home',
+		name: 'profile',
 		components: {
 			appHeader,
 			modal,
