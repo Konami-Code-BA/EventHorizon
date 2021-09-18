@@ -3,8 +3,8 @@ export default {
     translationsDict: {
         '': { '': '' },
         'REACH OUT TO NEW HORIZONS': {
-            'EN': 'REACH OUT\nTO NEW HORIZONS',
-            'JP': '新たな地平線への\n到達を目指して'
+            'EN': 'REACH OUT TO NEW HORIZONS',
+            'JP': '新たな地平線を求めて'
         },
         'LOGIN': {
             'EN': 'LOGIN',
@@ -102,9 +102,9 @@ export default {
             'EN': 'OK',
             'JP': '了解'
         },
-        'This site uses cookies': {
-            'EN': 'This site\nuses cookies',
-            'JP': 'このサイトでは\nクッキーが使われています'
+        'THIS APP USES COOKIES': {
+            'EN': 'THIS APP\nUSES COOKIES',
+            'JP': 'このアプリでは\nクッキーが使われています'
         },
         'ADD EMAIL ADDRESS': {
             'EN': 'ADD EMAIL ADDRESS',
@@ -161,6 +161,102 @@ export default {
         'Incorrect password for this email': {
             'EN': 'Incorrect password for this email',
             'JP': '登録済のメールアドレスとパスワード相違'
+        },
+        'CREATE EVENT': {
+            'EN': 'CREATE EVENT',
+            'JP': 'イベント作成'
+        },
+        'EVENTS': {
+            'EN': 'EVENTS',
+            'JP': 'イベント'
+        },
+        'month 0': {
+            'EN': 'JAN',
+            'JP': '1月'
+        },
+        'month 1': {
+            'EN': 'FEB',
+            'JP': '2月'
+        },
+        'month 2': {
+            'EN': 'MAR',
+            'JP': '3月'
+        },
+        'month 3': {
+            'EN': 'APR',
+            'JP': '4月'
+        },
+        'month 4': {
+            'EN': 'MAY',
+            'JP': '5月'
+        },
+        'month 5': {
+            'EN': 'JUN',
+            'JP': '6月'
+        },
+        'month 6': {
+            'EN': 'JUL',
+            'JP': '7月'
+        },
+        'month 7': {
+            'EN': 'AUG',
+            'JP': '8月'
+        },
+        'month 8': {
+            'EN': 'SEP',
+            'JP': '9月'
+        },
+        'month 9': {
+            'EN': 'OCT',
+            'JP': '10月'
+        },
+        'month 10': {
+            'EN': 'NOV',
+            'JP': '11月'
+        },
+        'month 11': {
+            'EN': 'DEC',
+            'JP': '12月'
+        },
+        'day 0': {
+            'EN': 'Su',
+            'JP': '日'
+        },
+        'day 1': {
+            'EN': 'Mo',
+            'JP': '月'
+        },
+        'day 2': {
+            'EN': 'Tu',
+            'JP': '火'
+        },
+        'day 3': {
+            'EN': 'We',
+            'JP': '水'
+        },
+        'day 4': {
+            'EN': 'Th',
+            'JP': '木'
+        },
+        'day 5': {
+            'EN': 'Fr',
+            'JP': '金'
+        },
+        'day 6': {
+            'EN': 'Sa',
+            'JP': '土'
+        },
+        'NO EVENTS': {
+            'EN': 'NO EVENTS',
+            'JP': 'イベント無し'
+        },
+        'MONTH VIEW': {
+            'EN': 'MONTH',
+            'JP': '月表示'
+        },
+        'TODAY': {
+            'EN': 'TODAY',
+            'JP': '今日'
         },
     },
 

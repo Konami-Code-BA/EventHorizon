@@ -23,13 +23,10 @@
 </script>
 <style scoped>
 .outside {
-	position: absolute;
-	top: 0;
-	left: 0;
-	height: 1000%;
-	width: 1000%;
-	z-index: 9999;
-	background: rgba(0, 0, 0, 0.5);
-	transform: translate(-50%, -50%);
+	position: fixed;
+	height: 100%;
+	width: 100%;
+	z-index: 99;
+	background: rgba(0, 0, 0, 0.7);
 }
 </style>
