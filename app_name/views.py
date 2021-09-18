@@ -8,7 +8,7 @@ import requests
 from app_name.functions import line_bot
 from decouple import config
 
-def index(request):
+def index(request, arg=None):
     return render(request, template_name='index.html')
 
 @require_POST

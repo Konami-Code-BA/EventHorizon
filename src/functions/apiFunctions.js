@@ -5,7 +5,7 @@ axios.defaults.xsrfHeaderName = "X-CSRFToken"
     //axios.defaults.headers.common['X-CSRFToken'] = csrftoken
 import axios from 'axios'
 export default {
-    get ApiBaseUrl() { return process.env.PYTHON_ENV == 'development' ? 'http://127.0.0.1:8000' : '' },
+    get apiBaseUrl() { return process.env.PYTHON_ENV == 'development' ? 'http://127.0.0.1:8000' : '' },
     axiosCall: {
         post: axios.post,
         patch: axios.patch,
@@ -15,7 +15,7 @@ export default {
     async userApiFunction(method, uri, data) {
         let output = store.user
         let error = null
-        await this.axiosCall[method](this.ApiBaseUrl + uri, data)
+        await this.axiosCall[method](this.apiBaseUrl + uri, data)
             .then(response => {
                 if (data.command == 'logout') {
                     console.log(`success - userApiFunction ${data.command}`)
@@ -38,7 +38,7 @@ export default {
     },
     async lineApiFunction(method, uri, data) {
         let output = null
-        await this.axiosCall[method](this.ApiBaseUrl + uri, data)
+        await this.axiosCall[method](this.apiBaseUrl + uri, data)
             .then(response => {
                 if (!('error' in response.data)) {
                     console.log(`success - lineApiFunction ${data.command}`)
@@ -54,13 +54,29 @@ export default {
     },
     async secretsApiFunction(toGet) {
         let output = null
-        await this.axiosCall['get'](this.ApiBaseUrl + '/api/secrets/' + toGet + '/')
+        await this.axiosCall['get'](this.apiBaseUrl + '/api/secrets/' + toGet + '/')
             .then(response => {
                 console.log(`success - secretsApiFunction ${toGet}`)
                 output = response.data
             })
             .catch(error => {
                 console.log(`*API ERROR* - secretsApiFunction ${toGet}:`, error)
+            })
+        return output
+    },
+    async eventsApiFunction(method, pk = null) {
+        let output = null
+        let id = ''
+        if (pk) {
+            id = pk.toString() + '/'
+        }
+        await this.axiosCall[method](this.apiBaseUrl + '/api/events/' + id)
+            .then(response => {
+                console.log(`success - eventsApiFunction`)
+                output = response.data
+            })
+            .catch(error => {
+                console.log(`*API ERROR* - eventsApiFunction:`, error)
             })
         return output
     },
@@ -143,11 +159,11 @@ export default {
             message: 'sup this is a broadcast message',
         })
     },
-    // SECRETS /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    async loginChannelId() {
-        return await this.secretsApiFunction('login_channel_id')
+    // LINE ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    async getAllEvents() {
+        return await this.eventsApiFunction('get')
     },
-    async state() {
-        return await this.secretsApiFunction('new_random_secret')
+    async getEvent(pk) {
+        return await this.eventsApiFunction('get', pk)
     },
 }
