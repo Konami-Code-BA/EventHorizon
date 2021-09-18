@@ -31,7 +31,7 @@
 	import apiFunctions from '@/functions/apiFunctions.js'
 	import functions from '@/functions/functions.js'
 	export default {
-		name: 'settings',
+		name: 'addEvent',
 		components: {
 			appHeader,
 			modal,
@@ -56,7 +56,7 @@
 <style scoped>
 	.createEventModal {
 		position: fixed;
-		z-index: 10000;
+		z-index: 100;
 		background-color: #18002e;
 		border-radius: 15px;
 		border: 1px solid #5300e1;

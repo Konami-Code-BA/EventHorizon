@@ -7,7 +7,7 @@
 			<div style="font-size: 38px; margin-bottom: 5px;">EVENT HORIZON</div>
 			<div style="width: 100%;">
 				<tabs :num-tabs="4" :not-buttons="[1]" :initial="selectedTab" :key="selectedTab"
-						@on-click="selectedTab = $event" style="background-color: rgba(0, 0, 0, .2);">
+						@on-click="(arg) => { selectedTab = arg }" style="background-color: rgba(0, 0, 0, .2);">
 					<div slot="1">
 						<span style="font-size: 15px">{{ t('EVENTS') }}:</span>
 					</div>
@@ -23,30 +23,31 @@
 				</tabs>
 			</div>
 			<google-map class="viewer" v-show="selectedTab==2" @openEventModal="openEventModal" :events="events"
-					:selectedEventId="selectedEventId" :key="selectedEventId"/>
+					:selectedEventId="selectedEventId" :key="selectedEventId" :script="script" ref="googleMap"/>
 			<events-calendar class="viewer" v-show="selectedTab==3" @openEventModal="openEventModal" :events="events"/>
 			<div style="font-size: 20px; margin-bottom: 10px;">
 				{{ t('REACH OUT TO NEW HORIZONS') }}
 			</div>
 		</div>
-		<modal v-show="showCookiesModal" @closeModals="closeCookiesModal()">
+		<modal v-if="showCookiesModal" @closeModals="closeCookiesModal()">
 			<div slot="contents" class="cookiesModal">
 				<div style="align-self: flex-end">
 					<button v-on:click.prevent="closeCookiesModal()" class="no-border-button">
 						✖
 					</button>
 				</div>
-				<div style="white-space: pre-line; text-align: center; font-weight: 400;">
-					{{t('This site uses cookies')}}
+				<div style="white-space: pre-line; text-align: center; align-self: center; font-weight: 400;
+						width: 80%;">
+					{{t('THIS APP USES COOKIES')}}
 				</div><br>
-				<div style="text-align: center">
+				<div style="align-self: center; width: 80%;">
 					<button v-on:click.prevent="closeCookiesModal()" class="button" style="width: 100%">
 						<big>{{t('OK')}}</big>
 					</button>
 				</div><br><br>
 			</div>
 		</modal>
-		<event v-if="showEventModal" @goToMap="showEventModal = false; selectedTab = 2" :id="selectedEventId"/>
+		<event v-if="showEventModal" @goToMap="goToMap()" :id="selectedEventId"/>
 	</div>
 </template>
 <script>
@@ -59,7 +60,7 @@
 	import apiFunctions from '@/functions/apiFunctions.js'
 	import event from '@/components/event.vue'
 	export default {
-		name: 'experiment1',
+		name: 'events',
 		components: {
 			modal,
 			tabs,
@@ -76,17 +77,21 @@
 				selectedEventId: null,
 				events: null,
 				loaded: false,
+				script: document.createElement('script'),
 			}
 		},
 		watch: {
 			'showEventModal' () {
 				if (!this.showEventModal && this.$route.params.id) {
-					this.$router.push({ name: 'front' })
+					this.$router.push({ name: 'events' })
 				}
 			},
 		},
 		async created () {
 			this.events = await apiFunctions.getAllEvents()
+			let apiKey = await apiFunctions.secretsApiFunction('google_maps_api_key')
+			this.script.src = `https://maps.googleapis.com/maps/api/js?v=weekly&key=${apiKey}&callback=initMap`
+			this.script.async = true
 			this.loaded = true
 		},
 		mounted () {
@@ -102,6 +107,11 @@
 				this.selectedEventId = id
 				this.showEventModal = true
 			},
+			goToMap () {
+				this.$refs.googleMap.initMap()
+				this.selectedTab = 2
+				this.showEventModal = false
+			}
 		} // methods
 	} // export
 </script>
@@ -111,5 +121,20 @@
 		height: 100%;
 		margin-bottom: 5px;
 		border: 1px solid rgba(255, 255, 255, .1);
+	}
+	.cookiesModal {
+		position: fixed;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		z-index: 100;
+		background-color: #0b0015;
+		border: 1px solid #5300e1;
+		border-radius: 15px;
+		padding: 20px;
+		width: 50%;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
 	}
 </style>

@@ -75,8 +75,6 @@
 			id: {},
 		},
 		async mounted () {
-			console.log(this.$route.params.id)
-			console.log(this.id)
 			if (this.$route.params.id) {
 				this.eventId = this.$route.params.id
 			} else {
