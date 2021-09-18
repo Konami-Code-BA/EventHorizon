@@ -102,9 +102,9 @@ export default {
             'EN': 'OK',
             'JP': '了解'
         },
-        'This site uses cookies': {
-            'EN': 'This site\nuses cookies',
-            'JP': 'このサイトでは\nクッキーが使われています'
+        'THIS APP USES COOKIES': {
+            'EN': 'THIS APP\nUSES COOKIES',
+            'JP': 'このアプリでは\nクッキーが使われています'
         },
         'ADD EMAIL ADDRESS': {
             'EN': 'ADD EMAIL ADDRESS',

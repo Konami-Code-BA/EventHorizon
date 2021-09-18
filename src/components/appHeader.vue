@@ -1,16 +1,16 @@
 <template>
 	<div>
 		<div class="header" style="width: 100%;">
-			<tabs :num-tabs="3" :initial="0" @on-click="selectedTab = $event"
+			<tabs :num-tabs="3" :initial="0" @on-click="(arg) => { selectedTab = arg }"
 					style="background-color: rgba(0, 0, 0, .5);">
 				<div slot="1" style="vertical-align: bottom;">
 					A/文
 				</div>
 				<div slot="2">
 					<button class="no-border-button" style="display: flex; flex-direction: row; align-items: center;"
-							v-on:click.prevent="goToFront()">
+							v-on:click.prevent="goToEvents()">
 						<div>EVENT</div>
-						<div v-if="this.$route.name != 'front'">
+						<div v-if="this.$route.name != 'events'">
 							<img src="../assets/eventhorizonTopIcon.png" style="height: 20px; vertical-align: middle;">
 						</div>
 						<div v-else>
@@ -24,7 +24,7 @@
 				</div>
 			</tabs>
 		</div>
-		<modal v-show="selectedTab === 1" @closeModals="selectedTab = 0">
+		<modal v-if="selectedTab === 1" @closeModals="selectedTab = 0">
 			<div slot="contents" class="language menu">
 				<div style="align-self: flex-end">
 					<button v-on:click.prevent="selectedTab = 0" class="no-border-button">
@@ -45,34 +45,20 @@
 				<div class="line-height"></div>
 			</div>
 		</modal>
-		<modal v-show="selectedTab === 3" @closeModals="selectedTab = 0">
+		<modal v-if="selectedTab === 3" @closeModals="selectedTab = 0">
 			<div slot="contents" class="threeBars menu">
 				<div style="align-self: flex-end">
 					<button v-on:click.prevent="selectedTab = 0" class="no-border-button">
 						✖
 					</button>
 				</div>
-				<div>
-					<button v-on:click.prevent="goToLoginRegister()" class="no-border-button"
-							v-if="!isAuthenticatedUser">
+				<div v-if="!isAuthenticatedUser">
+					<button v-on:click.prevent="goToLoginRegister()" class="no-border-button">
 						{{ t('LOGIN / REGISTER') }}
 					</button>
 				</div>
-				<div>
-					<button v-on:click.prevent="goToHome()" class="no-border-button"
-							v-if="isAuthenticatedUser">
-						{{ t('HOME') }}
-					</button>
-				</div>
-				<div>
-					<button v-on:click.prevent="goToSettings()" class="no-border-button"
-							v-if="isAuthenticatedUser">
-						{{ t('SETTINGS') }}
-					</button>
-				</div>
-				<div>
-					<button v-on:click.prevent="logout()" class="no-border-button"
-							v-if="isAuthenticatedUser">
+				<div v-else>
+					<button v-on:click.prevent="logout()" class="no-border-button">
 						{{ t('LOGOUT') }}
 					</button>
 				</div>
@@ -107,7 +93,7 @@
 		watch: {
 			'selectedTab' () {
 				if (this.selectedTab === 2) {
-					this.goToFront()
+					this.goToEvents()
 				}
 			},
 		},
@@ -115,11 +101,6 @@
 		},
 		methods: {
 			t (w) { return translations.t(w) },
-			async logout () {
-				this.$emit('startLoading')
-				await apiFunctions.logout()
-				this.goToFront()
-			},
 			async english () {
 				let lang = 'EN'
 				store.user.language = lang
@@ -132,15 +113,9 @@
 				this.selectedTab = 0
 				await apiFunctions.updateUserLanguage()
 			},
-			goToHome () {
-				if (this.$route.name !== 'guestHome') {
-					this.$router.push({ name: 'guestHome' })
-				}
-				this.selectedTab = 0
-			},
-			goToFront () {
-				if (this.$route.name !== 'front') {
-					this.$router.push({ name: 'front' })
+			goToEvents () {
+				if (this.$route.name !== 'events') {
+					this.$router.push({ name: 'events' })
 				} else {
 					location.reload()
 				}
@@ -152,11 +127,10 @@
 				}
 				this.selectedTab = 0
 			},
-			goToSettings () {
-				if (this.$route.name !== 'settings') {
-					this.$router.push({ name: 'settings' })
-				}
-				this.selectedTab = 0
+			async logout () {
+				this.$emit('startLoading')
+				await apiFunctions.logout()
+				this.goToEvents()
 			},
 		}
 	}
@@ -167,7 +141,7 @@
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
-		z-index: 10000;
+		z-index: 100;
 		background-color: #0b0015;
 		border: 1px solid #5300e1;
 		border-radius: 15px;
