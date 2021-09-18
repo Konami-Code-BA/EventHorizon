@@ -1,13 +1,36 @@
 <template>
-  <div id="app">
-    <router-view :key="$route.fullPath"/>
-  </div>
+	<div id="app">
+		<div v-show="!loading" class="app">
+			<div>
+				<app-header @startLoading="loading=true" @endLoading="loading=false"/>
+			</div>
+			<div>
+				<router-view @startLoading="loading=true" @endLoading="loading=false" :key="$route.fullPath"
+						class="router"/>
+			</div>
+			<div>
+				<app-footer @startLoading="loading=true" @endLoading="loading=false"/>
+			</div>
+		</div>
+		<div class="loading" v-show="loading"></div>
+	</div>
 </template>
 
 <script>
 	import store from '@/store'
+	import appHeader from '@/components/appHeader.vue'
+	import appFooter from '@/components/appFooter.vue'
 	export default {
 		name: 'App',
+		components: {
+			appHeader,
+			appFooter,
+		},
+		data () {
+			return {
+				loading: true,
+			}
+		},
 	}
 </script>
 
@@ -17,59 +40,74 @@
 			font-family: Futura;
 			src: url(./assets/FuturaLT.woff);
 		}
+		html {
+			-webkit-box-sizing: border-box;
+			-moz-box-sizing: border-box;
+			box-sizing: border-box;
+		}
+		*, *:before, *:after {
+			-webkit-box-sizing: inherit;
+			-moz-box-sizing: inherit;
+			box-sizing: inherit;
+		}
 		body {
-			position: fixed;
 			font-family: Futura; /*Segoe UI*/
-			color: #d2e6ff;
+			color: #95c4ff; /*b4d5ff*/
 			font-weight: 600; /*400=normal, 700=bold*/
 			font-size: 16px;
 			-webkit-font-smoothing: antialiased;
 			-moz-osx-font-smoothing: grayscale;
 			background-color: #18002e; /*00033e 20003e*/
-			max-width: 500px;
-			width: 90%;
-			top: 10px;
-			margin-left: 50%;
-			transform: translate(-50%, 0%);
-			overflow: hidden;
+			margin: 0;
+			padding: 0;
+		}
+		.app {
+			position: fixed;
+			display: flex;
+			flex-direction: column;
+			width: 100%;
+		}
+		.header {
+			position: fixed;
+			top: 0;
+			z-index: 2;
+		}
+		.router {
+			position: fixed;
+			top: 31px;
+			bottom: 31px;
+			overflow-y: scroll;
+			width: 100%;
+			padding-left: 10px;
+			z-index: 1;
+		}
+		.footer {
+			position: fixed;
+			bottom: 0;
+			z-index: 2;
+		}
+		.main {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			width: 100%;
+			height: 100%;
+			z-index: 1;
 		}
 		/*[v-cloak] {
 			display: none;
 		}*/
-		.fade-enter, .fade-leave-to {
-			opacity: 0;
+		.icon {
+			height: 20px;
+			vertical-align: bottom;
 		}
-		.fade-enter-active, .fade-leave-active {
-			transition: opacity .3s;
-		}
-		.logo {
-			width: 50%;
-			margin-left: 50%;
-			transform: translate(-50%, 0%);
-		}
-		.box {
-			width: 100%;
-			display: flex;
-			flex-flow: column wrap;
-			align-content: space-between;
-			justify-content: space-between;
-		}
-		.box-item {
-			box-sizing: border-box;
-			width: 100%;
-			max-width: 100%;
-		}
-		.box-height{
+		.line-height{
 			height: 30px;
 		}
-		.box-center {
-			text-align: center;
-		}
-		button, button:hover, button:active, button.pointer, a, a:hover, a:active, a.pointer {
+		.button, .button:hover, .button:active, .button.pointer, .a, .a:hover, .a:active, .a.pointer {
 			font-family: inherit;
 			color: #ffe07a;
 			font-weight: inherit;
-			font-size: inherit;
 			font-size: inherit;
 			background-color: #5300e1;  /*000bff*/
 			border: 1px solid #18002e;  /*18002e*/
@@ -80,6 +118,11 @@
 			padding-left: 3px;
 			padding-right: 3px;
   			text-decoration: none;
+			width: 80%;
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			justify-content: center;
 		}
 		input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus,
 		input:-webkit-autofill:active, input[type=text], input[type=email], input[type=password],
@@ -105,11 +148,18 @@
 		.no-border-button, .no-border-button:hover, .no-border-button:active, .no-border-button.pointer {
 			border: none;
 			background: none;
-			/*transition-duration: 0.1s;*/
 			color: #ffe07a;
 			cursor: pointer;
 			height: 30px;
 			padding: 0;
+			font-family: inherit;
+			font-weight: inherit;
+			font-size: inherit;
+  			text-decoration: none;
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			justify-content: center;
 		}
 		.small-button {
 			height: 19px !important;
@@ -122,13 +172,6 @@
 		}
 		td {
 			padding: 0;
-		}
-		.header {
-			display: flex;
-			flex-direction: row;
-			justify-content: space-between;
-			padding-bottom: 10px;
-			color: #inherit;
 		}
 		.container {
 			position: relative;
@@ -149,6 +192,15 @@
 			font-weight: 400; /*400=normal, 700=bold*/
 			font-size: 12px;
 			color: red;
+		}
+		::-webkit-scrollbar {
+			-webkit-appearance: none;
+			width: 10px;
+		}
+		::-webkit-scrollbar-thumb {
+			border-radius: 4px;
+			background-color: rgba(0, 0, 0, .5);
+			border: 1px solid rgba(255, 255, 255, .1);
 		}
 
 		/* LOADING SPINNER */

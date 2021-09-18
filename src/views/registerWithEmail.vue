@@ -1,31 +1,28 @@
 <template>
-	<div>
-		<div v-show="!loading">
-			<menus-header @startLoading="loading=true" @endLoading="loading=false"/>
-			<div>
-				<register-with-email-internal @startLoading="loading=true" @endLoading="loading=false"/>
-			</div>
-			<!--a href="https://lin.ee/UeSvNxR"><img height="36" border="0" src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png"></a-->
+	<div class="main" style="justify-content: center">
+		<div>
+			<register-with-email-internal
+				@startLoading="$emit('startLoading')"
+				@endLoading="$emit('endLoading')"
+			/>
 		</div>
-		<div class="loading" v-show="loading"></div>
 	</div>
 </template>
 <script>
-	import menusHeader from '@/components/menusHeader.vue'
+	import appHeader from '@/components/appHeader.vue'
 	import registerWithEmailInternal from '@/components/registerWithEmailInternal.vue'
 	export default {
 		name: 'registerWithEmail',
 		components: {
-			menusHeader,
+			appHeader,
 			registerWithEmailInternal,
 		},
 		data () {
 			return {
-				loading: true,
 			}
 		},
 		async mounted () {
-			this.loading = false
+			this.$emit('endLoading')
 		},
 		watch: {
 		},

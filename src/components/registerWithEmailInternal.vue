@@ -1,26 +1,25 @@
 <template>
-	<div>
+	<div class="main">
 		<form v-on:keyup.enter="registerWithEmail()">
 			<div v-if="includeDisplayName">
-				<input :placeholder="t('DISPLAY NAME')" v-model="displayNameInput" type="text" class="box-item"
-					id="displayName" autocorrect="off" autocapitalize="none"/>
-				<div class="box-height error-text" :class="{'shake' : shakeIt}">
+				<input :placeholder="t('DISPLAY NAME')" v-model="displayNameInput" type="text" id="displayName"
+						autocorrect="off" autocapitalize="none"/>
+				<div class="line-height error-text" :class="{'shake' : shakeIt}">
 					{{t(displayNameError)}}
 				</div>
 			</div>
 			<div>
-				<input :placeholder="t('EMAIL')" v-model="emailInput" type="email" class="box-item"
-					autocorrect="off" autocapitalize="none" id="email"/>
+				<input :placeholder="t('EMAIL')" v-model="emailInput" type="email" autocorrect="off"
+						autocapitalize="none" id="email"/>
 			</div>
-			<div class="box-height error-text" :class="{'shake' : shakeIt}" style="color: red">
+			<div class="line-height error-text" :class="{'shake' : shakeIt}" style="color: red">
 				<small>{{t(emailError)}}</small>
 			</div>
 			<div style="display: flex">
-				<input :placeholder="t('PASSWORD')" v-model="passwordInput"
-					:type="[showPassword ? 'text' : 'password']" class="box-item" style="flex-grow: 1"
-					id="password" autocorrect="off" autocapitalize="none"/>
-				<button v-on:click.prevent="showButton()" class="box-item" style="width: 70px; font-weight: 400"
-					id="show" type="button">
+				<input :placeholder="t('PASSWORD')" v-model="passwordInput" :type="[showPassword ? 'text' : 'password']"
+						style="flex-grow: 1" id="password" autocorrect="off" autocapitalize="none"/>
+				<button v-on:click.prevent="showButton()" class="button" style="width: 70px; font-weight: 400" id="show"
+						type="button">
 					<small v-if="!showPassword">
 						{{ t('SHOW') }}
 					</small>
@@ -29,15 +28,15 @@
 					</small>
 				</button>
 			</div>
-			<div class="box-height error-text" :class="{'shake' : shakeIt}" style="color: red">
+			<div class="line-height error-text" :class="{'shake' : shakeIt}" style="color: red">
 				{{t(passwordError)}}
 			</div>
 			<div style="display: flex">
 				<input :placeholder="t('PASSWORD (AGAIN)')" v-model="password2Input"
-					:type="[showPassword2 ? 'text' : 'password']" class="box-item" style="flex-grow: 1"
-					id="password2" autocorrect="off" autocapitalize="none"/>
-				<button v-on:click.prevent="showButton2()" class="box-item" style="width: 70px; font-weight: 400"
-					id="show" type="button">
+						:type="[showPassword2 ? 'text' : 'password']" style="flex-grow: 1" id="password2"
+						autocorrect="off" autocapitalize="none"/>
+				<button v-on:click.prevent="showButton2()" class="button" style="width: 70px; font-weight: 400"
+						id="show" type="button">
 					<small v-if="!showPassword2">
 						{{ t('SHOW') }}
 					</small>
@@ -46,11 +45,11 @@
 					</small>
 				</button>
 			</div>
-			<div class="box-height error-text" :class="{'shake' : shakeIt}" style="color: red">
+			<div class="line-height error-text" :class="{'shake' : shakeIt}" style="color: red">
 				{{t(password2Error)}}
 			</div>
 		</form>
-		<button v-on:click.prevent="registerWithEmail()" class="box-item">
+		<button v-on:click.prevent="registerWithEmail()" class="button">
 			{{ t('REGISTER') }}
 		</button>
 	</div>
@@ -67,7 +66,6 @@
 		data () {
 			return {
 				store: store,
-				loading: true,
 				displayNameInput: '',
 				emailInput: '',
 				passwordInput: '',
