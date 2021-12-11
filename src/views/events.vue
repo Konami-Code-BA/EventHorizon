@@ -29,7 +29,7 @@
 				{{ t('REACH OUT TO NEW HORIZONS') }}
 			</div>
 		</div>
-		<modal v-if="showCookiesModal" @closeModals="closeCookiesModal()">
+		<!--modal v-if="showCookiesModal" @closeModals="closeCookiesModal()">
 			<div slot="contents" class="cookiesModal">
 				<div style="align-self: flex-end">
 					<button v-on:click.prevent="closeCookiesModal()" class="no-border-button">
@@ -46,7 +46,7 @@
 					</button>
 				</div><br><br>
 			</div>
-		</modal>
+		</modal-->
 		<event v-if="showEventModal" @goToMap="goToMap()" :id="selectedEventId"/>
 	</div>
 </template>

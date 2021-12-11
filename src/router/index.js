@@ -115,10 +115,10 @@ router.beforeEach(
                 }
             } // permission denied
             // if path coming from is login, register, or events page, don't change pages on failure
-            if (['loginRegister', 'loginWithEmail', 'events', 'event', 'registerWithEmail'].includes(from.name)) {
+            if (['loginRegister', 'loginWithEmail', 'event', 'registerWithEmail'].includes(from.name)) {
                 return
             } else { // any other page, when permission denied, get sent to events page
-                next({ name: 'events' })
+                next({ name: 'loginRegister' })
                 return
             }
         }
