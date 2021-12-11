@@ -63,14 +63,22 @@
 					</button>
 				</div>
 				<div class="line-height"></div>
+				<div>
+					<button v-on:click.prevent="selectedTab = 0; showQrModal = true" class="no-border-button">
+						{{t('GET QR CODES')}}
+					</button>
+				</div>
+				<div class="line-height"></div>
 			</div>
 		</modal>
+		<qr-code-generator v-if="showQrModal" @closeModal="showQrModal=false"/>
 	</div>
 </template>
 <script>
 	import store from '@/store'
 	import modal from '@/components/modal'
 	import tabs from '@/components/tabs.vue'
+	import qrCodeGenerator from '@/components/qrCodeGenerator.vue'
 	import translations from '@/functions/translations.js'
 	import apiFunctions from '@/functions/apiFunctions.js'
 	export default {
@@ -79,11 +87,13 @@
 			return {
 				store: store,
 				selectedTab: 0,
+				showQrModal: false,
 			}
 		},
 		components: {
 			modal,
 			tabs,
+			qrCodeGenerator,
 		},
 		props: {
 		},
@@ -146,7 +156,8 @@
 		border: 1px solid #5300e1;
 		border-radius: 15px;
 		padding: 20px;
-		width: 50%;
+		width: 80%;
+		max-width: 300px;
 		top: 40px;
 	}
 	.threeBars {
