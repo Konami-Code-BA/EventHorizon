@@ -27,6 +27,6 @@
 	height: 100%;
 	width: 100%;
 	z-index: 99;
-	background: rgba(0, 0, 0, 0.7);
+	background: rgba(255, 255, 255, 0.5);
 }
 </style>
