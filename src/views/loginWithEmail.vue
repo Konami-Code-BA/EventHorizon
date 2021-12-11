@@ -79,7 +79,7 @@
 				let error = await apiFunctions.login({'email': this.emailInput, 'password': this.passwordInput})
 				this.$emit('endLoading')
 				if (!error) {
-					this.$router.push({ name: 'home' })
+					this.$router.push({ name: 'events' })
 				} else if (error === 'This email is not registered') {
 					this.emailError = error
 				} else if (error === 'Incorrect password') {

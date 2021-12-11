@@ -258,6 +258,10 @@ export default {
             'EN': 'TODAY',
             'JP': '今日'
         },
+        'GET QR CODES': {
+            'EN': 'GET QR CODES',
+            'JP': 'QRコード出す'
+        },
     },
 
     t: function(w) {
