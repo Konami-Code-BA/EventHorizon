@@ -15,16 +15,17 @@
 						<img src="@/assets/mapIcon.png" class="icon"/>
 					</div>
 					<div slot="3">
-						<img src="@/assets/calendarIcon.png" class="icon" style="vertical-align: bottom"/>
+						<img src="@/assets/threeBarsHIcon.png" class="icon" style="vertical-align: bottom"/>
 					</div>
 					<div slot="4">
-						<img src="@/assets/threeBarsHIcon.png" class="icon" style="vertical-align: bottom"/>
+						<img src="@/assets/calendarIcon.png" class="icon" style="vertical-align: bottom"/>
 					</div>
 				</tabs>
 			</div>
 			<google-map class="viewer" v-show="selectedTab==2" @openEventModal="openEventModal" :events="events"
-					:selectedEventId="selectedEventId" :key="selectedEventId" :script="script" ref="googleMap"/>
-			<events-calendar class="viewer" v-show="selectedTab==3" @openEventModal="openEventModal" :events="events"/>
+					:selectedEventId="selectedEventId" :key="selectedEventId" :scrip="scrip" ref="googleMap"/>
+			<events-list class="viewer" v-show="selectedTab==3" @openEventModal="openEventModal" :events="events"/>
+			<events-calendar class="viewer" v-show="selectedTab==4" @openEventModal="openEventModal" :events="events"/>
 			<div style="font-size: 20px; margin-bottom: 10px;">
 				{{ t('REACH OUT TO NEW HORIZONS') }}
 			</div>
@@ -47,7 +48,7 @@
 				</div><br><br>
 			</div>
 		</modal-->
-		<event v-if="showEventModal" @goToMap="goToMap()" :id="selectedEventId"/>
+		<event v-if="showEventModal" @goToMap="goToMap()" :id="selectedEventId" @closeModals="closeEventModal"/>
 	</div>
 </template>
 <script>
@@ -56,6 +57,7 @@
 	import tabs from '@/components/tabs.vue'
 	import googleMap from '@/components/googleMap.vue'
 	import eventsCalendar from '@/components/eventsCalendar.vue'
+	import eventsList from '@/components/eventsList.vue'
 	import translations from '@/functions/translations.js'
 	import apiFunctions from '@/functions/apiFunctions.js'
 	import event from '@/components/event.vue'
@@ -66,6 +68,7 @@
 			tabs,
 			googleMap,
 			eventsCalendar,
+			eventsList,
 			event,
 		},
 		data () {
@@ -77,7 +80,7 @@
 				selectedEventId: null,
 				events: null,
 				loaded: false,
-				script: document.createElement('script'),
+				scrip: document.createElement('script'),
 			}
 		},
 		watch: {
@@ -90,8 +93,8 @@
 		async created () {
 			this.events = await apiFunctions.getAllEvents()
 			let apiKey = await apiFunctions.secretsApiFunction('google_maps_api_key')
-			this.script.src = `https://maps.googleapis.com/maps/api/js?v=weekly&key=${apiKey}&callback=initMap`
-			this.script.async = true
+			this.scrip.src = `https://maps.googleapis.com/maps/api/js?v=weekly&key=${apiKey}&callback=initMap`
+			this.scrip.async = true
 			this.loaded = true
 		},
 		mounted () {
@@ -107,11 +110,17 @@
 				this.selectedEventId = id
 				this.showEventModal = true
 			},
+			closeEventModal () {
+				// after closing, it goes to the previously opened event in map. should it also scroll to previously
+				// opened event in the list and calendar?
+				this.$refs.googleMap.initMap()
+				this.showEventModal = false
+			},
 			goToMap () {
 				this.$refs.googleMap.initMap()
 				this.selectedTab = 2
 				this.showEventModal = false
-			}
+			},
 		} // methods
 	} // export
 </script>
