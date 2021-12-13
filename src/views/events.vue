@@ -2,7 +2,7 @@
 	<div v-if="loaded">
 		<div class="main" v-show="!showEventModal">
 			<div>
-				<img src="../assets/eventhorizonLogo.png" style="max-width: 200px; max-height: 200px;">
+				<img src="@/assets/eventhorizonLogo.png" style="max-width: 200px; max-height: 200px;">
 			</div>
 			<div style="font-size: 38px; margin-bottom: 5px;">EVENT HORIZON</div>
 			<div style="width: 100%;">
@@ -12,13 +12,13 @@
 						<span style="font-size: 15px">{{ t('EVENTS') }}:</span>
 					</div>
 					<div slot="2">
-						<img src="../assets/mapIcon.png" class="icon"/>
+						<img src="@/assets/mapIcon.png" class="icon"/>
 					</div>
 					<div slot="3">
-						<img src="../assets/calendarIcon.png" class="icon" style="vertical-align: bottom"/>
+						<img src="@/assets/calendarIcon.png" class="icon" style="vertical-align: bottom"/>
 					</div>
 					<div slot="4">
-						<img src="../assets/threeBarsHIcon.png" class="icon" style="vertical-align: bottom"/>
+						<img src="@/assets/threeBarsHIcon.png" class="icon" style="vertical-align: bottom"/>
 					</div>
 				</tabs>
 			</div>

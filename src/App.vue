@@ -1,16 +1,10 @@
 <template>
 	<div id="app">
 		<div v-show="!loading" class="app">
-			<div>
-				<app-header @startLoading="loading=true" @endLoading="loading=false"/>
-			</div>
-			<div>
-				<router-view @startLoading="loading=true" @endLoading="loading=false" :key="$route.fullPath"
-						class="router"/>
-			</div>
-			<div>
-				<app-footer @startLoading="loading=true" @endLoading="loading=false"/>
-			</div>
+			<app-header @startLoading="loading=true" @endLoading="loading=false"/>
+			<router-view @startLoading="loading=true" @endLoading="loading=false" :key="$route.fullPath"
+					class="router"/>
+			<app-footer @startLoading="loading=true" @endLoading="loading=false"/>
 		</div>
 		<div class="loading" v-show="loading"></div>
 	</div>
@@ -66,23 +60,23 @@
 			display: flex;
 			flex-direction: column;
 			width: 100%;
+			height: 100%;
 		}
 		.header {
-			position: fixed;
+			position: relative;
 			top: 0;
 			z-index: 2;
 		}
 		.router {
-			position: fixed;
-			top: 31px;
-			bottom: 31px;
+			position: relative;
 			overflow-y: scroll;
 			width: 100%;
+			height: 100%;
 			padding-left: 10px;
 			z-index: 1;
 		}
 		.footer {
-			position: fixed;
+			position: relative;
 			bottom: 0;
 			z-index: 2;
 		}
@@ -140,6 +134,12 @@
 			padding: 0;
 			padding-left: 10px;
 			outline: none !important;
+			width: 80%;
+		}
+		form {
+			display: flex;
+			flex-direction: column;
+			width: 80%;
 		}
 		::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
   			color: #5841e9;
