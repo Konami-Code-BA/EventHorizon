@@ -8,7 +8,7 @@
 			<div class="line-button">
 				<div class="line-alignment">
 					<div>
-						<img src="../assets/line.png" class="line-img">
+						<img src="@/assets/line.png" class="line-img">
 					</div>
 					<div>
 						LINE
@@ -20,7 +20,7 @@
 			<div class="line-button">
 				<div class="line-alignment">
 					<div>
-						<img src="../assets/line.png" class="line-img">
+						<img src="@/assets/line.png" class="line-img">
 					</div>
 					<div style="white-space: nowrap">
 						ADD FRIEND
@@ -103,7 +103,7 @@
 		height: inherit !important;
 	}
 	.line-img {
-		height: 28px;
+		height: 27px;
 		transform: translate(0, 2px);
 	}
 </style>
