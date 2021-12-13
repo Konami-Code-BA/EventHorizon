@@ -2,7 +2,7 @@
 	<div>
 		<div class="main">
 			<div>
-				<img src="../assets/eventhorizonLogo.png" style="max-width: 200px; max-height: 200px;">
+				<img src="@/assets/eventhorizonLogo.png" style="max-width: 200px; max-height: 200px;">
 			</div>
 			<div style="font-size: 32px; margin-bottom: 10px;">EVENT HORIZON</div>
 			<div style="width: 100%;">
@@ -11,13 +11,13 @@
 						<span style="font-size: 20px; white-space: pre-line; margin-bottom: 10px;">{{ t('EVENTS') }}:</span>
 					</div>
 					<div slot="2">
-						<img src="../assets/mapIcon.png" class="icon"/>
+						<img src="@/assets/mapIcon.png" class="icon"/>
 					</div>
 					<div slot="3">
-						<img src="../assets/calendarIcon.png" class="icon"/>
+						<img src="@/assets/calendarIcon.png" class="icon"/>
 					</div>
 					<div slot="4">
-						<img src="../assets/threeBarsHIcon.png" class="icon"/>
+						<img src="@/assets/threeBarsHIcon.png" class="icon"/>
 					</div>
 				</tabs>
 			</div>

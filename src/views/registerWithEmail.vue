@@ -1,12 +1,12 @@
 <template>
-	<div class="main" style="justify-content: center">
-		<div>
-			<register-with-email-internal
-				@startLoading="$emit('startLoading')"
-				@endLoading="$emit('endLoading')"
-			/>
+		<div style="display: flex; flex-direction: column; justify-content: center">
+			<div>
+				<register-with-email-internal
+					@startLoading="$emit('startLoading')"
+					@endLoading="$emit('endLoading')"
+				/>
+			</div>
 		</div>
-	</div>
 </template>
 <script>
 	import appHeader from '@/components/appHeader.vue'

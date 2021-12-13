@@ -3,14 +3,14 @@
 		<form v-on:keyup.enter="registerWithEmail()">
 			<div v-if="includeDisplayName">
 				<input :placeholder="t('DISPLAY NAME')" v-model="displayNameInput" type="text" id="displayName"
-						autocorrect="off" autocapitalize="none"/>
+						autocorrect="off" autocapitalize="none" style="width: 100%"/>
 				<div class="line-height error-text" :class="{'shake' : shakeIt}">
 					{{t(displayNameError)}}
 				</div>
 			</div>
 			<div>
 				<input :placeholder="t('EMAIL')" v-model="emailInput" type="email" autocorrect="off"
-						autocapitalize="none" id="email"/>
+						autocapitalize="none" id="email" style="width: 100%"/>
 			</div>
 			<div class="line-height error-text" :class="{'shake' : shakeIt}" style="color: red">
 				<small>{{t(emailError)}}</small>
@@ -123,7 +123,7 @@
 				}
 				this.$emit('endLoading')
 				if (!error) {
-					this.$router.push({ name: 'home' })
+					this.$router.push({ name: 'events' })
 				} else if (error == 'Incorrect password for this email') {
 					this.passwordError = error
 					this.showError = true
@@ -204,7 +204,7 @@
 				}
 			},
 			hasIllegalSymbols (value) {
-				let symbols = '`~!#$%^&*()+=[{]}\\|;:\'",<>/?'
+				let symbols = '`~!#$%^&*()=[{]}\\|;:\'",<>/?'
 				for (let i = 0; i < symbols.length; i++) {
 					if (value.includes(symbols[i])) {
 						return true

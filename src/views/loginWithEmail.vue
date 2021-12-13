@@ -3,14 +3,14 @@
 		<form v-on:keyup.enter="login()">
 			<div>
 				<input :placeholder="t('EMAIL')" v-model="emailInput" type="text"
-					id="email" autocorrect="off" autocapitalize="none"/>
+					id="email" autocorrect="off" autocapitalize="none" style="width: 100%"/>
 			</div>
 			<div class="line-height" :class="{'shake' : shakeIt}" style="color: red">
 				<small>{{t(emailError)}}</small>
 			</div>
-			<div style="display: flex">
+			<div style="display: flex; flex-direction: row">
 				<input :placeholder="t('PASSWORD')" v-model="passwordInput"
-					:type="[showPassword ? 'text' : 'password']" style="flex-grow: 1"
+					:type="[showPassword ? 'text' : 'password']" style="flex-grow: 1; width: 100%"
 					id="password" autocorrect="off" autocapitalize="none"/>
 				<button v-on:click.prevent="showButton()" class="button" style="width: 70px"
 					id="show" type="button">
@@ -127,7 +127,7 @@
 				}
 			},
 			hasIllegalSymbols (value) {
-				let symbols = '`~!#$%^&*()+=[{]}\\|;:\'",<>/?'
+				let symbols = '`~!#$%^&*()=[{]}\\|;:\'",<>/?'
 				for (let i = 0; i < symbols.length; i++) {
 					if (value.includes(symbols[i])) {
 						return true
