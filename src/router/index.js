@@ -16,10 +16,9 @@ import experiment2 from '@/views/experiment2'
 
 Vue.use(Router)
 
-//export default new Router({
+//1=Admin, 2=User, 3=Temp Visitor, 5=Temp Line Friend
 const router = new Router({
     mode: 'history',
-    //beforeEach: (to, from, next) => {},
     routes: [{
         path: '',
         redirect: { name: 'events' },
@@ -67,17 +66,17 @@ const router = new Router({
         path: '/loginRegister',
         name: 'loginRegister',
         component: loginRegister,
-        meta: { userGroups: [1, 3, 5, ] }, // [1, 3, 5, ]
+        meta: { userGroups: [3, 5, ] },
     }, {
         path: '/registerWithEmail',
         name: 'registerWithEmail',
         component: registerWithEmail,
-        meta: { userGroups: [1, 3, 5, ] },
+        meta: { userGroups: [3, 5, ] },
     }, {
         path: '/loginWithEmail',
         name: 'loginWithEmail',
         component: loginWithEmail,
-        meta: { userGroups: [1, 3, 5, ] }, // [1, 3, 5, ]
+        meta: { userGroups: [3, 5, ] },
     }, {
         path: '/experiment1',
         name: 'experiment1',
