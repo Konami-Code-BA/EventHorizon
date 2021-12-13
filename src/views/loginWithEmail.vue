@@ -127,7 +127,7 @@
 				}
 			},
 			hasIllegalSymbols (value) {
-				let symbols = '`~!#$%^&*()+=[{]}\\|;:\'",<>/?'
+				let symbols = '`~!#$%^&*()=[{]}\\|;:\'",<>/?'
 				for (let i = 0; i < symbols.length; i++) {
 					if (value.includes(symbols[i])) {
 						return true
