@@ -11,7 +11,7 @@
 							v-on:click.prevent="goToEvents()">
 						<div>EVENT</div>
 						<div v-if="this.$route.name != 'events'">
-							<img src="../assets/eventhorizonTopIcon.png" style="height: 20px; vertical-align: middle;">
+							<img src="@/assets/eventhorizonTopIcon.png" style="height: 20px; vertical-align: middle;">
 						</div>
 						<div v-else>
 							&nbsp;
@@ -20,12 +20,12 @@
 					</button>
 				</div>
 				<div slot="3">
-					<img src="../assets/threeBarsIcon.png" class="icon" style="height: 16px; margin-bottom: 3px;"/>
+					<img src="@/assets/threeBarsIcon.png" class="icon" style="height: 16px; margin-bottom: 3px;"/>
 				</div>
 			</tabs>
 		</div>
 		<modal v-if="selectedTab === 1" @closeModals="selectedTab = 0">
-			<div slot="contents" class="language menu">
+			<div slot="contents" class="menu">
 				<div style="align-self: flex-end">
 					<button v-on:click.prevent="selectedTab = 0" class="no-border-button">
 						✖
@@ -46,7 +46,7 @@
 			</div>
 		</modal>
 		<modal v-if="selectedTab === 3" @closeModals="selectedTab = 0">
-			<div slot="contents" class="threeBars menu">
+			<div slot="contents" class="menu">
 				<div style="align-self: flex-end">
 					<button v-on:click.prevent="selectedTab = 0" class="no-border-button">
 						✖
@@ -71,7 +71,7 @@
 				<div class="line-height"></div>
 			</div>
 		</modal>
-		<qr-code-generator v-if="showQrModal" @closeModal="showQrModal=false"/>
+		<qr-code-generator v-if="showQrModal" @closeModals="showQrModal=false"/>
 	</div>
 </template>
 <script>
@@ -124,6 +124,7 @@
 				await apiFunctions.updateUserLanguage()
 			},
 			goToEvents () {
+				this.$emit('startLoading')
 				if (this.$route.name !== 'events') {
 					this.$router.push({ name: 'events' })
 				} else {
@@ -147,24 +148,18 @@
 </script>
 <style scoped>
 	.menu {
-		position: fixed;
 		display: flex;
 		flex-direction: column;
-		align-items: flex-start;
-		z-index: 100;
+		align-items: center;
 		background-color: #0b0015;
 		border: 1px solid #5300e1;
 		border-radius: 15px;
 		padding: 20px;
 		width: 80%;
+		max-height: 80%;
 		max-width: 300px;
-		top: 40px;
-	}
-	.threeBars {
-		right: 0;
-	}
-	.language {
-		left: 0;
+		z-index: 101;
+		pointer-events: auto;
 	}
 	.languageIcon {
 		height: 16px;
