@@ -262,6 +262,10 @@ export default {
             'EN': 'GET QR CODES',
             'JP': 'QRコード出す'
         },
+        'ALL EVENTS': {
+            'EN': 'ALL EVENTS',
+            'JP': 'オール　イベント'
+        },
     },
 
     t: function(w) {
