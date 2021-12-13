@@ -1,6 +1,12 @@
 <template>
 	<div class="main">
-		<h1>Event</h1>
+		<div style="width: 100%; display: flex; flex-direction: row; align-items: center; justify-content: space-between">
+			<div style="width: 16px"></div>
+			<h1>Event</h1>
+			<button v-on:click.prevent="$emit('closeModals')" class="no-border-button">
+				✖
+			</button>
+		</div>
 		<div class="flex-table">
 			<div style="align-self: flex-end">
 				<small>{{event['is_private'] ? 'PRIVATE EVENT' : 'PUBLIC EVENT'}}</small>

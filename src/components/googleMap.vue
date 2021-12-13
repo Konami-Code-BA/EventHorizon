@@ -15,12 +15,12 @@
 		props: {
 			events: { default: null },
 			selectedEventId: { default: null },
-			script: {},
+			scrip: {},
 		},
 		computed: {
 		},
 		async mounted () {
-			document.head.appendChild(this.script)
+			document.head.appendChild(this.scrip)
 			window.initMap = this.initMap
 			window.openEventModal = this.openEventModal
 			this.$emit('endLoading')
