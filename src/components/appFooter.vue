@@ -4,22 +4,22 @@
 			<tabs :num-tabs="6" :initial="selectedTab" :key="selectedTab" @on-click="(arg) => { changeTab(arg) }"
 					style="background-color: rgba(0, 0, 0, .5);">
 				<div slot="1">
-					<img src="../assets/mapIcon.png" class="icon" style="margin-bottom: 2px;"/>
+					<img src="@/assets/mapIcon.png" class="icon" style="margin-bottom: 2px;"/>
 				</div>
 				<div slot="2">
-					<img src="../assets/profileIcon.png" class="icon" style="margin-bottom: 1px;"/>
+					<img src="@/assets/profileIcon.png" class="icon" style="margin-bottom: 1px;"/>
 				</div>
 				<div slot="3">
-					<img src="../assets/peopleIcon.png" class="icon" style="margin-bottom: 1px;"/>
+					<img src="@/assets/peopleIcon.png" class="icon" style="margin-bottom: 1px;"/>
 				</div>
 				<div slot="4">
-					<img src="../assets/searchIcon.png" class="icon" style="margin-bottom: 1px;"/>
+					<img src="@/assets/searchIcon.png" class="icon" style="margin-bottom: 1px;"/>
 				</div>
 				<div slot="5">
-					<img src="../assets/plusIcon.png" class="icon" style="margin-bottom: 1px;"/>
+					<img src="@/assets/plusIcon.png" class="icon" style="margin-bottom: 1px;"/>
 				</div>
 				<div slot="6">
-					<img src="../assets/gearIcon.png" class="icon" style="margin-bottom: 1px;"/>
+					<img src="@/assets/gearIcon.png" class="icon" style="margin-bottom: 1px;"/>
 				</div>
 			</tabs>
 		</div>
@@ -36,15 +36,8 @@
 			return {
 				store: store,
 				languageMenu: false,
-				pages: {
-					'events': 1,
-					'profile': 2,
-					'people': 3,
-					'search': 4,
-					'addEvent': 5,
-					'settings': 6,
-				},
-				selectedTab: 1,
+				selectedTab: 0,
+				pages: ['events', 'profile', 'people', 'search', 'addEvent', 'settings'],
 			}
 		},
 		components: {
@@ -58,55 +51,28 @@
 		},
 		watch: {
 			'$route' () {
-				this.selectedTab = this.pages[this.$route.name]
-			}
+				let ind = this.pages.indexOf(this.$route.name)
+				if (ind != -1) {
+					this.selectedTab = ind + 1
+				} else {
+					this.selectedTab = 0
+				}
+			},
 		},
 		methods: {
 			t (w) { return translations.t(w) },
 			changeTab (selectedTab) {
-				this.selectedTab = selectedTab
-				if (this.selectedTab === 1) {
-					this.goToEvents()
-				} else if (this.selectedTab === 2) {
-					this.goToProfile()
-				} else if (this.selectedTab === 3) {
-					this.goToPeople()
-				} else if (this.selectedTab === 4) {
-					this.goToSearch()
-				} else if (this.selectedTab === 5) {
-					this.goToAddEvent()
-				} else if (this.selectedTab === 6) {
-					this.goToSettings()
+				let routes = ''
+				if (selectedTab === 1) {
+					this.selectedTab = selectedTab
+				} else {
+					this.selectedTab = 0
+					routes += 'loginRegister'
 				}
-			},
-			goToEvents () {
-				if (this.$route.name != 'events') {
-					this.$router.push({ name: 'events' })
-				}
-			},
-			goToProfile () {
-				if (this.$route.name != 'profile') {
-					this.$router.push({ name: 'profile' })
-				}
-			},
-			goToPeople () {
-				if (this.$route.name != 'people') {
-					this.$router.push({ name: 'people' })
-				}
-			},
-			goToSearch () {
-				if (this.$route.name != 'search') {
-					this.$router.push({ name: 'search' })
-				}
-			},
-			goToAddEvent () {
-				if (this.$route.name != 'addEvent') {
-					this.$router.push({ name: 'addEvent' })
-				}
-			},
-			goToSettings () {
-				if (this.$route.name != 'settings') {
-					this.$router.push({ name: 'settings' })
+				for (let i = 0; i < this.pages.length; i++) {
+					if (selectedTab === i+1 && !(routes+this.pages[i]).includes(this.$route.name)) {
+						this.$router.push({ name: this.pages[i] }).catch(() => {})
+					}
 				}
 			},
 		}
