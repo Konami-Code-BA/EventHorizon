@@ -100,7 +100,6 @@
 		components: {
 		},
 		props: {
-			tabNo: {},
 			events: { default: null },
 		},
 		computed: {
