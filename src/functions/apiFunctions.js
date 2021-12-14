@@ -101,10 +101,11 @@ export default {
         data['command'] = 'login'
         return await this.userApiFunction('post', '/api/user/', data)
     },
-    async lineNewDevice(code) {
+    async lineNewDevice(code, path) {
         return await this.userApiFunction('post', '/api/user/', {
             command: 'line_new_device',
             code: code,
+            path: path,
         })
     },
     async logout() {
