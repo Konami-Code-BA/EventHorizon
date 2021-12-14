@@ -160,12 +160,13 @@ class UserViewset(viewsets.ModelViewSet):
 			return user
 
 	def line_new_device(self, request):
+		print(1)
 		if config('PYTHON_ENV', default='\'"production"\'') == 'development':  # get url depending on dev, test, or prod
-			uri = 'http://127.0.0.1:8080/loginRegister'
+			uri = 'http://127.0.0.1:8080/' + request.data['path']
 		elif config('PYTHON_ENV', default='\'"production"\'') == '\'"test"\'':
-			uri = 'https://event-horizon-test.herokuapp.com/loginRegister'
+			uri = 'https://event-horizon-test.herokuapp.com/' + request.data['path']
 		else:
-			uri = 'https://www.eventhorizon.vip/loginRegister'
+			uri = 'https://www.eventhorizon.vip/' + request.data['path']
 		url = 'https://api.line.me/oauth2/v2.1/token'  # use code to get access token
 		data = {
 			'grant_type': 'authorization_code',
@@ -176,14 +177,19 @@ class UserViewset(viewsets.ModelViewSet):
 		}
 		headers = {'Content-Type': 'application/x-www-form-urlencoded'}
 		getAccessToken_response = json.loads(requests.post(url, headers=headers, data=data).content)
+		print(2)
 		if 'error' in getAccessToken_response:
+			print(3)
 			user = namedtuple('user', 'error')
 			user.error = getAccessToken_response['error_description']
 			return user
+		print(4)
 		url = 'https://api.line.me/v2/profile'  # use access token to get profile info
 		headers = {'Authorization': 'Bearer ' + getAccessToken_response['access_token']}
 		profile_response = json.loads(requests.get(url, headers=headers).content)
+		print(5)
 		try:  # try to get a user with this user id, if there is one then set all the new data to their account
+			print(6)
 			user = self.model.objects.get(line_id=profile_response['userId'])
 			user.line_access_token = getAccessToken_response['access_token']
 			user.line_refresh_token = getAccessToken_response['refresh_token']
@@ -192,7 +198,9 @@ class UserViewset(viewsets.ModelViewSet):
 				user.groups.add(2)  # change to user
 			print('changing temp line friend to user')
 			user = verify_update_line_info(request, user)  # verify validity of current line data and put new data
+			print(7)
 		except self.model.DoesNotExist:  # if there was no user with this id, turn visitor into user & add info
+			print(8)
 			user = self.model.objects.get(pk=request.user.pk)  # get visitor account (already logged in)
 			user.groups.clear()  # clear visitor group
 			user.groups.add(2)  # change to user
@@ -205,6 +213,7 @@ class UserViewset(viewsets.ModelViewSet):
 			print('SAVED USER')
 			user = authenticate_login(request)  # login user
 			print('LOGGED IN')
+		print(9)
 		return user
 		
 
