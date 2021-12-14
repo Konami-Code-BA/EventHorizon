@@ -82,7 +82,7 @@
 					this.$emit('startLoading')
 					await apiFunctions.lineNewDevice(this.$route.query.code)
 					this.$emit('endLoading')
-					this.$router.push({ name: 'guestHome' })
+					this.$router.push({ name: 'events' })
 				}
 			}
 		} // methods
