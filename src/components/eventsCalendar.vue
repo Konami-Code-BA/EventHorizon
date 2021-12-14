@@ -15,7 +15,7 @@
 					{{'>'}}
 				</button>
 			</div>
-			<div style="height: 87%">
+			<div style="height: 87%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
 				<div class="weeks">
 					<div v-for="week in 6" style="margin-bottom: 5px;">
 						<div class="days">
@@ -32,6 +32,9 @@
 							</div>
 						</div>
 					</div>
+				</div>
+				<div v-show="showNoEventsModal" :class="noEventsModalClass" style="position: fixed;">
+					<div style="color: white; font-size: 32px;">{{t('NO EVENTS')}}</div>
 				</div>
 			</div>
 		</div>
@@ -95,6 +98,8 @@
 				selectedDate: 0,
 				eventDates: {},
 				loaded: false,
+				showNoEventsModal: false,
+				noEventsModalClass: null,
 			}
 		},
 		components: {
@@ -170,6 +175,13 @@
 				let calendarLocation = (week - 1) * 7 + day - 1
 				let date = this.getDateOfCalendarLocation(calendarLocation)
 				let dayDate = date.getDate()
+				if (date.toString().split(' ').slice(0, 4).toString() === this.today.toString().split(' ').slice(0, 4).toString()) {
+					style['border-radius'] = '50%'
+					style['border'] = '1px solid white'
+					style['background-color'] = 'none'
+					style['width'] = '22px'
+					style['height'] = '22px'
+				}
 				if ((
 					week == 1 && dayDate > 7
 				) || (
@@ -187,9 +199,16 @@
 				}
 				return style		
 			},
-			selectDate (date) {
+			async selectDate (date) {
 				if (this.getEventsFromDate(date).length > 0) {
 					this.selectedDate = date
+				} else {
+					this.showNoEventsModal = true
+					await new Promise(r => setTimeout(r, 500))  // .5 seconds
+					this.noEventsModalClass = 'fade-out'
+					await new Promise(r => setTimeout(r, 1000))  // 1 seconds
+					this.showNoEventsModal = false
+					this.noEventsModalClass = null
 				}
 			},
 			goToToday () {
@@ -219,5 +238,8 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center !important;
+	}
+	.noEventsModal {
+		opacity: 0;
 	}
 </style>
