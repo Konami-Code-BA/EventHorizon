@@ -79,12 +79,16 @@ def line_bot(line_body):
 
 def add_line_friend(line_id):
 	from app_name.viewsets import UserViewset
+	print('start')
 	try:  # if user with this line id exists
+		print(line_id)
 		user = UserViewset.model.objects.get(line_id=line_id)
 		user.is_line_friend = True
 		user.do_get_lines = True
 		user.save()
+		print('CHANGED is_line_friend AND do_get_lines FOR EXISTING LINE FRIEND')
 	except UserViewset.model.DoesNotExist:  # if no user with this line id exists
+		print('in here')
 		# this wasn't done on the site, it was done in line so there is no visitor, and can't make session
 		user = UserViewset.model.objects.create_user(  # create temporary line friend user
 			line_id = line_id,
@@ -97,6 +101,7 @@ def add_line_friend(line_id):
 		user.groups.add(5)  # temp line friend
 		user.save()
 		print('ADDED NEW TEMP LINE FRIEND')
+	print('out here')
 
 
 def remove_line_friend(line_id):
