@@ -66,17 +66,17 @@ const router = new Router({
         path: '/loginRegister',
         name: 'loginRegister',
         component: loginRegister,
-        meta: { userGroups: [3, 5, ] },
+        meta: { userGroups: [1, 3, 5, ] },
     }, {
         path: '/registerWithEmail',
         name: 'registerWithEmail',
         component: registerWithEmail,
-        meta: { userGroups: [3, 5, ] },
+        meta: { userGroups: [1, 3, 5, ] },
     }, {
         path: '/loginWithEmail',
         name: 'loginWithEmail',
         component: loginWithEmail,
-        meta: { userGroups: [3, 5, ] },
+        meta: { userGroups: [1, 3, 5, ] },
     }, {
         path: '/experiment1',
         name: 'experiment1',
@@ -113,8 +113,8 @@ router.beforeEach(
                     }
                 }
             } // permission denied
-            // if path coming from is login, register, or events page, don't change pages on failure
-            if (['loginRegister', 'loginWithEmail', 'event', 'registerWithEmail'].includes(from.name)) {
+            // if path coming from is loginRegiste, or events page, don't change pages on failure
+            if (['loginRegister', 'event'].includes(from.name)) {
                 return
             } else { // any other page, when permission denied, get sent to events page
                 next({ name: 'loginRegister' })

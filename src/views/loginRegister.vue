@@ -39,7 +39,7 @@
 	import apiFunctions from '@/functions/apiFunctions.js'
 	import functions from '@/functions/functions.js'
 	export default {
-		name: 'experiment1',
+		name: 'loginRegister',
 		components: {
 			appHeader,
 			modal,
@@ -80,7 +80,7 @@
 			async tryLineNewDevice () {
 				if (this.$route.query.code && this.stateCookie === this.$route.query.state) {
 					this.$emit('startLoading')
-					await apiFunctions.lineNewDevice(this.$route.query.code)
+					await apiFunctions.lineNewDevice(this.$route.query.code, 'loginRegister')
 					this.$emit('endLoading')
 					this.$router.push({ name: 'events' })
 				}
