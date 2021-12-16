@@ -4,11 +4,7 @@
 		<div class="line-height"></div>
 		<div style="font-size: 24px;">{{ store.user.display_name }}</div>
 		<div class="line-height"></div>
-		<div class="coming-soon-list"><div style="font-size: 16px;">{{ t('UPCOMING EVENTS') }}</div><small>({{ t('COMING SOON') }})</small></div>
-		<div class="line-height"></div>
-		<div class="coming-soon-list"><div style="font-size: 16px;">{{ t('MY EVENTS') }}</div><small>({{ t('COMING SOON') }})</small></div>
-		<div class="line-height"></div>
-		<div class="coming-soon-list"><div style="font-size: 16px;">{{ t('TBA') }}</div><small>({{ t('COMING SOON') }})</small></div>
+		<div class="coming-soon-list">({{ t('COMING SOON') }})</div>
 	</div>
 </template>
 <script>
@@ -19,7 +15,7 @@
 	import apiFunctions from '@/functions/apiFunctions.js'
 	import functions from '@/functions/functions.js'
 	export default {
-		name: 'profile',
+		name: 'people',
 		components: {
 			appHeader,
 			modal,
@@ -41,9 +37,9 @@
 <style scoped>
 .coming-soon-list {
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 	align-items: center;
-	justify-content: space-between;
+	justify-content: center;
 	width: 100%;
 	color: grey;
 }
