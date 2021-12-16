@@ -2,7 +2,7 @@
 	<div>
 		<div class="main">
 			<div>
-				<h1>{{ t('SETTINGS') }}</h1>
+				<h1>ADD</h1>
 			</div>
 			<div>
 				<button class="no-border-button" v-on:click.prevent="showCreateEventModal=true">
@@ -12,7 +12,7 @@
 		</div>
 		<modal v-show="showCreateEventModal" @closeModals="showCreateEventModal=false">
 			<div slot="contents" class="createEventModal">
-				<div style="text-align: right">
+				<div style="align-self: flex-end">
 					<button v-on:click.prevent="showCreateEventModal=false" class="no-border-button">
 						✖
 					</button>
@@ -55,16 +55,19 @@
 </script>
 <style scoped>
 	.createEventModal {
-		position: fixed;
-		z-index: 100;
-		background-color: #18002e;
-		border-radius: 15px;
-		border: 1px solid #5300e1;
-		padding: 20px;
 		width: 85%;
 		height: 100%;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, 0);
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		background-color: #0b0015;
+		border: 1px solid #5300e1;
+		border-radius: 15px;
+		padding: 20px;
+		max-height: 80%;
+		width: 85%;
+		max-width: 300px;
+		z-index: 101;
+		pointer-events: auto;
 	}
 </style>

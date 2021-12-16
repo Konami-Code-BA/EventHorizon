@@ -64,13 +64,13 @@ export default {
             })
         return output
     },
-    async eventsApiFunction(method, pk = null) {
+    async eventsApiFunction(method, data, pk) {
         let output = null
         let id = ''
         if (pk) {
             id = pk.toString() + '/'
         }
-        await this.axiosCall[method](this.apiBaseUrl + '/api/events/' + id)
+        await this.axiosCall[method](this.apiBaseUrl + '/api/events/' + id, data)
             .then(response => {
                 console.log(`success - eventsApiFunction`)
                 output = response.data
@@ -160,11 +160,14 @@ export default {
             message: 'sup this is a broadcast message',
         })
     },
-    // LINE ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // EVENTS //////////////////////////////////////////////////////////////////////////////////////////////////////////
     async getAllEvents() {
         return await this.eventsApiFunction('get')
     },
     async getEvent(pk) {
-        return await this.eventsApiFunction('get', pk)
+        return await this.eventsApiFunction('get', {}, pk)
+    },
+    async createEvent(data) {
+        return await this.eventsApiFunction('post', data, null)
     },
 }
