@@ -63,7 +63,8 @@
 						let [randLat, randLng] = [0, 0]
 						let icon = 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
 						let eventName = 'PRIVATE EVENT'
-						if (this.events[i]['is_private']) {
+						console.log(this.store.user['id'], this.events[i]['guests'], !this.events[i]['guests'].includes(this.store.user['id']))
+						if (this.events[i]['is_private'] || !this.events[i]['guests'].includes(this.store.user['id'])) {
 							let randSign = Math.random() > .5 ? 1 : -1
 							randLat = Math.random() / 250 * randSign
 							randSign = Math.random() > .5 ? 1 : -1

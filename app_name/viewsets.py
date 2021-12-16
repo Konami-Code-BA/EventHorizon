@@ -1,4 +1,4 @@
-from rest_framework import viewsets, filters
+from rest_framework import viewsets
 from .models import Alert
 from .serializers import UserSerializer, EventSerializer
 from rest_framework.response import Response
@@ -7,11 +7,12 @@ from django.conf import settings
 from decouple import config
 from django.core.mail import send_mail
 from app_name.functions import verify_update_line_info, authenticate_login, new_visitor, merge_email_into_line_account
-from django.http import HttpResponse
 import secrets, requests, json
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth.models import Group
 from collections import namedtuple, OrderedDict
+from rest_framework import serializers
+from django.db.models import Q
+import googlemaps
 
 
 # USER VIEW SET ########################################################################################################
@@ -21,13 +22,19 @@ class UserViewset(viewsets.ModelViewSet):
 	queryset = model.objects.all()
 
 	def list(self, request):  # GET {prefix}/
-		return request.user
+		self.queryset = [request.user]
+		serializer_data = self.serializer_class(self.queryset, many=True).data
+		return Response(serializer_data)
 
 	def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
-		return request.user
+		self.queryset = [request.user]
+		serializer_data = self.serializer_class(self.queryset, many=True).data
+		return Response(serializer_data)
 
 	def update(self, request, pk=None):  # PUT {prefix}/{lookup}/
-		return request.user
+		self.queryset = [request.user]
+		serializer_data = self.serializer_class(self.queryset, many=True).data
+		return Response(serializer_data)
 
 	# PARTIAL_UPDATE ###############################################################################
 	def partial_update(self, request, pk=None):  # PATCH {prefix}/{lookup}/
@@ -160,7 +167,6 @@ class UserViewset(viewsets.ModelViewSet):
 			return user
 
 	def line_new_device(self, request):
-		print(1)
 		if config('PYTHON_ENV', default='\'"production"\'') == 'development':  # get url depending on dev, test, or prod
 			uri = 'http://127.0.0.1:8080/' + request.data['path']
 		elif config('PYTHON_ENV', default='\'"production"\'') == '\'"test"\'':
@@ -177,19 +183,14 @@ class UserViewset(viewsets.ModelViewSet):
 		}
 		headers = {'Content-Type': 'application/x-www-form-urlencoded'}
 		getAccessToken_response = json.loads(requests.post(url, headers=headers, data=data).content)
-		print(2)
 		if 'error' in getAccessToken_response:
-			print(3)
 			user = namedtuple('user', 'error')
 			user.error = getAccessToken_response['error_description']
 			return user
-		print(4)
 		url = 'https://api.line.me/v2/profile'  # use access token to get profile info
 		headers = {'Authorization': 'Bearer ' + getAccessToken_response['access_token']}
 		profile_response = json.loads(requests.get(url, headers=headers).content)
-		print(5)
 		try:  # try to get a user with this user id, if there is one then set all the new data to their account
-			print(6)
 			user = self.model.objects.get(line_id=profile_response['userId'])
 			user.line_access_token = getAccessToken_response['access_token']
 			user.line_refresh_token = getAccessToken_response['refresh_token']
@@ -198,9 +199,7 @@ class UserViewset(viewsets.ModelViewSet):
 				user.groups.add(2)  # change to user
 			print('changing temp line friend to user')
 			user = verify_update_line_info(request, user)  # verify validity of current line data and put new data
-			print(7)
 		except self.model.DoesNotExist:  # if there was no user with this id, turn visitor into user & add info
-			print(8)
 			user = self.model.objects.get(pk=request.user.pk)  # get visitor account (already logged in)
 			user.groups.clear()  # clear visitor group
 			user.groups.add(2)  # change to user
@@ -213,7 +212,6 @@ class UserViewset(viewsets.ModelViewSet):
 			print('SAVED USER')
 			user = authenticate_login(request)  # login user
 			print('LOGGED IN')
-		print(9)
 		return user
 		
 
@@ -325,19 +323,60 @@ class EventsViewset(viewsets.ViewSet):
 	serializer_class = EventSerializer
 	model = serializer_class.Meta.model
 	queryset = []
+	# who can make an event? at first only us admins right? gotta add that
+	# also gotta include changing up lat lng when returning to user who doesnt have access
 	def create(self, request):  # POST {prefix}/
-		return Response()
+		gmaps = googlemaps.Client(key=config('GOOGLE_MAPS_API_KEY'))
+		geocoded = gmaps.geocode(request.data['address'])
+		latitude = geocoded[0]['geometry']['location']['lat']
+		longitude = geocoded[0]['geometry']['location']['lng']
+		event = self.model(
+			name=request.data['name'],
+			description=request.data['description'],
+			address=request.data['address'],
+			venue_name=request.data['venue_name'],
+			latitude=latitude,
+			longitude=longitude,
+			date_time=request.data['date_time'],
+			include_time=request.data['include_time'],
+			is_private=request.data['is_private'],
+		)
+		event.save()
+		event.hosts.set(request.data['hosts'])
+		event.guests.set(request.data['guests'])
+		event.confirmed_guests.set(request.data['confirmed_guests'])
+		event.interested_guests.set(request.data['interested_guests'])
+		event.invited_guests.set(request.data['invited_guests'])
+		event.save()
+		serializer_data = self.serializer_class([event], many=True).data
+		return Response(serializer_data)
+
 	def partial_update(self, request, pk=None):  # PATCH {prefix}/{lookup}/
 		return Response()
+
 	def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
-		self.queryset = self.model.objects.get(pk=pk)
-		serializer_data = self.serializer_class(self.queryset, many=False).data
-		return Response(serializer_data)
-	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
-		return Response()
-	def list(self, request):  # GET {prefix}/
-		self.queryset = self.model.objects.all()
+		events = self.model.objects.filter(guests=request.user.id) # gotta include public events
+		event = self.model.objects.get(pk=pk)
+		if event in events or not event.is_private:
+			self.queryset = [event]
+		else:
+			self.queryset = []
 		serializer_data = self.serializer_class(self.queryset, many=True).data
 		return Response(serializer_data)
+
+	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
+		return Response()
+
+	def list(self, request):  # GET {prefix}/
+		my_events = self.model.objects.filter(guests=request.user.id)
+		public_events = self.model.objects.filter(is_private=False)
+		private_events = self.model.objects.filter(Q(is_private=True) & ~Q(guests=request.user.id))
+		print(private_events)
+		#self.queryset = my_events.union(public_events)
+		serializer_data1 = self.serializer_class(my_events.union(public_events), many=True).data
+		#new_serializer = serializers.ModelSerializer(model=self.model, fields=['name'])
+		serializer_data2 = self.serializer_class(private_events, many=True, context={'user': request.user}).data
+		return Response(serializer_data1+serializer_data2)
+
 	def update(self, request, pk=None):  # PUT {prefix}/{lookup}/
 		return Response()

@@ -99,9 +99,10 @@ class Event(models.Model):
 	date_time = models.DateTimeField(default=datetime.today(), blank=True)
 	include_time = models.BooleanField(default=False, blank=True)
 	hosts = models.ManyToManyField(User, blank=True, related_name='hosts')
+	guests = models.ManyToManyField(User, blank=True, related_name='guests')
 	confirmed_guests = models.ManyToManyField(User, blank=True, related_name='confirmed_guests')
 	interested_guests = models.ManyToManyField(User, blank=True, related_name='interested_guests')
-	unconfirmed_guests = models.ManyToManyField(User, blank=True, related_name='unconfirmed_guests')
+	invited_guests = models.ManyToManyField(User, blank=True, related_name='invited_guests')
 	is_private = models.BooleanField(default=True, blank=True)
 
 	def __str__(self):
@@ -113,5 +114,5 @@ class EventAdmin(admin.ModelAdmin):
 	list_display = ('name', 'id')
 	fields = (
 		'id', 'name', 'description', 'is_private', 'address', 'venue_name', 'latitude', 'longitude', 'date_time',
-		'include_time', 'hosts', 'confirmed_guests',
+		'include_time', 'hosts', 'guests', 'confirmed_guests', 'interested_guests', 'invited_guests'
 	)

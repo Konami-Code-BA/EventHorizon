@@ -8,6 +8,11 @@
 					</button>
 				</div>
 				<div>
+					<button v-on:click.prevent="closeModal=true; getQr(url)" class="no-border-button">
+						This Page QR
+					</button>
+				</div>
+				<div>
 					<button v-on:click.prevent="closeModal=true; getQr(instagram)" class="no-border-button">
 						Instagram QR
 					</button>
@@ -15,11 +20,6 @@
 				<div>
 					<button v-on:click.prevent="closeModal=true; getQr(line)" class="no-border-button">
 						Line QR
-					</button>
-				</div>
-				<div>
-					<button v-on:click.prevent="closeModal=true; getQr(url)" class="no-border-button">
-						other
 					</button>
 				</div>
 				<div class="line-height"></div>
