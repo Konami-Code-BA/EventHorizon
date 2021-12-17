@@ -13,6 +13,11 @@ from collections import namedtuple, OrderedDict
 from rest_framework import serializers
 from django.db.models import Q
 import googlemaps
+import random
+import decimal
+
+
+random.seed(1)
 
 
 # USER VIEW SET ########################################################################################################
@@ -330,23 +335,26 @@ class EventsViewset(viewsets.ViewSet):
 		geocoded = gmaps.geocode(request.data['address'])
 		latitude = geocoded[0]['geometry']['location']['lat']
 		longitude = geocoded[0]['geometry']['location']['lng']
+		postal_code, rand_latitude, rand_longitude = randomize_lat_lng(request.data['address'])
 		event = self.model(
 			name=request.data['name'],
 			description=request.data['description'],
 			address=request.data['address'],
+			postal_code=postal_code,
 			venue_name=request.data['venue_name'],
 			latitude=latitude,
 			longitude=longitude,
+			rand_latitude=rand_latitude,
+			rand_longitude=rand_longitude,
 			date_time=request.data['date_time'],
 			include_time=request.data['include_time'],
 			is_private=request.data['is_private'],
 		)
 		event.save()
 		event.hosts.set(request.data['hosts'])
-		event.guests.set(request.data['guests'])
+		event.invited.set(request.data['invited'])
 		event.confirmed_guests.set(request.data['confirmed_guests'])
-		event.interested_guests.set(request.data['interested_guests'])
-		event.invited_guests.set(request.data['invited_guests'])
+		event.interested.set(request.data['interested'])
 		event.save()
 		serializer_data = self.serializer_class([event], many=True).data
 		return Response(serializer_data)
@@ -355,28 +363,78 @@ class EventsViewset(viewsets.ViewSet):
 		return Response()
 
 	def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
-		events = self.model.objects.filter(guests=request.user.id) # gotta include public events
+		events = self.model.objects.filter(invited=request.user.id) # gotta include public events
 		event = self.model.objects.get(pk=pk)
 		if event in events or not event.is_private:
-			self.queryset = [event]
+			serializer_data = self.serializer_class([event], many=True).data
 		else:
-			self.queryset = []
-		serializer_data = self.serializer_class(self.queryset, many=True).data
+			serializer_data = [OrderedDict({
+				'id': event.id,
+				'name': event.name,
+				'address': event.postal_code,
+				'description': event.description,
+				'latitude': event.rand_latitude,
+				'longitude': event.rand_longitude,
+				'date_time': event.date_time,
+				'include_time': event.include_time,
+				'is_private': event.is_private,
+				'hosts': event.hosts.count(),
+				'invited': event.invited.count(),
+				'confirmed_guests': event.confirmed_guests.count(),
+				'interested': event.interested.count(),
+			})]
 		return Response(serializer_data)
 
 	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
 		return Response()
 
 	def list(self, request):  # GET {prefix}/
-		my_events = self.model.objects.filter(guests=request.user.id)
+		my_events = self.model.objects.filter(invited=request.user.id)
 		public_events = self.model.objects.filter(is_private=False)
-		private_events = self.model.objects.filter(Q(is_private=True) & ~Q(guests=request.user.id))
-		print(private_events)
-		#self.queryset = my_events.union(public_events)
+		private_events = self.model.objects.filter(Q(is_private=True) & ~Q(invited=request.user.id))
 		serializer_data1 = self.serializer_class(my_events.union(public_events), many=True).data
-		#new_serializer = serializers.ModelSerializer(model=self.model, fields=['name'])
-		serializer_data2 = self.serializer_class(private_events, many=True, context={'user': request.user}).data
+		serializer_data2 = []
+		for private_event in private_events:
+			serializer_data2 += [OrderedDict({
+				'id': private_event.id,
+				'name': private_event.name,
+				'address': private_event.postal_code,
+				'description': private_event.description,
+				'latitude': private_event.rand_latitude,
+				'longitude': private_event.rand_longitude,
+				'date_time': private_event.date_time,
+				'include_time': private_event.include_time,
+				'is_private': private_event.is_private,
+				'hosts': private_event.hosts.count(),
+				'invited': private_event.invited.count(),
+				'confirmed_guests': private_event.confirmed_guests.count(),
+				'interested': private_event.interested.count(),
+			})]
 		return Response(serializer_data1+serializer_data2)
 
 	def update(self, request, pk=None):  # PUT {prefix}/{lookup}/
 		return Response()
+
+
+def randomize_lat_lng(address):
+	gmaps = googlemaps.Client(key=config('GOOGLE_MAPS_API_KEY'))
+	geocoded = gmaps.geocode(address)
+	for component in geocoded[0]['address_components']:
+		print(component)
+		if 'postal_code' in component['types']:
+			postal_code = component['long_name']
+		if 'country' in component['types']:
+			country = component['long_name']
+	print(f'{postal_code} {country}')
+	geocoded = gmaps.geocode(f'{postal_code} {country}')
+	outter = 300
+	latitude = geocoded[0]['geometry']['location']['lat']
+	rand_sign = 1 if random.random() > .5 else -1
+	rand_value = random.random()
+	rand_latitude = float(latitude) + rand_value / outter * rand_sign
+	outter = 350
+	longitude = geocoded[0]['geometry']['location']['lng']
+	rand_sign = 1 if random.random() > .5 else -1
+	rand_value = random.random()
+	rand_longitude = float(longitude) + rand_value / outter * rand_sign
+	return postal_code, rand_latitude, rand_longitude

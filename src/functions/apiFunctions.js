@@ -73,7 +73,11 @@ export default {
         await this.axiosCall[method](this.apiBaseUrl + '/api/events/' + id, data)
             .then(response => {
                 console.log(`success - eventsApiFunction`)
-                output = response.data
+                if (pk) {
+                    output = response.data[0]
+                } else {
+                    output = response.data
+                }
             })
             .catch(error => {
                 console.log(`*API ERROR* - eventsApiFunction:`, error)

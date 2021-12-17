@@ -25,20 +25,20 @@
 			</tabs>
 		</div>
 		<modal v-if="selectedTab === 1" @closeModals="selectedTab = 0">
-			<div slot="contents" class="menu">
+			<div slot="contents" class="modal">
 				<div style="align-self: flex-end">
 					<button v-on:click.prevent="selectedTab = 0" class="no-border-button">
 						✖
 					</button>
 				</div>
 				<div>
-					<button v-on:click.prevent="english()" class="no-border-button">
+					<button v-on:click.prevent="english()" class="button">
 						ENGLISH
 					</button>
 				</div>
 				<div class="line-height"></div>
 				<div>
-					<button v-on:click.prevent="japanese()" class="no-border-button">
+					<button v-on:click.prevent="japanese()" class="button">
 						日本語
 					</button>
 				</div>
@@ -46,25 +46,24 @@
 			</div>
 		</modal>
 		<modal v-if="selectedTab === 3" @closeModals="selectedTab = 0">
-			<div slot="contents" class="menu">
+			<div slot="contents" class="modal">
 				<div style="align-self: flex-end">
 					<button v-on:click.prevent="selectedTab = 0" class="no-border-button">
 						✖
 					</button>
 				</div>
 				<div v-if="!isAuthenticatedUser">
-					<button v-on:click.prevent="goToLoginRegister()" class="no-border-button">
+					<button v-on:click.prevent="goToLoginRegister()" class="button">
 						{{ t('LOGIN / REGISTER') }}
 					</button>
 				</div>
 				<div v-else>
-					<button v-on:click.prevent="logout()" class="no-border-button">
+					<button v-on:click.prevent="logout()" class="button">
 						{{ t('LOGOUT') }}
 					</button>
 				</div>
-				<div class="line-height"></div>
 				<div>
-					<button v-on:click.prevent="selectedTab = 0; showQrModal = true" class="no-border-button">
+					<button v-on:click.prevent="selectedTab = 0; showQrModal = true" class="button">
 						{{t('GET QR CODES')}}
 					</button>
 				</div>
@@ -147,21 +146,12 @@
 	}
 </script>
 <style scoped>
-	.menu {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		background-color: #0b0015;
-		border: 1px solid #5300e1;
-		border-radius: 15px;
-		padding: 20px;
-		width: 80%;
-		max-height: 80%;
-		max-width: 300px;
-		z-index: 101;
-		pointer-events: auto;
-	}
 	.languageIcon {
 		height: 16px;
+	}
+	.tabs {
+		border-top: none !important;
+		border-left: none !important;
+		border-right: none !important;
 	}
 </style>
