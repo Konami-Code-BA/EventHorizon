@@ -1,13 +1,14 @@
 <template>
 	<div v-if="loaded">
 		<div class="main" v-show="!showEventModal">
-			<div>
-				<img src="@/assets/eventhorizonLogo.png" style="max-width: 200px; max-height: 200px;">
-			</div>
-			<div style="font-size: 38px; margin-bottom: 5px;">EVENT HORIZON</div>
+		<div>
+			<img src="@/assets/eventhorizonLogo.png" style="max-width: 150px; max-height: 150px; z-index: 5">
+		</div>
+		<!--div style="font-size: 38px; margin-bottom: 5px; position: fixed; top: 90px">EVENT HORIZON</div-->
 			<div style="width: 100%;">
 				<tabs :num-tabs="4" :not-buttons="[1]" :initial="selectedTab" :key="selectedTab"
-						@on-click="(arg) => { selectedTab = arg }" style="background-color: rgba(0, 0, 0, .2);">
+						@on-click="(arg) => { selectedTab = arg }"
+						class="tabs">
 					<div slot="1">
 						<span style="font-size: 15px">{{ t('EVENTS') }}:</span>
 					</div>
@@ -22,10 +23,13 @@
 					</div>
 				</tabs>
 			</div>
-			<google-map class="viewer" v-show="selectedTab==2" @openEventModal="openEventModal" :events="events"
-					:selectedEventId="selectedEventId" :key="selectedEventId" :scrip="scrip" ref="googleMap"/>
-			<events-list class="viewer" v-show="selectedTab==3" @openEventModal="openEventModal" :events="events"/>
-			<events-calendar class="viewer" v-show="selectedTab==4" @openEventModal="openEventModal" :events="events"/>
+			<events-map class="viewer" v-show="selectedTab==2" @openEventModal="openEventModal" :events="events"
+					:selectedEventId="selectedEventId" :key="selectedEventId" :scrip="scrip" ref="eventsMap"
+					:store="store"/>
+			<events-list class="viewer" v-show="selectedTab==3" @openEventModal="openEventModal" :events="events"
+					:store="store"/>
+			<events-calendar class="viewer" v-show="selectedTab==4" @openEventModal="openEventModal" :events="events"
+					:store="store"/>
 			<div style="font-size: 20px; margin-bottom: 10px;">
 				{{ t('REACH OUT TO NEW HORIZONS') }}
 			</div>
@@ -55,7 +59,7 @@
 	import store from '@/store.js'
 	import modal from '@/components/modal.vue'
 	import tabs from '@/components/tabs.vue'
-	import googleMap from '@/components/googleMap.vue'
+	import eventsMap from '@/components/eventsMap.vue'
 	import eventsCalendar from '@/components/eventsCalendar.vue'
 	import eventsList from '@/components/eventsList.vue'
 	import translations from '@/functions/translations.js'
@@ -66,7 +70,7 @@
 		components: {
 			modal,
 			tabs,
-			googleMap,
+			eventsMap,
 			eventsCalendar,
 			eventsList,
 			event,
@@ -113,11 +117,11 @@
 			closeEventModal () {
 				// after closing, it goes to the previously opened event in map. should it also scroll to previously
 				// opened event in the list and calendar?
-				this.$refs.googleMap.initMap()
+				this.$refs.eventsMap.initMap()
 				this.showEventModal = false
 			},
 			goToMap () {
-				this.$refs.googleMap.initMap()
+				this.$refs.eventsMap.initMap()
 				this.selectedTab = 2
 				this.showEventModal = false
 			},
@@ -129,7 +133,9 @@
 		width: 100%;
 		height: 100%;
 		margin-bottom: 5px;
-		border: 1px solid rgba(255, 255, 255, .1);
+		border: 2px solid rgba(255, 255, 255, .1);
+		border-bottom-left-radius: 7px;
+		border-bottom-right-radius: 7px;
 	}
 	.cookiesModal {
 		position: fixed;
@@ -145,5 +151,11 @@
 		top: 50%;
 		left: 50%;
 		transform: translate(-50%, -50%);
+	}
+	.tabs {
+		background-color: rgba(0, 0, 0, .2);
+		border-top-left-radius: 7px;
+		border-top-right-radius: 7px;
+		border-bottom: none !important;
 	}
 </style>
