@@ -157,6 +157,7 @@
 		background-color: #00b300;
 		color: white;
 		padding: 0;
+		border-color: #00b300;
 	}
 	.line-alignment {
 		display: flex;

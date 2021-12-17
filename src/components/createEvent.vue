@@ -37,14 +37,13 @@
 					description: 'description',
 					address: '〒160-0023 東京都新宿区西新宿３丁目２−9',
 					venue_name: 'venue_name',
-					date_time: new Date(),
+					date_time: new Date('2021-12-31T03:24:00'),
 					include_time: true,
-					is_private: false,
-					hosts: [387],
-					guests: [387],
-					confirmed_guests: [387],
-					interested_guests: [387],
-					invited_guests: [387],
+					is_private: true,
+					hosts: [],
+					invited: [],
+					confirmed_guests: [],
+					interested: [],
 				})
 			}
 		} // methods
