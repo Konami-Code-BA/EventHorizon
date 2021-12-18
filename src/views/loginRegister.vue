@@ -83,7 +83,7 @@
 			this.passwordHasErrors()
 			this.emailHasErrors()
 			this.$emit('endLoading')
-			functions.focusCursor('email')
+			functions.focusCursor(document, 'email')
 		},
 		watch: {
 			'passwordInput' () { this.passwordHasErrors() },
@@ -109,7 +109,7 @@
 				}
 			},
 			showButton () {
-				functions.focusCursor('password')
+				functions.focusCursor(document, 'password')
 				this.showPassword = !this.showPassword
 			},
 			async sendEmail() {
