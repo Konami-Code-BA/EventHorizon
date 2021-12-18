@@ -62,6 +62,7 @@
 						{{ t('LOGOUT') }}
 					</button>
 				</div>
+				<div class="line-height"></div>
 				<div>
 					<button v-on:click.prevent="selectedTab = 0; showQrModal = true" class="button">
 						{{t('GET QR CODES')}}
@@ -80,6 +81,7 @@
 	import qrCodeGenerator from '@/components/qrCodeGenerator.vue'
 	import translations from '@/functions/translations.js'
 	import apiFunctions from '@/functions/apiFunctions.js'
+	import functions from '@/functions/functions.js'
 	export default {
 		name: 'appHeader',
 		data () {
@@ -97,16 +99,23 @@
 		props: {
 		},
 		computed: {
-			isAuthenticatedUser () { return [1, 2].includes(store.user.groups[0]) },
+			isAuthenticatedUser () {
+				return functions.isAuthenticatedUser
+			},
 		},
 		watch: {
 			'selectedTab' () {
-				if (this.selectedTab === 2) {
+				if (this.selectedTab != 0) {  // opens a modal
+					functions.setBackButtonToCloseModal(this, window, this.closeModal)
+				} else if (this.selectedTab === 0 && !this.showQrModal) {  // closes a modal
+					functions.freeUpBackButton(this)
+				} else if (this.selectedTab === 2) {
 					this.goToEvents()
 				}
 			},
 		},
 		async mounted () {
+			this.$emit('endLoading')
 		},
 		methods: {
 			t (w) { return translations.t(w) },
@@ -122,25 +131,33 @@
 				this.selectedTab = 0
 				await apiFunctions.updateUserLanguage()
 			},
-			goToEvents () {
+			async goToEvents () {
 				this.$emit('startLoading')
 				if (this.$route.name !== 'events') {
-					this.$router.push({ name: 'events' })
+					await this.$router.push({ name: 'events' })
+					this.$emit('endLoading')
 				} else {
-					location.reload()
+					await location.reload()
 				}
-				this.selectedTab = 0
 			},
 			goToLoginRegister () {
+				this.$emit('startLoading')
 				if (this.$route.name !== 'loginRegister') {
 					this.$router.push({ name: 'loginRegister' })
 				}
 				this.selectedTab = 0
+				this.$emit('endLoading')
 			},
 			async logout () {
 				this.$emit('startLoading')
 				await apiFunctions.logout()
+				this.selectedTab = 0
 				this.goToEvents()
+			},
+			closeModal () {
+				functions.freeUpBackButton(this)
+				this.selectedTab = 0
+				this.showQrModal = false
 			},
 		}
 	}
