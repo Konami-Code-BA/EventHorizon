@@ -1,10 +1,10 @@
 <template>
 	<div id="app">
 		<div v-show="!loading" class="app">
-			<app-header @startLoading="loading=true" @endLoading="loading=false"/>
-			<router-view @startLoading="loading=true" @endLoading="loading=false" :key="$route.fullPath"
+			<app-header @startLoading="headerLoading=true" @endLoading="headerLoading=false"/>
+			<router-view @startLoading="routerLoading=true" @endLoading="routerLoading=false" :key="$route.fullPath"
 					class="router"/>
-			<app-footer @startLoading="loading=true" @endLoading="loading=false"/>
+			<app-footer @startLoading="footerLoading=true" @endLoading="footerLoading=false"/>
 		</div>
 		<div class="loading" v-show="loading"></div>
 	</div>
@@ -22,8 +22,31 @@
 		},
 		data () {
 			return {
+				headerLoading: true,
+				routerLoading: true,
+				footerLoading: true,
 				loading: true,
 			}
+		},
+		watch: {
+			'headerLoading' () {
+				this.checkLoading()
+			},
+			'routerLoading' () {
+				this.checkLoading()
+			},
+			'footerLoading' () {
+				this.checkLoading()
+			},
+		},
+		methods: {
+			checkLoading () {
+				if (this.headerLoading || this.routerLoading || this.footerLoading) {
+					this.loading = true
+				} else if (!this.headerLoading && !this.routerLoading && !this.footerLoading) {
+					this.loading = false
+				}
+			},
 		},
 	}
 </script>
@@ -108,13 +131,34 @@
 			border-radius: 15px;
 			height: 30px;
 			cursor: pointer;
-			padding: 0;
-			padding-left: 3px;
-			padding-right: 3px;
-  			text-decoration: none;
-			width: auto;
+			padding-top: 0;
+			padding-bottom: 0;
 			padding-left: 10px;
 			padding-right: 10px;
+  			text-decoration: none;
+			width: auto;
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			justify-content: center;
+			white-space: nowrap;
+		}
+		.button:disabled, .button[disabled] {
+			font-family: inherit;
+			color: #808080;  /*ffe07a*/
+			font-weight: inherit;
+			font-size: inherit;
+			background-color: transparent;  /*5300e1, 000bff*/
+			border: 2px solid #808080;  /*18002e*/
+			border-radius: 15px;
+			height: 30px;
+			cursor: pointer;
+			padding-top: 0;
+			padding-bottom: 0;
+			padding-left: 10px;
+			padding-right: 10px;
+  			text-decoration: none;
+			width: auto;
 			display: flex;
 			flex-direction: row;
 			align-items: center;
@@ -142,7 +186,6 @@
 		form {
 			display: flex;
 			flex-direction: column;
-			width: 80%;
 		}
 		.modal {
 			display: flex;
@@ -268,8 +311,8 @@
 			-o-animation: spinner 1500ms infinite linear;
 			animation: spinner 1500ms infinite linear;
 			border-radius: 0.5em;
-			-webkit-box-shadow: rgba(0, 0, 0, 0.75) 1.5em 0 0 0, rgba(0, 0, 0, 0.75) 1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) 0 1.5em 0 0, rgba(0, 0, 0, 0.75) -1.1em 1.1em 0 0, rgba(0, 0, 0, 0.5) -1.5em 0 0 0, rgba(0, 0, 0, 0.5) -1.1em -1.1em 0 0, rgba(0, 0, 0, 0.75) 0 -1.5em 0 0, rgba(0, 0, 0, 0.75) 1.1em -1.1em 0 0;
-			box-shadow: rgba(0, 0, 0, 0.75) 1.5em 0 0 0, rgba(0, 0, 0, 0.75) 1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) 0 1.5em 0 0, rgba(0, 0, 0, 0.75) -1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) -1.5em 0 0 0, rgba(0, 0, 0, 0.75) -1.1em -1.1em 0 0, rgba(0, 0, 0, 0.75) 0 -1.5em 0 0, rgba(0, 0, 0, 0.75) 1.1em -1.1em 0 0;
+			-webkit-box-shadow: rgba(255, 255, 255, .7) 1.5em 0 0 0, rgba(255, 255, 255, .7) 1.1em 1.1em 0 0, rgba(255, 255, 255, .7) 0 1.5em 0 0, rgba(255, 255, 255, .7) -1.1em 1.1em 0 0, rgba(255, 255, 255, .7) -1.5em 0 0 0, rgba(0, 0, 0, 0.5) -1.1em -1.1em 0 0, rgba(255, 255, 255, .7) 0 -1.5em 0 0, rgba(255, 255, 255, .7) 1.1em -1.1em 0 0;
+			box-shadow: rgba(255, 255, 255, .7) 1.5em 0 0 0, rgba(255, 255, 255, .7) 1.1em 1.1em 0 0, rgba(255, 255, 255, .7) 0 1.5em 0 0, rgba(255, 255, 255, .7) -1.1em 1.1em 0 0, rgba(255, 255, 255, .7) -1.5em 0 0 0, rgba(255, 255, 255, .7) -1.1em -1.1em 0 0, rgba(255, 255, 255, .7) 0 -1.5em 0 0, rgba(255, 255, 255, .7) 1.1em -1.1em 0 0;
 		}
 		/* Animation */
 		@-webkit-keyframes spinner {
