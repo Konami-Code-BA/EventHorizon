@@ -331,6 +331,10 @@ class EventsViewset(viewsets.ViewSet):
 	# who can make an event? at first only us admins right? gotta add that
 	# also gotta include changing up lat lng when returning to user who doesnt have access
 	def create(self, request):  # POST {prefix}/
+		response = eval(f"self.{request.data['command']}(request)")
+		return Response(response)
+
+	def add_event(self, request):
 		gmaps = googlemaps.Client(key=config('GOOGLE_MAPS_API_KEY'))
 		geocoded = gmaps.geocode(request.data['address'])
 		latitude = geocoded[0]['geometry']['location']['lat']
@@ -357,7 +361,16 @@ class EventsViewset(viewsets.ViewSet):
 		event.interested.set(request.data['interested'])
 		event.save()
 		serializer_data = self.serializer_class([event], many=True).data
-		return Response(serializer_data)
+		return serializer_data
+
+	def my_events(self, request):
+		invited_events = self.model.objects.filter(invited=request.user.id)
+		interested_public_events = self.model.objects.filter(Q(is_private=False) & Q(interested=request.user.id) & ~Q(invited=request.user.id))
+		interested_private_events = self.model.objects.filter(Q(is_private=True) & Q(interested=request.user.id) & ~Q(invited=request.user.id))
+		print(interested_private_events)
+		serializer_data1 = self.serializer_class(invited_events.union(interested_public_events), many=True).data
+		serializer_data2 = serializer_private(interested_private_events)
+		return serializer_data1 + serializer_data2
 
 	def partial_update(self, request, pk=None):  # PATCH {prefix}/{lookup}/
 		return Response()
@@ -368,21 +381,7 @@ class EventsViewset(viewsets.ViewSet):
 		if event in events or not event.is_private:
 			serializer_data = self.serializer_class([event], many=True).data
 		else:
-			serializer_data = [OrderedDict({
-				'id': event.id,
-				'name': event.name,
-				'address': event.postal_code,
-				'description': event.description,
-				'latitude': event.rand_latitude,
-				'longitude': event.rand_longitude,
-				'date_time': event.date_time,
-				'include_time': event.include_time,
-				'is_private': event.is_private,
-				'hosts': event.hosts.count(),
-				'invited': event.invited.count(),
-				'confirmed_guests': event.confirmed_guests.count(),
-				'interested': event.interested.count(),
-			})]
+			serializer_data = serializer_private([event])
 		return Response(serializer_data)
 
 	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
@@ -393,24 +392,8 @@ class EventsViewset(viewsets.ViewSet):
 		public_events = self.model.objects.filter(is_private=False)
 		private_events = self.model.objects.filter(Q(is_private=True) & ~Q(invited=request.user.id))
 		serializer_data1 = self.serializer_class(my_events.union(public_events), many=True).data
-		serializer_data2 = []
-		for private_event in private_events:
-			serializer_data2 += [OrderedDict({
-				'id': private_event.id,
-				'name': private_event.name,
-				'address': private_event.postal_code,
-				'description': private_event.description,
-				'latitude': private_event.rand_latitude,
-				'longitude': private_event.rand_longitude,
-				'date_time': private_event.date_time,
-				'include_time': private_event.include_time,
-				'is_private': private_event.is_private,
-				'hosts': private_event.hosts.count(),
-				'invited': private_event.invited.count(),
-				'confirmed_guests': private_event.confirmed_guests.count(),
-				'interested': private_event.interested.count(),
-			})]
-		return Response(serializer_data1+serializer_data2)
+		serializer_data2 = serializer_private(private_events)
+		return Response(serializer_data1 + serializer_data2)
 
 	def update(self, request, pk=None):  # PUT {prefix}/{lookup}/
 		return Response()
@@ -438,3 +421,24 @@ def randomize_lat_lng(address):
 	rand_value = random.random()
 	rand_longitude = float(longitude) + rand_value / outter * rand_sign
 	return postal_code, rand_latitude, rand_longitude
+
+
+def serializer_private(events):
+	serializer_data = []
+	for event in events:
+		serializer_data += [OrderedDict({
+			'id': event.id,
+			'name': event.name,
+			'address': event.postal_code,
+			'description': event.description,
+			'latitude': event.rand_latitude,
+			'longitude': event.rand_longitude,
+			'date_time': event.date_time,
+			'include_time': event.include_time,
+			'is_private': event.is_private,
+			'hosts': event.hosts.count(),
+			'invited': event.invited.count(),
+			'confirmed_guests': event.confirmed_guests.count(),
+			'interested': event.interested.count(),
+		})]
+	return serializer_data

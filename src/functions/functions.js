@@ -1,7 +1,7 @@
 import store from '@/store'
 export default {
-    focusCursor(id) {
-        setTimeout(() => { document.getElementById(id).focus() }, 200)
+    focusCursor(documentt, id) {
+        setTimeout(() => { documentt.getElementById(id).focus() }, 200)
     },
     setBackButtonToCloseModal(thiss, windoww, closeFunc) {
         thiss.$router.allowBack = false

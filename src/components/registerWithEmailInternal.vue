@@ -87,9 +87,9 @@
 		},
 		async mounted () {
 			if (this.includeDisplayName) {
-				functions.focusCursor('displayName')
+				functions.focusCursor(document, 'displayName')
 			} else {
-				functions.focusCursor('email')
+				functions.focusCursor(document, 'email')
 			}
 			this.passwordHasErrors()
 			this.password2HasErrors()
@@ -143,11 +143,11 @@
 				}
 			},
 			showButton () {
-				functions.focusCursor('password')
+				functions.focusCursor(document, 'password')
 				this.showPassword = !this.showPassword
 			},
 			showButton2 () {
-				functions.focusCursor('password2')
+				functions.focusCursor(document, 'password2')
 				this.showPassword2 = !this.showPassword2
 			},
 			passwordHasErrors() {
