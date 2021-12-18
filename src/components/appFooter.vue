@@ -48,6 +48,7 @@
 		computed: {
 		},
 		mounted () {
+			this.$emit('endLoading')
 		},
 		watch: {
 			'$route' () {

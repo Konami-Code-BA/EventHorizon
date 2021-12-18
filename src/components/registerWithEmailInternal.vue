@@ -1,6 +1,6 @@
 <template>
-	<div class="main">
-		<form v-on:keyup.enter="registerWithEmail()">
+	<div class="main" style="min-width: 300px;">
+		<form v-on:keyup.enter="registerWithEmail()" :class="{'modal-style' : modalStyle}">
 			<div v-if="includeDisplayName">
 				<input :placeholder="t('DISPLAY NAME')" v-model="displayNameInput" type="text" id="displayName"
 						autocorrect="off" autocapitalize="none" style="width: 100%"/>
@@ -81,7 +81,9 @@
 			}
 		},
 		props: {
-			includeDisplayName: { default: true }
+			includeDisplayName: { default: true },
+			next: { default: null },
+			modalStyle: { default: false },
 		},
 		async mounted () {
 			if (this.includeDisplayName) {
@@ -112,7 +114,6 @@
 				}
 				this.showPassword = false
 				this.showPassword2 = false
-				//this.$emit('closeModal')
 				this.$emit('startLoading')
 				let error = null
 				if (this.includeDisplayName) {
@@ -121,9 +122,16 @@
 				} else {
 					error = await apiFunctions.registerWithEmail(this.emailInput, this.passwordInput)
 				}
-				this.$emit('endLoading')
 				if (!error) {
-					this.$router.push({ name: 'events' })
+					if (this.next) {
+						this.$router.push({ name: this.next })
+						this.$emit('endLoading')
+						return
+					} else {
+						this.$emit('closeModals')
+						this.$emit('endLoading')
+						return
+					}
 				} else if (error == 'Incorrect password for this email') {
 					this.passwordError = error
 					this.showError = true
@@ -236,4 +244,10 @@
 	} // export
 </script>
 <style scoped>
+	.button {
+		width: 80%;
+	}
+	.modal-style {
+		width: 80%;
+	}
 </style>

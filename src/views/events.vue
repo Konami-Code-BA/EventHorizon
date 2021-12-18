@@ -1,10 +1,10 @@
 <template>
 	<div v-if="loaded">
 		<div class="main" v-show="!showEventModal">
-		<div>
-			<img src="@/assets/eventhorizonLogo.png" style="max-width: 150px; max-height: 150px; z-index: 5">
-		</div>
-		<!--div style="font-size: 38px; margin-bottom: 5px; position: fixed; top: 90px">EVENT HORIZON</div-->
+			<div>
+				<img src="@/assets/eventhorizonLogo.png" style="max-width: 150px; max-height: 150px; z-index: 5">
+			</div>
+			<!--div style="font-size: 38px; margin-bottom: 5px; position: fixed; top: 90px">EVENT HORIZON</div-->
 			<div style="width: 100%;">
 				<tabs :num-tabs="4" :not-buttons="[1]" :initial="selectedTab" :key="selectedTab"
 						@on-click="(arg) => { selectedTab = arg }"
@@ -23,15 +23,18 @@
 					</div>
 				</tabs>
 			</div>
-			<events-map class="viewer" v-show="selectedTab==2" @openEventModal="openEventModal" :events="events"
+			<events-map class="viewer" v-show="selectedTab==2" @openEventModal="openEventModal()" :events="events"
 					:selectedEventId="selectedEventId" :key="selectedEventId" :scrip="scrip" ref="eventsMap"
 					:store="store"/>
-			<events-list class="viewer" v-show="selectedTab==3" @openEventModal="openEventModal" :events="events"
+			<events-list class="viewer" v-show="selectedTab==3" @openEventModal="openEventModal()" :events="events"
 					:store="store"/>
-			<events-calendar class="viewer" v-show="selectedTab==4" @openEventModal="openEventModal" :events="events"
+			<events-calendar class="viewer" v-show="selectedTab==4" @openEventModal="openEventModal()" :events="events"
 					:store="store"/>
-			<div style="font-size: 20px; margin-bottom: 10px;">
+			<div style="font-size: 20px; margin-bottom: 10px;" v-if="!isAuthenticatedUser">
 				{{ t('REACH OUT TO NEW HORIZONS') }}
+			</div>
+			<div style="font-size: 20px; margin-bottom: 10px;" v-else>
+				{{ t('WELCOME') }}&nbsp;{{ store.user.display_name }}
 			</div>
 		</div>
 		<!--modal v-if="showCookiesModal" @closeModals="closeCookiesModal()">
@@ -52,7 +55,7 @@
 				</div><br><br>
 			</div>
 		</modal-->
-		<event v-if="showEventModal" @goToMap="goToMap()" :id="selectedEventId" @closeModals="closeEventModal"/>
+		<event v-if="showEventModal" @goToMap="goToMap()" :id="selectedEventId" @closeModals="closeEventModal()"/>
 	</div>
 </template>
 <script>
@@ -64,6 +67,7 @@
 	import eventsList from '@/components/eventsList.vue'
 	import translations from '@/functions/translations.js'
 	import apiFunctions from '@/functions/apiFunctions.js'
+	import functions from '@/functions/functions.js'
 	import event from '@/components/event.vue'
 	export default {
 		name: 'events',
@@ -87,12 +91,18 @@
 				scrip: document.createElement('script'),
 			}
 		},
+		computed : {
+			isAuthenticatedUser () { return functions.isAuthenticatedUser }
+		},
 		watch: {
 			'showEventModal' () {
 				if (!this.showEventModal && this.$route.params.id) {
 					this.$router.push({ name: 'events' })
 				}
 			},
+			'loaded' () {
+				this.$emit('endLoading')
+			}
 		},
 		async created () {
 			this.events = await apiFunctions.getAllEvents()
@@ -100,6 +110,7 @@
 			this.scrip.src = `https://maps.googleapis.com/maps/api/js?v=weekly&key=${apiKey}&callback=initMap`
 			this.scrip.async = true
 			this.loaded = true
+			this.$emit('endLoading')
 		},
 		mounted () {
 			this.$emit('endLoading')
@@ -111,12 +122,14 @@
 				await apiFunctions.updateUserAlerts('Show Cookies')
 			},
 			openEventModal (id) {
+				functions.setBackButtonToCloseModal(this, window, this.closeEventModal)
 				this.selectedEventId = id
 				this.showEventModal = true
 			},
 			closeEventModal () {
 				// after closing, it goes to the previously opened event in map. should it also scroll to previously
 				// opened event in the list and calendar?
+				functions.freeUpBackButton(this)
 				this.$refs.eventsMap.initMap()
 				this.showEventModal = false
 			},
