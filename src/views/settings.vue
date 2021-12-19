@@ -65,7 +65,7 @@
 	import modal from '@/components/modal.vue'
 	import translations from '@/functions/translations.js'
 	import apiFunctions from '@/functions/apiFunctions.js'
-	import functions from '@/functions/functions.js'
+	import f from '@/functions/functions.js'
 	export default {
 		name: 'settings',
 		components: {
@@ -94,11 +94,11 @@
 		methods: {
 			t (w) { return translations.t(w) },
 			openAddEmailModal () {
-				functions.setBackButtonToCloseModal(this, window, this.closeAddEmailModal)
+				f.setBackButtonToCloseModal(this, window, this.closeAddEmailModal)
 				this.showAddEmailModal = true
 			},
 			closeAddEmailModal () {
-				functions.freeUpBackButton(this)
+				f.freeUpBackButton(this)
 				this.do_get_emails = this.store.user.do_get_emails
 				this.showAddEmailModal = false
 			},

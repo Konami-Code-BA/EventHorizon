@@ -23,7 +23,7 @@
 	import store from '@/store.js'
 	import translations from '@/functions/translations.js'
 	import apiFunctions from '@/functions/apiFunctions.js'
-	import functions from '@/functions/functions.js'
+	import f from '@/functions/functions.js'
 	export default {
 		name: 'loginRegister',
 		components: {

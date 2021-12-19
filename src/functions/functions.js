@@ -18,4 +18,30 @@ export default {
     get isAdmin() {
         return [1].includes(store.user.groups[0])
     },
+    isInvitedGuest(event) {
+        if (Array.isArray(event.invited)) {
+            return event.invited.includes(store.user.id)
+        } else {
+            return false
+        }
+    },
+    isHost(event) {
+        if (Array.isArray(event.hosts)) {
+            return event.hosts.includes(store.user.id)
+        } else {
+            return false
+        }
+    },
+    sortEventsByDate(events) {
+        let sorted_events = events.sort((a, b) => {
+            if (Date(a.date_time) > Date(b.date_time)) {
+                return 1
+            } else if (Date(a.date_time) < Date(b.date_time)) {
+                return -1
+            } else {
+                return 0
+            }
+        })
+        return sorted_events
+    },
 }

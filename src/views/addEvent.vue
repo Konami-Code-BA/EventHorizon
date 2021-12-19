@@ -17,7 +17,7 @@
 	import modal from '@/components/modal.vue'
 	import translations from '@/functions/translations.js'
 	import apiFunctions from '@/functions/apiFunctions.js'
-	import functions from '@/functions/functions.js'
+	import f from '@/functions/functions.js'
 	export default {
 		name: 'addEvent',
 		components: {
@@ -31,7 +31,7 @@
 		},
 		computed: {
 			isAdmin () {
-				return functions.isAdmin
+				return f.isAdmin
 			},
 		},
 		watch: {

@@ -2,7 +2,7 @@
 	<div class="main" v-if="event">
 		<div class="flex-row" style="align-items: center; justify-content: space-between; height: 60px;">
 			<div style="width: 16px"></div>
-			<h2 style="text-align: center">{{event['name']}}</h2>
+			<h2 style="text-align: center">{{event.name}}</h2>
 			<button v-on:click.prevent="$emit('closeModals')" class="no-border-button" style="align-self: flex-start">
 				✖
 			</button>
@@ -10,22 +10,22 @@
 		</div>
 		<div class="flex-table">
 			<div style="align-self: flex-end">
-				<small>{{ event['is_private'] ? 'PRIVATE EVENT' : 'PUBLIC EVENT' }}</small>
+				<small>{{ event.is_private ? 'PRIVATE EVENT' : 'PUBLIC EVENT' }}</small>
 			</div>
 			<br>
 			<div>
 				DESCRIPTION
 			</div>
 			<div style="align-self: center">
-				{{event['description']}}
+				{{ event.description }}
 			</div>
-			<div v-if="!event['is_private'] || Array.isArray(event['invited'])" class="flex-table">
+			<div v-if="!event.is_private || this.isInvited" class="flex-table">
 				<br>
 				<div>
 					VENUE
 				</div>
 				<div style="align-self: center">
-					{{event['venue_name']}}
+					{{ event.venue_name }}
 				</div>
 			</div>
 			<br>
@@ -33,8 +33,8 @@
 				ADDRESS
 			</div>
 			<div style="align-self: center">
-				<button v-on:click.prevent="$emit('goToMap')" class="button" style="align-self: center">
-					<small>{{ event['address'] }}</small>
+				<button v-on:click.prevent="$emit('goToEvents')" class="button" style="align-self: center">
+					<small>{{ event.address }}</small>
 				</button>
 			</div>
 			<br>
@@ -43,7 +43,7 @@
 					DATE
 				</div>
 				<div>
-					<button v-on:click.prevent="$emit('goToMap')" class="button" style="align-self: center">
+					<button v-on:click.prevent="" class="button" style="align-self: center">
 						{{ getDate() }}
 					</button>
 				</div>
@@ -53,10 +53,11 @@
 				<div style="align-self: center">
 					HOSTS
 				</div>
-				<button v-on:click.prevent="$emit('goToMap')" class="button" style="align-self: center">
-					<div v-if="Array.isArray(event['invited'])" class="flex-row" style="align-self: center">
-						{{ event['hosts'].length }}
-						<div v-if="event['hosts'].length > 1">
+				<button v-on:click.prevent="" class="button" style="align-self: center"
+						:disabled="!isInvited && event.is_private">
+					<div v-if="this.isInvited || !event.is_private" class="flex-row" style="align-self: center">
+						{{ event.hosts.length }}
+						<div v-if="event.hosts.length > 1">
 							&nbsp;people
 						</div>
 						<div v-else>
@@ -64,8 +65,8 @@
 						</div>
 					</div>
 					<div v-else class="flex-row" style="align-self: center">
-						{{ event['hosts'] }}
-						<div v-if="event['hosts'] > 1">
+						{{ event.hosts }}
+						<div v-if="event.hosts > 1">
 							&nbsp;people
 						</div>
 						<div v-else>
@@ -78,10 +79,11 @@
 				<div style="align-self: center">
 					INVITED
 				</div>
-				<button v-on:click.prevent="$emit('goToMap')" class="button" style="align-self: center">
-					<div v-if="Array.isArray(event['invited'])" class="flex-row" style="align-self: center">
-						{{ event['invited'].length }}
-						<div v-if="event['invited'].length > 1">
+				<button v-on:click.prevent="" class="button" style="align-self: center"
+						:disabled="!isInvited && event.is_private">
+					<div v-if="this.isInvited || !event.is_private" class="flex-row" style="align-self: center">
+						{{ event.invited.length }}
+						<div v-if="event.invited.length > 1">
 							&nbsp;people
 						</div>
 						<div v-else>
@@ -89,8 +91,8 @@
 						</div>
 					</div>
 					<div v-else class="flex-row" style="align-self: center">
-						{{ event['invited'] }}
-						<div v-if="event['invited'] > 1">
+						{{ event.invited }}
+						<div v-if="event.invited > 1">
 							&nbsp;people
 						</div>
 						<div v-else>
@@ -103,10 +105,11 @@
 				<div style="align-self: center">
 					CONFIRMED GUESTS
 				</div>
-				<button v-on:click.prevent="$emit('goToMap')" class="button" style="align-self: center">
-					<div v-if="Array.isArray(event['invited'])" class="flex-row" style="align-self: center">
-						{{ event['confirmed_guests'].length }}
-						<div v-if="event['confirmed_guests'].length > 1">
+				<button v-on:click.prevent="" class="button" style="align-self: center"
+						:disabled="!isInvited && event.is_private">
+					<div v-if="this.isInvited || !event.is_private" class="flex-row" style="align-self: center">
+						{{ event.confirmed_guests.length }}
+						<div v-if="event.confirmed_guests.length > 1">
 							&nbsp;people
 						</div>
 						<div v-else>
@@ -114,8 +117,8 @@
 						</div>
 					</div>
 					<div v-else class="flex-row" style="align-self: center">
-						{{ event['confirmed_guests'] }}
-						<div v-if="event['confirmed_guests'] > 1">
+						{{ event.confirmed_guests }}
+						<div v-if="event.confirmed_guests > 1">
 							&nbsp;people
 						</div>
 						<div v-else>
@@ -128,10 +131,11 @@
 				<div style="align-self: center">
 					INTERESTED
 				</div>
-				<button v-on:click.prevent="$emit('goToMap')" class="button" style="align-self: center">
-					<div v-if="Array.isArray(event['invited'])" class="flex-row" style="align-self: center">
-						{{ event['interested'].length }}
-						<div v-if="0 >= event['interested'].length > 1">
+				<button v-on:click.prevent="" class="button" style="align-self: center"
+						:disabled="!isInvited && event.is_private">
+					<div v-if="this.isInvited || !event.is_private" class="flex-row" style="align-self: center">
+						{{ event.interested.length }}
+						<div v-if="0 >= event.interested.length > 1">
 							&nbsp;people
 						</div>
 						<div v-else>
@@ -139,8 +143,8 @@
 						</div>
 					</div>
 					<div v-else class="flex-row" style="align-self: center">
-						{{ event['interested'] }}
-						<div v-if="event['interested'] > 1">
+						{{ event.interested }}
+						<div v-if="event.interested > 1">
 							&nbsp;people
 						</div>
 						<div v-else>
@@ -156,7 +160,7 @@
 	import store from '@/store.js'
 	import translations from '@/functions/translations.js'
 	import apiFunctions from '@/functions/apiFunctions.js'
-	import functions from '@/functions/functions.js'
+	import f from '@/functions/functions.js'
 	export default {
 		name: 'event',
 		components: {
@@ -165,31 +169,32 @@
 			return {
 				store: store,
 				event: null,
-				eventId: null,
+				isInvited: null,
 			}
 		},
 		props: {
-			id: {},
+			eventId: {},
+		},
+		computed: {
 		},
 		async mounted () {
-			if (this.$route.params.id) {
-				this.eventId = this.$route.params.id
-			} else {
-				this.eventId = this.id
-			}
 			this.event = await apiFunctions.getEvent(this.eventId)
+			this.isInvited = this.isInvitedGuest(this.event)
 			this.$emit('endLoading')
 		},
 		methods: {
 			t (w) { return translations.t(w) },
 			getDate () {
-				let date_time = this.event['date_time'].split('T')
+				let date_time = this.event.date_time.split('T')
 				let date = date_time[0]
 				let time = date_time[1]
 				time = time.split(':')
 				time = time[0] + ':' + time[1]
 				return date + '\xa0\xa0-\xa0\xa0' + time
-			}
+			},
+			isInvitedGuest (event) {
+				return f.isInvitedGuest(event)
+			},
 		} // methods
 	} // export
 </script>

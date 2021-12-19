@@ -58,7 +58,7 @@
 	import store from '@/store.js'
 	import translations from '@/functions/translations.js'
 	import apiFunctions from '@/functions/apiFunctions.js'
-	import functions from '@/functions/functions.js'
+	import f from '@/functions/functions.js'
 	export default {
 		name: 'registerWithEmailInternal',
 		components: {
@@ -87,9 +87,9 @@
 		},
 		async mounted () {
 			if (this.includeDisplayName) {
-				functions.focusCursor(document, 'displayName')
+				f.focusCursor(document, 'displayName')
 			} else {
-				functions.focusCursor(document, 'email')
+				f.focusCursor(document, 'email')
 			}
 			this.passwordHasErrors()
 			this.password2HasErrors()
@@ -143,11 +143,11 @@
 				}
 			},
 			showButton () {
-				functions.focusCursor(document, 'password')
+				f.focusCursor(document, 'password')
 				this.showPassword = !this.showPassword
 			},
 			showButton2 () {
-				functions.focusCursor(document, 'password2')
+				f.focusCursor(document, 'password2')
 				this.showPassword2 = !this.showPassword2
 			},
 			passwordHasErrors() {
