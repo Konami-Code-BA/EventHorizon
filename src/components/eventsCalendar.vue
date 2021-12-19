@@ -73,8 +73,8 @@
 			<div style="height: 87%">
 				<ul v-if="getEventsFromDate(selectedDate).length > 0" style="list-style-type: none">
 					<li v-for="event in getEventsFromDate(selectedDate)">
-						<button v-on:click.prevent="$emit('openEventModal', event['id'])" class="no-border-button">
-							{{ event['name'] }}
+						<button v-on:click.prevent="$emit('openEventModal', event.id)" class="no-border-button">
+							{{ event.name }}
 						</button>
 					</li>
 				</ul>
@@ -107,6 +107,7 @@
 		props: {
 			events: { default: null },
 			store: { default: null },
+			startingAt: { default: null },
 		},
 		computed: {
 			today () {
@@ -125,7 +126,7 @@
 			t (w) { return translations.t(w) },
 			getAllEvents () {
 				for ( let i = 0; i < this.events.length; i++) {
-					let dateTime = new Date(this.events[i]['date_time'])
+					let dateTime = new Date(this.events[i].date_time)
 					let date = new Date(
 						dateTime.getYear() - 100 + 2000, dateTime.getMonth(), dateTime.getDate(), 0, 0, 0, 0
 					).getTime()

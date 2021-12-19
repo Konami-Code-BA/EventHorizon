@@ -14,21 +14,30 @@
 			</tabs>
 		</div>
 		<div class="viewer">
-			<div v-for="item in list">
-				{{ item.name }}
+			<div class="list">
+				<div v-for="item in list">
+					<button v-on:click.prevent="$emit('openEventModal', item.id)" class="no-border-button"
+							style="text-align: left; white-space: nowrap">
+						{{item.date_time.split('T')[0]}}: {{ item.name }}
+					</button>
+				</div>
 			</div>
 		</div>
+		<event v-if="showEventModal" @goToMap="goToMap()" :id="selectedEventId" @closeModals="closeEventModal()"/>
 	</div>
 </template>
 <script>
 	import store from '@/store.js'
 	import translations from '@/functions/translations.js'
 	import apiFunctions from '@/functions/apiFunctions.js'
+	import f from '@/functions/functions.js'
 	import tabs from '@/components/tabs.vue'
+	import event from '@/components/event.vue'
 	export default {
 		name: 'profile',
 		components: {
 			tabs,
+			event,
 		},
 		watch: {
 			'selectedTab' () {
@@ -46,6 +55,9 @@
 				hosting: [],
 				guest: [],
 				list: [],
+				sorted_events: [],
+				selectedEventId: null,
+				showEventModal: false,
 			}
 		},
 		async mounted () {
@@ -58,13 +70,35 @@
 				this.$emit('startLoading')
 				let allEvents = await apiFunctions.getMyEvents()
 				for (let i = 0; i < allEvents.length; i++) {
-					if (Array.isArray(allEvents[i]['hosts']) && allEvents[i]['hosts'].includes(this.store.user.id)) {
+					if (this.isHost(allEvents[i])) {
 						this.hosting.push(allEvents[i])
 					} else {
 						this.guest.push(allEvents[i])
 					}
 				}
+				this.guest = this.sortEventsByDate(this.guest)
+				this.hosting = this.sortEventsByDate(this.hosting)
 				this.list = this.guest
+			},
+			sortEventsByDate (events) {
+				return f.sortEventsByDate(events)
+			},
+			openEventModal (id) {
+				f.setBackButtonToCloseModal(this, window, this.closeEventModal)
+				this.selectedEventId = id
+				this.showEventModal = true
+			},
+			closeEventModal () {
+				// after closing, it goes to the previously opened event in map. should it also scroll to previously
+				// opened event in the list and calendar?
+				f.freeUpBackButton(this)
+				this.showEventModal = false
+			},
+			isHost (event) {
+				return f.isHost(event)
+			},
+			goToMap () {
+				1
 			},
 		} // methods
 	} // export
@@ -83,5 +117,12 @@
 		border-top-left-radius: 7px;
 		border-top-right-radius: 7px;
 		border-bottom: none !important;
+	}
+	.list {
+		display: flex;
+		flex-direction: column;
+		overflow-y: scroll;
+		overflow-x: hidden;
+		align-items: flex-start;
 	}
 </style>

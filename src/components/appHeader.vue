@@ -81,7 +81,7 @@
 	import qrCodeGenerator from '@/components/qrCodeGenerator.vue'
 	import translations from '@/functions/translations.js'
 	import apiFunctions from '@/functions/apiFunctions.js'
-	import functions from '@/functions/functions.js'
+	import f from '@/functions/functions.js'
 	export default {
 		name: 'appHeader',
 		data () {
@@ -100,15 +100,15 @@
 		},
 		computed: {
 			isAuthenticatedUser () {
-				return functions.isAuthenticatedUser
+				return f.isAuthenticatedUser
 			},
 		},
 		watch: {
 			'selectedTab' () {
 				if (this.selectedTab != 0) {  // opens a modal
-					functions.setBackButtonToCloseModal(this, window, this.closeModal)
+					f.setBackButtonToCloseModal(this, window, this.closeModal)
 				} else if (this.selectedTab === 0 && !this.showQrModal) {  // closes a modal
-					functions.freeUpBackButton(this)
+					f.freeUpBackButton(this)
 				} else if (this.selectedTab === 2) {
 					this.goToEvents()
 				}
@@ -155,7 +155,7 @@
 				this.goToEvents()
 			},
 			closeModal () {
-				functions.freeUpBackButton(this)
+				f.freeUpBackButton(this)
 				this.selectedTab = 0
 				this.showQrModal = false
 			},

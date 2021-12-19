@@ -23,13 +23,13 @@
 					</div>
 				</tabs>
 			</div>
-			<events-map class="viewer" v-show="selectedTab==2" @openEventModal="openEventModal()" :events="events"
+			<events-map class="viewer" v-show="selectedTab==2" @openEventModal="openEventModal" :events="events"
 					:selectedEventId="selectedEventId" :key="selectedEventId" :scrip="scrip" ref="eventsMap"
 					:store="store"/>
-			<events-list class="viewer" v-show="selectedTab==3" @openEventModal="openEventModal()" :events="events"
-					:store="store"/>
-			<events-calendar class="viewer" v-show="selectedTab==4" @openEventModal="openEventModal()" :events="events"
-					:store="store"/>
+			<events-list class="viewer" v-show="selectedTab==3" @openEventModal="openEventModal" :events="events"
+					:store="store" :startingAt="selectedEventId" :key="selectedEventId+'list'"/>
+			<events-calendar class="viewer" v-show="selectedTab==4" @openEventModal="openEventModal" :events="events"
+					:store="store" :startingAt="selectedEventId"/>
 			<div style="font-size: 20px; margin-bottom: 10px;" v-if="!isAuthenticatedUser">
 				{{ t('REACH OUT TO NEW HORIZONS') }}
 			</div>
@@ -55,7 +55,7 @@
 				</div><br><br>
 			</div>
 		</modal-->
-		<event v-if="showEventModal" @goToMap="goToMap()" :id="selectedEventId" @closeModals="closeEventModal()"/>
+		<event v-if="showEventModal" @goToEvents="goToEvents()" :eventId="selectedEventId" @closeModals="closeEventModal()"/>
 	</div>
 </template>
 <script>
@@ -67,7 +67,7 @@
 	import eventsList from '@/components/eventsList.vue'
 	import translations from '@/functions/translations.js'
 	import apiFunctions from '@/functions/apiFunctions.js'
-	import functions from '@/functions/functions.js'
+	import f from '@/functions/functions.js'
 	import event from '@/components/event.vue'
 	export default {
 		name: 'events',
@@ -85,14 +85,14 @@
 				showCookiesModal: store.user.alerts.includes(1),
 				selectedTab: 2,
 				showEventModal: Boolean(this.$route.params.id),
-				selectedEventId: null,
+				selectedEventId: this.$route.params.id,
 				events: null,
 				loaded: false,
 				scrip: document.createElement('script'),
 			}
 		},
 		computed : {
-			isAuthenticatedUser () { return functions.isAuthenticatedUser }
+			isAuthenticatedUser () { return f.isAuthenticatedUser }
 		},
 		watch: {
 			'showEventModal' () {
@@ -110,10 +110,8 @@
 			this.scrip.src = `https://maps.googleapis.com/maps/api/js?v=weekly&key=${apiKey}&callback=initMap`
 			this.scrip.async = true
 			this.loaded = true
-			this.$emit('endLoading')
 		},
 		mounted () {
-			this.$emit('endLoading')
 		},
 		methods: {
 			t (w) { return translations.t(w) },
@@ -122,21 +120,24 @@
 				await apiFunctions.updateUserAlerts('Show Cookies')
 			},
 			openEventModal (id) {
-				functions.setBackButtonToCloseModal(this, window, this.closeEventModal)
+				f.setBackButtonToCloseModal(this, window, this.closeEventModal)
 				this.selectedEventId = id
 				this.showEventModal = true
 			},
 			closeEventModal () {
 				// after closing, it goes to the previously opened event in map. should it also scroll to previously
 				// opened event in the list and calendar?
-				functions.freeUpBackButton(this)
+				f.freeUpBackButton(this)
 				this.$refs.eventsMap.initMap()
 				this.showEventModal = false
 			},
-			goToMap () {
+			goToEvents () {
 				this.$refs.eventsMap.initMap()
 				this.selectedTab = 2
 				this.showEventModal = false
+			},
+			goToCalendar () {
+
 			},
 		} // methods
 	} // export

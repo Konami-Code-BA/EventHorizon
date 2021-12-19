@@ -61,7 +61,7 @@
 	import store from '@/store.js'
 	import translations from '@/functions/translations.js'
 	import apiFunctions from '@/functions/apiFunctions.js'
-	import functions from '@/functions/functions.js'
+	import f from '@/functions/functions.js'
 	export default {
 		name: 'loginRegister',
 		components: {
@@ -83,7 +83,7 @@
 			this.passwordHasErrors()
 			this.emailHasErrors()
 			this.$emit('endLoading')
-			functions.focusCursor(document, 'email')
+			f.focusCursor(document, 'email')
 		},
 		watch: {
 			'passwordInput' () { this.passwordHasErrors() },
@@ -109,7 +109,7 @@
 				}
 			},
 			showButton () {
-				functions.focusCursor(document, 'password')
+				f.focusCursor(document, 'password')
 				this.showPassword = !this.showPassword
 			},
 			async sendEmail() {

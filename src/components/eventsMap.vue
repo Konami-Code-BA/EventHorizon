@@ -4,6 +4,7 @@
 <script>
 	import translations from '@/functions/translations.js'
 	import apiFunctions from '@/functions/apiFunctions.js'
+	import f from '@/functions/functions.js'
 	export default {
 		name: 'eventsMap',
 		data () {
@@ -43,7 +44,7 @@
 				let markers = {}
 				let infowindowContents = []
 				for (let i = 0; i < this.events.length; i++) {
-					let dateTime = Date.parse(this.events[i]['date_time'])
+					let dateTime = Date.parse(this.events[i].date_time)
 					if (dateTime < Date.now()) {
 						this.events.splice(i, 1)
 						i--
@@ -52,12 +53,12 @@
 				if (this.events.length != 0) {
 					for (let i = 0; i < this.events.length; i++) {
 						let icon = 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
-						if (this.events[i]['is_private'] && !Array.isArray(this.events[i]['invited'])) {
+						if (this.events[i].is_private && !this.isInvitedGuest(this.events[i])) {
 							icon = 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
 						}
 						infowindowContents.push(`
 							<button
-								onclick="openEventModal(${this.events[i]['id']})"
+								onclick="openEventModal(${this.events[i].id})"
 								style="
 									text-decoration: none;
 									color: blue;
@@ -69,19 +70,19 @@
 									outline: none;
 								"
 							>
-								${this.events[i]['name']}
+								${this.events[i].name}
 							</button>
 						`)
 						let position = new google.maps.LatLng(
-							this.events[i]['latitude'],
-							this.events[i]['longitude']
+							this.events[i].latitude,
+							this.events[i].longitude
 						)
 						let marker = new google.maps.Marker({
 							position: position,
 							map: map,
 							icon: icon
 						})
-						markers[this.events[i]['id']] = marker
+						markers[this.events[i].id] = marker
 						google.maps.event.addListener(marker, 'click', function() {
 							infowindow.close()
 							infowindow.setContent(infowindowContents[i])
@@ -138,6 +139,9 @@
 			},
 			openEventModal (id) {
 				this.$emit('openEventModal', id)
+			},
+			isInvitedGuest (event) {
+				return f.isInvitedGuest(event)
 			},
 		}
 	}
