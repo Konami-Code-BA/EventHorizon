@@ -1,19 +1,16 @@
 <template>
 	<div>
 		<div class="main">
-			<div>
-				<h1>{{ t('SETTINGS') }}</h1>
-			</div>
-			<div class="dual-set">
-				<div>
-					<button class="no-border-button" v-on:click.prevent="do_get_emails=!do_get_emails">
-						<div style="font-size: 18px;" v-if="store.user.email === ''">{{ t('ADD EMAIL ADDRESS') }}&nbsp;</div>
-						<div style="font-size: 18px;" v-if="store.user.email !== ''">{{ t('GET EMAILS') }}&nbsp;</div>
-					</button>
-				</div>
-				<div>
-					<input type="checkbox" v-if="store.user.email !== ''" class="checkbox" v-model="do_get_emails"/>
-				</div>
+			<div style="font-size: 36px;">{{ t('SETTINGS') }}</div>
+			<div class="line-height"></div>
+			<button class="button" v-if="store.user.email === ''" v-on:click.prevent="openAddEmailModal()">
+				{{ t('ADD EMAIL ADDRESS') }}
+			</button>
+			<div v-else class="dual-set">
+				<button class="button" style="width: 100%" v-on:click.prevent="do_get_emails=!do_get_emails">
+					{{ t('GET EMAILS') }}&nbsp;
+				</button>
+				<input type="checkbox" class="checkbox" v-model="do_get_emails"/>
 			</div>
 			<div class="line-height"></div>
 			<button v-on:click.prevent="loginByLine()" class="button line-coloring">
@@ -31,9 +28,21 @@
 			<!--div>
 				<h2>{{ t('CHANGE PASSWORD') }}</h2>
 			</div-->
+			<!--a href="https://lin.ee/UeSvNxR" class="line-coloring">
+				<div class="line-button">
+					<div class="line-alignment">
+						<div>
+							<img src="@/assets/line.png" class="line-img">
+						</div>
+						<div style="white-space: nowrap">
+							ADD FRIEND
+						</div>
+					</div>
+				</div>
+			</a-->
 		</div>
 		<modal v-show="showAddEmailModal" @closeModals="closeAddEmailModal()">
-			<div slot="contents" class="addEmailModal">
+			<div slot="contents" class="modal">
 				<div style="align-self: flex-end">
 					<button v-on:click.prevent="closeAddEmailModal()" class="no-border-button">
 						✖
@@ -43,6 +52,8 @@
 					@startLoading="$emit('startLoading')"
 					@endLoading="$emit('endLoading')"
 					:includeDisplayName="false"
+					@closeModals="closeAddEmailModal()"
+					:modalStyle="true"
 				/>
 			</div>
 		</modal>
@@ -50,42 +61,29 @@
 </template>
 <script>
 	import store from '@/store.js'
-	import appHeader from '@/components/appHeader.vue'
 	import registerWithEmailInternal from '@/components/registerWithEmailInternal.vue'
 	import modal from '@/components/modal.vue'
 	import translations from '@/functions/translations.js'
 	import apiFunctions from '@/functions/apiFunctions.js'
-	import functions from '@/functions/functions.js'
+	import f from '@/functions/functions.js'
 	export default {
 		name: 'settings',
 		components: {
-			appHeader,
 			modal,
 			registerWithEmailInternal,
 		},
 		data () {
 			return {
 				store: store,
+				showAddEmailModal: false,
 				do_get_emails: store.user.do_get_emails,
 				showAddEmailModal: false,
 				stateCookie: JSON.parse('{"' + this.replaceAll(this.replaceAll(document.cookie, '=', '": "'), '; ', '", "') + '"}')['state'],
 			}
 		},
 		watch: {
-			'do_get_emails' () {  // if do_get_emails changes
-				if (this.do_get_emails) {  // if true, they want to get emails
-					if (this.store.user.email !== '') {  // if user has an email set
-						this.store.user.do_get_emails = true  // change the stored user's do_get_emails setting to true
-					} else {  // if the user has no email set
-						this.showAddEmailModal = true  // open up the AddEmailModal
-						// if they save a new email, it will save a new stored user its do_get_emails
-						// if they don't save a new email, it will not save a new stored user or its do_get_emails
-					}
-				} else {  // if false, they don't want to get emails
-					this.store.user.do_get_emails = false  // change the stored user's do_get_emails setting to false
-				}
-			},
-			async 'store.user.do_get_emails' () {  // if store.user.do_get_emails changes, update it in the DB
+			async 'do_get_emails' () {  // if do_get_emails changes, update it in the DB
+				this.store.user.do_get_emails = this.do_get_emails
 				await apiFunctions.updateUserDoGetEmails()  // update it in the DB
 			},
 		},
@@ -95,9 +93,14 @@
 		},
 		methods: {
 			t (w) { return translations.t(w) },
+			openAddEmailModal () {
+				f.setBackButtonToCloseModal(this, window, this.closeAddEmailModal)
+				this.showAddEmailModal = true
+			},
 			closeAddEmailModal () {
-				this.showAddEmailModal = false
+				f.freeUpBackButton(this)
 				this.do_get_emails = this.store.user.do_get_emails
+				this.showAddEmailModal = false
 			},
 			replaceAll (str, match, replace) {
 				return str.replace(new RegExp(match, 'g'), () => replace);
@@ -120,7 +123,6 @@
 					this.$emit('startLoading')
 					await apiFunctions.lineNewDevice(this.$route.query.code, 'settings')
 					this.$emit('endLoading')
-					this.$router.push({ name: 'events' })
 				}
 			}
 		} // methods
@@ -128,35 +130,25 @@
 </script>
 <style scoped>
 	.dual-set {
-		height: 24px;
 		display: flex;
 		flex-direction: row;
-		align-self: flex-start;
-		align-items: flex-end;
+		align-self: center;
+		align-items: center;
+		justify-content: center;
 		padding: 0;
+		width: 80%;
 	}
 	.checkbox {
+		position: fixed;
 		height: 20px;
 		width: 20px;
-	}
-	.addEmailModal {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		background-color: #0b0015;
-		border: 1px solid #5300e1;
-		border-radius: 15px;
-		padding: 20px;
-		max-height: 80%;
-		width: 85%;
-		max-width: 300px;
-		z-index: 101;
-		pointer-events: auto;
+		transform: translate(60px, 0)
 	}
 	.line-coloring {
 		background-color: #00b300;
 		color: white;
 		padding: 0;
+		border-color: #00b300;
 	}
 	.line-alignment {
 		display: flex;
@@ -169,5 +161,8 @@
 	.line-img {
 		height: 27px;
 		transform: translate(0, 2px);
+	}
+	.button {
+		width: 80%;
 	}
 </style>

@@ -4,8 +4,9 @@
 <script>
 	import translations from '@/functions/translations.js'
 	import apiFunctions from '@/functions/apiFunctions.js'
+	import f from '@/functions/functions.js'
 	export default {
-		name: 'googleMap',
+		name: 'eventsMap',
 		data () {
 			return {
 			}
@@ -16,6 +17,7 @@
 			events: { default: null },
 			selectedEventId: { default: null },
 			scrip: {},
+			store: { default: null },
 		},
 		computed: {
 		},
@@ -42,7 +44,7 @@
 				let markers = {}
 				let infowindowContents = []
 				for (let i = 0; i < this.events.length; i++) {
-					let dateTime = Date.parse(this.events[i]['date_time'])
+					let dateTime = Date.parse(this.events[i].date_time)
 					if (dateTime < Date.now()) {
 						this.events.splice(i, 1)
 						i--
@@ -50,31 +52,13 @@
 				}
 				if (this.events.length != 0) {
 					for (let i = 0; i < this.events.length; i++) {
-						let address = this.events[i]['address']
-						let geocoder = new google.maps.Geocoder()
-						var result
-						await geocoder.geocode( { 'address': address }, function(results, status) {
-							if (status == google.maps.GeocoderStatus.OK) {
-								result = results[0]
-							} else {
-								alert(' Geocode was not successful for the following reason: ' + status)
-							}
-						})
-						let [randLat, randLng] = [0, 0]
 						let icon = 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
-						let eventName = 'PRIVATE EVENT'
-						if (this.events[i]['is_private']) {
-							let randSign = Math.random() > .5 ? 1 : -1
-							randLat = Math.random() / 250 * randSign
-							randSign = Math.random() > .5 ? 1 : -1
-							randLng = Math.random() / 300 * randSign
+						if (this.events[i].is_private && !this.isInvitedGuest(this.events[i])) {
 							icon = 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
-						} else {
-							eventName = this.events[i]['name']
 						}
 						infowindowContents.push(`
 							<button
-								onclick="openEventModal(${this.events[i]['id']})"
+								onclick="openEventModal(${this.events[i].id})"
 								style="
 									text-decoration: none;
 									color: blue;
@@ -86,19 +70,19 @@
 									outline: none;
 								"
 							>
-								${eventName}
+								${this.events[i].name}
 							</button>
 						`)
 						let position = new google.maps.LatLng(
-							result.geometry.location.lat() + randLat,
-							result.geometry.location.lng() + randLng
+							this.events[i].latitude,
+							this.events[i].longitude
 						)
 						let marker = new google.maps.Marker({
 							position: position,
 							map: map,
 							icon: icon
 						})
-						markers[this.events[i]['id']] = marker
+						markers[this.events[i].id] = marker
 						google.maps.event.addListener(marker, 'click', function() {
 							infowindow.close()
 							infowindow.setContent(infowindowContents[i])
@@ -107,9 +91,9 @@
 						google.maps.event.addListener(map, "click", function() {
 							infowindow.close()
 						})
-						map.setZoom(12)
 						bounds.extend(position)
-						map.fitBounds(bounds)
+						await map.fitBounds(bounds)
+						map.setZoom(12)
 					}
 				} else {
 					let address = '東京都千代田区千代田１−1'
@@ -122,10 +106,9 @@
 							alert('Geocode was not successful for the following reason: ' + status)
 						}
 					})
-					let [randLat, randLng] = [0, 0]
 					let position = new google.maps.LatLng(
-						result.geometry.location.lat() + randLat,
-						result.geometry.location.lng() + randLng
+						result.geometry.location.lat(),
+						result.geometry.location.lng()
 					)
 					let marker = new google.maps.Marker({
 						position: position,
@@ -140,20 +123,25 @@
 						},
 					})
 					bounds.extend(position)
-					map.fitBounds(bounds)
+					await map.fitBounds(bounds)
 					map.setZoom(12)
+				}
+				if (this.selectedEventId) {
+					bounds.extend(markers[this.selectedEventId].getPosition())
+					await map.fitBounds(bounds)
+					map.setZoom(15)
+					map.panTo(markers[this.selectedEventId].getPosition())
+					google.maps.event.trigger(markers[this.selectedEventId], 'click');
 				}
 				var boundsListener = google.maps.event.addListener((map), 'bounds_changed', function(event) {
 					google.maps.event.removeListener(boundsListener)
 				})
-				if (this.selectedEventId) {
-					map.panTo(markers[this.selectedEventId].getPosition())
-					google.maps.event.trigger(markers[this.selectedEventId], 'click');
-					map.setZoom(14)
-				}
 			},
 			openEventModal (id) {
 				this.$emit('openEventModal', id)
+			},
+			isInvitedGuest (event) {
+				return f.isInvitedGuest(event)
 			},
 		}
 	}

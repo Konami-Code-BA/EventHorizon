@@ -1,22 +1,24 @@
 <template>
-	<div style="display: flex; flex-direction: column; overflow: scroll">
+	<div class="list" id="view">
 		<div style="align-self: center">
 			{{ t('ALL EVENTS') }}:
 		</div>
-		<div v-for="event in eventDates">
-			<button v-on:click.prevent="$emit('openEventModal', event[0]['id'])" class="no-border-button">
-				{{event[0]['date_time'].split('T')[0]}}: {{event[0]['name'].split('T')[0]}}
+		<div v-for="event in sorted_events" :id="`item${event.id}`">
+			<button v-on:click.prevent="$emit('openEventModal', event.id)" class="no-border-button"
+					style="text-align: left; white-space: nowrap">
+				{{ event.date_time.split('T')[0] }}: {{ event.id }}
 			</button>
 		</div>
 	</div>
 </template>
 <script>
 	import translations from '@/functions/translations.js'
+	import f from '@/functions/functions.js'
 	export default {
 		name: 'eventsList',
 		data () {
 			return {
-				eventDates: {},
+				sorted_events: {},
 				loaded: false,
 			}
 		},
@@ -24,6 +26,8 @@
 		},
 		props: {
 			events: { default: null },
+			store: { default: null },
+			startingAt: { default: null },
 		},
 		computed: {
 			today () {
@@ -31,28 +35,30 @@
 			},
 		},
 		created () {
-			this.selectedMonth = this.today.getMonth()  // note: month goes from 0 to 11 (so dumb)
-			this.selectedYear = this.today.getYear() - 100 + 2000
-			this.getAllEvents()
+			this.sorted_events = this.sortEventsByDate(this.events)
+			//if (this.startingAt) {
+			//	console.log('HERE BRAH', this.startingAt)
+			//	console.log(document.getElementById(this.startingAt).offsetTop)
+			//	document.getElementById('view').scroll({left: 0, top: document.getElementById(`item${this.startingAt}`).offsetTop})
+			//}
 			this.loaded = true
+		},
+		updated () {
 		},
 		methods: {
 			t (w) { return translations.t(w) },
-			getAllEvents () {
-				for ( let i = 0; i < this.events.length; i++) {
-					let dateTime = new Date(this.events[i]['date_time'])
-					let date = new Date(
-						dateTime.getYear() - 100 + 2000, dateTime.getMonth(), dateTime.getDate(), 0, 0, 0, 0
-					).getTime()
-					if (date in this.eventDates) {
-						this.eventDates[date].push(this.events[i])
-					} else {
-						this.eventDates[date] = [this.events[i]]
-					}
-				}
+			sortEventsByDate (events) {
+				return f.sortEventsByDate(events)
 			},
 		}
 	}
 </script>
 <style scoped>
+	.list {
+		display: flex;
+		flex-direction: column;
+		overflow-y: scroll;
+		overflow-x: hidden;
+		align-items: flex-start;
+	}
 </style>

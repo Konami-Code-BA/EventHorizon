@@ -48,6 +48,7 @@
 		computed: {
 		},
 		mounted () {
+			this.$emit('endLoading')
 		},
 		watch: {
 			'$route' () {
@@ -79,4 +80,9 @@
 	}
 </script>
 <style scoped>
+	.tabs {
+		border-bottom: none !important;
+		border-left: none !important;
+		border-right: none !important;
+	}
 </style>

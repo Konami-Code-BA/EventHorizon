@@ -10,7 +10,6 @@ import addEvent from '@/views/addEvent'
 import settings from '@/views/settings'
 import loginRegister from '@/views/loginRegister'
 import registerWithEmail from '@/views/registerWithEmail'
-import loginWithEmail from '@/views/loginWithEmail'
 import experiment1 from '@/views/experiment1'
 import experiment2 from '@/views/experiment2'
 
@@ -18,6 +17,11 @@ Vue.use(Router)
 
 //1=Admin, 2=User, 3=Temp Visitor, 5=Temp Line Friend
 const router = new Router({
+    data() {
+        return {
+            allowBack: true,
+        }
+    },
     mode: 'history',
     routes: [{
         path: '',
@@ -73,11 +77,6 @@ const router = new Router({
         component: registerWithEmail,
         meta: { userGroups: [1, 3, 5, ] },
     }, {
-        path: '/loginWithEmail',
-        name: 'loginWithEmail',
-        component: loginWithEmail,
-        meta: { userGroups: [1, 3, 5, ] },
-    }, {
         path: '/experiment1',
         name: 'experiment1',
         component: experiment1,
@@ -90,8 +89,24 @@ const router = new Router({
     }, ]
 })
 
+window.popStateDetected = false
+window.addEventListener('popstate', () => {
+    window.popStateDetected = true
+})
+
 router.beforeEach(
     async(to, from, next) => {
+        let isBackButton = window.popStateDetected
+        window.popStateDetected = false
+        if (isBackButton && !router.allowBack) {
+            next(false)
+            router.allowBack = true
+            return
+        } else if (isBackButton) {
+            next()
+            router.allowBack = true
+            return
+        }
         if (store.user.groups[0] === 100) { // if never logged in, not even to visitor account, login
             console.log(process.env.PYTHON_ENV)
             await apiFunctions.login({})
@@ -113,10 +128,10 @@ router.beforeEach(
                     }
                 }
             } // permission denied
-            // if path coming from is loginRegiste, or events page, don't change pages on failure
+            // if path coming from is loginRegister or events page, don't change pages on failure
             if (['loginRegister', 'event'].includes(from.name)) {
                 return
-            } else { // any other page, when permission denied, get sent to events page
+            } else { // any other page, when permission denied, get sent to loginRegister
                 next({ name: 'loginRegister' })
                 return
             }

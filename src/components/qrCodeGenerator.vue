@@ -8,18 +8,18 @@
 					</button>
 				</div>
 				<div>
-					<button v-on:click.prevent="closeModal=true; getQr(instagram)" class="no-border-button">
+					<button v-on:click.prevent="closeModal=true; getQr(url)" class="button">
+						This Page QR
+					</button>
+				</div>
+				<div>
+					<button v-on:click.prevent="closeModal=true; getQr(instagram)" class="button">
 						Instagram QR
 					</button>
 				</div>
 				<div>
-					<button v-on:click.prevent="closeModal=true; getQr(line)" class="no-border-button">
+					<button v-on:click.prevent="closeModal=true; getQr(line)" class="button">
 						Line QR
-					</button>
-				</div>
-				<div>
-					<button v-on:click.prevent="closeModal=true; getQr(url)" class="no-border-button">
-						other
 					</button>
 				</div>
 				<div class="line-height"></div>
@@ -27,18 +27,27 @@
 		</modal>
 		<modal v-if="image_name!=null" @closeModals="$emit('closeModals')">
 			<div slot="contents" class="qr">
-				<div>
-				<a :href="image_file" :download="image_name" class="qr">
-					<img class="qr-img" :src="image_file"/>
-					<div class="qr-download" style="text-decoration: underline">
-						⇩
+				<div style="height: auto; width: 100%; display: flex; justify-content: center"
+						v-on:click.prevent="$emit('closeModals')">
+					<div class="qr-button" style="align-self: center">
+						<button v-on:click.prevent="$emit('closeModals')" class="no-border-button" style="color: black">
+							✖
+						</button>
 					</div>
-				</a>
 				</div>
-				<div class="qr-close">
-					<button v-on:click.prevent="$emit('closeModals')" class="no-border-button" style="color: black">
-						✖
-					</button>
+				<div>
+					<a :href="image_file" :download="image_name">
+						<img class="qr-img" :src="image_file"/>
+					</a>
+				</div>
+				<div style="height: 40px; width: 100%; display: flex; flex-direction: column; align-items: center">
+					<div style="height: 40px; width: 100%; z-index: 103; position: fixed"
+							v-on:click.prevent="$emit('closeModals')"/>
+					<a :href="image_file" :download="image_name">
+						<div class="qr-button" style="text-decoration: underline; position: fixed">
+							⇩
+						</div>
+					</a>
 				</div>
 			</div>
 		</modal>
@@ -87,58 +96,32 @@
 	}
 </script>
 <style scoped>
-	.modal {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		background-color: #0b0015;
-		border: 1px solid #5300e1;
-		border-radius: 15px;
-		padding: 20px;
-		width: 80%;
-		max-height: 80%;
-		max-width: 300px;
-		z-index: 101;
-		pointer-events: auto;
-	}
 	.qr {
 		display: flex;
-		flex-direction: row;
+		flex-direction: column;
 		z-index: 101;
 		pointer-events: auto;
-		justify-content: flex-end;
-		align-items: flex-start;
+		justify-content: center;
+		align-items: center;
 	}
 	.qr-img {
 		width: 100%;
 		max-width: 300px;
+		border: 2px solid black;
+		border-radius: 7px;
 	}
-	.qr-close {
-		position: fixed;
-		height: 30px;
-		width: 30px;
+	.qr-button {
+		height: 40px;
+		width: 40px;
 		display: flex;
 		flex-direction: column;
-		align-items: flex-end;
-		z-index: 101;
-		margin-right: 3px;
+		align-items: center;
+		justify-content: center;
+		z-index: 105;
 		color: black;
-		border: none;
-		background: none;
-	}
-	.qr-download {
-		position: fixed;
-		height: 30px;
-		width: 30px;
-		display: flex;
-		flex-direction: column;
-		align-items: flex-end;
-		justify-content: flex-end;
-		z-index: 101;
-		margin-right: 3px;
-		color: black;
-		border: none;
-		background: none;
-		align-self: flex-end;
+		border-radius: 7px;
+		border: 2px solid black;
+		background: white;
+		align-self: center;
 	}
 </style>

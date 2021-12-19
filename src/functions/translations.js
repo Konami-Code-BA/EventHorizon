@@ -162,13 +162,33 @@ export default {
             'EN': 'Incorrect password for this email',
             'JP': '登録済のメールアドレスとパスワード相違'
         },
-        'CREATE EVENT': {
-            'EN': 'CREATE EVENT',
+        'ADD': {
+            'EN': 'ADD',
+            'JP': '作成'
+        },
+        'ADD EVENT': {
+            'EN': 'ADD EVENT',
             'JP': 'イベント作成'
         },
         'EVENTS': {
             'EN': 'EVENTS',
             'JP': 'イベント'
+        },
+        'WELCOME': {
+            'EN': 'WELCOME',
+            'JP': 'ようこそ'
+        },
+        'ME': {
+            'EN': 'ME',
+            'JP': '私'
+        },
+        'PEOPLE': {
+            'EN': 'PEOPLE',
+            'JP': '人'
+        },
+        'SEARCH': {
+            'EN': 'SEARCH',
+            'JP': '検索'
         },
         'month 0': {
             'EN': 'JAN',
