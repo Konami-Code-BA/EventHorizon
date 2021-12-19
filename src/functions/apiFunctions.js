@@ -12,9 +12,13 @@ export default {
         get: axios.get,
     },
     // API /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    async userApiFunction(method, uri, data) {
+    async userApiFunction(method, pk = null, data = null) {
         let output = store.user
         let error = null
+        let uri = '/api/user/'
+        if (pk) {
+            uri += pk + '/'
+        }
         await this.axiosCall[method](this.apiBaseUrl + uri, data)
             .then(response => {
                 if (data.command == 'logout') {
@@ -64,16 +68,20 @@ export default {
             })
         return output
     },
-    async eventsApiFunction(method, pk = null) {
+    async eventsApiFunction(method, pk = null, data = null) {
         let output = null
         let id = ''
         if (pk) {
-            id = pk.toString() + '/'
+            id = pk + '/'
         }
-        await this.axiosCall[method](this.apiBaseUrl + '/api/events/' + id)
+        await this.axiosCall[method](this.apiBaseUrl + '/api/events/' + id, data)
             .then(response => {
                 console.log(`success - eventsApiFunction`)
-                output = response.data
+                if (pk) {
+                    output = response.data[0]
+                } else {
+                    output = response.data
+                }
             })
             .catch(error => {
                 console.log(`*API ERROR* - eventsApiFunction:`, error)
@@ -83,14 +91,14 @@ export default {
     // USERS ///////////////////////////////////////////////////////////////////////////////////////////////////////////
     async registerWithEmail(email, password, displayName = null) {
         if (displayName && displayName !== '') {
-            return await this.userApiFunction('post', '/api/user/', {
+            return await this.userApiFunction('post', null, {
                 command: 'register_with_email',
                 display_name: displayName,
                 email: email,
                 password: password,
             })
         } else {
-            return await this.userApiFunction('patch', '/api/user/' + store.user.id + '/', {
+            return await this.userApiFunction('patch', store.user.id, {
                 command: 'register_email',
                 email: email,
                 password: password,
@@ -99,39 +107,39 @@ export default {
     },
     async login(data) {
         data['command'] = 'login'
-        return await this.userApiFunction('post', '/api/user/', data)
+        return await this.userApiFunction('post', null, data)
     },
     async lineNewDevice(code, path) {
-        return await this.userApiFunction('post', '/api/user/', {
+        return await this.userApiFunction('post', null, {
             command: 'line_new_device',
             code: code,
             path: path,
         })
     },
     async logout() {
-        return await this.userApiFunction('post', '/api/user/', {
+        return await this.userApiFunction('post', null, {
             command: 'logout',
         })
     },
     async sendEmail() {
-        return await this.userApiFunction('post', '/api/user/', {
+        return await this.userApiFunction('post', null, {
             command: 'sendEmail',
         })
     },
     async updateUserLanguage() {
-        return await this.userApiFunction('patch', '/api/user/' + store.user.id + '/', {
+        return await this.userApiFunction('patch', store.user.id, {
             command: 'update_user_language',
             language: store.user.language,
         })
     },
     async updateUserDoGetEmails() {
-        return await this.userApiFunction('patch', '/api/user/' + store.user.id + '/', {
+        return await this.userApiFunction('patch', store.user.id, {
             command: 'update_user_do_get_emails',
             do_get_emails: store.user.do_get_emails,
         })
     },
     async updateUserAlerts(name) {
-        return await this.userApiFunction('patch', '/api/user/' + store.user.id + '/', {
+        return await this.userApiFunction('patch', store.user.id, {
             command: 'update_user_alerts',
             name: name,
         })
@@ -160,11 +168,18 @@ export default {
             message: 'sup this is a broadcast message',
         })
     },
-    // LINE ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // EVENTS //////////////////////////////////////////////////////////////////////////////////////////////////////////
     async getAllEvents() {
-        return await this.eventsApiFunction('get')
+        return await this.eventsApiFunction('get', null, null)
     },
     async getEvent(pk) {
-        return await this.eventsApiFunction('get', pk)
+        return await this.eventsApiFunction('get', pk, null)
+    },
+    async createEvent(data) {
+        data.command = 'add_event'
+        return await this.eventsApiFunction('post', null, data)
+    },
+    async getMyEvents() {
+        return await this.eventsApiFunction('post', null, { command: 'my_events' })
     },
 }
