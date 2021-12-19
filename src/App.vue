@@ -1,10 +1,10 @@
 <template>
 	<div id="app">
 		<div v-show="!loading" class="app">
-			<app-header @startLoading="loading=true" @endLoading="loading=false"/>
-			<router-view @startLoading="loading=true" @endLoading="loading=false" :key="$route.fullPath"
+			<app-header @startLoading="headerLoading=true" @endLoading="headerLoading=false"/>
+			<router-view @startLoading="routerLoading=true" @endLoading="routerLoading=false" :key="$route.fullPath"
 					class="router"/>
-			<app-footer @startLoading="loading=true" @endLoading="loading=false"/>
+			<app-footer @startLoading="footerLoading=true" @endLoading="footerLoading=false"/>
 		</div>
 		<div class="loading" v-show="loading"></div>
 	</div>
@@ -22,8 +22,31 @@
 		},
 		data () {
 			return {
+				headerLoading: true,
+				routerLoading: true,
+				footerLoading: true,
 				loading: true,
 			}
+		},
+		watch: {
+			'headerLoading' () {
+				this.checkLoading()
+			},
+			'routerLoading' () {
+				this.checkLoading()
+			},
+			'footerLoading' () {
+				this.checkLoading()
+			},
+		},
+		methods: {
+			checkLoading () {
+				if (this.headerLoading || this.routerLoading || this.footerLoading) {
+					this.loading = true
+				} else if (!this.headerLoading && !this.routerLoading && !this.footerLoading) {
+					this.loading = false
+				}
+			},
 		},
 	}
 </script>
@@ -100,34 +123,58 @@
 		}
 		.button, .button:hover, .button:active, .button.pointer, .a, .a:hover, .a:active, .a.pointer {
 			font-family: inherit;
-			color: #ffe07a;
+			color: #ffe07a;  /*ffe07a*/
 			font-weight: inherit;
 			font-size: inherit;
-			background-color: #5300e1;  /*000bff*/
-			border: 1px solid #18002e;  /*18002e*/
+			background-color: transparent;  /*5300e1, 000bff*/
+			border: 2px solid #ffe07a;  /*18002e*/
 			border-radius: 15px;
 			height: 30px;
 			cursor: pointer;
-			padding: 0;
-			padding-left: 3px;
-			padding-right: 3px;
+			padding-top: 0;
+			padding-bottom: 0;
+			padding-left: 10px;
+			padding-right: 10px;
   			text-decoration: none;
-			width: 80%;
+			width: auto;
 			display: flex;
 			flex-direction: row;
 			align-items: center;
 			justify-content: center;
+			white-space: nowrap;
+		}
+		.button:disabled, .button[disabled] {
+			font-family: inherit;
+			color: #808080;  /*ffe07a*/
+			font-weight: inherit;
+			font-size: inherit;
+			background-color: transparent;  /*5300e1, 000bff*/
+			border: 2px solid #808080;  /*18002e*/
+			border-radius: 15px;
+			height: 30px;
+			cursor: pointer;
+			padding-top: 0;
+			padding-bottom: 0;
+			padding-left: 10px;
+			padding-right: 10px;
+  			text-decoration: none;
+			width: auto;
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			justify-content: center;
+			white-space: nowrap;
 		}
 		input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus,
 		input:-webkit-autofill:active, input[type=text], input[type=email], input[type=password],
 		input[type=text]:focus, input[type=email]:focus, input[type=password]:focus {
 			font-family: inherit;
-  			color: #5300e1;
-  			-webkit-text-fill-color: #5300e1;
+  			color: #18002e;
+  			-webkit-text-fill-color: #18002e;
 			font-weight: inherit;
 			font-size: inherit;
 			border-radius: 15px;
-			border: 1px solid #18002e;
+			border: 0px;
 			background-color: #ffe07a;
  			-webkit-box-shadow: 0 0 0 30px #ffe07a inset;
 			height: 30px;
@@ -139,7 +186,20 @@
 		form {
 			display: flex;
 			flex-direction: column;
+		}
+		.modal {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			background-color: #18002e;
+			border: 2px solid #ffe07a;
+			border-radius: 15px;
+			padding: 20px;
 			width: 80%;
+			max-height: 80%;
+			max-width: 300px;
+			z-index: 101;
+			pointer-events: auto;
 		}
 		::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
   			color: #5841e9;
@@ -251,8 +311,8 @@
 			-o-animation: spinner 1500ms infinite linear;
 			animation: spinner 1500ms infinite linear;
 			border-radius: 0.5em;
-			-webkit-box-shadow: rgba(0, 0, 0, 0.75) 1.5em 0 0 0, rgba(0, 0, 0, 0.75) 1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) 0 1.5em 0 0, rgba(0, 0, 0, 0.75) -1.1em 1.1em 0 0, rgba(0, 0, 0, 0.5) -1.5em 0 0 0, rgba(0, 0, 0, 0.5) -1.1em -1.1em 0 0, rgba(0, 0, 0, 0.75) 0 -1.5em 0 0, rgba(0, 0, 0, 0.75) 1.1em -1.1em 0 0;
-			box-shadow: rgba(0, 0, 0, 0.75) 1.5em 0 0 0, rgba(0, 0, 0, 0.75) 1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) 0 1.5em 0 0, rgba(0, 0, 0, 0.75) -1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) -1.5em 0 0 0, rgba(0, 0, 0, 0.75) -1.1em -1.1em 0 0, rgba(0, 0, 0, 0.75) 0 -1.5em 0 0, rgba(0, 0, 0, 0.75) 1.1em -1.1em 0 0;
+			-webkit-box-shadow: rgba(255, 255, 255, .7) 1.5em 0 0 0, rgba(255, 255, 255, .7) 1.1em 1.1em 0 0, rgba(255, 255, 255, .7) 0 1.5em 0 0, rgba(255, 255, 255, .7) -1.1em 1.1em 0 0, rgba(255, 255, 255, .7) -1.5em 0 0 0, rgba(0, 0, 0, 0.5) -1.1em -1.1em 0 0, rgba(255, 255, 255, .7) 0 -1.5em 0 0, rgba(255, 255, 255, .7) 1.1em -1.1em 0 0;
+			box-shadow: rgba(255, 255, 255, .7) 1.5em 0 0 0, rgba(255, 255, 255, .7) 1.1em 1.1em 0 0, rgba(255, 255, 255, .7) 0 1.5em 0 0, rgba(255, 255, 255, .7) -1.1em 1.1em 0 0, rgba(255, 255, 255, .7) -1.5em 0 0 0, rgba(255, 255, 255, .7) -1.1em -1.1em 0 0, rgba(255, 255, 255, .7) 0 -1.5em 0 0, rgba(255, 255, 255, .7) 1.1em -1.1em 0 0;
 		}
 		/* Animation */
 		@-webkit-keyframes spinner {

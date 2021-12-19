@@ -36,7 +36,15 @@ CORS_ALLOW_CREDENTIALS = True
 CSRF_COOKIE_NAME = 'XSRF-TOKEN'
 
 #CORS_ALLOW_ALL_ORIGINS = True  # dangerous, want to restrict origins that can make cross-origin requests
-CORS_ALLOWED_ORIGINS  = (  # need to figure out how to use this correctly
+CORS_ALLOWED_ORIGINS = (
+	'http://127.0.0.1:8080',
+	'http://127.0.0.1:8000',
+	'https://event-horizon-jp.herokuapp.com',
+	'https://event-horizon-test.herokuapp.com',
+	'http://eventhorizon.vip',
+	'https://eventhorizon.vip',
+)
+CSRF_TRUSTED_ORIGINS = (
 	'http://127.0.0.1:8080',
 	'http://127.0.0.1:8000',
 	'https://event-horizon-jp.herokuapp.com',

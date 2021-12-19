@@ -33,8 +33,8 @@
 						</div>
 					</div>
 				</div>
-				<div v-show="showNoEventsModal" :class="noEventsModalClass" style="position: fixed;">
-					<div style="color: white; font-size: 32px;">{{t('NO EVENTS')}}</div>
+				<div v-show="showNoEventsModal" :class="noEventsModalClass" class="no-events-modal">
+					{{ t('NO EVENTS') }}
 				</div>
 			</div>
 		</div>
@@ -73,8 +73,8 @@
 			<div style="height: 87%">
 				<ul v-if="getEventsFromDate(selectedDate).length > 0" style="list-style-type: none">
 					<li v-for="event in getEventsFromDate(selectedDate)">
-						<button v-on:click.prevent="$emit('openEventModal', event['id'])" class="no-border-button">
-							{{ event['name'] }}
+						<button v-on:click.prevent="$emit('openEventModal', event.id)" class="no-border-button">
+							{{ event.name }}
 						</button>
 					</li>
 				</ul>
@@ -106,6 +106,8 @@
 		},
 		props: {
 			events: { default: null },
+			store: { default: null },
+			startingAt: { default: null },
 		},
 		computed: {
 			today () {
@@ -124,7 +126,7 @@
 			t (w) { return translations.t(w) },
 			getAllEvents () {
 				for ( let i = 0; i < this.events.length; i++) {
-					let dateTime = new Date(this.events[i]['date_time'])
+					let dateTime = new Date(this.events[i].date_time)
 					let date = new Date(
 						dateTime.getYear() - 100 + 2000, dateTime.getMonth(), dateTime.getDate(), 0, 0, 0, 0
 					).getTime()
@@ -171,16 +173,21 @@
 				}
 			},
 			dayStyling (week, day) {
-				let style = {}
+				let style = {
+					'display': 'flex',
+					'flex-diretion': 'column',
+					'justify-content': 'center',
+					'align-items': 'center'
+				}
 				let calendarLocation = (week - 1) * 7 + day - 1
 				let date = this.getDateOfCalendarLocation(calendarLocation)
 				let dayDate = date.getDate()
 				if (date.toString().split(' ').slice(0, 4).toString() === this.today.toString().split(' ').slice(0, 4).toString()) {
 					style['border-radius'] = '50%'
-					style['border'] = '1px solid white'
+					style['border'] = '2px solid #95c4ff'
 					style['background-color'] = 'none'
-					style['width'] = '22px'
-					style['height'] = '22px'
+					style['width'] = '27px'
+					style['height'] = '27px'
 				}
 				if ((
 					week == 1 && dayDate > 7
@@ -193,9 +200,9 @@
 					style['cursor'] = 'initial !important';
 				} else {
 					style['border-radius'] = '50%'
-					style['background-color'] = '#5300e1'
-					style['width'] = '22px'
-					style['height'] = '22px'
+					style['width'] = '27px'
+					style['height'] = '27px'
+					style['border'] = '2px solid #ffe07a'
 				}
 				return style		
 			},
@@ -204,7 +211,7 @@
 					this.selectedDate = date
 				} else {
 					this.showNoEventsModal = true
-					await new Promise(r => setTimeout(r, 500))  // .5 seconds
+					await new Promise(r => setTimeout(r, 700))  // .5 seconds
 					this.noEventsModalClass = 'fade-out'
 					await new Promise(r => setTimeout(r, 1000))  // 1 seconds
 					this.showNoEventsModal = false
@@ -238,8 +245,12 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center !important;
+		justify-content: center;
 	}
-	.noEventsModal {
-		opacity: 0;
+	.no-events-modal {
+		position: fixed;
+		color: white;
+		font-size: 32px;
+		background-color: rgba(0, 0, 0, .5);
 	}
 </style>

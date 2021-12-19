@@ -45,7 +45,7 @@
 	.tabs {
 		display: flex;
 		flex-direction: row;
-		border: 1px solid rgba(255, 255, 255, .1);
+		border: 2px solid rgba(255, 255, 255, .13);
 		padding-bottom: 0;
 		align-items: flex-end;  /* this isnt for buttons, its for text */
 	}
@@ -67,7 +67,7 @@
 		border-radius: 0;
 	}
 	.selected {
-		background-color: rgba(255, 255, 255, .1);
+		background-color: rgba(255, 255, 255, .13);
 		width: 100%;
 	}
 </style>

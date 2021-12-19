@@ -1,108 +1,212 @@
 <template>
-	<div class="main">
-		<div style="width: 100%; display: flex; flex-direction: row; align-items: center; justify-content: space-between">
+	<div class="main" v-if="event">
+		<div class="flex-row" style="align-items: center; justify-content: space-between; height: 60px;">
 			<div style="width: 16px"></div>
-			<h1>Event</h1>
-			<button v-on:click.prevent="$emit('closeModals')" class="no-border-button">
+			<h2 style="text-align: center">{{event.name}}</h2>
+			<button v-on:click.prevent="$emit('closeModals')" class="no-border-button" style="align-self: flex-start">
 				✖
 			</button>
+			<!-- let say we come here from map. and we go back. itd be cool if list and calendar are focuson on this event -->
 		</div>
 		<div class="flex-table">
 			<div style="align-self: flex-end">
-				<small>{{event['is_private'] ? 'PRIVATE EVENT' : 'PUBLIC EVENT'}}</small>
+				<small>{{ event.is_private ? 'PRIVATE EVENT' : 'PUBLIC EVENT' }}</small>
 			</div>
-			<div class="flex-row">
-				<div>
-					EVENT NAME:
-				</div>
-				<div>
-					{{event['name']}}
-				</div>
-			</div>
+			<br>
 			<div>
-				DESCRIPTION:
+				DESCRIPTION
 			</div>
 			<div style="align-self: center">
-				{{event['description']}}
+				{{ event.description }}
 			</div>
+			<div v-if="!event.is_private || this.isInvited" class="flex-table">
+				<br>
+				<div>
+					VENUE
+				</div>
+				<div style="align-self: center">
+					{{ event.venue_name }}
+				</div>
+			</div>
+			<br>
 			<div>
-				VENUE:
+				ADDRESS
 			</div>
 			<div style="align-self: center">
-				{{event['venue_name']}}
-			</div>
-			<div class="flex-row">
-				<div>
-					ADDRESS:
-				</div>
-				<button v-on:click.prevent="$emit('goToMap')" class="no-border-button">
-					See in map
+				<button v-on:click.prevent="$emit('goToEvents')" class="button" style="align-self: center">
+					<small>{{ event.address }}</small>
 				</button>
 			</div>
-			<div style="align-self: center">
-				{{event['address']}}
-			</div>
-			<div class="flex-row">
-				<div>
-					DATE:
+			<br>
+			<div class="flex-row" style="justify-content: space-between">
+				<div style="align-self: center">
+					DATE
 				</div>
 				<div>
-					{{event['date_time']}}
+					<button v-on:click.prevent="" class="button" style="align-self: center">
+						{{ getDate() }}
+					</button>
 				</div>
 			</div>
-			<div class="flex-row">
+			<br>
+			<div class="flex-row" style="justify-content: space-between">
+				<div style="align-self: center">
+					HOSTS
+				</div>
+				<button v-on:click.prevent="" class="button" style="align-self: center"
+						:disabled="!isInvited && event.is_private">
+					<div v-if="this.isInvited || !event.is_private" class="flex-row" style="align-self: center">
+						{{ event.hosts.length }}
+						<div v-if="event.hosts.length > 1">
+							&nbsp;people
+						</div>
+						<div v-else>
+							&nbsp;person
+						</div>
+					</div>
+					<div v-else class="flex-row" style="align-self: center">
+						{{ event.hosts }}
+						<div v-if="event.hosts > 1">
+							&nbsp;people
+						</div>
+						<div v-else>
+							&nbsp;person
+						</div>
+					</div>
+				</button>
 			</div>
-			<div class="flex-row">
+			<div class="flex-row" style="justify-content: space-between">
+				<div style="align-self: center">
+					INVITED
+				</div>
+				<button v-on:click.prevent="" class="button" style="align-self: center"
+						:disabled="!isInvited && event.is_private">
+					<div v-if="this.isInvited || !event.is_private" class="flex-row" style="align-self: center">
+						{{ event.invited.length }}
+						<div v-if="event.invited.length > 1">
+							&nbsp;people
+						</div>
+						<div v-else>
+							&nbsp;person
+						</div>
+					</div>
+					<div v-else class="flex-row" style="align-self: center">
+						{{ event.invited }}
+						<div v-if="event.invited > 1">
+							&nbsp;people
+						</div>
+						<div v-else>
+							&nbsp;person
+						</div>
+					</div>
+				</button>
+			</div>
+			<div class="flex-row" style="justify-content: space-between">
+				<div style="align-self: center">
+					CONFIRMED GUESTS
+				</div>
+				<button v-on:click.prevent="" class="button" style="align-self: center"
+						:disabled="!isInvited && event.is_private">
+					<div v-if="this.isInvited || !event.is_private" class="flex-row" style="align-self: center">
+						{{ event.confirmed_guests.length }}
+						<div v-if="event.confirmed_guests.length > 1">
+							&nbsp;people
+						</div>
+						<div v-else>
+							&nbsp;person
+						</div>
+					</div>
+					<div v-else class="flex-row" style="align-self: center">
+						{{ event.confirmed_guests }}
+						<div v-if="event.confirmed_guests > 1">
+							&nbsp;people
+						</div>
+						<div v-else>
+							&nbsp;person
+						</div>
+					</div>
+				</button>
+			</div>
+			<div class="flex-row" style="justify-content: space-between">
+				<div style="align-self: center">
+					INTERESTED
+				</div>
+				<button v-on:click.prevent="" class="button" style="align-self: center"
+						:disabled="!isInvited && event.is_private">
+					<div v-if="this.isInvited || !event.is_private" class="flex-row" style="align-self: center">
+						{{ event.interested.length }}
+						<div v-if="0 >= event.interested.length > 1">
+							&nbsp;people
+						</div>
+						<div v-else>
+							&nbsp;person
+						</div>
+					</div>
+					<div v-else class="flex-row" style="align-self: center">
+						{{ event.interested }}
+						<div v-if="event.interested > 1">
+							&nbsp;people
+						</div>
+						<div v-else>
+							&nbsp;person
+						</div>
+					</div>
+				</button>
 			</div>
 		</div>
 	</div>
 </template>
 <script>
 	import store from '@/store.js'
-	import appHeader from '@/components/appHeader.vue'
-	import modal from '@/components/modal.vue'
 	import translations from '@/functions/translations.js'
 	import apiFunctions from '@/functions/apiFunctions.js'
-	import functions from '@/functions/functions.js'
+	import f from '@/functions/functions.js'
 	export default {
 		name: 'event',
 		components: {
-			appHeader,
-			modal,
 		},
 		data () {
 			return {
 				store: store,
-				event: {},
-				eventId: null,
+				event: null,
+				isInvited: null,
 			}
 		},
 		props: {
-			id: {},
+			eventId: {},
+		},
+		computed: {
 		},
 		async mounted () {
-			if (this.$route.params.id) {
-				this.eventId = this.$route.params.id
-			} else {
-				this.eventId = this.id
-			}
 			this.event = await apiFunctions.getEvent(this.eventId)
+			this.isInvited = this.isInvitedGuest(this.event)
 			this.$emit('endLoading')
 		},
 		methods: {
 			t (w) { return translations.t(w) },
+			getDate () {
+				let date_time = this.event.date_time.split('T')
+				let date = date_time[0]
+				let time = date_time[1]
+				time = time.split(':')
+				time = time[0] + ':' + time[1]
+				return date + '\xa0\xa0-\xa0\xa0' + time
+			},
+			isInvitedGuest (event) {
+				return f.isInvitedGuest(event)
+			},
 		} // methods
 	} // export
 </script>
 <style scoped>
-.flex-table {
-	width: 100%;
-	display: flex;
-	flex-direction: column;
-}
-.flex-row {
-	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
-}
+	.flex-table {
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+	}
+	.flex-row {
+		width: 100%;
+		display: flex;
+		flex-direction: row;
+	}
 </style>
