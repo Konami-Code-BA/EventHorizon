@@ -48,13 +48,8 @@
 						✖
 					</button>
 				</div>
-				<register-with-email-internal
-					@startLoading="$emit('startLoading')"
-					@endLoading="$emit('endLoading')"
-					:includeDisplayName="false"
-					@closeModals="closeAddEmailModal()"
-					:modalStyle="true"
-				/>
+				<register-with-email-internal @startLoading="$emit('startLoading')" @endLoading="$emit('endLoading')"
+					:includeDisplayName="false" @closeModals="closeAddEmailModal()"/>
 			</div>
 		</modal>
 	</div>

@@ -6,8 +6,6 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
 from datetime import datetime
 
-from django.db.models.fields import TextField
-
 
 class Alert(models.Model):
 	name = models.CharField(max_length=40, default='', blank=True)

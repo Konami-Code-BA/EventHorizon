@@ -98,14 +98,15 @@
 				}
 				this.showPassword = false
 				this.$emit('startLoading')
-				let error = await apiFunctions.login({'email': this.emailInput, 'password': this.passwordInput})
+				let user = await apiFunctions.login({'email': this.emailInput, 'password': this.passwordInput})
 				this.$emit('endLoading')
-				if (!error) {
+				console.log('JEEZE', user)
+				if (!user.error) {
 					this.$router.push({ name: 'events' })
-				} else if (error === 'This email is not registered') {
-					this.emailError = error
-				} else if (error === 'Incorrect password') {
-					this.passwordError = error
+				} else if (user.error === 'This email is not registered') {
+					this.emailError = user.error
+				} else if (user.error === 'Incorrect password') {
+					this.passwordError = user.error
 				}
 			},
 			showButton () {
