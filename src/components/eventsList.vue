@@ -6,7 +6,7 @@
 		<div v-for="event in sorted_events" :id="`item${event.id}`">
 			<button v-on:click.prevent="$emit('openEventModal', event.id)" class="no-border-button"
 					style="text-align: left; white-space: nowrap">
-				{{ event.date_time.split('T')[0] }}: {{ event.id }}
+				{{ event.date_time.split('T')[0] }}: {{ event.name }}
 			</button>
 		</div>
 	</div>
