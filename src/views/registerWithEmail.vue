@@ -1,12 +1,7 @@
 <template>
-		<div style="display: flex; flex-direction: column; justify-content: center">
-			<div>
-				<register-with-email-internal
-					@startLoading="$emit('startLoading')"
-					@endLoading="$emit('endLoading')"
-					:next="'events'"
-				/>
-			</div>
+		<div class="main" style="display: flex; flex-direction: column; justify-content: center">
+			<register-with-email-internal style="width: 80%;" @startLoading="$emit('startLoading')"
+				@endLoading="$emit('endLoading')" :next="'events'"/>
 		</div>
 </template>
 <script>

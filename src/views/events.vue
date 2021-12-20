@@ -10,7 +10,7 @@
 						@on-click="(arg) => { selectedTab = arg }"
 						class="tabs">
 					<div slot="1">
-						<span style="font-size: 15px">{{ t('EVENTS') }}:</span>
+						<span style="font-size: 15px">{{ t('EVENTS') }}</span>
 					</div>
 					<div slot="2">
 						<img src="@/assets/mapIcon.png" class="icon"/>
