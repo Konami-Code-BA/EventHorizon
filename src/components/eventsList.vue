@@ -1,13 +1,21 @@
 <template>
-	<div class="list" id="view">
-		<div style="align-self: center">
-			{{ t('ALL EVENTS') }}:
+	<div style="display: flex; flex-direction: column; align-items: center; padding-top: 5px;">
+		<div>
+			<input :placeholder="t('SEARCH')" v-model="search" type="text" id="email" autocorrect="off"
+					autocapitalize="none" style="width: 100%"/>
 		</div>
-		<div v-for="event in sorted_events" :id="`item${event.id}`">
-			<button v-on:click.prevent="$emit('openEventModal', event.id)" class="no-border-button"
-					style="text-align: left; white-space: nowrap">
-				{{ event.date_time.split('T')[0] }}: {{ event.name }}
-			</button>
+		<div style="width: 100%; overflow-y: scroll; overflow-x: hidden; display: flex; flex-direction: column;
+				align-items: center">
+			<div style="width: 90%;">
+			<div class="list">
+				<div v-for="event in sorted_events" :id="`item${event.id}`">
+					<button v-on:click.prevent="$emit('openEventModal', event.id)" class="no-border-button"
+							style="text-align: left; white-space: nowrap">
+						{{ event.date_time.split('T')[0] }}: {{ event.name }}
+					</button>
+				</div>
+			</div>
+			</div>
 		</div>
 	</div>
 </template>
@@ -20,6 +28,7 @@
 			return {
 				sorted_events: {},
 				loaded: false,
+				search: null,
 			}
 		},
 		components: {
@@ -32,6 +41,14 @@
 		computed: {
 			today () {
 				return new Date()
+			},
+		},
+		watch: {
+			'search' () {
+				this.sorted_events = f.filterEvents(
+					this.sortEventsByDate(this.events),
+					this.search,
+					['name', 'description', 'address', 'venue_name'])
 			},
 		},
 		created () {
@@ -57,8 +74,8 @@
 	.list {
 		display: flex;
 		flex-direction: column;
-		overflow-y: scroll;
-		overflow-x: hidden;
 		align-items: flex-start;
+		overflow-x: hidden;
+		overflow-y: visible;
 	}
 </style>

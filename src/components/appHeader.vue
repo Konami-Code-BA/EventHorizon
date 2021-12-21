@@ -27,7 +27,7 @@
 		<modal v-if="selectedTab === 1" @closeModals="selectedTab = 0">
 			<div slot="contents" class="modal">
 				<div style="align-self: flex-end">
-					<button v-on:click.prevent="selectedTab = 0" class="no-border-button">
+					<button v-on:click.prevent="selectedTab = 0" class="no-border-button x-button">
 						✖
 					</button>
 				</div>
@@ -48,7 +48,7 @@
 		<modal v-if="selectedTab === 3" @closeModals="selectedTab = 0">
 			<div slot="contents" class="modal">
 				<div style="align-self: flex-end">
-					<button v-on:click.prevent="selectedTab = 0" class="no-border-button">
+					<button v-on:click.prevent="selectedTab = 0" class="no-border-button x-button">
 						✖
 					</button>
 				</div>

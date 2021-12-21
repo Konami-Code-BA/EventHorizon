@@ -39,6 +39,7 @@
 						clickableIcons: false,
 						controlSize: 30,
 						tilt: 45,
+						disableDefaultUI: true,
 					})
 				let infowindow = new google.maps.InfoWindow({ map: map })
 				let markers = {}
