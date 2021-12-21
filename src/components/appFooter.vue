@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div class="footer" style="width: 100%">
-			<tabs :num-tabs="6" :initial="selectedTab" :key="selectedTab" @on-click="(arg) => { changeTab(arg) }"
+			<tabs :num-tabs="5" :initial="selectedTab" :key="selectedTab" @on-click="(arg) => { changeTab(arg) }"
 					style="background-color: rgba(0, 0, 0, .5);">
 				<div slot="1">
 					<img src="@/assets/mapIcon.png" class="icon" style="margin-bottom: 2px;"/>
@@ -13,12 +13,9 @@
 					<img src="@/assets/peopleIcon.png" class="icon" style="margin-bottom: 1px;"/>
 				</div>
 				<div slot="4">
-					<img src="@/assets/searchIcon.png" class="icon" style="margin-bottom: 1px;"/>
-				</div>
-				<div slot="5">
 					<img src="@/assets/plusIcon.png" class="icon" style="margin-bottom: 1px;"/>
 				</div>
-				<div slot="6">
+				<div slot="5">
 					<img src="@/assets/gearIcon.png" class="icon" style="margin-bottom: 1px;"/>
 				</div>
 			</tabs>
@@ -37,7 +34,7 @@
 				store: store,
 				languageMenu: false,
 				selectedTab: 0,
-				pages: ['events', 'profile', 'people', 'search', 'addEvent', 'settings'],
+				pages: ['events', 'profile', 'people', 'addEvent', 'settings'],
 			}
 		},
 		components: {

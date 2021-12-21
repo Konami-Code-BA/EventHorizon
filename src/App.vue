@@ -92,10 +92,12 @@
 		}
 		.router {
 			position: relative;
-			overflow-y: scroll;
+			overflow-x: hidden;
+			overflow-y: hidden;
 			width: 100%;
 			height: 100%;
 			padding-left: 10px;
+			padding-right: 10px;
 			z-index: 1;
 		}
 		.footer {
@@ -174,7 +176,7 @@
 			font-weight: inherit;
 			font-size: inherit;
 			border-radius: 15px;
-			border: 0px;
+			border: none;
 			background-color: #ffe07a;
  			-webkit-box-shadow: 0 0 0 30px #ffe07a inset;
 			height: 30px;
@@ -221,6 +223,20 @@
 			align-items: center;
 			justify-content: center;
 		}
+		.x-button {
+			/*color: red;*/
+			font-size: 24px;
+		}
+		.viewer {
+			width: 100%;
+			height: 100%;
+			margin-bottom: 5px;
+			border: 2px solid rgba(255, 255, 255, .3);
+			border-bottom-left-radius: 7px;
+			border-bottom-right-radius: 7px;
+			overflow-x: hidden;
+			overflow-y: hidden;
+		}
 		.small-button {
 			height: 19px !important;
 		}
@@ -256,11 +272,12 @@
 		::-webkit-scrollbar {
 			-webkit-appearance: none;
 			width: 10px;
+			height: 10px;
 		}
 		::-webkit-scrollbar-thumb {
 			border-radius: 4px;
 			background-color: rgba(0, 0, 0, .5);
-			border: 1px solid rgba(255, 255, 255, .1);
+			border: 2px solid rgba(255, 255, 255, .3);
 		}
 
 		/* LOADING SPINNER */

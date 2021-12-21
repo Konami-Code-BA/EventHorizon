@@ -1,8 +1,8 @@
 <template>
 	<div>
-		<div class="outside" v-on:click.prevent="$emit('closeModals')">
+		<div class="modal-outside" v-on:click.prevent="$emit('closeModals')">
 		</div>
-		<div class="inside">
+		<div class="modal-inside">
 			<slot name="contents">
 			</slot>
 		</div>
@@ -22,16 +22,16 @@
 	}
 </script>
 <style scoped>
-.outside {
+.modal-outside {
 	position: fixed;
 	top: 0;
 	left: 0;
 	height: 100%;
 	width: 100%;
 	z-index: 99;
-	background: rgba(255, 255, 255, 0.5);
+	background: rgba(0, 0, 0, 0.5);
 }
-.inside {
+.modal-inside {
 	position: fixed;
 	top: 0;
 	left: 0;

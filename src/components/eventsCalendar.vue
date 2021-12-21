@@ -1,18 +1,21 @@
 <template>
 	<div v-if="loaded">
-		<div style="width: 100%; height: 100%; padding-left: 5px; padding-right: 5px" v-show="selectedDate === 0">
+		<div style="width: 100%; height: 100%; padding-left: 5px; padding-right: 5px; padding-top: 5px;"
+				v-show="selectedDate === 0">
 			<div style="width: 100%; display: flex; flex-direction: row; align-items: center;
 					justify-content: space-between">
-				<button v-on:click.prevent="changeMonth(-1)" class="no-border-button">
-					{{'<'}}
+				<button v-on:click.prevent="changeMonth(-1)" class="button" style="padding-bottom: 1px;">
+					{{'⇦'}}
 				</button>
-				<button v-on:click.prevent="goToToday()" class="no-border-button" style="width: 40px; font-size: 10px">
+				<button v-on:click.prevent="goToToday()" class="button" style="width: 50px; font-size: 10px;">
 					{{t('TODAY')}}
 				</button>
-				{{ selectedYear }} {{ t('month ' + selectedMonth) }}
-				<div style="width: 40px"/>
-				<button v-on:click.prevent="changeMonth(1)" class="no-border-button">
-					{{'>'}}
+				<div style="width: 100px; display: flex; justify-content: space-between;">
+					<div>{{ selectedYear }}</div><div>{{ t('month ' + selectedMonth) }}</div>
+				</div>
+				<div style="width: 50px"/>
+				<button v-on:click.prevent="changeMonth(1)" class="button" style="padding-bottom: 1px;">
+					{{'⇨'}}
 				</button>
 			</div>
 			<div style="height: 87%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
@@ -41,11 +44,11 @@
 		<div style="width: 100%; height: 100%; padding-left: 5px; padding-right: 5px" v-if="selectedDate != 0">
 			<div style="width: 100%; display: flex; flex-direction: row; align-items: center;
 					justify-content: space-between">
-				<button v-on:click.prevent="changeDay(-1)" class="no-border-button">
-					{{'<'}}
+				<button v-on:click.prevent="changeDay(-1)" class="button" style="padding-bottom: 1px;">
+					{{'⇦'}}
 				</button>
-				<button v-on:click.prevent="selectedDate = 0" class="no-border-button"
-						style="width: 40px; font-size: 10px">
+				<button v-on:click.prevent="selectedDate = 0" class="button"
+						style="width: 50px; font-size: 10px">
 					{{t('MONTH VIEW')}}
 				</button>
 				<div style="display: flex; flex-direction: row; align-items: center; justify-content: center">
@@ -60,14 +63,14 @@
 					<div style="width: 20px; text-align: center">
 						{{ selectedDate.getDate() }}
 					</div>
-					&nbsp;
+					<div style="width: 5px"/>
 					<div style="width: 25px; text-align: center">
 						{{ t('day ' + selectedDate.getDay()) }}
 					</div>
 				</div>
-				<div style="width: 40px"/>
-				<button v-on:click.prevent="changeDay(1)" class="no-border-button">
-					{{'>'}}
+				<div style="width: 50px"/>
+				<button v-on:click.prevent="changeDay(1)" class="button" style="padding-bottom: 1px;">
+					{{'⇨'}}
 				</button>
 			</div>
 			<div style="height: 87%">

@@ -44,7 +44,7 @@
 		<modal v-show="showAddEmailModal" @closeModals="closeAddEmailModal()">
 			<div slot="contents" class="modal">
 				<div style="align-self: flex-end">
-					<button v-on:click.prevent="closeAddEmailModal()" class="no-border-button">
+					<button v-on:click.prevent="closeAddEmailModal()" class="no-border-button x-button">
 						✖
 					</button>
 				</div>

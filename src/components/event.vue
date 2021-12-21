@@ -2,51 +2,39 @@
 	<div class="main" v-if="event">
 		<div class="flex-row" style="align-items: center; justify-content: space-between; height: 60px;">
 			<div style="width: 16px"></div>
-			<h2 style="text-align: center">{{event.name}}</h2>
-			<button v-on:click.prevent="$emit('closeModals')" class="no-border-button" style="align-self: flex-start">
+			<h2 style="text-align: center; max-width: 80%; overflow-x: scroll;">{{event.name}}</h2>
+			<button v-on:click.prevent="$emit('closeModals')" class="no-border-button x-button" style="align-self: flex-start">
 				✖
 			</button>
 			<!-- let say we come here from map. and we go back. itd be cool if list and calendar are focuson on this event -->
 		</div>
 		<div class="flex-table">
-			<div style="align-self: flex-end">
-				<small>{{ event.is_private ? 'PRIVATE EVENT' : 'PUBLIC EVENT' }}</small>
+			<div class="flex-row" style="justify-content: space-between">
+				<div>
+					{{ getDate() }}
+				</div>
+				<div>
+					<small>{{ event.is_private ? 'PRIVATE EVENT' : 'PUBLIC EVENT' }}</small>
+				</div>
 			</div>
 			<br>
-			<div>
-				DESCRIPTION
-			</div>
 			<div style="align-self: center">
 				{{ event.description }}
 			</div>
 			<div v-if="!event.is_private || this.isInvited" class="flex-table">
 				<br>
 				<div>
-					VENUE
+					VENUE:
 				</div>
 				<div style="align-self: center">
 					{{ event.venue_name }}
 				</div>
 			</div>
 			<br>
-			<div>
-				ADDRESS
-			</div>
 			<div style="align-self: center">
 				<button v-on:click.prevent="$emit('goToEvents')" class="button" style="align-self: center">
 					<small>{{ event.address }}</small>
 				</button>
-			</div>
-			<br>
-			<div class="flex-row" style="justify-content: space-between">
-				<div style="align-self: center">
-					DATE
-				</div>
-				<div>
-					<button v-on:click.prevent="" class="button" style="align-self: center">
-						{{ getDate() }}
-					</button>
-				</div>
 			</div>
 			<br>
 			<div class="flex-row" style="justify-content: space-between">
