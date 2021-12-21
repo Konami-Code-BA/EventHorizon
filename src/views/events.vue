@@ -1,46 +1,50 @@
 <template>
 	<div v-if="loaded">
-		<div class="main" v-show="!showEventModal">
-			<div>
-				<img src="@/assets/eventhorizonLogo.png" style="max-width: 150px; max-height: 150px; z-index: 5">
+		<div class="main" v-show="!showEventModal" style="padding-top: 5px;">
+			<div style="display: flex; flex-direction: column; align-items: center;" v-if="!hideTop">
+				<div style="font-size: 20px;" v-if="!isAuthenticatedUser">
+					{{ t('REACH OUT TO NEW HORIZONS') }}
+				</div>
+				<div style="font-size: 20px;" v-else>
+					{{ t('WELCOME') }}&nbsp;{{ store.user.display_name }}
+				</div>
+				<div>
+					<img src="@/assets/eventhorizonLogo.png" style="max-width: 150px; max-height: 150px; z-index: 5">
+				</div>
+				<div style="font-size: 24px;">{{ t('EVENTS') }}:</div>
 			</div>
-			<!--div style="font-size: 38px; margin-bottom: 5px; position: fixed; top: 90px">EVENT HORIZON</div-->
 			<div style="width: 100%;">
-				<tabs :num-tabs="4" :not-buttons="[1]" :initial="selectedTab" :key="selectedTab"
+				<div style="position: fixed; margin-top: 15px; right: 2px; z-index: 10;">
+					<button class="button" v-on:click.prevent="hideTop = !hideTop" style="border: 2px solid rgba(140, 128, 151, 0.6); border-radius: 7px; width: 25px; height: 25px; padding: 0; background-color: #18002e; padding-bottom: 1px;">
+						<img src="@/assets/fullScreen.png" class="icon" style="width: 80%; height: 80%"/>
+					</button>
+				</div>
+				<tabs :num-tabs="3" :initial="selectedTab" :key="selectedTab"
 						@on-click="(arg) => { selectedTab = arg }"
 						class="tabs">
 					<div slot="1">
-						<span style="font-size: 15px">{{ t('EVENTS') }}</span>
-					</div>
-					<div slot="2">
 						<img src="@/assets/mapIcon.png" class="icon"/>
 					</div>
-					<div slot="3">
-						<img src="@/assets/threeBarsHIcon.png" class="icon" style="vertical-align: bottom"/>
-					</div>
-					<div slot="4">
+					<div slot="2">
 						<img src="@/assets/calendarIcon.png" class="icon" style="vertical-align: bottom"/>
+					</div>
+					<div slot="3">
+						<img src="@/assets/searchIcon.png" class="icon" style="vertical-align: bottom"/>
 					</div>
 				</tabs>
 			</div>
-			<events-map class="viewer" v-show="selectedTab==2" @openEventModal="openEventModal" :events="events"
+			<events-map class="viewer" v-show="selectedTab==1" @openEventModal="openEventModal" :events="events"
 					:selectedEventId="selectedEventId" :key="selectedEventId" :scrip="scrip" ref="eventsMap"
 					:store="store"/>
+			<events-calendar class="viewer" v-show="selectedTab==2" @openEventModal="openEventModal" :events="events"
+					:store="store" :startingAt="selectedEventId"/>
 			<events-list class="viewer" v-show="selectedTab==3" @openEventModal="openEventModal" :events="events"
 					:store="store" :startingAt="selectedEventId" :key="selectedEventId+'list'"/>
-			<events-calendar class="viewer" v-show="selectedTab==4" @openEventModal="openEventModal" :events="events"
-					:store="store" :startingAt="selectedEventId"/>
-			<div style="font-size: 20px; margin-bottom: 10px;" v-if="!isAuthenticatedUser">
-				{{ t('REACH OUT TO NEW HORIZONS') }}
-			</div>
-			<div style="font-size: 20px; margin-bottom: 10px;" v-else>
-				{{ t('WELCOME') }}&nbsp;{{ store.user.display_name }}
-			</div>
 		</div>
 		<!--modal v-if="showCookiesModal" @closeModals="closeCookiesModal()">
 			<div slot="contents" class="cookiesModal">
 				<div style="align-self: flex-end">
-					<button v-on:click.prevent="closeCookiesModal()" class="no-border-button">
+					<button v-on:click.prevent="closeCookiesModal()" class="no-border-button x-button">
 						✖
 					</button>
 				</div>
@@ -83,12 +87,13 @@
 			return {
 				store: store,
 				showCookiesModal: store.user.alerts.includes(1),
-				selectedTab: 2,
+				selectedTab: 1,
 				showEventModal: Boolean(this.$route.params.id),
 				selectedEventId: this.$route.params.id,
 				events: null,
 				loaded: false,
 				scrip: document.createElement('script'),
+				hideTop: false,
 			}
 		},
 		computed : {
@@ -133,7 +138,7 @@
 			},
 			goToEvents () {
 				this.$refs.eventsMap.initMap()
-				this.selectedTab = 2
+				this.selectedTab = 1
 				this.showEventModal = false
 			},
 			goToCalendar () {
@@ -143,14 +148,6 @@
 	} // export
 </script>
 <style scoped>
-	.viewer {
-		width: 100%;
-		height: 100%;
-		margin-bottom: 5px;
-		border: 2px solid rgba(255, 255, 255, .1);
-		border-bottom-left-radius: 7px;
-		border-bottom-right-radius: 7px;
-	}
 	.cookiesModal {
 		position: fixed;
 		display: flex;
