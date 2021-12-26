@@ -322,6 +322,7 @@ class SecretsViewset(viewsets.ViewSet):
 			'MIKEY_LINE_USER_ID': config('MIKEY_LINE_USER_ID'),
 			'STU_LINE_USER_ID': config('STU_LINE_USER_ID'),
 		}
+		print('INSIE SECRETS', secrets_dict[pk])
 		return Response(secrets_dict[pk])
 
 
