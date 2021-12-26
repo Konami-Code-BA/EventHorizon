@@ -5,7 +5,13 @@
 			<button v-on:click.prevent="linePush()">linePush</button>
 			<input v-model="type" placeholder="type"/>
 			<input v-model="text" placeholder="text"/>
-			<img :src="imageone"/>
+			<button v-on:click.prevent="saveImage()">saveImage</button>
+			<input type="file" accept="image/*" @change="(e) => {imageFile = e.target.files[0]}">
+			<input v-model="getimgid" placeholder="id#"/>
+			<button v-on:click.prevent="getImage()">getImage</button>
+			<img :src="imagetwo" style="width: 100px; height: 100px;"/>
+			<!--button v-on:click.prevent="makeImage()">makeImage</button-->    <!--for makeImage()-->
+			<!--img :src="imageone"/-->    <!--for makeImage()-->
 		</div>
 	</div>
 </template>
@@ -18,9 +24,12 @@
 		data () {
 			return {
 				imageone: null,
+				imagetwo: null,
 				canvas: null,
 				type: null,
 				text: null,
+				imageFile: null,
+				getimgid: null,
 			}
 		},
 		async mounted () {
@@ -28,27 +37,27 @@
 		},
 		methods: {
 			t (w) { return translations.t(w) },
-			async trything2 () {
-				let background = new Image()
-				background.src = require('@/assets/pexels-photo-event1.jpg')
-				let canvas = document.createElement('canvas')
-				canvas.width = 200
-				canvas.height = background.height / background.width * canvas.width
-				let context = canvas.getContext('2d')
-				await background.decode()
-				context.drawImage(background, 0, 0, canvas.width, canvas.height)
-				context.font = '10px Arial'
-				context.fillStyle = 'black'
-				context.fillText('hello world', 40, 40)
-				let dataUrl = await canvas.toDataURL("image/png")
-				this.imageone = dataUrl
+			//async makeImage () {  // this was finished but i need to do it in backend afterall so leave unused
+			//	let background = new Image()
+			//	background.src = require('@/assets/pexels-photo-event1.jpg')
+			//	let canvas = document.createElement('canvas')
+			//	canvas.width = 200
+			//	canvas.height = background.height / background.width * canvas.width
+			//	let context = canvas.getContext('2d')
+			//	await background.decode()
+			//	context.drawImage(background, 0, 0, canvas.width, canvas.height)
+			//	context.font = '10px Arial'
+			//	context.fillStyle = 'black'
+			//	context.fillText('hello world', 40, 40)
+			//	let dataUrl = await canvas.toDataURL("image/png")
+			//	this.imageone = dataUrl
 
-				//let a = document.createElement("a")
-				//let image_name = 'thing.png'
-				//a.href = dataUrl
-				//a.download = image_name
-				//a.click()
-			},
+			//	//let a = document.createElement("a")  // uncomment this part to save the image rather than just display
+			//	//let image_name = 'thing.png'
+			//	//a.href = dataUrl
+			//	//a.download = image_name
+			//	//a.click()
+			//},
 			async sendWebhook () {
 				let mikeyId = await apiFunctions.secretsApiFunction('mikey-line-user-id')
 				let events = [{
@@ -67,6 +76,16 @@
 			async linePush () {
 				let data = {"to": "mikey", "messages": [{"type": "text", "text": "this is a thing"}]}
 				await apiFunctions.linePush(data)
+			},
+			async saveImage () {
+				let formData = new FormData();
+				formData.append("file", this.imageFile)
+				await apiFunctions.saveImage(formData)
+			},
+			async getImage () {
+				let result = await apiFunctions.getImage(this.getimgid)
+				console.log(apiFunctions.baseUrl + result.image)
+				this.imagetwo = apiFunctions.baseUrl + result.image
 			}
 		} // methods
 	} // export
