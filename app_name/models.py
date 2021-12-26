@@ -4,8 +4,8 @@ from django.contrib import admin
 from django.contrib.auth.models import BaseUserManager
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
-from datetime import datetime
 from django.conf import settings
+from django.utils import timezone
 
 
 class Alert(models.Model):
@@ -113,7 +113,7 @@ class Event(models.Model):
 	longitude = models.DecimalField(max_digits=23, decimal_places=20, default=0, blank=True)
 	rand_latitude = models.DecimalField(max_digits=23, decimal_places=20, default=0, blank=True)
 	rand_longitude = models.DecimalField(max_digits=23, decimal_places=20, default=0, blank=True)
-	date_time = models.DateTimeField(default=datetime.today(), blank=True)
+	date_time = models.DateTimeField(default=timezone.now, blank=True)
 	include_time = models.BooleanField(default=False, blank=True)
 	hosts = models.ManyToManyField(User, blank=True, related_name='hosts')
 	invited = models.ManyToManyField(User, blank=True, related_name='invited')
