@@ -150,11 +150,10 @@ export default {
             command: 'consumption',
         })
     },
-    async linePush() {
+    async linePush(data) {
         await this.lineApiFunction('post', '/api/line/', {
             command: 'push',
-            message: 'sup this is a push message',
-            to: 'mikey',
+            data: data,
         })
     },
     async lineBroadcast() {
