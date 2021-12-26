@@ -316,9 +316,11 @@ class SecretsViewset(viewsets.ViewSet):
 	queryset = []
 	def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
 		secrets_dict = {
-			'new_random_secret': secrets.token_urlsafe(16),
-			'login_channel_id': config('LOGIN_CHANNEL_ID'),
-			'google_maps_api_key': config('GOOGLE_MAPS_API_KEY'),
+			'NEW_RANDOM_SECRET': secrets.token_urlsafe(16),
+			'LOGIN_CHANNEL_ID': config('LOGIN_CHANNEL_ID'),
+			'GOOGLE_MAPS_API_KEY': config('GOOGLE_MAPS_API_KEY'),
+			'MIKEY_LINE_USER_ID': config('MIKEY_LINE_USER_ID'),
+			'STU_LINE_USER_ID': config('STU_LINE_USER_ID'),
 		}
 		return Response(secrets_dict[pk])
 

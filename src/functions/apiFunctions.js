@@ -142,10 +142,8 @@ export default {
         })
     },
     // LINE ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    async sendWebhook() {
-        await this.lineApiFunction('post', '/webhook/', {
-            command: 'sendWebhook',
-        })
+    async sendWebhook(data) {
+        await this.lineApiFunction('post', '/webhook/', data)
     },
     async lineConsumption() {
         await this.lineApiFunction('post', '/api/line/', {

@@ -1,8 +1,10 @@
 <template>
 	<div>
 		<div class="main" id="page">
-			some stuff
-			<button v-on:click.prevent="trything2()">trything</button>
+			<button v-on:click.prevent="sendWebhook()">trything</button>
+			<input v-model="type" placeholder="type"/>
+			<input v-model="text" placeholder="text"/>
+			<img :src="imageone"/>
 		</div>
 	</div>
 </template>
@@ -14,6 +16,10 @@
 		},
 		data () {
 			return {
+				imageone: null,
+				canvas: null,
+				type: null,
+				text: null,
 			}
 		},
 		async mounted () {
@@ -21,33 +27,42 @@
 		},
 		methods: {
 			t (w) { return translations.t(w) },
-			//trything1 () {
-			//	require('html2canvas')(document.querySelector("#page"))
-			//		.then(canvas => {
-			//			canvas.toBlob(function(blob) {
-			//				console.log(typeof blob)
-			//				saveAs(blob, "Dashboard.png");
-			//			})
-			//		})
-			//},
 			async trything2 () {
-				await apiFunctions.createEvent({
-					name: 'name',
-					description: 'description',
-					address: '〒160-0023 東京都新宿区西新宿３丁目２−9',
-					venue_name: 'venue_name',
-					latitude: 0,
-					longitude: 0,
-					date_time: new Date(),
-					include_time: true,
-					is_private: false,
-					hosts: [387],
-					guests: [387],
-					confirmed_guests: [387],
-					interested_guests: [387],
-					invited_guests: [387],
+				let background = new Image()
+				background.src = require('@/assets/pexels-photo-event1.jpg')
+				let canvas = document.createElement('canvas')
+				canvas.width = 200
+				canvas.height = background.height / background.width * canvas.width
+				let context = canvas.getContext('2d')
+				await background.decode()
+				context.drawImage(background, 0, 0, canvas.width, canvas.height)
+				context.font = '10px Arial'
+				context.fillStyle = 'black'
+				context.fillText('hello world', 40, 40)
+				let dataUrl = await canvas.toDataURL("image/png")
+				this.imageone = dataUrl
+
+				//let a = document.createElement("a")
+				//let image_name = 'thing.png'
+				//a.href = dataUrl
+				//a.download = image_name
+				//a.click()
+			},
+			async sendWebhook () {
+				let mikeyId = await apiFunctions.secretsApiFunction('MIKEY_LINE_USER_ID')
+				let events = [{
+					'type': 'message',
+					'message': {
+						'type': 'text',
+						'text': '. ' + this.type
+					},
+					'to': mikeyId,
+					'reply': this.text
+				}]
+				await apiFunctions.sendWebhook({
+					'events': events,
 				})
-			}
+			},
 		} // methods
 	} // export
 </script>

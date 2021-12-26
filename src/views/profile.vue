@@ -14,13 +14,16 @@
 			</tabs>
 		</div>
 		<div class="viewer">
-			<div class="list">
+			<div class="list" v-if="list.length > 0">
 				<div v-for="item in list">
 					<button v-on:click.prevent="$emit('openEventModal', item.id)" class="no-border-button"
 							style="text-align: left; white-space: nowrap">
-						{{item.date_time.split('T')[0]}}: {{ item.name }}
+						{{ item.date_time.split('T')[0] }}: {{ item.name }}
 					</button>
 				</div>
+			</div>
+			<div v-else>
+				{{ t('NO EVENTS') }}
 			</div>
 		</div>
 		<event v-if="showEventModal" @goToMap="goToMap()" :id="selectedEventId" @closeModals="closeEventModal()"/>
@@ -46,6 +49,7 @@
 				} else {
 					this.list = this.hosting
 				}
+				console.log(this.list.length)
 			},
 		},
 		data () {

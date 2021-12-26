@@ -60,21 +60,25 @@ def line_bot(line_body):
 	else: 
 		return replyToken, reply
 	if events['type'] == 'follow':
-		reply = 'Thank you for following!'
+		reply = {'type': 'text', 'text': 'Thank you for following!'}
 		add_line_friend(events['source']['userId'])
 	if events['type'] == 'unfollow':
 		remove_line_friend(events['source']['userId'])
 	elif events['type'] == 'message':  # its a message (not a follow etc)
 		if events['message']['type'] == 'text':  # its a text message (not an image etc)
-			if events['message']['text'][:4] == '.bot':  # it has a .bot trigger
-				received = events['message']['text'][5:]  # save the text minus the .bot trigger
-			elif events['source']['type'] == 'user':  # it doesn't have a .bot trigger but it is a 1-user private room
-				received = events['message']['text']  # private room doesn't need .bot trigger, so save all the text
+			if events['message']['text'][:2] == '. ':  # it has a bot trigger
+				received = events['message']['text'][2:]  # save the text minus the bot trigger
+			elif events['source']['type'] == 'user':  # it doesn't have a bot trigger but it is a 1-user private room
+				received = events['message']['text']  # private room doesn't need bot trigger, so save all the text
 	if 'replyToken' in events:
-		replyToken = events['replyToken']
+		send_to = {'type': 'replyToken', 'to': events['replyToken']}
+	if 'to' in events:
+		send_to = {'type': 'to', 'to': events['to']}
 	if received in ['Status', 'status']:
-		reply = '15 people confirmed'
-	return replyToken, reply
+		reply = {'type': 'text', 'text': events['reply']}
+	elif received in ['Image', 'image']:
+		reply = {'type': 'image', 'image': events['reply']}
+	return send_to, reply
 
 
 def add_line_friend(line_id):
