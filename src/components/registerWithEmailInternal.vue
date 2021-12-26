@@ -1,6 +1,6 @@
 <template>
-	<div class="main" style="min-width: 300px;">
-		<form v-on:keyup.enter="registerWithEmail()" :class="{'modal-style' : modalStyle}">
+	<div style="min-width: 235px">
+		<form v-on:keyup.enter="registerWithEmail()">
 			<div v-if="includeDisplayName">
 				<input :placeholder="t('DISPLAY NAME')" v-model="displayNameInput" type="text" id="displayName"
 						autocorrect="off" autocapitalize="none" style="width: 100%"/>
@@ -83,7 +83,6 @@
 		props: {
 			includeDisplayName: { default: true },
 			next: { default: null },
-			modalStyle: { default: false },
 		},
 		async mounted () {
 			if (this.includeDisplayName) {
@@ -115,14 +114,13 @@
 				this.showPassword = false
 				this.showPassword2 = false
 				this.$emit('startLoading')
-				let error = null
 				if (this.includeDisplayName) {
-					error = await apiFunctions.registerWithEmail(this.emailInput, this.passwordInput,
+					let user = await apiFunctions.registerWithEmail(this.emailInput, this.passwordInput,
 							this.displayNameInput)
 				} else {
-					error = await apiFunctions.registerWithEmail(this.emailInput, this.passwordInput)
+					let user = await apiFunctions.registerWithEmail(this.emailInput, this.passwordInput)
 				}
-				if (!error) {
+				if (!user.error) {
 					if (this.next) {
 						this.$router.push({ name: this.next })
 						this.$emit('endLoading')
@@ -132,15 +130,16 @@
 						this.$emit('endLoading')
 						return
 					}
-				} else if (error == 'Incorrect password for this email') {
-					this.passwordError = error
+				} else if (user.error == 'Incorrect password for this email') {
+					this.passwordError = user.error
 					this.showError = true
 					this.shakeFunction()
-				} else if (error == "This email is already registered") {
-					this.emailError = error
+				} else if (user.error == "This email is already registered") {
+					this.emailError = user.error
 					this.showError = true
 					this.shakeFunction()
 				}
+				this.$emit('endLoading')
 			},
 			showButton () {
 				f.focusCursor(document, 'password')
@@ -245,9 +244,6 @@
 </script>
 <style scoped>
 	.button {
-		width: 80%;
-	}
-	.modal-style {
-		width: 80%;
+		width: 100%;
 	}
 </style>

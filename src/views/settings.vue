@@ -44,17 +44,12 @@
 		<modal v-show="showAddEmailModal" @closeModals="closeAddEmailModal()">
 			<div slot="contents" class="modal">
 				<div style="align-self: flex-end">
-					<button v-on:click.prevent="closeAddEmailModal()" class="no-border-button">
+					<button v-on:click.prevent="closeAddEmailModal()" class="no-border-button x-button">
 						✖
 					</button>
 				</div>
-				<register-with-email-internal
-					@startLoading="$emit('startLoading')"
-					@endLoading="$emit('endLoading')"
-					:includeDisplayName="false"
-					@closeModals="closeAddEmailModal()"
-					:modalStyle="true"
-				/>
+				<register-with-email-internal @startLoading="$emit('startLoading')" @endLoading="$emit('endLoading')"
+					:includeDisplayName="false" @closeModals="closeAddEmailModal()"/>
 			</div>
 		</modal>
 	</div>
@@ -107,8 +102,8 @@
 			},
 			async loginByLine () {
 				this.$emit('startLoading')
-				let loginChannelId = await apiFunctions.secretsApiFunction('login_channel_id')
-				let state = await apiFunctions.secretsApiFunction('new_random_secret')
+				let loginChannelId = await apiFunctions.secretsApiFunction('login-channel-id')
+				let state = await apiFunctions.secretsApiFunction('new-random-secret')
 				document.cookie = `state=${state}; path=/`
 				let lineLoginRedirectUrl = 'https%3A%2F%2Fwww.eventhorizon.vip%2Fsettings'
 				if (process.env.PYTHON_ENV == 'development') {
