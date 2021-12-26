@@ -98,7 +98,7 @@ export default {
             })
     },
     async getImage(pk) {
-        return await this.axiosCall['get'](this.apiBaseUrl + '/api/images/' + pk + '/')
+        return await this.axiosCall['get'](this.baseUrl + '/api/images/' + pk + '/')
             .then(response => {
                 console.log(`success - saveImageFunction`)
                 return response.data[0]
