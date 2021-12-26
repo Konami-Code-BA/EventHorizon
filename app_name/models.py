@@ -89,7 +89,7 @@ class SessionAdmin(admin.ModelAdmin):
 
 
 class Image(models.Model):
-	image = models.ImageField(upload_to=settings.MEDIA_ROOT)
+	image = models.ImageField()
 
 	def __str__(self):
 		return str(self.id)
