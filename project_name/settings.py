@@ -181,7 +181,7 @@ USE_TZ = True
 
 STATIC_URL = '/dist/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'dist')
-MEDIA_URL = '/media/'
+MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Vue project location
