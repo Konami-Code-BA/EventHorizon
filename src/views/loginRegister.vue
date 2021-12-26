@@ -183,8 +183,8 @@
 			},
 			async loginByLine () {
 				this.$emit('startLoading')
-				let loginChannelId = await apiFunctions.secretsApiFunction('login_channel_id')
-				let state = await apiFunctions.secretsApiFunction('new_random_secret')
+				let loginChannelId = await apiFunctions.secretsApiFunction('LOGIN_CHANNEL_ID')
+				let state = await apiFunctions.secretsApiFunction('NEW_RANDOM_SECRET')
 				document.cookie = `state=${state}; path=/`
 				let lineLoginRedirectUrl = 'https%3A%2F%2Fwww.eventhorizon.vip%2FloginRegister'
 				if (process.env.PYTHON_ENV == 'development') {
