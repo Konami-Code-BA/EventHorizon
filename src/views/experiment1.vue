@@ -1,7 +1,8 @@
 <template>
 	<div>
 		<div class="main" id="page">
-			<button v-on:click.prevent="sendWebhook()">trything</button>
+			<button v-on:click.prevent="sendWebhook()">sendWebhook</button>
+			<button v-on:click.prevent="linePush()">linePush</button>
 			<input v-model="type" placeholder="type"/>
 			<input v-model="text" placeholder="text"/>
 			<img :src="imageone"/>
@@ -63,6 +64,10 @@
 					'events': events,
 				})
 			},
+			async linePush () {
+				let data = {"to": "mikey", "messages": [{"type": "text", "text": "this is a thing"}]}
+				await apiFunctions.linePush(data)
+			}
 		} // methods
 	} // export
 </script>
