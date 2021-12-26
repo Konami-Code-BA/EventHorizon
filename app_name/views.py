@@ -15,20 +15,26 @@ def index(request, arg=None):
 @csrf_exempt
 def line_webhook(request):  # https://developers.line.biz/en/reference/messaging-api/#message-event
 	line_body = json.loads(request.body.decode('utf-8'))
-	replyToken, reply = line_bot(line_body)
+	send_to, reply = line_bot(line_body)
 	response = "Don't need to send a reply"
-	if replyToken and reply:
+	if send_to and reply:
 		url = 'https://api.line.me/v2/bot/message/reply'
 		headers = {
 			'Content-Type': 'application/json',
 			'Authorization': 'Bearer ' + config('MESSAGING_CHANNEL_ACCESS_TOKEN'),
 		}
-		data = json.dumps({
-			'replyToken': replyToken,
+		data = {
+			send_to['type']: send_to['to'],
 			'messages': [{
-				"type": "text",
-				"text": reply,
+				'type': reply['type'],
 			}]
-		})
+		}
+		if reply['type'] == 'text':
+			data['messages'][0]['text'] = reply['text']
+		elif reply['type'] == 'image':
+			data['messages'][0]['originalContentUrl'] = reply['image']
+			data['messages'][0]['previewImageUrl'] = reply['image']
+		data = json.dumps(data)
+		print('DATA', data)
 		response = requests.post(url, headers=headers, data=data)
 	return HttpResponse(response)
