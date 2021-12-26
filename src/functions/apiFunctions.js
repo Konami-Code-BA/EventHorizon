@@ -13,60 +13,56 @@ export default {
     },
     // API /////////////////////////////////////////////////////////////////////////////////////////////////////////////
     async userApiFunction(method, pk = null, data = null) {
-        let output = store.user
-        let error = null
         let uri = '/api/user/'
         if (pk) {
             uri += pk + '/'
         }
-        await this.axiosCall[method](this.apiBaseUrl + uri, data)
+        return await this.axiosCall[method](this.apiBaseUrl + uri, data)
             .then(response => {
                 if (data.command == 'logout') {
                     console.log(`success - userApiFunction ${data.command}`)
-                    output = store.defaultUser
+                    store.user = store.defaultUser
+                    return store.user
                 } else if (!('error' in response.data[0])) {
                     console.log(`success - userApiFunction ${data.command}`)
-                    output = response.data[0]
+                    store.user = response.data[0]
+                    return store.user
                 } else {
                     console.log(`*INTERNAL ERROR* - userApiFunction ${data.command}:`, response.data[0]['error'])
-                    error = response.data[0]['error']
+                    return response.data[0]
                 }
             })
             .catch(error => {
                 console.log(`*API ERROR* - userApiFunction ${data.command}:`, error)
+                return error
             })
-            .finally(() => {
-                store.user = output
-            })
-        return error
     },
     async lineApiFunction(method, uri, data) {
-        let output = null
-        await this.axiosCall[method](this.apiBaseUrl + uri, data)
+        return await this.axiosCall[method](this.apiBaseUrl + uri, data)
             .then(response => {
                 if (!('error' in response.data)) {
                     console.log(`success - lineApiFunction ${data.command}`)
-                    output = response.data
+                    return response.data
                 } else {
                     console.log(`*INTERNAL ERROR* - lineApiFunction ${data.command}:`, response.data['error'])
+                    return response.data['error']
                 }
             })
             .catch(error => {
                 console.log(`*API ERROR* - lineApiFunction ${data.command}:`, error)
+                return error
             })
-        return output
     },
     async secretsApiFunction(toGet) {
-        let output = null
-        await this.axiosCall['get'](this.apiBaseUrl + '/api/secrets/' + toGet + '/')
+        return await this.axiosCall['get'](this.apiBaseUrl + '/api/secrets/' + toGet + '/')
             .then(response => {
                 console.log(`success - secretsApiFunction ${toGet}`)
-                output = response.data
+                return response.data
             })
             .catch(error => {
                 console.log(`*API ERROR* - secretsApiFunction ${toGet}:`, error)
+                return error
             })
-        return output
     },
     async eventsApiFunction(method, pk = null, data = null) {
         let output = null
@@ -74,19 +70,19 @@ export default {
         if (pk) {
             id = pk + '/'
         }
-        await this.axiosCall[method](this.apiBaseUrl + '/api/events/' + id, data)
+        return await this.axiosCall[method](this.apiBaseUrl + '/api/events/' + id, data)
             .then(response => {
                 console.log(`success - eventsApiFunction`)
                 if (pk) {
-                    output = response.data[0]
+                    return response.data[0]
                 } else {
-                    output = response.data
+                    return response.data
                 }
             })
             .catch(error => {
                 console.log(`*API ERROR* - eventsApiFunction:`, error)
+                return error
             })
-        return output
     },
     // USERS ///////////////////////////////////////////////////////////////////////////////////////////////////////////
     async registerWithEmail(email, password, displayName = null) {
@@ -108,6 +104,7 @@ export default {
     async login(data) {
         data['command'] = 'login'
         return await this.userApiFunction('post', null, data)
+
     },
     async lineNewDevice(code, path) {
         return await this.userApiFunction('post', null, {
@@ -145,10 +142,8 @@ export default {
         })
     },
     // LINE ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    async sendWebhook() {
-        await this.lineApiFunction('post', '/webhook/', {
-            command: 'sendWebhook',
-        })
+    async sendWebhook(data) {
+        await this.lineApiFunction('post', '/webhook/', data)
     },
     async lineConsumption() {
         await this.lineApiFunction('post', '/api/line/', {

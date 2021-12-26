@@ -3,7 +3,7 @@
 		<modal v-if="!closeModal" @closeModals="$emit('closeModals')">
 			<div slot="contents" class="modal">
 				<div style="align-self: flex-end">
-					<button v-on:click.prevent="$emit('closeModals')" class="no-border-button">
+					<button v-on:click.prevent="$emit('closeModals')" class="no-border-button x-button">
 						✖
 					</button>
 				</div>
@@ -30,7 +30,7 @@
 				<div style="height: auto; width: 100%; display: flex; justify-content: center"
 						v-on:click.prevent="$emit('closeModals')">
 					<div class="qr-button" style="align-self: center">
-						<button v-on:click.prevent="$emit('closeModals')" class="no-border-button" style="color: black">
+						<button v-on:click.prevent="$emit('closeModals')" class="no-border-button x-button">
 							✖
 						</button>
 					</div>

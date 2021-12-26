@@ -315,11 +315,15 @@ class LineViewset(viewsets.ViewSet):
 class SecretsViewset(viewsets.ViewSet):
 	queryset = []
 	def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
+		print('if this doesnt print then fuck me', pk)
 		secrets_dict = {
-			'new_random_secret': secrets.token_urlsafe(16),
-			'login_channel_id': config('LOGIN_CHANNEL_ID'),
-			'google_maps_api_key': config('GOOGLE_MAPS_API_KEY'),
+			'new-random-secret': secrets.token_urlsafe(16),
+			'login-channel-id': config('LOGIN_CHANNEL_ID'),
+			'google-maps-api-key': config('GOOGLE_MAPS_API_KEY'),
+			'mikey-line-user-id': config('MIKEY_LINE_USER_ID'),
+			'stu-line-user-id': config('STU_LINE_USER_ID'),
 		}
+		print('INSIDE SECRETS', secrets_dict[pk])
 		return Response(secrets_dict[pk])
 
 
