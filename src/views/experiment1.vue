@@ -84,7 +84,7 @@
 			},
 			async getImage () {
 				let result = await apiFunctions.getImage(this.getimgid)
-				let imgUrl = apiFunctions.baseUrl + result.image
+				let imgUrl = apiFunctions.baseUrl ? apiFunctions.baseUrl : window.location.hostname + result.image
 				console.log(imgUrl)
 				this.imagetwo = imgUrl
 			}
