@@ -5,9 +5,7 @@ axios.defaults.xsrfHeaderName = "X-CSRFToken"
     //axios.defaults.headers.common['X-CSRFToken'] = csrftoken
 import axios from 'axios'
 export default {
-    get baseUrl() {
-        return process.env.PYTHON_ENV == 'development' ? 'http://127.0.0.1:8000' : window.location.hostname
-    },
+    get baseUrl() { return process.env.PYTHON_ENV == 'development' ? 'http://127.0.0.1:8000' : '' },
     axiosCall: {
         post: axios.post,
         patch: axios.patch,
@@ -100,7 +98,7 @@ export default {
             })
     },
     async getImage(pk) {
-        return await this.axiosCall['get'](this.baseUrl + '/api/images/' + pk + '/')
+        return await this.axiosCall['get'](this.apiBaseUrl + '/api/images/' + pk + '/')
             .then(response => {
                 console.log(`success - saveImageFunction`)
                 return response.data[0]
