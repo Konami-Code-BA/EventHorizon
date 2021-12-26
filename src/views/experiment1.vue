@@ -84,8 +84,9 @@
 			},
 			async getImage () {
 				let result = await apiFunctions.getImage(this.getimgid)
-				console.log(apiFunctions.baseUrl + result.image)
-				this.imagetwo = apiFunctions.baseUrl + result.image
+				let imgUrl = apiFunctions.baseUrl + result.image
+				console.log(imgUrl)
+				this.imagetwo = imgUrl
 			}
 		} // methods
 	} // export
