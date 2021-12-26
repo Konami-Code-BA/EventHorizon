@@ -1,6 +1,6 @@
 from rest_framework import viewsets
 from .models import Alert
-from .serializers import UserSerializer, EventSerializer
+from .serializers import UserSerializer, EventSerializer, ImageSerializer
 from rest_framework.response import Response
 from django.contrib import auth
 from django.conf import settings
@@ -291,17 +291,21 @@ class LineViewset(viewsets.ViewSet):
 		return response
 
 	def push(self, request):
+		print('INSIDE PUSH - DATA:', request.data['data'])
 		mikeyOrStu = {
 			'mikey': config('MIKEY_LINE_USER_ID'),
 			'stu': config('STU_LINE_USER_ID'),
 		}
+		data = request.data['data']
+		data['to'] = mikeyOrStu[data['to']]
 		url = 'https://api.line.me/v2/bot/message/push'
 		headers = {
 			'Content-Type': 'application/json',
 			'Authorization': 'Bearer ' + config('MESSAGING_CHANNEL_ACCESS_TOKEN'),
 		}
-		data = json.dumps(request.data['data'])
+		data = json.dumps(data)
 		response = requests.post(url, headers=headers, data=data)
+		print('INSIDE PUSH - RESPONSE', response)
 		return response
 
 
@@ -319,43 +323,44 @@ class SecretsViewset(viewsets.ViewSet):
 		return Response(secrets_dict[pk])
 
 
-# EVENTS VIEW SET #####################################################################################################
-class EventsViewset(viewsets.ViewSet):
+# EVENTS VIEW SET ######################################################################################################
+class EventViewset(viewsets.ViewSet):
 	serializer_class = EventSerializer
 	model = serializer_class.Meta.model
 	queryset = []
-	# who can make an event? at first only us admins right? gotta add that
-	# also gotta include changing up lat lng when returning to user who doesnt have access
+
 	def create(self, request):  # POST {prefix}/
 		response = eval(f"self.{request.data['command']}(request)")
 		return Response(response)
 
 	def add_event(self, request):
-		gmaps = googlemaps.Client(key=config('GOOGLE_MAPS_API_KEY'))
-		geocoded = gmaps.geocode(request.data['address'])
-		latitude = geocoded[0]['geometry']['location']['lat']
-		longitude = geocoded[0]['geometry']['location']['lng']
-		postal_code, rand_latitude, rand_longitude = randomize_lat_lng(request.data['address'])
-		event = self.model(
-			name=request.data['name'],
-			description=request.data['description'],
-			address=request.data['address'],
-			postal_code=postal_code,
-			venue_name=request.data['venue_name'],
-			latitude=latitude,
-			longitude=longitude,
-			rand_latitude=rand_latitude,
-			rand_longitude=rand_longitude,
-			date_time=request.data['date_time'],
-			include_time=request.data['include_time'],
-			is_private=request.data['is_private'],
-		)
-		event.save()
-		event.hosts.set(request.data['hosts'])
-		event.invited.set(request.data['invited'])
-		event.confirmed_guests.set(request.data['confirmed_guests'])
-		event.interested.set(request.data['interested'])
-		event.save()
+		event = None
+		if request.user.is_superuser:
+			gmaps = googlemaps.Client(key=config('GOOGLE_MAPS_API_KEY'))
+			geocoded = gmaps.geocode(request.data['address'])
+			latitude = geocoded[0]['geometry']['location']['lat']
+			longitude = geocoded[0]['geometry']['location']['lng']
+			postal_code, rand_latitude, rand_longitude = randomize_lat_lng(request.data['address'])
+			event = self.model(
+				name=request.data['name'],
+				description=request.data['description'],
+				address=request.data['address'],
+				postal_code=postal_code,
+				venue_name=request.data['venue_name'],
+				latitude=latitude,
+				longitude=longitude,
+				rand_latitude=rand_latitude,
+				rand_longitude=rand_longitude,
+				date_time=request.data['date_time'],
+				include_time=request.data['include_time'],
+				is_private=request.data['is_private'],
+			)
+			event.save()
+			event.hosts.set(request.data['hosts'])
+			event.invited.set(request.data['invited'])
+			event.confirmed_guests.set(request.data['confirmed_guests'])
+			event.interested.set(request.data['interested'])
+			event.save()
 		serializer_data = self.serializer_class([event], many=True).data
 		return serializer_data
 
@@ -438,3 +443,23 @@ def serializer_private(events):
 			'interested': event.interested.count(),
 		})]
 	return serializer_data
+
+
+# IMAGES VIEW SET ######################################################################################################
+class ImageViewset(viewsets.ViewSet):
+	serializer_class = ImageSerializer
+	model = serializer_class.Meta.model
+	queryset = []
+
+	def create(self, request):  # POST {prefix}/
+		file = request.data.get('file')
+		file = self.model(image=file)
+		file.save()
+		response = 'a response'
+		return Response(response)
+
+	def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
+		print('did make it here', pk, request)
+		image = self.model.objects.get(pk=pk)
+		serializer_data = self.serializer_class([image], many=True).data
+		return Response(serializer_data)

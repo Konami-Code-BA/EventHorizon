@@ -5,7 +5,7 @@ axios.defaults.xsrfHeaderName = "X-CSRFToken"
     //axios.defaults.headers.common['X-CSRFToken'] = csrftoken
 import axios from 'axios'
 export default {
-    get apiBaseUrl() { return process.env.PYTHON_ENV == 'development' ? 'http://127.0.0.1:8000' : '' },
+    get baseUrl() { return process.env.PYTHON_ENV == 'development' ? 'http://127.0.0.1:8000' : '' },
     axiosCall: {
         post: axios.post,
         patch: axios.patch,
@@ -17,7 +17,7 @@ export default {
         if (pk) {
             uri += pk + '/'
         }
-        return await this.axiosCall[method](this.apiBaseUrl + uri, data)
+        return await this.axiosCall[method](this.baseUrl + uri, data)
             .then(response => {
                 if (data.command == 'logout') {
                     console.log(`success - userApiFunction ${data.command}`)
@@ -38,7 +38,7 @@ export default {
             })
     },
     async lineApiFunction(method, uri, data) {
-        return await this.axiosCall[method](this.apiBaseUrl + uri, data)
+        return await this.axiosCall[method](this.baseUrl + uri, data)
             .then(response => {
                 if (!('error' in response.data)) {
                     console.log(`success - lineApiFunction ${data.command}`)
@@ -54,7 +54,7 @@ export default {
             })
     },
     async secretsApiFunction(toGet) {
-        return await this.axiosCall['get'](this.apiBaseUrl + '/api/secrets/' + toGet + '/')
+        return await this.axiosCall['get'](this.baseUrl + '/api/secrets/' + toGet + '/')
             .then(response => {
                 console.log(`success - secretsApiFunction ${toGet}`)
                 return response.data
@@ -70,7 +70,7 @@ export default {
         if (pk) {
             id = pk + '/'
         }
-        return await this.axiosCall[method](this.apiBaseUrl + '/api/events/' + id, data)
+        return await this.axiosCall[method](this.baseUrl + '/api/events/' + id, data)
             .then(response => {
                 console.log(`success - eventsApiFunction`)
                 if (pk) {
@@ -81,6 +81,30 @@ export default {
             })
             .catch(error => {
                 console.log(`*API ERROR* - eventsApiFunction:`, error)
+                return error
+            })
+    },
+    async saveImage(formData) {
+        return await this.axiosCall['post'](this.baseUrl + '/api/images/', formData, {
+                headers: { "content-type": "multipart/form-data" }
+            })
+            .then(response => {
+                console.log(`success - saveImageFunction`)
+                return response.data
+            })
+            .catch(error => {
+                console.log(`*API ERROR* - saveImageFunction:`, error)
+                return error
+            })
+    },
+    async getImage(pk) {
+        return await this.axiosCall['get'](this.baseUrl + '/api/images/' + pk + '/')
+            .then(response => {
+                console.log(`success - saveImageFunction`)
+                return response.data[0]
+            })
+            .catch(error => {
+                console.log(`*API ERROR* - saveImageFunction:`, error)
                 return error
             })
     },

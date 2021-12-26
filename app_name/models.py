@@ -5,6 +5,7 @@ from django.contrib.auth.models import BaseUserManager
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
 from datetime import datetime
+from django.conf import settings
 
 
 class Alert(models.Model):
@@ -87,6 +88,21 @@ class SessionAdmin(admin.ModelAdmin):
     readonly_fields = ['_session_data']
 
 
+class Image(models.Model):
+	image = models.ImageField(upload_to=settings.MEDIA_ROOT)
+
+	def __str__(self):
+		return str(self.id)
+
+
+class ImageAdmin(admin.ModelAdmin):
+	readonly_fields = ('id',)
+	list_display = ('id',)
+	fields = (
+		'id',
+	)
+
+
 class Event(models.Model):
 	name = models.CharField(max_length=40, default='', blank=True)
 	description = models.TextField(default='', blank=True)
@@ -104,6 +120,7 @@ class Event(models.Model):
 	confirmed_guests = models.ManyToManyField(User, blank=True, related_name='confirmed_guests')
 	interested = models.ManyToManyField(User, blank=True, related_name='interested')
 	is_private = models.BooleanField(default=True, blank=True)
+	images = models.ManyToManyField(Image, blank=True, related_name='images')
 
 	def __str__(self):
 		return self.name
