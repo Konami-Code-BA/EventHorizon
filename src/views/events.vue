@@ -111,7 +111,7 @@
 		},
 		async created () {
 			this.events = await apiFunctions.getAllEvents()
-			let apiKey = await apiFunctions.secretsApiFunction('GOOGLE_MAPS_API_KEY')
+			let apiKey = await apiFunctions.secretsApiFunction('google-maps-api-key')
 			this.scrip.src = `https://maps.googleapis.com/maps/api/js?v=weekly&key=${apiKey}&callback=initMap`
 			this.scrip.async = true
 			this.loaded = true

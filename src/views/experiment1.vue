@@ -49,7 +49,7 @@
 				//a.click()
 			},
 			async sendWebhook () {
-				let mikeyId = await apiFunctions.secretsApiFunction('MIKEY_LINE_USER_ID')
+				let mikeyId = await apiFunctions.secretsApiFunction('mikey-line-user-id')
 				let events = [{
 					'type': 'message',
 					'message': {
