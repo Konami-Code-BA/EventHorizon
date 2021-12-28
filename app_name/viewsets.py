@@ -2,6 +2,7 @@ from rest_framework import viewsets
 from .models import Alert
 from .serializers import UserSerializer, EventSerializer, ImageSerializer
 from rest_framework.response import Response
+from django.http import StreamingHttpResponse
 from django.contrib import auth
 from django.conf import settings
 from decouple import config
@@ -10,11 +11,14 @@ from app_name.functions import verify_update_line_info, authenticate_login, new_
 import secrets, requests, json
 from django.contrib.auth.hashers import make_password
 from collections import namedtuple, OrderedDict
-from rest_framework import serializers
 from django.db.models import Q
 import googlemaps
 import random
-import decimal
+import boto3
+from botocore.exceptions import ClientError
+import os
+import urllib
+from datetime import datetime
 
 
 random.seed(1)
@@ -452,14 +456,64 @@ class ImageViewset(viewsets.ViewSet):
 	queryset = []
 
 	def create(self, request):  # POST {prefix}/
-		file = request.data.get('file')
-		file = self.model(image=file)
-		file.save()
-		response = 'a response'
-		return Response(response)
-
-	def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
-		print('did make it here', pk, request)
-		image = self.model.objects.get(pk=pk)
-		serializer_data = self.serializer_class([image], many=True).data
+		file = request.data['file']
+		result = aws_upload_file(file)
+		if 'error' in result:
+			serializer_data = self.serializer_class([result], many=True).data
+		else:
+			image = self.model(key=result['key'])
+			image.save()
+			event = EventSerializer.Meta.model.objects.get(pk=request.data['event_pk'])
+			event.images.add(image)
+			serializer_data = self.serializer_class([image], many=True).data
 		return Response(serializer_data)
+
+	def partial_update(self, request, pk=None):  # PATCH {prefix}/{lookup}/
+		if request.data['command'] == 'get':
+			my_events = EventSerializer.Meta.model.objects.filter(invited=request.user.id)
+			event = EventSerializer.Meta.model.objects.get(pk=request.data['event_pk'])
+			image = self.model.objects.get(pk=pk)
+			if image in event.images.all() and event in my_events:
+				result = aws_get_file(image.key)
+				if 'error' in result:
+					serializer_data = self.serializer_class([result], many=True).data
+					return Response(serializer_data)
+				else:
+					return StreamingHttpResponse(result['file'])
+			else:
+				serializer_data = self.serializer_class([{'error': 'Not authorized'}], many=True).data
+			return Response(serializer_data)
+		else:
+			serializer_data = self.serializer_class([{'error': 'Not get command'}], many=True).data
+			return Response(serializer_data)
+
+def aws_upload_file(file):
+	s3_client = boto3.client(
+		's3',
+		aws_access_key_id=config('AWS_ACCESS_KEY_ID'),
+		aws_secret_access_key=config('AWS_SECRET_ACCESS_KEY')
+	)
+	try:
+		file_type = '.' + file.name.split('.')[len(file.name.split('.'))-1]
+		if file_type not in ['.jpg', '.JPG', '.jpeg', '.JPEG', '.png', '.PNG', '.gif', '.PNG']:
+			return {'error': 'Not supported file type'}
+		key = str(datetime.now()).replace(' ', 'T').replace(':', '_').replace('.', '_')
+		key += '--' + str(secrets.token_urlsafe(4)) + file_type
+		s3_client.upload_fileobj(file, config('AWS_BUCKET_ACCESS_POINT'), key)
+		return {'key': key}
+	except ClientError as e:
+		print('AWS S3 UPLOAD ERROR:', e)
+		return {'error': e}
+
+def aws_get_file(key):
+	s3_client = boto3.client(
+		's3',
+		aws_access_key_id=config('AWS_ACCESS_KEY_ID'),
+		aws_secret_access_key=config('AWS_SECRET_ACCESS_KEY')
+	)
+	try:
+		file = s3_client.get_object(Bucket=config('AWS_BUCKET_ACCESS_POINT'), Key=key)
+		return {'file': file['Body']}
+	except ClientError as e:
+		print('AWS S3 UPLOAD ERROR:', e)
+		return {'error': e}

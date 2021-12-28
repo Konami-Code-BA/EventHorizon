@@ -9,7 +9,7 @@
 			<input type="file" accept="image/*" @change="(e) => {imageFile = e.target.files[0]}">
 			<input v-model="getimgid" placeholder="id#"/>
 			<button v-on:click.prevent="getImage()">getImage</button>
-			<img :src="imagetwo" style="width: 100px; height: 100px;"/>
+			<img style="width: 100px; height: 100px;" id="img"/>
 			<!--button v-on:click.prevent="makeImage()">makeImage</button-->    <!--for makeImage()-->
 			<!--img :src="imageone"/-->    <!--for makeImage()-->
 		</div>
@@ -59,7 +59,7 @@
 			//	//a.click()
 			//},
 			async sendWebhook () {
-				let mikeyId = await apiFunctions.secretsApiFunction('mikey-line-user-id')
+				let mikeyId = await apiFunctions.secretsApi('mikey-line-user-id')
 				let events = [{
 					'type': 'message',
 					'message': {
@@ -78,19 +78,24 @@
 				await apiFunctions.linePush(data)
 			},
 			async saveImage () {
-				let formData = new FormData();
-				formData.append("file", this.imageFile)
-				await apiFunctions.saveImage(formData)
+				let formData = new FormData()
+				formData.append('file', this.imageFile)
+				formData.append('event_pk', 87)  // this.event.id
+				let result = await apiFunctions.saveImage(formData)
+				console.log('RESULT', result)
 			},
 			async getImage () {
-				let result = await apiFunctions.getImage(this.getimgid)
-				console.log(result.image)
-				console.log(apiFunctions.baseUrl)
-				console.log(window.location.hostname)
-				console.log(apiFunctions.baseUrl ? apiFunctions.baseUrl : window.location.hostname)
-				let imgUrl = (apiFunctions.baseUrl ? apiFunctions.baseUrl : window.location.hostname) + result.image
-				console.log(imgUrl)
-				this.imagetwo = imgUrl
+				let formData = new FormData()
+				formData.append('event_pk', 87)  // this.event.id
+				let result = await apiFunctions.getImage(this.getimgid, formData)
+				//console.log('RESULT', result)
+				this.imagetwo = result  // problem is whats being returned doesnt seem like a file. have to figure out streaming, and geting file back as a return. and btw when i did typeof it said string so that seems wrong
+
+				let fr = new FileReader()
+				fr.onload = function () {
+					document.getElementById('#img').src = fr.result
+				}
+				fr.readAsDataURL(result)
 			}
 		} // methods
 	} // export
