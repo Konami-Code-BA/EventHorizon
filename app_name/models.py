@@ -89,18 +89,9 @@ class SessionAdmin(admin.ModelAdmin):
 
 
 class Image(models.Model):
-	image = models.ImageField()
-
+	key = models.CharField(max_length=40, default='nameless.jpg')
 	def __str__(self):
 		return str(self.id)
-
-
-class ImageAdmin(admin.ModelAdmin):
-	readonly_fields = ('id',)
-	list_display = ('id',)
-	fields = (
-		'id',
-	)
 
 
 class Event(models.Model):
@@ -131,5 +122,5 @@ class EventAdmin(admin.ModelAdmin):
 	list_display = ('name', 'id')
 	fields = (
 		'id', 'name', 'description', 'is_private', 'address', 'venue_name', 'latitude', 'longitude', 'date_time',
-		'include_time', 'hosts', 'invited', 'confirmed_guests', 'interested'
+		'include_time', 'hosts', 'invited', 'confirmed_guests', 'interested', 'images'
 	)
