@@ -282,6 +282,22 @@ export default {
             'EN': 'GET QR CODES',
             'JP': 'QRコード出す'
         },
+        'EVENT NAME': {
+            'EN': 'EVENT NAME',
+            'JP': 'イベント名'
+        },
+        'DESCRIPTION': {
+            'EN': 'DESCRIPTION',
+            'JP': '説明'
+        },
+        'ADDRESS': {
+            'EN': 'ADDRESS',
+            'JP': '住所'
+        },
+        'VENUE NAME': {
+            'EN': 'VENUE NAME',
+            'JP': 'べニュー名'
+        },
         'ALL EVENTS': {
             'EN': 'ALL EVENTS',
             'JP': 'オール　イベント'

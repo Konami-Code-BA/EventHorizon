@@ -169,7 +169,7 @@
 		}
 		input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus,
 		input:-webkit-autofill:active, input[type=text], input[type=email], input[type=password],
-		input[type=text]:focus, input[type=email]:focus, input[type=password]:focus {
+		input[type=text]:focus, input[type=email]:focus, input[type=password]:focus, textarea {
 			font-family: inherit;
   			color: #18002e;
   			-webkit-text-fill-color: #18002e;
@@ -183,11 +183,12 @@
 			padding: 0;
 			padding-left: 10px;
 			outline: none !important;
-			width: 80%;
+			width: 100%;
 		}
 		form {
 			display: flex;
 			flex-direction: column;
+			width: 100%;
 		}
 		.modal {
 			display: flex;
