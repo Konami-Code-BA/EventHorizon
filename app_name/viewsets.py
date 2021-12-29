@@ -2,7 +2,7 @@ from rest_framework import viewsets
 from .models import Alert
 from .serializers import UserSerializer, EventSerializer, ImageSerializer
 from rest_framework.response import Response
-from django.http import StreamingHttpResponse
+from django.http import StreamingHttpResponse, HttpResponse
 from django.contrib import auth
 from django.conf import settings
 from decouple import config
@@ -16,9 +16,10 @@ import googlemaps
 import random
 import boto3
 from botocore.exceptions import ClientError
-import os
-import urllib
+import io
 from datetime import datetime
+from  PIL import Image
+import base64
 
 
 random.seed(1)
@@ -475,11 +476,15 @@ class ImageViewset(viewsets.ViewSet):
 			image = self.model.objects.get(pk=pk)
 			if image in event.images.all() and event in my_events:
 				result = aws_get_file(image.key)
-				if 'error' in result:
-					serializer_data = self.serializer_class([result], many=True).data
-					return Response(serializer_data)
-				else:
-					return StreamingHttpResponse(result['file'])
+				#buffer = io.BytesIO()
+				#result.save(buffer, format = 'JPEG', quality = 75)
+
+				## You probably want
+				#result = buffer.getbuffer()
+				response = HttpResponse(result)
+				response['Content-Type'] = "image/jpg"
+				response['Cache-Control'] = "max-age=0"
+				return response
 			else:
 				serializer_data = self.serializer_class([{'error': 'Not authorized'}], many=True).data
 			return Response(serializer_data)
@@ -506,14 +511,20 @@ def aws_upload_file(file):
 		return {'error': e}
 
 def aws_get_file(key):
-	s3_client = boto3.client(
-		's3',
-		aws_access_key_id=config('AWS_ACCESS_KEY_ID'),
-		aws_secret_access_key=config('AWS_SECRET_ACCESS_KEY')
-	)
 	try:
-		file = s3_client.get_object(Bucket=config('AWS_BUCKET_ACCESS_POINT'), Key=key)
-		return {'file': file['Body']}
+		s3_client = boto3.client(
+			's3',
+			aws_access_key_id=config('AWS_ACCESS_KEY_ID'),
+			aws_secret_access_key=config('AWS_SECRET_ACCESS_KEY')
+		)
+		#bucket = s3_client.Bucket(config('AWS_BUCKET_ACCESS_POINT'))
+		#object = bucket.Object(key)
+
+		file_stream = io.BytesIO()
+		s3_client.download_fileobj(config('AWS_BUCKET_ACCESS_POINT'), key, file_stream)
+		#send = Image.open(file_stream)
+		send = base64.b64encode(file_stream.getbuffer())
+		return send
 	except ClientError as e:
 		print('AWS S3 UPLOAD ERROR:', e)
 		return {'error': e}
