@@ -37,7 +37,8 @@
 		},
 		methods: {
 			t (w) { return translations.t(w) },
-			//async makeImage () {  // this was finished but i need to do it in backend afterall so leave unused
+			////this was finished but i need to do it in backend afterall so leave unused
+			//async makeImage () {
 			//	let background = new Image()
 			//	background.src = require('@/assets/pexels-photo-event1.jpg')
 			//	let canvas = document.createElement('canvas')
@@ -82,23 +83,13 @@
 				formData.append('file', this.imageFile)
 				formData.append('event_pk', 87)  // this.event.id
 				let result = await apiFunctions.saveImage(formData)
-				console.log('RESULT', result)
+				return result.id
 			},
 			async getImage () {
 				let formData = new FormData()
 				formData.append('event_pk', 87)  // this.event.id
 				let result = await apiFunctions.getImage(this.getimgid, formData)
-				//console.log('RESULT', result)
-				//this.imagetwo = result  // problem is whats being returned doesnt seem like a file. have to figure out streaming, and geting file back as a return. and btw when i did typeof it said string so that seems wrong
-				let image = "data:image/jpg;base64," + result
-				this.imagetwo = image
-				//console.log(typeof iamge)
-				console.log(image)
-				//let fr = new FileReader()
-				//fr.onload = function () {
-				//	document.getElementById('#img').src = fr.result
-				//}
-				//fr.readAsDataURL(result)
+				this.imagetwo = "data:image/jpg;base64," + result
 			}
 		} // methods
 	} // export

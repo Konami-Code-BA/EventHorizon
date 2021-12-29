@@ -97,6 +97,7 @@ class Image(models.Model):
 class Event(models.Model):
 	name = models.CharField(max_length=40, default='', blank=True)
 	description = models.TextField(default='', blank=True)
+	is_private = models.BooleanField(default=True, blank=True)
 	address = models.CharField(max_length=120, default='', blank=True)
 	postal_code = models.CharField(max_length=120, default='', blank=True)
 	venue_name = models.CharField(max_length=120, default='', blank=True)
@@ -110,7 +111,6 @@ class Event(models.Model):
 	invited = models.ManyToManyField(User, blank=True, related_name='invited')
 	confirmed_guests = models.ManyToManyField(User, blank=True, related_name='confirmed_guests')
 	interested = models.ManyToManyField(User, blank=True, related_name='interested')
-	is_private = models.BooleanField(default=True, blank=True)
 	images = models.ManyToManyField(Image, blank=True, related_name='images')
 
 	def __str__(self):
@@ -121,6 +121,7 @@ class EventAdmin(admin.ModelAdmin):
 	readonly_fields = ('id',)
 	list_display = ('name', 'id')
 	fields = (
-		'id', 'name', 'description', 'is_private', 'address', 'venue_name', 'latitude', 'longitude', 'date_time',
-		'include_time', 'hosts', 'invited', 'confirmed_guests', 'interested', 'images'
+		'id', 'name', 'description', 'is_private', 'address', 'postal_code', 'venue_name', 'latitude', 'longitude',
+		'rand_latitude', 'rand_longitude', 'date_time', 'include_time', 'hosts', 'invited', 'confirmed_guests',
+		'interested', 'images'
 	)

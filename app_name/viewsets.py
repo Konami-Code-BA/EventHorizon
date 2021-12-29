@@ -296,7 +296,6 @@ class LineViewset(viewsets.ViewSet):
 		return response
 
 	def push(self, request):
-		print('INSIDE PUSH - DATA:', request.data['data'])
 		mikeyOrStu = {
 			'mikey': config('MIKEY_LINE_USER_ID'),
 			'stu': config('STU_LINE_USER_ID'),
@@ -310,7 +309,6 @@ class LineViewset(viewsets.ViewSet):
 		}
 		data = json.dumps(data)
 		response = requests.post(url, headers=headers, data=data)
-		print('INSIDE PUSH - RESPONSE', response)
 		return response
 
 
@@ -341,11 +339,16 @@ class EventViewset(viewsets.ViewSet):
 	def add_event(self, request):
 		event = None
 		if request.user.is_superuser:
-			gmaps = googlemaps.Client(key=config('GOOGLE_MAPS_API_KEY'))
-			geocoded = gmaps.geocode(request.data['address'])
-			latitude = geocoded[0]['geometry']['location']['lat']
-			longitude = geocoded[0]['geometry']['location']['lng']
-			postal_code, rand_latitude, rand_longitude = randomize_lat_lng(request.data['address'])
+			if request.data['address']:
+				gmaps = googlemaps.Client(key=config('GOOGLE_MAPS_API_KEY'))
+				geocoded = gmaps.geocode(request.data['address'])
+				latitude = geocoded[0]['geometry']['location']['lat']
+				longitude = geocoded[0]['geometry']['location']['lng']
+				postal_code, rand_latitude, rand_longitude = randomize_lat_lng(request.data['address'])
+			else:
+				latitude = 0
+				longitude = 0
+				postal_code, rand_latitude, rand_longitude = '', 0, 0
 			event = self.model(
 				name=request.data['name'],
 				description=request.data['description'],
@@ -361,10 +364,9 @@ class EventViewset(viewsets.ViewSet):
 				is_private=request.data['is_private'],
 			)
 			event.save()
-			event.hosts.set(request.data['hosts'])
-			event.invited.set(request.data['invited'])
-			event.confirmed_guests.set(request.data['confirmed_guests'])
-			event.interested.set(request.data['interested'])
+			event.hosts.set([request.user.id])
+			event.invited.set([request.user.id])
+			event.images.set(request.data['images'])
 			event.save()
 		serializer_data = self.serializer_class([event], many=True).data
 		return serializer_data
@@ -373,7 +375,6 @@ class EventViewset(viewsets.ViewSet):
 		invited_events = self.model.objects.filter(invited=request.user.id)
 		interested_public_events = self.model.objects.filter(Q(is_private=False) & Q(interested=request.user.id) & ~Q(invited=request.user.id))
 		interested_private_events = self.model.objects.filter(Q(is_private=True) & Q(interested=request.user.id) & ~Q(invited=request.user.id))
-		print(interested_private_events)
 		serializer_data1 = self.serializer_class(invited_events.union(interested_public_events), many=True).data
 		serializer_data2 = serializer_private(interested_private_events)
 		return serializer_data1 + serializer_data2
@@ -409,12 +410,10 @@ def randomize_lat_lng(address):
 	gmaps = googlemaps.Client(key=config('GOOGLE_MAPS_API_KEY'))
 	geocoded = gmaps.geocode(address)
 	for component in geocoded[0]['address_components']:
-		print(component)
 		if 'postal_code' in component['types']:
 			postal_code = component['long_name']
 		if 'country' in component['types']:
 			country = component['long_name']
-	print(f'{postal_code} {country}')
 	geocoded = gmaps.geocode(f'{postal_code} {country}')
 	outter = 300
 	latitude = geocoded[0]['geometry']['location']['lat']
@@ -464,8 +463,6 @@ class ImageViewset(viewsets.ViewSet):
 		else:
 			image = self.model(key=result['key'])
 			image.save()
-			event = EventSerializer.Meta.model.objects.get(pk=request.data['event_pk'])
-			event.images.add(image)
 			serializer_data = self.serializer_class([image], many=True).data
 		return Response(serializer_data)
 
