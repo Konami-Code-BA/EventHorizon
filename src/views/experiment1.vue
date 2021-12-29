@@ -9,7 +9,7 @@
 			<input type="file" accept="image/*" @change="(e) => {imageFile = e.target.files[0]}">
 			<input v-model="getimgid" placeholder="id#"/>
 			<button v-on:click.prevent="getImage()">getImage</button>
-			<img style="width: 100px; height: 100px;" id="img"/>
+			<img style="width: 100px; height: 100px;" :src="imagetwo"/>
 			<!--button v-on:click.prevent="makeImage()">makeImage</button-->    <!--for makeImage()-->
 			<!--img :src="imageone"/-->    <!--for makeImage()-->
 		</div>
@@ -89,13 +89,16 @@
 				formData.append('event_pk', 87)  // this.event.id
 				let result = await apiFunctions.getImage(this.getimgid, formData)
 				//console.log('RESULT', result)
-				this.imagetwo = result  // problem is whats being returned doesnt seem like a file. have to figure out streaming, and geting file back as a return. and btw when i did typeof it said string so that seems wrong
-
-				let fr = new FileReader()
-				fr.onload = function () {
-					document.getElementById('#img').src = fr.result
-				}
-				fr.readAsDataURL(result)
+				//this.imagetwo = result  // problem is whats being returned doesnt seem like a file. have to figure out streaming, and geting file back as a return. and btw when i did typeof it said string so that seems wrong
+				let image = "data:image/jpg;base64," + result
+				this.imagetwo = image
+				//console.log(typeof iamge)
+				console.log(image)
+				//let fr = new FileReader()
+				//fr.onload = function () {
+				//	document.getElementById('#img').src = fr.result
+				//}
+				//fr.readAsDataURL(result)
 			}
 		} // methods
 	} // export
