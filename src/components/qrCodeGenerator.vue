@@ -2,22 +2,24 @@
 	<div>
 		<modal v-if="!closeModal" @closeModals="$emit('closeModals')">
 			<div slot="contents" class="modal">
-				<div style="align-self: flex-end">
+				<div style="align-self: flex-end; padding-bottom: 5px; padding-bottom: 5px;">
 					<button v-on:click.prevent="$emit('closeModals')" class="no-border-button x-button">
 						✖
 					</button>
 				</div>
-				<div>
+				<div style="width: 100%">
 					<button v-on:click.prevent="closeModal=true; getQr(url)" class="button">
 						This Page QR
 					</button>
 				</div>
-				<div>
+				<div class="line-height"></div>
+				<div style="width: 100%">
 					<button v-on:click.prevent="closeModal=true; getQr(instagram)" class="button">
 						Instagram QR
 					</button>
 				</div>
-				<div>
+				<div class="line-height"></div>
+				<div style="width: 100%">
 					<button v-on:click.prevent="closeModal=true; getQr(line)" class="button">
 						Line QR
 					</button>
@@ -123,5 +125,8 @@
 		border: 2px solid black;
 		background: white;
 		align-self: center;
+	}
+	.button {
+		width: 100%;
 	}
 </style>

@@ -57,6 +57,7 @@ def line_bot(line_body):
 	replyToken, reply, received = None, None, None
 	if len(line_body['events']) > 0:
 		events = line_body['events'][0]
+		print('INSIDE LINE BOT - INCOMING', events)
 	else: 
 		return replyToken, reply
 	if events['type'] == 'follow':
@@ -78,6 +79,8 @@ def line_bot(line_body):
 		reply = {'type': 'text', 'text': events['reply']}
 	elif received in ['Image', 'image']:
 		reply = {'type': 'image', 'image': events['reply']}
+	print('INSIDE LINE BOT - SEND TO', send_to)
+	print('INSIDE LINE BOT - REPLY', reply)
 	return send_to, reply
 
 

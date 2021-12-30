@@ -4,7 +4,8 @@ from django.contrib import admin
 from django.contrib.auth.models import BaseUserManager
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
-from datetime import datetime
+from django.conf import settings
+from django.utils import timezone
 
 
 class Alert(models.Model):
@@ -87,9 +88,16 @@ class SessionAdmin(admin.ModelAdmin):
     readonly_fields = ['_session_data']
 
 
+class Image(models.Model):
+	key = models.CharField(max_length=40, default='nameless.jpg')
+	def __str__(self):
+		return str(self.id)
+
+
 class Event(models.Model):
 	name = models.CharField(max_length=40, default='', blank=True)
 	description = models.TextField(default='', blank=True)
+	is_private = models.BooleanField(default=True, blank=True)
 	address = models.CharField(max_length=120, default='', blank=True)
 	postal_code = models.CharField(max_length=120, default='', blank=True)
 	venue_name = models.CharField(max_length=120, default='', blank=True)
@@ -97,13 +105,13 @@ class Event(models.Model):
 	longitude = models.DecimalField(max_digits=23, decimal_places=20, default=0, blank=True)
 	rand_latitude = models.DecimalField(max_digits=23, decimal_places=20, default=0, blank=True)
 	rand_longitude = models.DecimalField(max_digits=23, decimal_places=20, default=0, blank=True)
-	date_time = models.DateTimeField(default=datetime.today(), blank=True)
+	date_time = models.DateTimeField(default=timezone.now, blank=True)
 	include_time = models.BooleanField(default=False, blank=True)
 	hosts = models.ManyToManyField(User, blank=True, related_name='hosts')
 	invited = models.ManyToManyField(User, blank=True, related_name='invited')
 	confirmed_guests = models.ManyToManyField(User, blank=True, related_name='confirmed_guests')
 	interested = models.ManyToManyField(User, blank=True, related_name='interested')
-	is_private = models.BooleanField(default=True, blank=True)
+	images = models.ManyToManyField(Image, blank=True, related_name='images')
 
 	def __str__(self):
 		return self.name
@@ -113,6 +121,7 @@ class EventAdmin(admin.ModelAdmin):
 	readonly_fields = ('id',)
 	list_display = ('name', 'id')
 	fields = (
-		'id', 'name', 'description', 'is_private', 'address', 'venue_name', 'latitude', 'longitude', 'date_time',
-		'include_time', 'hosts', 'invited', 'confirmed_guests', 'interested'
+		'id', 'name', 'description', 'is_private', 'address', 'postal_code', 'venue_name', 'latitude', 'longitude',
+		'rand_latitude', 'rand_longitude', 'date_time', 'include_time', 'hosts', 'invited', 'confirmed_guests',
+		'interested', 'images'
 	)
