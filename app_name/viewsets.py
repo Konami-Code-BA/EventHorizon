@@ -1,7 +1,8 @@
 from rest_framework import viewsets
 from .models import Alert
-from .serializers import UserSerializer, EventSerializer
+from .serializers import UserSerializer, EventSerializer, ImageSerializer
 from rest_framework.response import Response
+from django.http import StreamingHttpResponse, HttpResponse
 from django.contrib import auth
 from django.conf import settings
 from decouple import config
@@ -10,11 +11,15 @@ from app_name.functions import verify_update_line_info, authenticate_login, new_
 import secrets, requests, json
 from django.contrib.auth.hashers import make_password
 from collections import namedtuple, OrderedDict
-from rest_framework import serializers
 from django.db.models import Q
 import googlemaps
 import random
-import decimal
+import boto3
+from botocore.exceptions import ClientError
+import io
+from datetime import datetime
+from  PIL import Image
+import base64
 
 
 random.seed(1)
@@ -295,12 +300,14 @@ class LineViewset(viewsets.ViewSet):
 			'mikey': config('MIKEY_LINE_USER_ID'),
 			'stu': config('STU_LINE_USER_ID'),
 		}
+		data = request.data['data']
+		data['to'] = mikeyOrStu[data['to']]
 		url = 'https://api.line.me/v2/bot/message/push'
 		headers = {
 			'Content-Type': 'application/json',
 			'Authorization': 'Bearer ' + config('MESSAGING_CHANNEL_ACCESS_TOKEN'),
 		}
-		data = json.dumps(request.data['data'])
+		data = json.dumps(data)
 		response = requests.post(url, headers=headers, data=data)
 		return response
 
@@ -319,43 +326,48 @@ class SecretsViewset(viewsets.ViewSet):
 		return Response(secrets_dict[pk])
 
 
-# EVENTS VIEW SET #####################################################################################################
-class EventsViewset(viewsets.ViewSet):
+# EVENTS VIEW SET ######################################################################################################
+class EventViewset(viewsets.ViewSet):
 	serializer_class = EventSerializer
 	model = serializer_class.Meta.model
 	queryset = []
-	# who can make an event? at first only us admins right? gotta add that
-	# also gotta include changing up lat lng when returning to user who doesnt have access
+
 	def create(self, request):  # POST {prefix}/
 		response = eval(f"self.{request.data['command']}(request)")
 		return Response(response)
 
 	def add_event(self, request):
-		gmaps = googlemaps.Client(key=config('GOOGLE_MAPS_API_KEY'))
-		geocoded = gmaps.geocode(request.data['address'])
-		latitude = geocoded[0]['geometry']['location']['lat']
-		longitude = geocoded[0]['geometry']['location']['lng']
-		postal_code, rand_latitude, rand_longitude = randomize_lat_lng(request.data['address'])
-		event = self.model(
-			name=request.data['name'],
-			description=request.data['description'],
-			address=request.data['address'],
-			postal_code=postal_code,
-			venue_name=request.data['venue_name'],
-			latitude=latitude,
-			longitude=longitude,
-			rand_latitude=rand_latitude,
-			rand_longitude=rand_longitude,
-			date_time=request.data['date_time'],
-			include_time=request.data['include_time'],
-			is_private=request.data['is_private'],
-		)
-		event.save()
-		event.hosts.set(request.data['hosts'])
-		event.invited.set(request.data['invited'])
-		event.confirmed_guests.set(request.data['confirmed_guests'])
-		event.interested.set(request.data['interested'])
-		event.save()
+		event = None
+		if request.user.is_superuser:
+			if request.data['address']:
+				gmaps = googlemaps.Client(key=config('GOOGLE_MAPS_API_KEY'))
+				geocoded = gmaps.geocode(request.data['address'])
+				latitude = geocoded[0]['geometry']['location']['lat']
+				longitude = geocoded[0]['geometry']['location']['lng']
+				postal_code, rand_latitude, rand_longitude = randomize_lat_lng(request.data['address'])
+			else:
+				latitude = 0
+				longitude = 0
+				postal_code, rand_latitude, rand_longitude = '', 0, 0
+			event = self.model(
+				name=request.data['name'],
+				description=request.data['description'],
+				address=request.data['address'],
+				postal_code=postal_code,
+				venue_name=request.data['venue_name'],
+				latitude=latitude,
+				longitude=longitude,
+				rand_latitude=rand_latitude,
+				rand_longitude=rand_longitude,
+				date_time=request.data['date_time'],
+				include_time=request.data['include_time'],
+				is_private=request.data['is_private'],
+			)
+			event.save()
+			event.hosts.set([request.user.id])
+			event.invited.set([request.user.id])
+			event.images.set(request.data['images'])
+			event.save()
 		serializer_data = self.serializer_class([event], many=True).data
 		return serializer_data
 
@@ -363,7 +375,6 @@ class EventsViewset(viewsets.ViewSet):
 		invited_events = self.model.objects.filter(invited=request.user.id)
 		interested_public_events = self.model.objects.filter(Q(is_private=False) & Q(interested=request.user.id) & ~Q(invited=request.user.id))
 		interested_private_events = self.model.objects.filter(Q(is_private=True) & Q(interested=request.user.id) & ~Q(invited=request.user.id))
-		print(interested_private_events)
 		serializer_data1 = self.serializer_class(invited_events.union(interested_public_events), many=True).data
 		serializer_data2 = serializer_private(interested_private_events)
 		return serializer_data1 + serializer_data2
@@ -399,12 +410,10 @@ def randomize_lat_lng(address):
 	gmaps = googlemaps.Client(key=config('GOOGLE_MAPS_API_KEY'))
 	geocoded = gmaps.geocode(address)
 	for component in geocoded[0]['address_components']:
-		print(component)
 		if 'postal_code' in component['types']:
 			postal_code = component['long_name']
 		if 'country' in component['types']:
 			country = component['long_name']
-	print(f'{postal_code} {country}')
 	geocoded = gmaps.geocode(f'{postal_code} {country}')
 	outter = 300
 	latitude = geocoded[0]['geometry']['location']['lat']
@@ -438,3 +447,81 @@ def serializer_private(events):
 			'interested': event.interested.count(),
 		})]
 	return serializer_data
+
+
+# IMAGES VIEW SET ######################################################################################################
+class ImageViewset(viewsets.ViewSet):
+	serializer_class = ImageSerializer
+	model = serializer_class.Meta.model
+	queryset = []
+
+	def create(self, request):  # POST {prefix}/
+		file = request.data['file']
+		result = aws_upload_file(file)
+		if 'error' in result:
+			serializer_data = self.serializer_class([result], many=True).data
+		else:
+			image = self.model(key=result['key'])
+			image.save()
+			serializer_data = self.serializer_class([image], many=True).data
+		return Response(serializer_data)
+
+	def partial_update(self, request, pk=None):  # PATCH {prefix}/{lookup}/
+		if request.data['command'] == 'get':
+			my_events = EventSerializer.Meta.model.objects.filter(invited=request.user.id)
+			event = EventSerializer.Meta.model.objects.get(pk=request.data['event_pk'])
+			image = self.model.objects.get(pk=pk)
+			if image in event.images.all() and event in my_events:
+				result = aws_get_file(image.key)
+				#buffer = io.BytesIO()
+				#result.save(buffer, format = 'JPEG', quality = 75)
+
+				## You probably want
+				#result = buffer.getbuffer()
+				response = HttpResponse(result)
+				response['Content-Type'] = "image/jpg"
+				response['Cache-Control'] = "max-age=0"
+				return response
+			else:
+				serializer_data = self.serializer_class([{'error': 'Not authorized'}], many=True).data
+			return Response(serializer_data)
+		else:
+			serializer_data = self.serializer_class([{'error': 'Not get command'}], many=True).data
+			return Response(serializer_data)
+
+def aws_upload_file(file):
+	s3_client = boto3.client(
+		's3',
+		aws_access_key_id=config('AWS_ACCESS_KEY_ID'),
+		aws_secret_access_key=config('AWS_SECRET_ACCESS_KEY')
+	)
+	try:
+		file_type = '.' + file.name.split('.')[len(file.name.split('.'))-1]
+		if file_type not in ['.jpg', '.JPG', '.jpeg', '.JPEG', '.png', '.PNG', '.gif', '.PNG']:
+			return {'error': 'Not supported file type'}
+		key = str(datetime.now()).replace(' ', 'T').replace(':', '_').replace('.', '_')
+		key += '--' + str(secrets.token_urlsafe(4)) + file_type
+		s3_client.upload_fileobj(file, config('AWS_BUCKET_ACCESS_POINT'), key)
+		return {'key': key}
+	except ClientError as e:
+		print('AWS S3 UPLOAD ERROR:', e)
+		return {'error': e}
+
+def aws_get_file(key):
+	try:
+		s3_client = boto3.client(
+			's3',
+			aws_access_key_id=config('AWS_ACCESS_KEY_ID'),
+			aws_secret_access_key=config('AWS_SECRET_ACCESS_KEY')
+		)
+		#bucket = s3_client.Bucket(config('AWS_BUCKET_ACCESS_POINT'))
+		#object = bucket.Object(key)
+
+		file_stream = io.BytesIO()
+		s3_client.download_fileobj(config('AWS_BUCKET_ACCESS_POINT'), key, file_stream)
+		#send = Image.open(file_stream)
+		send = base64.b64encode(file_stream.getbuffer())
+		return send
+	except ClientError as e:
+		print('AWS S3 UPLOAD ERROR:', e)
+		return {'error': e}

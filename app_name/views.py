@@ -18,7 +18,8 @@ def line_webhook(request):  # https://developers.line.biz/en/reference/messaging
 	send_to, reply = line_bot(line_body)
 	response = "Don't need to send a reply"
 	if send_to and reply:
-		url = 'https://api.line.me/v2/bot/message/reply'
+		uri = 'reply' if send_to['type'] == 'reply_token' else 'push'
+		url = 'https://api.line.me/v2/bot/message/' + uri
 		headers = {
 			'Content-Type': 'application/json',
 			'Authorization': 'Bearer ' + config('MESSAGING_CHANNEL_ACCESS_TOKEN'),
