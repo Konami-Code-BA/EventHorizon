@@ -9,9 +9,15 @@
 						<input :placeholder="t('EVENT NAME')" v-model="name" type="text"
 								autocapitalize="words"/>
 					</div>
+					<div class="dual-set" style="padding-bottom: 5px;">
+						<button class="button" style="width: 100%" v-on:click.prevent="is_private=!is_private">
+							{{ t('PRIVATE EVENT?') }}
+						</button>
+						<input type="checkbox" class="checkbox" v-model="is_private"/><!--wanna put a little i in a cirle for info about what a private event means vs public-->
+					</div>
 					<div>
 						<textarea :placeholder="t('DESCRIPTION')" v-model="description" type="text"
-								autocapitalize="sentences"/>
+								autocapitalize="sentences" style="height: 60px"/>
 					</div>
 					<div style="padding-bottom: 5px;">
 						<input :placeholder="t('ADDRESS')" v-model="address" type="text" autocorrect="none"
@@ -21,23 +27,23 @@
 						<input :placeholder="t('VENUE NAME')" v-model="venue_name" type="text" autocorrect="none"
 								autocapitalize="words"/>
 					</div>
-					<div style="display: flex; flex-direction: column; justify-content: center; height: 60px;">
-						<div style="padding-bottom: 5px;">
-							<input v-model="venue_name" type="date" style="width: 100%"/>
+					<div style="padding-bottom: 5px; width: 100%; display: flex; flex-direction: row;">
+						<div :style="[include_time ? {width: '50%'} : {width: '100%'}]">
+							<input v-model="date" type="date" style="width: 100%; height: 30px; font: inherit; font-size: 11px;"/>
 						</div>
-						<div v-if="include_time" style="padding-bottom: 5px;">
-							<input v-model="venue_name" type="time" style="width: 100%"/>
+						<div v-if="include_time" style="width: 50%">
+							<input v-model="time" type="time" style="width: 100%; height: 30px; font: inherit; font-size: 11px;">
 						</div>
 					</div>
 					<div class="dual-set" style="padding-bottom: 5px;">
 						<button class="button" style="width: 100%" v-on:click.prevent="include_time=!include_time">
-							Include time?&nbsp;
+							{{ t('INCLUDE TIME?') }}
 						</button>
 						<input type="checkbox" class="checkbox" v-model="include_time"/>
 					</div>
 					<div class="file-input">
 						<div>
-							IMAGE
+							{{ t('IMAGE') }}
 						</div>
 						<input type="file" accept="image/*" @change="(e) => {imageFile = e.target.files[0]}"/>
 					</div>
@@ -72,7 +78,9 @@
 				description: '',
 				address: '',
 				venue_name: '',
-				date_time: new Date(),
+				date: null,
+				time: null,
+				date_time: null,
 				include_time: false,
 				is_private: true,
 			}
@@ -83,8 +91,22 @@
 			},
 		},
 		watch: {
+			'date' () {
+				this.date_time = new Date(this.date + 'T' + this.time)
+			},
+			'time' () {
+				this.date_time = new Date(this.date + 'T' + this.time)
+			},
 		},
 		async mounted () {
+			this.date_time = new Date()
+			this.date = (this.date_time.getYear()+1900) + '-' + (this.date_time.getMonth()+1) + '-'
+			this.date += this.date_time.getDate()
+			this.time = this.date_time.getHours() + ':' + this.date_time.getMinutes()
+			if (this.time.length < 5) {
+				this.time = '0' + this.time
+			}
+
 			this.$emit('endLoading')
 		},
 		methods: {
@@ -94,7 +116,6 @@
 				if (this.imageFile) {
 					image_id = await this.saveImage()
 				}
-				console.log(this.date_time, typeof this.date_time)
 				await apiFunctions.createEvent({  // lets make this a form
 					name: this.name,
 					description: this.description,
@@ -132,6 +153,7 @@
 		padding-right: 10px;
 		outline: none !important;
 		width: 100%;
+		height: 60px;
 	}
 	.button {
 		width: 100%;
@@ -149,6 +171,6 @@
 		position: fixed;
 		height: 20px;
 		width: 20px;
-		transform: translate(60px, 0)
+		transform: translate(80px, 0)
 	}
 </style>
