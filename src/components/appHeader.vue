@@ -4,7 +4,7 @@
 			<tabs :num-tabs="3" :initial="0" @on-click="(arg) => { selectedTab = arg }"
 					style="background-color: rgba(0, 0, 0, .5);">
 				<div slot="1" style="vertical-align: bottom;">
-					A/文
+					A/あ
 				</div>
 				<div slot="2">
 					<button class="no-border-button" style="display: flex; flex-direction: row; align-items: center;"
@@ -26,18 +26,18 @@
 		</div>
 		<modal v-if="selectedTab === 1" @closeModals="selectedTab = 0">
 			<div slot="contents" class="modal">
-				<div style="align-self: flex-end">
+				<div style="align-self: flex-end; padding-bottom: 5px;">
 					<button v-on:click.prevent="selectedTab = 0" class="no-border-button x-button">
 						✖
 					</button>
 				</div>
-				<div>
+				<div style="width: 100%">
 					<button v-on:click.prevent="english()" class="button">
 						ENGLISH
 					</button>
 				</div>
 				<div class="line-height"></div>
-				<div>
+				<div style="width: 100%">
 					<button v-on:click.prevent="japanese()" class="button">
 						日本語
 					</button>
@@ -47,23 +47,23 @@
 		</modal>
 		<modal v-if="selectedTab === 3" @closeModals="selectedTab = 0">
 			<div slot="contents" class="modal">
-				<div style="align-self: flex-end">
+				<div style="align-self: flex-end; padding-bottom: 5px;">
 					<button v-on:click.prevent="selectedTab = 0" class="no-border-button x-button">
 						✖
 					</button>
 				</div>
-				<div v-if="!isAuthenticatedUser">
+				<div v-if="!isAuthenticatedUser" style="width: 100%">
 					<button v-on:click.prevent="goToLoginRegister()" class="button">
 						{{ t('LOGIN / REGISTER') }}
 					</button>
 				</div>
-				<div v-else>
+				<div v-else style="width: 100%">
 					<button v-on:click.prevent="logout()" class="button">
 						{{ t('LOGOUT') }}
 					</button>
 				</div>
 				<div class="line-height"></div>
-				<div>
+				<div style="width: 100%">
 					<button v-on:click.prevent="selectedTab = 0; showQrModal = true" class="button">
 						{{t('GET QR CODES')}}
 					</button>
@@ -170,5 +170,8 @@
 		border-top: none !important;
 		border-left: none !important;
 		border-right: none !important;
+	}
+	.button {
+		width: 100%;
 	}
 </style>

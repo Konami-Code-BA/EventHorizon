@@ -282,6 +282,34 @@ export default {
             'EN': 'GET QR CODES',
             'JP': 'QRコード出す'
         },
+        'EVENT NAME': {
+            'EN': 'EVENT NAME',
+            'JP': 'イベント名'
+        },
+        'DESCRIPTION': {
+            'EN': 'DESCRIPTION',
+            'JP': '説明'
+        },
+        'ADDRESS': {
+            'EN': 'ADDRESS',
+            'JP': '住所'
+        },
+        'VENUE NAME': {
+            'EN': 'VENUE NAME',
+            'JP': '場所'
+        },
+        'PRIVATE EVENT?': {
+            'EN': 'PRIVATE EVENT?',
+            'JP': 'プライベート？'
+        },
+        'INCLUDE TIME?': {
+            'EN': 'INCLUDE TIME?',
+            'JP': '時間設定？'
+        },
+        'IMAGE': {
+            'EN': 'IMAGE',
+            'JP': '画像'
+        },
         'ALL EVENTS': {
             'EN': 'ALL EVENTS',
             'JP': 'オール　イベント'
