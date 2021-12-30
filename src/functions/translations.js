@@ -296,7 +296,19 @@ export default {
         },
         'VENUE NAME': {
             'EN': 'VENUE NAME',
-            'JP': 'べニュー名'
+            'JP': '場所'
+        },
+        'PRIVATE EVENT?': {
+            'EN': 'PRIVATE EVENT?',
+            'JP': 'プライベート？'
+        },
+        'INCLUDE TIME?': {
+            'EN': 'INCLUDE TIME?',
+            'JP': '時間設定？'
+        },
+        'IMAGE': {
+            'EN': 'IMAGE',
+            'JP': '画像'
         },
         'ALL EVENTS': {
             'EN': 'ALL EVENTS',
