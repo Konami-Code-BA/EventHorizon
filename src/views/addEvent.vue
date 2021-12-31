@@ -122,8 +122,8 @@
 					is_private: this.is_private,
 				}
 				if (this.imageFile) {
-					image_id = await this.saveImage()
-					data['images']: [image_id],
+					let image_id = await this.saveImage()
+					data['images'] = [image_id]
 				}
 				await apiFunctions.createEvent(data)
 			},
