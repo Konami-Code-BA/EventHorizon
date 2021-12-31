@@ -365,9 +365,11 @@ class EventViewset(viewsets.ViewSet):
 				is_private=request.data['is_private'],
 			)
 			event.save()
-			print('**********************CHECK1', event)
+			print('**********************CHECK1', request.user.id)
 			event.hosts.set([request.user.id])
+			print('**********************CHECK1.2', request.user.id)
 			event.invited.set([request.user.id])
+			print('**********************CHECK1.3', request.data['images'])
 			event.images.set(request.data['images'])
 			print('**********************CHECK2', event)
 		serializer_data = self.serializer_class([event], many=True).data
@@ -408,6 +410,7 @@ class EventViewset(viewsets.ViewSet):
 		print('**********************CHECK6', my_events, public_events, private_events)
 		serializer_data1 = self.serializer_class(my_events.union(public_events), many=True).data
 		serializer_data2 = serializer_private(private_events)
+		print('**********************CHECK7', serializer_data1 + serializer_data2)
 		return Response(serializer_data1 + serializer_data2)
 
 	def update(self, request, pk=None):  # PUT {prefix}/{lookup}/
