@@ -112,7 +112,11 @@
 		methods: {
 			t (w) { return translations.t(w) },
 			async createEvent () {
-				let data = {
+				let image_id = null
+				if (this.imageFile) {
+					image_id = await this.saveImage()
+				}
+				await apiFunctions.createEvent({
 					name: this.name,
 					description: this.description,
 					address: this.address,
@@ -120,12 +124,8 @@
 					date_time: this.date_time,
 					include_time: this.include_time,
 					is_private: this.is_private,
-				}
-				if (this.imageFile) {
-					let image_id = await this.saveImage()
-					data['images'] = [image_id]
-				}
-				await apiFunctions.createEvent(data)
+					images: [image_id],
+				})
 			},
 			async saveImage () {
 				let formData = new FormData()
