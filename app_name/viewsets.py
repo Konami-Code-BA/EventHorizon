@@ -384,8 +384,8 @@ class EventViewset(viewsets.ViewSet):
 			event.hosts.add(request.user.id)
 			print('**********************CHECK1.2', request.user.id)
 			event.invited.add(request.user.id)
-			print('**********************CHECK1.3', request.data['images'])
-			if request.data['images']:
+			print('**********************CHECK1.25', request.data)
+			if 'images' in request.data:
 				event.images.add(request.data['images'])
 			print('**********************CHECK2', event)
 		serializer_data = self.serializer_class([event], many=True).data
