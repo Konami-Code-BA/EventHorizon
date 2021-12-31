@@ -406,6 +406,14 @@ class EventViewset(viewsets.ViewSet):
 		print('**********************CHECK2.14', event.interested)
 		print('**********************CHECK2.15', event.images)
 		print('**********************CHECK2.16', event.id)
+		self.serializer_class(event, many=False)
+		print('**********************CHECK2.17')
+		self.serializer_class([event], many=True)
+		print('**********************CHECK2.18')
+		self.serializer_class(event, many=False).data
+		print('**********************CHECK2.19')
+		self.serializer_class([event], many=True).data
+		print('**********************CHECK2.20')
 		serializer_data = self.serializer_class([event], many=True).data
 		print('**********************CHECK3', serializer_data)
 		return serializer_data
