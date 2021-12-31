@@ -409,9 +409,13 @@ class EventViewset(viewsets.ViewSet):
 		print('**********************CHECK2.17')
 		serializer = self.serializer_class([event], many=True)
 		print('**********************CHECK2.175')
-		print('**********************CHECK2.18', serializer.is_valid())
 		print('**********************CHECK2.19')
-		serializer_data = serializer.data
+		try:
+			serializer_data = serializer.data
+		except Exception as e:
+			print('error is', e)
+		else:
+			print('other error')
 		print('**********************CHECK2.20')
 		#self.serializer_class(event, many=False).data
 		#self.serializer_class([event], many=True).data
