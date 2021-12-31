@@ -33,29 +33,35 @@ export default {
         }
     },
     sortEventsByDate(events) {
-        let sorted_events = events.sort((a, b) => {
-            let a_date = new Date(a.date_time)
-            let b_date = new Date(b.date_time)
-            if (a_date.getTime() > b_date.getTime()) {
-                return 1
-            } else if (a_date.getTime() < b_date.getTime()) {
-                return -1
-            } else {
-                return 0
-            }
-        })
+        let sorted_events = []
+        if (events.length > 0) {
+            sorted_events = events.sort((a, b) => {
+                let a_date = new Date(a.date_time)
+                let b_date = new Date(b.date_time)
+                if (a_date.getTime() > b_date.getTime()) {
+                    return 1
+                } else if (a_date.getTime() < b_date.getTime()) {
+                    return -1
+                } else {
+                    return 0
+                }
+            })
+        }
         return sorted_events
     },
     filterEvents(events, search, criteria) {
-        let filtered_events = events.filter(event => {
-            for (let i = 0; i < criteria.length; i++) {
-                console.log('this the stuff', event[criteria[i]], search)
-                if (String(event[criteria[i]]).includes(String(search))) {
-                    return true
+        let filtered_events = []
+        if (events.length > 0) {
+            filtered_events = events.filter(event => {
+                for (let i = 0; i < criteria.length; i++) {
+                    console.log('this the stuff', event[criteria[i]], search)
+                    if (String(event[criteria[i]]).includes(String(search))) {
+                        return true
+                    }
                 }
-            }
-            return false
-        })
+                return false
+            })
+        }
         return filtered_events
     },
 }
