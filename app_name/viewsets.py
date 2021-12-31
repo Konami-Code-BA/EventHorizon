@@ -207,7 +207,7 @@ class UserViewset(viewsets.ModelViewSet):
 			if user.groups.filter(id=5).exists():  # if this user is a temp line friend
 				user.groups.clear()  # clear temp line friend group
 				user.groups.add(2)  # change to user
-			print('changing temp line friend to user')
+			print('CHANGING TEMP LINE FRIEND TO USER')
 			user = verify_update_line_info(request, user)  # verify validity of current line data and put new data
 		except self.model.DoesNotExist:  # if there was no user with this id, turn visitor into user & add info
 			user = self.model.objects.get(pk=request.user.pk)  # get visitor account (already logged in)
@@ -364,11 +364,15 @@ class EventViewset(viewsets.ViewSet):
 				is_private=request.data['is_private'],
 			)
 			event.save()
-			event.hosts.set([request.user.id])
-			event.invited.set([request.user.id])
-			event.images.set(request.data['images'])
-			event.save()
-		serializer_data = self.serializer_class([event], many=True).data
+			event.hosts.add(request.user.id)
+			event.invited.add(request.user.id)
+			if 'images' in request.data:
+				event.images.add(request.data['images'])
+		try:
+			serializer_data = self.serializer_class([event], many=True).data
+		except Exception as e:
+			print('ERROR IN ADD_EVENT API:', e)
+			serializer_data = self.serializer_class([], many=True).data
 		return serializer_data
 
 	def my_events(self, request):
