@@ -338,6 +338,7 @@ class EventViewset(viewsets.ViewSet):
 
 	def add_event(self, request):
 		event = None
+		print('**********************INSIDE ADD EVENT', event)
 		if request.user.is_superuser:
 			if request.data['address']:
 				gmaps = googlemaps.Client(key=config('GOOGLE_MAPS_API_KEY'))
@@ -364,11 +365,13 @@ class EventViewset(viewsets.ViewSet):
 				is_private=request.data['is_private'],
 			)
 			event.save()
+			print('**********************CHECK1', event)
 			event.hosts.set([request.user.id])
 			event.invited.set([request.user.id])
 			event.images.set(request.data['images'])
-			event.save()
+			print('**********************CHECK2', event)
 		serializer_data = self.serializer_class([event], many=True).data
+		print('**********************CHECK3', serializer_data)
 		return serializer_data
 
 	def my_events(self, request):
@@ -383,21 +386,26 @@ class EventViewset(viewsets.ViewSet):
 		return Response()
 
 	def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
+		print('**********************INSIDE RETRIEVE')
 		events = self.model.objects.filter(invited=request.user.id) # gotta include public events
 		event = self.model.objects.get(pk=pk)
+		print('**********************CHECK4', events, event)
 		if event in events or not event.is_private:
 			serializer_data = self.serializer_class([event], many=True).data
 		else:
 			serializer_data = serializer_private([event])
+		print('**********************CHECK5', serializer_data)
 		return Response(serializer_data)
 
 	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
 		return Response()
 
 	def list(self, request):  # GET {prefix}/
+		print('**********************INSIDE LIST')
 		my_events = self.model.objects.filter(invited=request.user.id)
 		public_events = self.model.objects.filter(is_private=False)
 		private_events = self.model.objects.filter(Q(is_private=True) & ~Q(invited=request.user.id))
+		print('**********************CHECK6', my_events, public_events, private_events)
 		serializer_data1 = self.serializer_class(my_events.union(public_events), many=True).data
 		serializer_data2 = serializer_private(private_events)
 		return Response(serializer_data1 + serializer_data2)
