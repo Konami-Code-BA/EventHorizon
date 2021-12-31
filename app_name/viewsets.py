@@ -207,7 +207,7 @@ class UserViewset(viewsets.ModelViewSet):
 			if user.groups.filter(id=5).exists():  # if this user is a temp line friend
 				user.groups.clear()  # clear temp line friend group
 				user.groups.add(2)  # change to user
-			print('changing temp line friend to user')
+			print('CHANGING TEMP LINE FRIEND TO USER')
 			user = verify_update_line_info(request, user)  # verify validity of current line data and put new data
 		except self.model.DoesNotExist:  # if there was no user with this id, turn visitor into user & add info
 			user = self.model.objects.get(pk=request.user.pk)  # get visitor account (already logged in)
@@ -338,9 +338,7 @@ class EventViewset(viewsets.ViewSet):
 
 	def add_event(self, request):
 		event = None
-		print('**********************INSIDE ADD EVENT', request.user.is_superuser)
 		if request.user.is_superuser:
-			print('**********************CHECK0', request.data['address'])
 			if request.data['address']:
 				gmaps = googlemaps.Client(key=config('GOOGLE_MAPS_API_KEY'))
 				geocoded = gmaps.geocode(request.data['address'])
@@ -348,22 +346,9 @@ class EventViewset(viewsets.ViewSet):
 				longitude = geocoded[0]['geometry']['location']['lng']
 				postal_code, rand_latitude, rand_longitude = randomize_lat_lng(request.data['address'])
 			else:
-				print('**********************CHECK0.1', request.data['address'])
 				latitude = 0
 				longitude = 0
 				postal_code, rand_latitude, rand_longitude = '', 0, 0
-			print('**********************CHECK0.2', request.data['name'])
-			print('**********************CHECK0.3', request.data['description'])
-			print('**********************CHECK0.4', request.data['address'])
-			print('**********************CHECK0.5', postal_code)
-			print('**********************CHECK0.6', request.data['venue_name'])
-			print('**********************CHECK0.7', latitude)
-			print('**********************CHECK0.8', longitude)
-			print('**********************CHECK0.9', rand_latitude)
-			print('**********************CHECK0.10', rand_longitude)
-			print('**********************CHECK0.11', request.data['date_time'])
-			print('**********************CHECK0.12', request.data['include_time'])
-			print('**********************CHECK0.13', request.data['is_private'])
 			event = self.model(
 				name=request.data['name'],
 				description=request.data['description'],
@@ -378,48 +363,15 @@ class EventViewset(viewsets.ViewSet):
 				include_time=request.data['include_time'],
 				is_private=request.data['is_private'],
 			)
-			print('**********************CHECK0.14', request.user.id)
 			event.save()
-			print('**********************CHECK1', request.user.id)
 			event.hosts.add(request.user.id)
-			print('**********************CHECK1.2', request.user.id)
 			event.invited.add(request.user.id)
-			print('**********************CHECK1.25', request.data)
-			if 'images' in request.data:
-				event.images.add(request.data['images'])
-			print('**********************CHECK2', event)
-		print('**********************CHECK2.1', event.name)
-		print('**********************CHECK2.2', event.description)
-		print('**********************CHECK2.3', event.address)
-		print('**********************CHECK2.4', event.postal_code)
-		print('**********************CHECK2.45', event.venue_name)
-		print('**********************CHECK2.5', event.latitude)
-		print('**********************CHECK2.6', event.longitude)
-		print('**********************CHECK2.7', event.rand_latitude)
-		print('**********************CHECK2.8', event.rand_longitude)
-		print('**********************CHECK2.9', event.date_time)
-		print('**********************CHECK2.95', event.include_time)
-		print('**********************CHECK2.10', event.is_private)
-		print('**********************CHECK2.11', event.hosts)
-		print('**********************CHECK2.12', event.invited)
-		print('**********************CHECK2.13', event.confirmed_guests)
-		print('**********************CHECK2.14', event.interested)
-		print('**********************CHECK2.15', event.images)
-		print('**********************CHECK2.16', event.id)
-		print('**********************CHECK2.17')
-		serializer = self.serializer_class([event], many=True)
-		print('**********************CHECK2.175')
-		print('**********************CHECK2.19')
+			event.images.add(request.data['images'])
 		try:
-			serializer_data = serializer.data
+			serializer_data = self.serializer_class([event], many=True).data
 		except Exception as e:
-			print('error is', e)
-		else:
-			print('other error')
-		print('**********************CHECK2.20')
-		#self.serializer_class(event, many=False).data
-		#self.serializer_class([event], many=True).data
-		print('**********************CHECK3', serializer_data)
+			print('ERROR IN ADD_EVENT API:', e)
+			serializer_data = self.serializer_class([], many=True).data
 		return serializer_data
 
 	def my_events(self, request):
@@ -434,29 +386,23 @@ class EventViewset(viewsets.ViewSet):
 		return Response()
 
 	def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
-		print('**********************INSIDE RETRIEVE')
 		events = self.model.objects.filter(invited=request.user.id) # gotta include public events
 		event = self.model.objects.get(pk=pk)
-		print('**********************CHECK4', events, event)
 		if event in events or not event.is_private:
 			serializer_data = self.serializer_class([event], many=True).data
 		else:
 			serializer_data = serializer_private([event])
-		print('**********************CHECK5', serializer_data)
 		return Response(serializer_data)
 
 	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
 		return Response()
 
 	def list(self, request):  # GET {prefix}/
-		print('**********************INSIDE LIST')
 		my_events = self.model.objects.filter(invited=request.user.id)
 		public_events = self.model.objects.filter(is_private=False)
 		private_events = self.model.objects.filter(Q(is_private=True) & ~Q(invited=request.user.id))
-		print('**********************CHECK6', my_events, public_events, private_events)
 		serializer_data1 = self.serializer_class(my_events.union(public_events), many=True).data
 		serializer_data2 = serializer_private(private_events)
-		print('**********************CHECK7', serializer_data1 + serializer_data2)
 		return Response(serializer_data1 + serializer_data2)
 
 	def update(self, request, pk=None):  # PUT {prefix}/{lookup}/

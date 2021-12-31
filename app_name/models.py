@@ -95,12 +95,12 @@ class Image(models.Model):
 
 
 class Event(models.Model):
-	name = models.CharField(max_length=40, default='')
-	description = models.TextField(default='')
+	name = models.CharField(max_length=40, default='', blank=True)
+	description = models.TextField(default='', blank=True)
 	is_private = models.BooleanField(default=True)
-	address = models.CharField(max_length=120, default='')
-	postal_code = models.CharField(max_length=120, default='')
-	venue_name = models.CharField(max_length=120, default='')
+	address = models.CharField(max_length=120, default='', blank=True)
+	postal_code = models.CharField(max_length=120, default='', blank=True)
+	venue_name = models.CharField(max_length=120, default='', blank=True)
 	latitude = models.DecimalField(max_digits=23, decimal_places=20, default=0)
 	longitude = models.DecimalField(max_digits=23, decimal_places=20, default=0)
 	rand_latitude = models.DecimalField(max_digits=23, decimal_places=20, default=0)
