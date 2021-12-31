@@ -370,7 +370,8 @@ class EventViewset(viewsets.ViewSet):
 			print('**********************CHECK1.2', request.user.id)
 			event.invited.set([request.user.id])
 			print('**********************CHECK1.3', request.data['images'])
-			event.images.set(request.data['images'])
+			if request.data['images']:
+				event.images.set(request.data['images'])
 			print('**********************CHECK2', event)
 		serializer_data = self.serializer_class([event], many=True).data
 		print('**********************CHECK3', serializer_data)
