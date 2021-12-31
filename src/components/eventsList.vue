@@ -46,13 +46,13 @@
 		watch: {
 			'search' () {
 				this.sorted_events = f.filterEvents(
-					this.sortEventsByDate(this.events),
+					f.sortEventsByDate(this.events),
 					this.search,
 					['name', 'description', 'address', 'venue_name'])
 			},
 		},
 		created () {
-			this.sorted_events = this.sortEventsByDate(this.events)
+			this.sorted_events = f.sortEventsByDate(this.events)
 			//if (this.startingAt) {
 			//	console.log('HERE BRAH', this.startingAt)
 			//	console.log(document.getElementById(this.startingAt).offsetTop)
@@ -64,9 +64,6 @@
 		},
 		methods: {
 			t (w) { return translations.t(w) },
-			sortEventsByDate (events) {
-				return f.sortEventsByDate(events)
-			},
 		}
 	}
 </script>
