@@ -51,52 +51,57 @@
 						i--
 					}
 				}
+				let noEvents = true
 				if (this.events.length != 0) {
 					for (let i = 0; i < this.events.length; i++) {
-						let icon = 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
-						if (this.events[i].is_private && !this.isInvitedGuest(this.events[i])) {
-							icon = 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+						if (this.events[i].latitude != 0 || this.events[i].longitude != 0) {
+							noEvents = false
+							let icon = 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
+							if (this.events[i].is_private && !this.isInvitedGuest(this.events[i])) {
+								icon = 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+							}
+							infowindowContents.push(`
+								<button
+									onclick="openEventModal(${this.events[i].id})"
+									style="
+										text-decoration: none;
+										color: blue;
+										font-weight: 600;
+										font-size: 16px;
+										-webkit-font-smoothing: antialiased;
+										-moz-osx-font-smoothing: grayscale;
+										border: none;
+										outline: none;
+									"
+								>
+									${this.events[i].name}
+								</button>
+							`)
+							let position = new google.maps.LatLng(
+								this.events[i].latitude,
+								this.events[i].longitude
+							)
+							let marker = new google.maps.Marker({
+								position: position,
+								map: map,
+								icon: icon
+							})
+							markers[this.events[i].id] = marker
+							google.maps.event.addListener(marker, 'click', function() {
+								infowindow.close()
+								infowindow.setContent(infowindowContents[i])
+								infowindow.open(map, this)
+							})
+							google.maps.event.addListener(map, "click", function() {
+								infowindow.close()
+							})
+							bounds.extend(position)
+							await map.fitBounds(bounds)
+							map.setZoom(12)
 						}
-						infowindowContents.push(`
-							<button
-								onclick="openEventModal(${this.events[i].id})"
-								style="
-									text-decoration: none;
-									color: blue;
-									font-weight: 600;
-									font-size: 16px;
-									-webkit-font-smoothing: antialiased;
-									-moz-osx-font-smoothing: grayscale;
-									border: none;
-									outline: none;
-								"
-							>
-								${this.events[i].name}
-							</button>
-						`)
-						let position = new google.maps.LatLng(
-							this.events[i].latitude,
-							this.events[i].longitude
-						)
-						let marker = new google.maps.Marker({
-							position: position,
-							map: map,
-							icon: icon
-						})
-						markers[this.events[i].id] = marker
-						google.maps.event.addListener(marker, 'click', function() {
-							infowindow.close()
-							infowindow.setContent(infowindowContents[i])
-							infowindow.open(map, this)
-						})
-						google.maps.event.addListener(map, "click", function() {
-							infowindow.close()
-						})
-						bounds.extend(position)
-						await map.fitBounds(bounds)
-						map.setZoom(12)
 					}
-				} else {
+				}
+				if (noEvents) {
 					let address = '東京都千代田区千代田１−1'
 					let geocoder = new google.maps.Geocoder()
 					var result
@@ -117,7 +122,7 @@
 						icon: 'http://maps.google.com/mapfiles/ms/icons/empty.png',
 						label: {
 							color: 'rgba(0, 0, 0, 0.7)',
-   							//highlight: 'rgba(0, 0, 0, 0.5)',
+							//highlight: 'rgba(0, 0, 0, 0.5)',
 							fontWeight: 'bold',
 							text: this.t('NO EVENTS'),
 							fontSize: '40px',
