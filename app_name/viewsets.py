@@ -366,7 +366,8 @@ class EventViewset(viewsets.ViewSet):
 			event.save()
 			event.hosts.add(request.user.id)
 			event.invited.add(request.user.id)
-			event.images.add(request.data['images'])
+			if 'images' in request.data:
+				event.images.add(request.data['images'])
 		try:
 			serializer_data = self.serializer_class([event], many=True).data
 		except Exception as e:
