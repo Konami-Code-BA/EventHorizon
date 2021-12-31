@@ -338,8 +338,9 @@ class EventViewset(viewsets.ViewSet):
 
 	def add_event(self, request):
 		event = None
-		print('**********************INSIDE ADD EVENT', event)
+		print('**********************INSIDE ADD EVENT', request.user.is_superuser)
 		if request.user.is_superuser:
+			print('**********************CHECK0', request.data['address'])
 			if request.data['address']:
 				gmaps = googlemaps.Client(key=config('GOOGLE_MAPS_API_KEY'))
 				geocoded = gmaps.geocode(request.data['address'])
@@ -347,9 +348,22 @@ class EventViewset(viewsets.ViewSet):
 				longitude = geocoded[0]['geometry']['location']['lng']
 				postal_code, rand_latitude, rand_longitude = randomize_lat_lng(request.data['address'])
 			else:
+				print('**********************CHECK0.1', request.data['address'])
 				latitude = 0
 				longitude = 0
 				postal_code, rand_latitude, rand_longitude = '', 0, 0
+			print('**********************CHECK0.2', request.data['name'])
+			print('**********************CHECK0.3', request.data['description'])
+			print('**********************CHECK0.4', request.data['address'])
+			print('**********************CHECK0.5', postal_code)
+			print('**********************CHECK0.6', request.data['venue_name'])
+			print('**********************CHECK0.7', latitude)
+			print('**********************CHECK0.8', longitude)
+			print('**********************CHECK0.9', rand_latitude)
+			print('**********************CHECK0.10', rand_longitude)
+			print('**********************CHECK0.11', request.data['date_time'])
+			print('**********************CHECK0.12', request.data['include_time'])
+			print('**********************CHECK0.13', request.data['is_private'])
 			event = self.model(
 				name=request.data['name'],
 				description=request.data['description'],
@@ -364,14 +378,15 @@ class EventViewset(viewsets.ViewSet):
 				include_time=request.data['include_time'],
 				is_private=request.data['is_private'],
 			)
+			print('**********************CHECK0.14', request.user.id)
 			event.save()
 			print('**********************CHECK1', request.user.id)
-			event.hosts.set([request.user.id])
+			event.hosts.add(request.user.id)
 			print('**********************CHECK1.2', request.user.id)
-			event.invited.set([request.user.id])
+			event.invited.add(request.user.id)
 			print('**********************CHECK1.3', request.data['images'])
 			if request.data['images']:
-				event.images.set(request.data['images'])
+				event.images.add(request.data['images'])
 			print('**********************CHECK2', event)
 		serializer_data = self.serializer_class([event], many=True).data
 		print('**********************CHECK3', serializer_data)
