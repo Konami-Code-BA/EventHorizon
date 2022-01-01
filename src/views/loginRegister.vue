@@ -60,7 +60,7 @@
 <script>
 	import store from '@/store.js'
 	import translations from '@/functions/translations.js'
-	import apiFunctions from '@/functions/apiFunctions.js'
+	import api from '@/functions/apiFunctions.js'
 	import f from '@/functions/functions.js'
 	export default {
 		name: 'loginRegister',
@@ -98,7 +98,7 @@
 				}
 				this.showPassword = false
 				this.$emit('startLoading')
-				let user = await apiFunctions.login({'email': this.emailInput, 'password': this.passwordInput})
+				let user = await api.login({'email': this.emailInput, 'password': this.passwordInput})
 				this.$emit('endLoading')
 				console.log('JEEZE', user)
 				if (!user.error) {
@@ -114,7 +114,7 @@
 				this.showPassword = !this.showPassword
 			},
 			async sendEmail() {
-				await apiFunctions.sendEmail()
+				await api.sendEmail()
 			},
 			passwordHasErrors() {
 				if (this.passwordInput.length < 1 ) {
@@ -183,8 +183,8 @@
 			},
 			async loginByLine () {
 				this.$emit('startLoading')
-				let loginChannelId = await apiFunctions.secretsApi('login-channel-id')
-				let state = await apiFunctions.secretsApi('new-random-secret')
+				let loginChannelId = await api.secretsApi('login-channel-id')
+				let state = await api.secretsApi('new-random-secret')
 				document.cookie = `state=${state}; path=/`
 				let lineLoginRedirectUrl = 'https%3A%2F%2Fwww.eventhorizon.vip%2FloginRegister'
 				if (process.env.PYTHON_ENV == 'development') {
@@ -197,7 +197,7 @@
 			async tryLineNewDevice () {
 				if (this.$route.query.code && this.stateCookie === this.$route.query.state) {
 					this.$emit('startLoading')
-					await apiFunctions.lineNewDevice(this.$route.query.code, 'loginRegister')
+					await api.lineNewDevice(this.$route.query.code, 'loginRegister')
 					this.$emit('endLoading')
 					this.$router.push({ name: 'events' })
 				}

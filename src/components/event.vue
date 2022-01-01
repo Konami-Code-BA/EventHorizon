@@ -147,7 +147,7 @@
 <script>
 	import store from '@/store.js'
 	import translations from '@/functions/translations.js'
-	import apiFunctions from '@/functions/apiFunctions.js'
+	import api from '@/functions/apiFunctions.js'
 	import f from '@/functions/functions.js'
 	export default {
 		name: 'event',
@@ -166,7 +166,7 @@
 		computed: {
 		},
 		async mounted () {
-			this.event = await apiFunctions.getEvent(this.eventId)
+			this.event = await api.getEvent(this.eventId)
 			this.isInvited = this.isInvitedGuest(this.event)
 			this.$emit('endLoading')
 		},
@@ -186,7 +186,7 @@
 			//async getImage () {
 			//	let formData = new FormData()
 			//	formData.append('event_pk', 87)  // this.event.id
-			//	let result = await apiFunctions.getImage(this.getimgid, formData)
+			//	let result = await api.getImage(this.getimgid, formData)
 			//	this.imagetwo = "data:image/jpg;base64," + result['image_data']
 			//},
 		} // methods

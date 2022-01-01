@@ -70,7 +70,7 @@
 	import eventsCalendar from '@/components/eventsCalendar.vue'
 	import eventsList from '@/components/eventsList.vue'
 	import translations from '@/functions/translations.js'
-	import apiFunctions from '@/functions/apiFunctions.js'
+	import api from '@/functions/apiFunctions.js'
 	import f from '@/functions/functions.js'
 	import event from '@/components/event.vue'
 	export default {
@@ -110,8 +110,8 @@
 			}
 		},
 		async created () {
-			this.events = await apiFunctions.getAllEvents()
-			let apiKey = await apiFunctions.secretsApi('google-maps-api-key')
+			this.events = await api.getAllEvents()
+			let apiKey = await api.secretsApi('google-maps-api-key')
 			this.scrip.src = `https://maps.googleapis.com/maps/api/js?v=weekly&key=${apiKey}&callback=initMap`
 			this.scrip.async = true
 			this.loaded = true
@@ -122,7 +122,7 @@
 			t (w) { return translations.t(w) },
 			async closeCookiesModal () {
 				this.showCookiesModal = false
-				await apiFunctions.updateUserAlerts('Show Cookies')
+				await api.updateUserAlerts('Show Cookies')
 			},
 			openEventModal (id) {
 				f.setBackButtonToCloseModal(this, window, this.closeEventModal)

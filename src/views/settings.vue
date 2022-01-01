@@ -59,7 +59,7 @@
 	import registerWithEmailInternal from '@/components/registerWithEmailInternal.vue'
 	import modal from '@/components/modal.vue'
 	import translations from '@/functions/translations.js'
-	import apiFunctions from '@/functions/apiFunctions.js'
+	import api from '@/functions/apiFunctions.js'
 	import f from '@/functions/functions.js'
 	export default {
 		name: 'settings',
@@ -79,7 +79,7 @@
 		watch: {
 			async 'do_get_emails' () {  // if do_get_emails changes, update it in the DB
 				this.store.user.do_get_emails = this.do_get_emails
-				await apiFunctions.updateUserDoGetEmails()  // update it in the DB
+				await api.updateUserDoGetEmails()  // update it in the DB
 			},
 		},
 		async mounted () {
@@ -102,8 +102,8 @@
 			},
 			async loginByLine () {
 				this.$emit('startLoading')
-				let loginChannelId = await apiFunctions.secretsApi('login-channel-id')
-				let state = await apiFunctions.secretsApi('new-random-secret')
+				let loginChannelId = await api.secretsApi('login-channel-id')
+				let state = await api.secretsApi('new-random-secret')
 				document.cookie = `state=${state}; path=/`
 				let lineLoginRedirectUrl = 'https%3A%2F%2Fwww.eventhorizon.vip%2Fsettings'
 				if (process.env.PYTHON_ENV == 'development') {
@@ -116,7 +116,7 @@
 			async tryLineNewDevice () {
 				if (this.$route.query.code && this.stateCookie === this.$route.query.state) {
 					this.$emit('startLoading')
-					await apiFunctions.lineNewDevice(this.$route.query.code, 'settings')
+					await api.lineNewDevice(this.$route.query.code, 'settings')
 					this.$emit('endLoading')
 				}
 			}

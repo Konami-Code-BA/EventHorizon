@@ -8,9 +8,9 @@
 				align-items: center">
 			<div style="width: 90%;">
 			<div class="list">
-				<div v-for="event in sorted_events" :id="`item${event.id}`">
+				<div v-for="event in sorted_events">
 					<button v-on:click.prevent="$emit('openEventModal', event.id)" class="no-border-button"
-							style="text-align: left; white-space: nowrap">
+							style="text-align: left; white-space: nowrap" :id="`item${event.id}`">
 						{{ event.date_time.split('T')[0] }}: {{ event.name }}
 					</button>
 				</div>
@@ -22,12 +22,12 @@
 <script>
 	import translations from '@/functions/translations.js'
 	import f from '@/functions/functions.js'
+	import api from '@/functions/apiFunctions.js'
 	export default {
 		name: 'eventsList',
 		data () {
 			return {
 				sorted_events: {},
-				loaded: false,
 				search: null,
 			}
 		},
@@ -53,12 +53,18 @@
 		},
 		created () {
 			this.sorted_events = f.sortEventsByDate(this.events)
+		},
+		mounted () {
 			//if (this.startingAt) {
 			//	console.log('HERE BRAH', this.startingAt)
 			//	console.log(document.getElementById(this.startingAt).offsetTop)
 			//	document.getElementById('view').scroll({left: 0, top: document.getElementById(`item${this.startingAt}`).offsetTop})
 			//}
-			this.loaded = true
+			//console.log(api.getEventWithClosestFutureDate(this.today))
+			let id = f.getEventWithClosestFutureDate(this.events, this.today)['id']
+			let el = document.getElementById(`item${id}`)
+			let offsetTop = el.offsetTop
+			console.log(offsetTop)
 		},
 		updated () {
 		},
