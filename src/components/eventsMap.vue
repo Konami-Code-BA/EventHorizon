@@ -3,7 +3,7 @@
 </template>
 <script>
 	import translations from '@/functions/translations.js'
-	import apiFunctions from '@/functions/apiFunctions.js'
+	import api from '@/functions/apiFunctions.js'
 	import f from '@/functions/functions.js'
 	export default {
 		name: 'eventsMap',
@@ -44,13 +44,14 @@
 				let infowindow = new google.maps.InfoWindow({ map: map })
 				let markers = {}
 				let infowindowContents = []
-				for (let i = 0; i < this.events.length; i++) {
-					let dateTime = Date.parse(this.events[i].date_time)
-					if (dateTime < Date.now()) {
-						this.events.splice(i, 1)
-						i--
-					}
-				}
+				//// this removes past dates
+				//for (let i = 0; i < this.events.length; i++) {
+				//	let dateTime = Date.parse(this.events[i].date_time)
+				//	if (dateTime < Date.now()) {
+				//		this.events.splice(i, 1)
+				//		i--
+				//	}
+				//}
 				let noEvents = true
 				if (this.events.length != 0) {
 					for (let i = 0; i < this.events.length; i++) {

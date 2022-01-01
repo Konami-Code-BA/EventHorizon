@@ -32,7 +32,7 @@
 <script>
 	import store from '@/store.js'
 	import translations from '@/functions/translations.js'
-	import apiFunctions from '@/functions/apiFunctions.js'
+	import api from '@/functions/apiFunctions.js'
 	import f from '@/functions/functions.js'
 	import tabs from '@/components/tabs.vue'
 	import event from '@/components/event.vue'
@@ -72,7 +72,7 @@
 			t (w) { return translations.t(w) },
 			async getMyEvents () {
 				this.$emit('startLoading')
-				let allEvents = await apiFunctions.getMyEvents()
+				let allEvents = await api.getMyEvents()
 				for (let i = 0; i < allEvents.length; i++) {
 					if (this.isHost(allEvents[i])) {
 						this.hosting.push(allEvents[i])

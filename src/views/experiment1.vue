@@ -16,7 +16,7 @@
 	</div>
 </template>
 <script>
-	import apiFunctions from '@/functions/apiFunctions.js'
+	import api from '@/functions/apiFunctions.js'
 	export default {
 		name: 'experiment1',
 		components: {
@@ -60,7 +60,7 @@
 			//	//a.click()
 			//},
 			async sendWebhook () {
-				let mikeyId = await apiFunctions.secretsApi('mikey-line-user-id')
+				let mikeyId = await api.secretsApi('mikey-line-user-id')
 				let events = [{
 					'type': 'message',
 					'message': {
@@ -70,25 +70,25 @@
 					'to': mikeyId,
 					'reply': this.text
 				}]
-				await apiFunctions.sendWebhook({
+				await api.sendWebhook({
 					'events': events,
 				})
 			},
 			async linePush () {
 				let data = {"to": "mikey", "messages": [{"type": "text", "text": "this is a thing"}]}
-				await apiFunctions.linePush(data)
+				await api.linePush(data)
 			},
 			async saveImage () {
 				let formData = new FormData()
 				formData.append('file', this.imageFile)
 				formData.append('event_pk', 87)  // this.event.id
-				let result = await apiFunctions.saveImage(formData)
+				let result = await api.saveImage(formData)
 				return result.id
 			},
 			async getImage () {
 				let formData = new FormData()
 				formData.append('event_pk', 87)  // this.event.id
-				let result = await apiFunctions.getImage(this.getimgid, formData)
+				let result = await api.getImage(this.getimgid, formData)
 				this.imagetwo = "data:image/jpg;base64," + result
 			}
 		} // methods

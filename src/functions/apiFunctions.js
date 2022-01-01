@@ -72,11 +72,7 @@ export default {
         return await this.axiosCall[method](this.baseUrl + '/api/events/' + id, data)
             .then(response => {
                 console.log(`success - eventsApi`)
-                if (pk) {
-                    return response.data[0]
-                } else {
-                    return response.data
-                }
+                return response.data
             })
             .catch(error => {
                 console.log(`*API ERROR* - eventsApi:`, error)
@@ -93,11 +89,7 @@ export default {
             })
             .then(response => {
                 console.log(`success - saveImageFunction`)
-                if (pk) {
-                    return response.data
-                } else {
-                    return response.data[0]
-                }
+                return response.data
             })
             .catch(error => {
                 console.log(`*API ERROR* - saveImageFunction:`, error)
@@ -184,24 +176,38 @@ export default {
     },
     // EVENTS //////////////////////////////////////////////////////////////////////////////////////////////////////////
     async getAllEvents() {
-        return await this.eventsApi('get', null, null)
+        let result = await this.eventsApi('get', null, null)
+        return result
     },
     async getEvent(pk) {
-        return await this.eventsApi('get', pk, null)
+        let result = await this.eventsApi('get', pk, null)
+        return result[0]
     },
     async createEvent(data) {
         data.command = 'add_event'
-        return await this.eventsApi('post', null, data)
+        let result = await this.eventsApi('post', null, data)
+        return result[0]
     },
     async getMyEvents() {
-        return await this.eventsApi('post', null, { command: 'my_events' })
+        let result = await this.eventsApi('post', null, { command: 'my_events' })
+        return result
     },
+    //async getEventWithClosestFutureDate(date_time) {
+    //    let data = {
+    //        'date_time': date_time,
+    //        'command': 'closest_future_date',
+    //    }
+    //    let result = await this.eventsApi('post', null, data)
+    //    return result[0]
+    //},
     // IMAGES //////////////////////////////////////////////////////////////////////////////////////////////////////////
     async saveImage(formData) {
-        return await this.imagesApi('post', null, formData)
+        let result = await this.imagesApi('post', null, formData)
+        return result[0]
     },
     async getImage(pk, formData) {
         formData.append('command', 'get')
-        return await this.imagesApi('patch', pk, formData)
+        let result = await this.imagesApi('patch', pk, formData)
+        return result[0]
     },
 }

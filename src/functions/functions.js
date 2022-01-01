@@ -54,7 +54,6 @@ export default {
         if (events.length > 0) {
             filtered_events = events.filter(event => {
                 for (let i = 0; i < criteria.length; i++) {
-                    console.log('this the stuff', event[criteria[i]], search)
                     if (String(event[criteria[i]]).includes(String(search))) {
                         return true
                     }
@@ -63,5 +62,20 @@ export default {
             })
         }
         return filtered_events
+    },
+    isoStringDateToDateObject(date) {
+        let b = date.split(/\D+/)
+        return new Date(Date.UTC(b[0], --b[1], b[2], b[3], b[4], b[5], b[6]));
+    },
+    getEventWithClosestFutureDate(events, dateTime) {
+        let event = []
+        if (events.length > 0) {
+            event = events.filter(event => {
+                let eventDate = this.isoStringDateToDateObject(event['date_time'])
+                return eventDate >= dateTime
+            })
+            return event[0]
+        }
+        return event
     },
 }
