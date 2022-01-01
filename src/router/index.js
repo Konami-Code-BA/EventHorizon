@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import store from '@/store'
-import apiFunctions from '@/functions/apiFunctions.js'
+import api from '@/functions/apiFunctions.js'
 import events from '@/views/events'
 import profile from '@/views/profile'
 import people from '@/views/people'
@@ -109,7 +109,7 @@ router.beforeEach(
         }
         if (store.user.groups[0] === 100) { // if never logged in, not even to visitor account, login
             console.log(process.env.PYTHON_ENV)
-            await apiFunctions.login({})
+            await api.login({})
             if (store.user.groups.includes(3)) {
                 console.log('visitor')
             } else {

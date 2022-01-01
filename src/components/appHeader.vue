@@ -80,7 +80,7 @@
 	import tabs from '@/components/tabs.vue'
 	import qrCodeGenerator from '@/components/qrCodeGenerator.vue'
 	import translations from '@/functions/translations.js'
-	import apiFunctions from '@/functions/apiFunctions.js'
+	import api from '@/functions/apiFunctions.js'
 	import f from '@/functions/functions.js'
 	export default {
 		name: 'appHeader',
@@ -123,13 +123,13 @@
 				let lang = 'EN'
 				store.user.language = lang
 				this.selectedTab = 0
-				await apiFunctions.updateUserLanguage()
+				await api.updateUserLanguage()
 			},
 			async japanese () {
 				let lang = 'JP'
 				store.user.language = lang
 				this.selectedTab = 0
-				await apiFunctions.updateUserLanguage()
+				await api.updateUserLanguage()
 			},
 			async goToEvents () {
 				this.$emit('startLoading')
@@ -150,7 +150,7 @@
 			},
 			async logout () {
 				this.$emit('startLoading')
-				await apiFunctions.logout()
+				await api.logout()
 				this.selectedTab = 0
 				this.goToEvents()
 			},

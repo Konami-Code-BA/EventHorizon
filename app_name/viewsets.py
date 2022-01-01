@@ -382,6 +382,11 @@ class EventViewset(viewsets.ViewSet):
 		serializer_data1 = self.serializer_class(invited_events.union(interested_public_events), many=True).data
 		serializer_data2 = serializer_private(interested_private_events)
 		return serializer_data1 + serializer_data2
+	
+	#def closest_future_date(self, request):
+	#	date_time = request.data['date_time']
+	#	invited_events = self.model.objects.filter(invited=request.user.id)
+	#	print(date_time, type(date_time))
 
 	def partial_update(self, request, pk=None):  # PATCH {prefix}/{lookup}/
 		return Response()
