@@ -5,21 +5,21 @@
 					autocapitalize="none" style="width: 100%"/>
 		</div>
 		<div style="width: 100%; overflow-y: scroll; overflow-x: hidden; display: flex; flex-direction: column;
-				align-items: center">
+				align-items: center" id="scroller">
 			<div style="width: 90%;">
-			<div class="list">
-				<div v-for="event in sorted_events">
-					<button v-on:click.prevent="$emit('openEventModal', event.id)" class="no-border-button"
-							style="text-align: left; white-space: nowrap" :id="`item${event.id}`">
-						{{ event.date_time.split('T')[0] }}: {{ event.name }}
-					</button>
+				<div class="list">
+					<div v-for="event in sorted_events">
+						<button v-on:click.prevent="$emit('openEventModal', event.id)" class="no-border-button"
+								style="text-align: left; white-space: nowrap" :id="`item${event.id}`">
+							{{ event.date_time.split('T')[0] }}: {{ event.name }}
+						</button>
+					</div>
 				</div>
-			</div>
 			</div>
 		</div>
 	</div>
 </template>
-<script>
+<script defer>
 	import translations from '@/functions/translations.js'
 	import f from '@/functions/functions.js'
 	import api from '@/functions/apiFunctions.js'
@@ -29,6 +29,13 @@
 			return {
 				sorted_events: {},
 				search: null,
+				observer: new MutationObserver((mutations, obs) => {
+					let el = document.getElementById(`item${this.startingAt}`)
+					if (el) {
+						this.scrollIt(el)
+						return
+					}
+				}),
 			}
 		},
 		components: {
@@ -55,21 +62,18 @@
 			this.sorted_events = f.sortEventsByDate(this.events)
 		},
 		mounted () {
-			//if (this.startingAt) {
-			//	console.log('HERE BRAH', this.startingAt)
-			//	console.log(document.getElementById(this.startingAt).offsetTop)
-			//	document.getElementById('view').scroll({left: 0, top: document.getElementById(`item${this.startingAt}`).offsetTop})
-			//}
-			//console.log(api.getEventWithClosestFutureDate(this.today))
-			let id = f.getEventWithClosestFutureDate(this.events, this.today)['id']
-			let el = document.getElementById(`item${id}`)
-			let offsetTop = el.offsetTop
-			console.log(offsetTop)
+			this.observer.observe(document, {childList: true, subtree: true})
 		},
-		updated () {
+		watch: {
 		},
 		methods: {
 			t (w) { return translations.t(w) },
+			scrollIt () {
+				let el = document.getElementById(`item${this.startingAt}`)
+				let scroller = document.getElementById('scroller')
+				let offsetTop = el.offsetTop
+				scroller.scrollTop = el.offsetTop - scroller.offsetTop
+			},
 		}
 	}
 </script>
