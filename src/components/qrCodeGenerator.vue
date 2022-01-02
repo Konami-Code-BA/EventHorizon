@@ -58,10 +58,12 @@
 <script>
 	import translations from '@/functions/translations.js'
 	import modal from '@/components/modal'
+	import store from '@/store.js'
 	export default {
 		name: 'qrCodeGenerator',
 		data () {
 			return {
+				store: store,
 				qrUrl: '',
 				closeModal: false,
 				instagram: 'EventHorizonInstagramAccountQrCode.jpg',
@@ -81,7 +83,8 @@
 		watch: {
 		},
 		mounted () {
-			this.url = window.location.href
+			this.url = window.location.protocol + '//' + window.location.host + this.store.path
+			console.log(this.url)
 		},
 		methods: {
 			t (w) { return translations.t(w) },
