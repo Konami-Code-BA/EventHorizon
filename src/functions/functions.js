@@ -69,6 +69,7 @@ export default {
     },
     getEventWithClosestFutureDate(events, dateTime) {
         let event = []
+        events = this.sortEventsByDate(events)
         if (events.length > 0) {
             event = events.filter(event => {
                 let eventDate = this.isoStringDateToDateObject(event['date_time'])

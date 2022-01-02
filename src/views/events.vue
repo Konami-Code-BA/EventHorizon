@@ -97,7 +97,8 @@
 			}
 		},
 		computed : {
-			isAuthenticatedUser () { return f.isAuthenticatedUser }
+			isAuthenticatedUser () { return f.isAuthenticatedUser },
+			today () { return new Date() },
 		},
 		watch: {
 			'showEventModal' () {
@@ -111,6 +112,9 @@
 		},
 		async created () {
 			this.events = await api.getAllEvents()
+			if (!this.selectedEventId) {
+				this.selectedEventId = f.getEventWithClosestFutureDate(this.events, this.today)['id']
+			}
 			let apiKey = await api.secretsApi('google-maps-api-key')
 			this.scrip.src = `https://maps.googleapis.com/maps/api/js?v=weekly&key=${apiKey}&callback=initMap`
 			this.scrip.async = true
