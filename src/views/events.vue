@@ -88,8 +88,8 @@
 				store: store,
 				showCookiesModal: store.user.alerts.includes(1),
 				selectedTab: 1,
-				showEventModal: Boolean(this.$route.params.id),
-				selectedEventId: this.$route.params.id,
+				showEventModal: null,
+				selectedEventId: null,
 				events: null,
 				loaded: false,
 				scrip: document.createElement('script'),
@@ -101,24 +101,21 @@
 			today () { return new Date() },
 		},
 		watch: {
-			'showEventModal' () {
-				if (!this.showEventModal && this.$route.params.id) {
-					this.$router.push({ name: 'events' })
-				}
-			},
-			'loaded' () {
-				this.$emit('endLoading')
-			}
 		},
 		async created () {
 			this.events = await api.getAllEvents()
-			if (!this.selectedEventId) {
+			let id = this.$route.params.id
+			if (id) {
+				this.showEventModal = Boolean(this.$route.params.id)
+				this.openEventModal(id)
+			} else {
 				this.selectedEventId = f.getEventWithClosestFutureDate(this.events, this.today)['id']
 			}
 			let apiKey = await api.secretsApi('google-maps-api-key')
 			this.scrip.src = `https://maps.googleapis.com/maps/api/js?v=weekly&key=${apiKey}&callback=initMap`
 			this.scrip.async = true
 			this.loaded = true
+			this.$emit('endLoading')
 		},
 		mounted () {
 		},
@@ -130,13 +127,13 @@
 			},
 			openEventModal (id) {
 				f.setBackButtonToCloseModal(this, window, this.closeEventModal)
+				this.store.path = store.path + '/' + id
 				this.selectedEventId = id
 				this.showEventModal = true
 			},
 			closeEventModal () {
-				// after closing, it goes to the previously opened event in map. should it also scroll to previously
-				// opened event in the list and calendar?
 				f.freeUpBackButton(this)
+				this.store.path = this.$route.path
 				this.$refs.eventsMap.initMap()
 				this.showEventModal = false
 			},
