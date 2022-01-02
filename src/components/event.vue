@@ -161,7 +161,7 @@
 			}
 		},
 		props: {
-			eventId: {},
+			eventId: { default: null },
 		},
 		computed: {
 		},
