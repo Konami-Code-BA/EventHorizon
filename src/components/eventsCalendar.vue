@@ -110,7 +110,6 @@
 		props: {
 			events: { default: null },
 			store: { default: null },
-			startingAt: { default: null },
 		},
 		computed: {
 			today () {

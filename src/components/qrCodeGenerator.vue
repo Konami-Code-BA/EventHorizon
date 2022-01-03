@@ -32,7 +32,8 @@
 				<div style="height: auto; width: 100%; display: flex; justify-content: center"
 						v-on:click.prevent="$emit('closeModals')">
 					<div class="qr-button" style="align-self: center">
-						<button v-on:click.prevent="$emit('closeModals')" class="no-border-button x-button">
+						<button v-on:click.prevent="$emit('closeModals')" class="no-border-button x-button"
+								style="color: black">
 							✖
 						</button>
 					</div>
@@ -46,7 +47,7 @@
 					<div style="height: 40px; width: 100%; z-index: 103; position: fixed"
 							v-on:click.prevent="$emit('closeModals')"/>
 					<a :href="image_file" :download="image_name">
-						<div class="qr-button" style="text-decoration: underline; position: fixed">
+						<div class="qr-button" style="text-decoration: underline; position: fixed; transform: translate(-50%,-12%)">
 							⇩
 						</div>
 					</a>
@@ -59,6 +60,7 @@
 	import translations from '@/functions/translations.js'
 	import modal from '@/components/modal'
 	import store from '@/store.js'
+	import f from '@/functions/functions.js'
 	export default {
 		name: 'qrCodeGenerator',
 		data () {
@@ -83,18 +85,20 @@
 		watch: {
 		},
 		mounted () {
-			this.url = window.location.protocol + '//' + window.location.host + this.store.path
+			this.url = f.domain + this.store.path
 			console.log(this.url)
 		},
 		methods: {
 			t (w) { return translations.t(w) },
 			async getQr (inp) { // when this isnt async, it works, but when its async, it outputs promise instead of what i want
 				this.image_name = inp
+				console.log(this.image_name)
 				if (inp != this.url) {
 					this.image_file = require('@/assets/' + this.image_name)
 				} else {
 					var QRCode = require('qrcode')
 					this.image_file = await QRCode.toDataURL(this.url)
+					this.image_name = `EventHorizonQrCode${this.store.path.replace('/', '_')}.jpg`
 				}
 			},
 		}

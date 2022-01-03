@@ -1,5 +1,8 @@
 import store from '@/store'
 export default {
+    get domain() {
+        return (window.location.protocol + '//' + window.location.host).replace('8080', '8000')
+    },
     focusCursor(documentt, id) {
         setTimeout(() => { documentt.getElementById(id).focus() }, 200)
     },
@@ -49,13 +52,19 @@ export default {
         }
         return sorted_events
     },
-    filterEvents(events, search, criteria) {
+    filterEvents(events, search, criteria, strictlyEqual = false) {
         let filtered_events = []
         if (events.length > 0) {
             filtered_events = events.filter(event => {
                 for (let i = 0; i < criteria.length; i++) {
-                    if (String(event[criteria[i]]).includes(String(search))) {
-                        return true
+                    if (!strictlyEqual) {
+                        if (String(event[criteria[i]]).includes(String(search))) {
+                            return true
+                        }
+                    } else {
+                        if (String(event[criteria[i]]) === String(search)) {
+                            return true
+                        }
                     }
                 }
                 return false

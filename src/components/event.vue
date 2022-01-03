@@ -32,7 +32,7 @@
 			</div>
 			<br>
 			<div style="align-self: center">
-				<button v-on:click.prevent="$emit('goToEvents')" class="button" style="align-self: center">
+				<button v-on:click.prevent="$emit('goToMap')" class="button" style="align-self: center">
 					<small>{{ event.address }}</small>
 				</button>
 			</div>
