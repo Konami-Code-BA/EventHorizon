@@ -26,20 +26,20 @@
 						<img src="@/assets/mapIcon.png" class="icon"/>
 					</div>
 					<div slot="2">
-						<img src="@/assets/calendarIcon.png" class="icon" style="vertical-align: bottom"/>
+						<img src="@/assets/threeBarsHIcon.png" class="icon" style="vertical-align: bottom"/>
 					</div>
 					<div slot="3">
-						<img src="@/assets/searchIcon.png" class="icon" style="vertical-align: bottom"/>
+						<img src="@/assets/calendarIcon.png" class="icon" style="vertical-align: bottom"/>
 					</div>
 				</tabs>
 			</div>
 			<events-map class="viewer" v-show="selectedTab==1" @openEventModal="openEventModal" :events="events"
 					:selectedEventId="selectedEventIdForMap" :key="selectedEventIdForMap+'map'" :scrip="scrip"
 					ref="eventsMap" :store="store"/>
-			<events-calendar class="viewer" v-show="selectedTab==2" @openEventModal="openEventModal" :events="events"
-					:store="store"/>
-			<events-list class="viewer" v-show="selectedTab==3" @openEventModal="openEventModal" :events="events"
+			<events-list class="viewer" v-show="selectedTab==2" @openEventModal="openEventModal" :events="events"
 					:store="store" :startingAt="selectedEventIdForList" :key="selectedEventIdForList+'list'"/>
+			<events-calendar class="viewer" v-show="selectedTab==3" @openEventModal="openEventModal" :events="events"
+					:store="store"/>
 		</div>
 		<!--modal v-if="showCookiesModal" @closeModals="closeCookiesModal()">
 			<div slot="contents" class="cookiesModal">

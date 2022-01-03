@@ -21,7 +21,7 @@
 			<div style="align-self: center">
 				{{ event.description }}
 			</div>
-			<div v-if="!event.is_private || this.isInvited" class="flex-table">
+			<div v-if="(!event.is_private || this.isInvited) && event.venue_name" class="flex-table">
 				<br>
 				<div>
 					VENUE:
