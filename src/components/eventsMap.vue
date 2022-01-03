@@ -33,7 +33,7 @@
 			window.initMap = this.initMap
 			window.openEventModal = this.openEventModal
 			this.publicMapIcon = f.domain + '/media/publicMapIcon.png'
-			this.publicPastMapIcon = f.domain + '/media/publicPastMapIcon.png'
+			this.publicPastMapIcon = f.domain + '/static/img/publicPastMapIcon.8fa3e9e.png'
 			this.privateMapIcon = f.domain + '/media/privateMapIcon.png'
 			this.privatePastMapIcon = f.domain + '/media/privatePastMapIcon.png'
 			this.myMapIcon = f.domain + '/media/myMapIcon.png'
