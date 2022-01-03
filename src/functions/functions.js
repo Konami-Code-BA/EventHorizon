@@ -1,5 +1,8 @@
 import store from '@/store'
 export default {
+    get domain() {
+        return (window.location.protocol + '//' + window.location.host).replace('8080', '8000')
+    },
     focusCursor(documentt, id) {
         setTimeout(() => { documentt.getElementById(id).focus() }, 200)
     },
@@ -49,19 +52,40 @@ export default {
         }
         return sorted_events
     },
-    filterEvents(events, search, criteria) {
+    filterEvents(events, search, criteria, strictlyEqual = false) {
         let filtered_events = []
         if (events.length > 0) {
             filtered_events = events.filter(event => {
                 for (let i = 0; i < criteria.length; i++) {
-                    console.log('this the stuff', event[criteria[i]], search)
-                    if (String(event[criteria[i]]).includes(String(search))) {
-                        return true
+                    if (!strictlyEqual) {
+                        if (String(event[criteria[i]]).includes(String(search))) {
+                            return true
+                        }
+                    } else {
+                        if (String(event[criteria[i]]) === String(search)) {
+                            return true
+                        }
                     }
                 }
                 return false
             })
         }
         return filtered_events
+    },
+    isoStringDateToDateObject(date) {
+        let b = date.split(/\D+/)
+        return new Date(Date.UTC(b[0], --b[1], b[2], b[3], b[4], b[5], b[6]));
+    },
+    getEventWithClosestFutureDate(events, dateTime) {
+        let event = []
+        events = this.sortEventsByDate(events)
+        if (events.length > 0) {
+            event = events.filter(event => {
+                let eventDate = this.isoStringDateToDateObject(event['date_time'])
+                return eventDate >= dateTime
+            })
+            return event[0]
+        }
+        return event
     },
 }

@@ -62,7 +62,7 @@
 	import store from '@/store.js'
 	import modal from '@/components/modal.vue'
 	import translations from '@/functions/translations.js'
-	import apiFunctions from '@/functions/apiFunctions.js'
+	import api from '@/functions/apiFunctions.js'
 	import f from '@/functions/functions.js'
 	export default {
 		name: 'addEvent',
@@ -100,13 +100,25 @@
 		},
 		async mounted () {
 			this.date_time = new Date()
-			this.date = (this.date_time.getYear()+1900) + '-' + (this.date_time.getMonth()+1) + '-'
-			this.date += this.date_time.getDate()
-			this.time = this.date_time.getHours() + ':' + this.date_time.getMinutes()
-			if (this.time.length < 5) {
-				this.time = '0' + this.time
+			let year = (this.date_time.getYear() + 1900).toString()
+			let month = (this.date_time.getMonth() + 1).toString()
+			let day = (this.date_time.getDate()).toString()
+			let hour = (this.date_time.getHours()).toString()
+			let minute = (this.date_time.getMinutes()).toString()
+			if (month.length < 2) {
+				month = '0' + month
 			}
-
+			if (day.length < 2) {
+				day = '0' + day
+			}
+			if (hour.length < 2) {
+				hour = '0' + hour
+			}
+			if (minute.length < 2) {
+				minute = '0' + minute
+			}
+			this.date = year + '-' + month + '-' + day
+			this.time = hour + ':' + minute
 			this.$emit('endLoading')
 		},
 		methods: {
@@ -125,12 +137,12 @@
 					let image_id = await this.saveImage()
 					data['images'] = [image_id]
 				}
-				await apiFunctions.createEvent(data)
+				await api.createEvent(data)
 			},
 			async saveImage () {
 				let formData = new FormData()
 				formData.append('file', this.imageFile)
-				let result = await apiFunctions.saveImage(formData)
+				let result = await api.saveImage(formData)
 				return result.id
 			},
 		} // methods

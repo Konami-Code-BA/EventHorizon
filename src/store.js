@@ -9,4 +9,5 @@ export default {
         groups: [100],
         alerts: [],
     },
+    path: '',
 }

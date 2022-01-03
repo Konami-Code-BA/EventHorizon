@@ -3,7 +3,7 @@
 </template>
 <script>
 	import translations from '@/functions/translations.js'
-	import apiFunctions from '@/functions/apiFunctions.js'
+	import api from '@/functions/apiFunctions.js'
 	import f from '@/functions/functions.js'
 	export default {
 		name: 'eventsMap',
@@ -20,6 +20,7 @@
 			store: { default: null },
 		},
 		computed: {
+			today () { return new Date() },
 		},
 		async mounted () {
 			document.head.appendChild(this.scrip)
@@ -44,21 +45,35 @@
 				let infowindow = new google.maps.InfoWindow({ map: map })
 				let markers = {}
 				let infowindowContents = []
-				for (let i = 0; i < this.events.length; i++) {
-					let dateTime = Date.parse(this.events[i].date_time)
-					if (dateTime < Date.now()) {
-						this.events.splice(i, 1)
-						i--
-					}
-				}
+				//// this removes past dates
+				//for (let i = 0; i < this.events.length; i++) {
+				//	let dateTime = Date.parse(this.events[i].date_time)
+				//	if (dateTime < Date.now()) {
+				//		this.events.splice(i, 1)
+				//		i--
+				//	}
+				//}
 				let noEvents = true
 				if (this.events.length != 0) {
 					for (let i = 0; i < this.events.length; i++) {
 						if (this.events[i].latitude != 0 || this.events[i].longitude != 0) {
 							noEvents = false
-							let icon = 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
+							let icon = f.domain + '/static/publicPastMapIcon.png'
+							if (f.isoStringDateToDateObject(this.events[i].date_time) > this.today) {
+								icon = f.domain + '/static/publicMapIcon.png'
+							}
 							if (this.events[i].is_private && !this.isInvitedGuest(this.events[i])) {
-								icon = 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+								if (f.isoStringDateToDateObject(this.events[i].date_time) > this.today) {
+									icon = f.domain + '/static/privateMapIcon.png'
+								} else {
+									icon = f.domain + '/static/privatePastMapIcon.png'
+								}
+							} else if (this.isInvitedGuest(this.events[i])) {
+								if (f.isoStringDateToDateObject(this.events[i].date_time) > this.today) {
+									icon = f.domain + '/static/myMapIcon.png'
+								} else {
+									icon = f.domain + '/static/myPastMapIcon.png'
+								}
 							}
 							infowindowContents.push(`
 								<button
@@ -81,10 +96,13 @@
 								this.events[i].latitude,
 								this.events[i].longitude
 							)
+							let image = new google.maps.MarkerImage(
+								icon, null, null, null, new google.maps.Size(25, 25)
+							)
 							let marker = new google.maps.Marker({
 								position: position,
 								map: map,
-								icon: icon
+								icon: image,
 							})
 							markers[this.events[i].id] = marker
 							google.maps.event.addListener(marker, 'click', function() {
@@ -132,7 +150,7 @@
 					await map.fitBounds(bounds)
 					map.setZoom(12)
 				}
-				if (this.selectedEventId) {
+				if (markers[this.selectedEventId]) {
 					bounds.extend(markers[this.selectedEventId].getPosition())
 					await map.fitBounds(bounds)
 					map.setZoom(15)
