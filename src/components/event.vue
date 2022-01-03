@@ -21,7 +21,7 @@
 			<div style="align-self: center">
 				{{ event.description }}
 			</div>
-			<div v-if="!event.is_private || this.isInvited" class="flex-table">
+			<div v-if="(!event.is_private || this.isInvited) && event.venue_name" class="flex-table">
 				<br>
 				<div>
 					VENUE:
@@ -32,7 +32,7 @@
 			</div>
 			<br>
 			<div style="align-self: center">
-				<button v-on:click.prevent="$emit('goToEvents')" class="button" style="align-self: center">
+				<button v-on:click.prevent="$emit('goToMap')" class="button" style="align-self: center">
 					<small>{{ event.address }}</small>
 				</button>
 			</div>
@@ -147,7 +147,7 @@
 <script>
 	import store from '@/store.js'
 	import translations from '@/functions/translations.js'
-	import apiFunctions from '@/functions/apiFunctions.js'
+	import api from '@/functions/apiFunctions.js'
 	import f from '@/functions/functions.js'
 	export default {
 		name: 'event',
@@ -161,12 +161,12 @@
 			}
 		},
 		props: {
-			eventId: {},
+			eventId: { default: null },
 		},
 		computed: {
 		},
 		async mounted () {
-			this.event = await apiFunctions.getEvent(this.eventId)
+			this.event = await api.getEvent(this.eventId)
 			this.isInvited = this.isInvitedGuest(this.event)
 			this.$emit('endLoading')
 		},
@@ -183,10 +183,8 @@
 			isInvitedGuest (event) {
 				return f.isInvitedGuest(event)
 			},
-			//async getImage () {
-			//	let formData = new FormData()
-			//	formData.append('event_pk', 87)  // this.event.id
-			//	let result = await apiFunctions.getImage(this.getimgid, formData)
+			//async getEventImage () {
+			//	let result = await api.getEventImage(this.getimgid, eventId) // this.event.id
 			//	this.imagetwo = "data:image/jpg;base64," + result['image_data']
 			//},
 		} // methods

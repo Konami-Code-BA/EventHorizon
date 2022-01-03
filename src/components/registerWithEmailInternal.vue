@@ -57,7 +57,7 @@
 <script>
 	import store from '@/store.js'
 	import translations from '@/functions/translations.js'
-	import apiFunctions from '@/functions/apiFunctions.js'
+	import api from '@/functions/apiFunctions.js'
 	import f from '@/functions/functions.js'
 	export default {
 		name: 'registerWithEmailInternal',
@@ -115,10 +115,10 @@
 				this.showPassword2 = false
 				this.$emit('startLoading')
 				if (this.includeDisplayName) {
-					let user = await apiFunctions.registerWithEmail(this.emailInput, this.passwordInput,
+					let user = await api.registerWithEmail(this.emailInput, this.passwordInput,
 							this.displayNameInput)
 				} else {
-					let user = await apiFunctions.registerWithEmail(this.emailInput, this.passwordInput)
+					let user = await api.registerWithEmail(this.emailInput, this.passwordInput)
 				}
 				if (!user.error) {
 					if (this.next) {
