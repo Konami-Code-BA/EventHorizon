@@ -20,8 +20,9 @@
 			store: { default: null },
 		},
 		computed: {
+			today () { return new Date() },
 		},
-		async mounted () {
+		mounted () {
 			document.head.appendChild(this.scrip)
 			window.initMap = this.initMap
 			window.openEventModal = this.openEventModal
@@ -57,9 +58,22 @@
 					for (let i = 0; i < this.events.length; i++) {
 						if (this.events[i].latitude != 0 || this.events[i].longitude != 0) {
 							noEvents = false
-							let icon = 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
+							let icon = f.domain + '/media/publicPastMapIcon.png'
+							if (f.isoStringDateToDateObject(this.events[i].date_time) > this.today) {
+								icon = f.domain + '/media/publicMapIcon.png'
+							}
 							if (this.events[i].is_private && !this.isInvitedGuest(this.events[i])) {
-								icon = 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+								if (f.isoStringDateToDateObject(this.events[i].date_time) > this.today) {
+									icon = f.domain + '/media/privateMapIcon.png'
+								} else {
+									icon = f.domain + '/media/privatePastMapIcon.png'
+								}
+							} else if (this.isInvitedGuest(this.events[i])) {
+								if (f.isoStringDateToDateObject(this.events[i].date_time) > this.today) {
+									icon = f.domain + '/media/myMapIcon.png'
+								} else {
+									icon = f.domain + '/media/myPastMapIcon.png'
+								}
 							}
 							infowindowContents.push(`
 								<button
@@ -82,10 +96,13 @@
 								this.events[i].latitude,
 								this.events[i].longitude
 							)
+							let image = new google.maps.MarkerImage(
+								icon, null, null, null, new google.maps.Size(25, 25)
+							)
 							let marker = new google.maps.Marker({
 								position: position,
 								map: map,
-								icon: icon
+								icon: image,
 							})
 							markers[this.events[i].id] = marker
 							google.maps.event.addListener(marker, 'click', function() {
@@ -96,6 +113,9 @@
 							google.maps.event.addListener(map, "click", function() {
 								infowindow.close()
 							})
+							console.log('FOR SOME REASON THE ZOOM IS MESSED UP EVERY TIME I GO BACK TO THE MAP, WHY?')
+							console.log(bounds)
+							console.log(position)
 							bounds.extend(position)
 							await map.fitBounds(bounds)
 							map.setZoom(12)
@@ -133,7 +153,7 @@
 					await map.fitBounds(bounds)
 					map.setZoom(12)
 				}
-				if (this.selectedEventId) {
+				if (markers[this.selectedEventId]) {
 					bounds.extend(markers[this.selectedEventId].getPosition())
 					await map.fitBounds(bounds)
 					map.setZoom(15)
