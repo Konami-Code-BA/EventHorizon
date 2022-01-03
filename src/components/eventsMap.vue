@@ -9,12 +9,6 @@
 		name: 'eventsMap',
 		data () {
 			return {
-				publicMapIcon: null,
-				publicPastMapIcon: null,
-				privatePastMapIcon: null,
-				privateMapIcon: null,
-				myMapIcon: null,
-				myPastMapIcon: null,
 			}
 		},
 		components: {
@@ -32,14 +26,6 @@
 			document.head.appendChild(this.scrip)
 			window.initMap = this.initMap
 			window.openEventModal = this.openEventModal
-			this.publicMapIcon = f.domain + '/media/publicMapIcon.png'
-			this.publicPastMapIcon = f.domain + '/static/img/publicPastMapIcon.8fa3e9e.png'
-			this.privateMapIcon = f.domain + '/media/privateMapIcon.png'
-			this.privatePastMapIcon = f.domain + '/media/privatePastMapIcon.png'
-			this.myMapIcon = f.domain + '/media/myMapIcon.png'
-			this.myPastMapIcon = f.domain + '/media/publicPastMapIcon.png'
-			//window.publicMapIcon = this.publicMapIcon
-			
 			this.$emit('endLoading')
 		},
 		methods: {
@@ -72,21 +58,21 @@
 					for (let i = 0; i < this.events.length; i++) {
 						if (this.events[i].latitude != 0 || this.events[i].longitude != 0) {
 							noEvents = false
-							let icon = this.publicPastMapIcon
+							let icon = f.domain + '/static/publicPastMapIcon.png'
 							if (f.isoStringDateToDateObject(this.events[i].date_time) > this.today) {
-								icon = this.publicMapIcon
+								icon = f.domain + '/static/publicMapIcon.png'
 							}
 							if (this.events[i].is_private && !this.isInvitedGuest(this.events[i])) {
 								if (f.isoStringDateToDateObject(this.events[i].date_time) > this.today) {
-									icon = this.privateMapIcon
+									icon = f.domain + '/static/privateMapIcon.png'
 								} else {
-									icon = this.privatePastMapIcon
+									icon = f.domain + '/static/privatePastMapIcon.png'
 								}
 							} else if (this.isInvitedGuest(this.events[i])) {
 								if (f.isoStringDateToDateObject(this.events[i].date_time) > this.today) {
-									icon = this.myMapIcon
+									icon = f.domain + '/static/myMapIcon.png'
 								} else {
-									icon = this.myPastMapIcon
+									icon = f.domain + '/static/myPastMapIcon.png'
 								}
 							}
 							infowindowContents.push(`
@@ -113,7 +99,6 @@
 							let image = new google.maps.MarkerImage(
 								icon, null, null, null, new google.maps.Size(25, 25)
 							)
-							console.log(image)
 							let marker = new google.maps.Marker({
 								position: position,
 								map: map,
