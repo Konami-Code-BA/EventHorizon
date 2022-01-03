@@ -26,7 +26,7 @@
 	import store from '@/store'
 	import tabs from '@/components/tabs.vue'
 	import translations from '@/functions/translations.js'
-	import apiFunctions from '@/functions/apiFunctions.js'
+	import api from '@/functions/apiFunctions.js'
 	export default {
 		name: 'appFooter',
 		data () {

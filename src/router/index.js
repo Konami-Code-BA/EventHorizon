@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import store from '@/store'
-import apiFunctions from '@/functions/apiFunctions.js'
+import api from '@/functions/apiFunctions.js'
 import events from '@/views/events'
 import profile from '@/views/profile'
 import people from '@/views/people'
@@ -32,13 +32,16 @@ const router = new Router({
         redirect: { name: 'events' },
         meta: { userGroups: [] },
     }, {
-        path: '/events',
-        name: 'events',
-        component: events,
+        path: '/events/:id',
+        redirect: { name: 'events' },
+        params: to => {
+            const { hash, params, query } = to
+            return { id: params.id }
+        },
         meta: { userGroups: [] },
     }, {
-        path: '/events/:id',
-        name: 'event',
+        path: '/events',
+        name: 'events',
         component: events,
         meta: { userGroups: [] },
     }, {
@@ -103,13 +106,14 @@ router.beforeEach(
             router.allowBack = true
             return
         } else if (isBackButton) {
+            store.path = to.path
             next()
             router.allowBack = true
             return
         }
         if (store.user.groups[0] === 100) { // if never logged in, not even to visitor account, login
             console.log(process.env.PYTHON_ENV)
-            await apiFunctions.login({})
+            await api.login({})
             if (store.user.groups.includes(3)) {
                 console.log('visitor')
             } else {
@@ -117,12 +121,14 @@ router.beforeEach(
             }
         }
         if (to.meta.userGroups.length === 0) { // this path has no requirements, go ahead
+            store.path = to.path
             next()
             return
         } else { // this path does have requirements for group permission
             for (let i = 0; i < to.meta.userGroups.length; i++) {
                 for (let j = 0; j < store.user.groups.length; j++) {
                     if (to.meta.userGroups[i] === store.user.groups[j]) { // permission granted, go ahead
+                        store.path = to.path
                         next()
                         return
                     }
@@ -132,6 +138,7 @@ router.beforeEach(
             if (['loginRegister', 'event'].includes(from.name)) {
                 return
             } else { // any other page, when permission denied, get sent to loginRegister
+                store.path = '/loginRegister'
                 next({ name: 'loginRegister' })
                 return
             }

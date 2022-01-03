@@ -26,20 +26,20 @@
 						<img src="@/assets/mapIcon.png" class="icon"/>
 					</div>
 					<div slot="2">
-						<img src="@/assets/calendarIcon.png" class="icon" style="vertical-align: bottom"/>
+						<img src="@/assets/threeBarsHIcon.png" class="icon" style="vertical-align: bottom"/>
 					</div>
 					<div slot="3">
-						<img src="@/assets/searchIcon.png" class="icon" style="vertical-align: bottom"/>
+						<img src="@/assets/calendarIcon.png" class="icon" style="vertical-align: bottom"/>
 					</div>
 				</tabs>
 			</div>
 			<events-map class="viewer" v-show="selectedTab==1" @openEventModal="openEventModal" :events="events"
-					:selectedEventId="selectedEventId" :key="selectedEventId" :scrip="scrip" ref="eventsMap"
+					:selectedEventId="selectedEventIdForMap" :key="selectedEventIdForMap+'map'" :scrip="scrip"
+					ref="eventsMap" :store="store"/>
+			<events-list class="viewer" v-show="selectedTab==2" @openEventModal="openEventModal" :events="events"
+					:store="store" :startingAt="selectedEventIdForList" :key="selectedEventIdForList+'list'"/>
+			<events-calendar class="viewer" v-show="selectedTab==3" @openEventModal="openEventModal" :events="events"
 					:store="store"/>
-			<events-calendar class="viewer" v-show="selectedTab==2" @openEventModal="openEventModal" :events="events"
-					:store="store" :startingAt="selectedEventId"/>
-			<events-list class="viewer" v-show="selectedTab==3" @openEventModal="openEventModal" :events="events"
-					:store="store" :startingAt="selectedEventId" :key="selectedEventId+'list'"/>
 		</div>
 		<!--modal v-if="showCookiesModal" @closeModals="closeCookiesModal()">
 			<div slot="contents" class="cookiesModal">
@@ -59,7 +59,7 @@
 				</div><br><br>
 			</div>
 		</modal-->
-		<event v-if="showEventModal" @goToEvents="goToEvents()" :eventId="selectedEventId" @closeModals="closeEventModal()"/>
+		<event v-if="showEventModal" @goToMap="goToMap()" :eventId="selectedEventId" @closeModals="closeEventModal()"/>
 	</div>
 </template>
 <script>
@@ -70,7 +70,7 @@
 	import eventsCalendar from '@/components/eventsCalendar.vue'
 	import eventsList from '@/components/eventsList.vue'
 	import translations from '@/functions/translations.js'
-	import apiFunctions from '@/functions/apiFunctions.js'
+	import api from '@/functions/apiFunctions.js'
 	import f from '@/functions/functions.js'
 	import event from '@/components/event.vue'
 	export default {
@@ -88,8 +88,10 @@
 				store: store,
 				showCookiesModal: store.user.alerts.includes(1),
 				selectedTab: 1,
-				showEventModal: Boolean(this.$route.params.id),
-				selectedEventId: this.$route.params.id,
+				showEventModal: null,
+				selectedEventId: null,
+				selectedEventIdForMap: null,
+				selectedEventIdForList: null,
 				events: null,
 				loaded: false,
 				scrip: document.createElement('script'),
@@ -97,24 +99,25 @@
 			}
 		},
 		computed : {
-			isAuthenticatedUser () { return f.isAuthenticatedUser }
+			isAuthenticatedUser () { return f.isAuthenticatedUser },
+			today () { return new Date() },
 		},
 		watch: {
-			'showEventModal' () {
-				if (!this.showEventModal && this.$route.params.id) {
-					this.$router.push({ name: 'events' })
-				}
-			},
-			'loaded' () {
-				this.$emit('endLoading')
-			}
 		},
 		async created () {
-			this.events = await apiFunctions.getAllEvents()
-			let apiKey = await apiFunctions.secretsApi('google-maps-api-key')
+			this.events = await api.getAllEvents()
+			let id = this.$route.params.id
+			if (id) {
+				this.showEventModal = Boolean(this.$route.params.id)
+				this.openEventModal(id)
+			} else {
+				this.selectedEventIdForList = f.getEventWithClosestFutureDate(this.events, this.today)['id']
+			}
+			let apiKey = await api.secretsApi('google-maps-api-key')
 			this.scrip.src = `https://maps.googleapis.com/maps/api/js?v=weekly&key=${apiKey}&callback=initMap`
 			this.scrip.async = true
 			this.loaded = true
+			this.$emit('endLoading')
 		},
 		mounted () {
 		},
@@ -122,24 +125,28 @@
 			t (w) { return translations.t(w) },
 			async closeCookiesModal () {
 				this.showCookiesModal = false
-				await apiFunctions.updateUserAlerts('Show Cookies')
+				await api.updateUserAlerts('Show Cookies')
 			},
 			openEventModal (id) {
 				f.setBackButtonToCloseModal(this, window, this.closeEventModal)
+				this.store.path = store.path + '/' + id
 				this.selectedEventId = id
+				this.selectedEventIdForList = id
+				let event = f.filterEvents(this.events, id, ['id'], true)
+				if (event.address) {
+					this.selectedEventIdForMap = id
+				}
 				this.showEventModal = true
 			},
 			closeEventModal () {
-				// after closing, it goes to the previously opened event in map. should it also scroll to previously
-				// opened event in the list and calendar?
 				f.freeUpBackButton(this)
-				this.$refs.eventsMap.initMap()
+				this.store.path = this.$route.path
+				this.$refs.eventsMap.initMap() // everything else is working well now with list, but map isnt zooming correctly when going back to it from event
 				this.showEventModal = false
 			},
-			goToEvents () {
-				this.$refs.eventsMap.initMap()
+			goToMap () {
+				this.closeEventModal()
 				this.selectedTab = 1
-				this.showEventModal = false
 			},
 			goToCalendar () {
 

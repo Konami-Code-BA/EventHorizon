@@ -382,6 +382,11 @@ class EventViewset(viewsets.ViewSet):
 		serializer_data1 = self.serializer_class(invited_events.union(interested_public_events), many=True).data
 		serializer_data2 = serializer_private(interested_private_events)
 		return serializer_data1 + serializer_data2
+	
+	#def closest_future_date(self, request):
+	#	date_time = request.data['date_time']
+	#	invited_events = self.model.objects.filter(invited=request.user.id)
+	#	print(date_time, type(date_time))
 
 	def partial_update(self, request, pk=None):  # PATCH {prefix}/{lookup}/
 		return Response()
@@ -460,15 +465,27 @@ class ImageViewset(viewsets.ViewSet):
 	queryset = []
 
 	def create(self, request):  # POST {prefix}/
-		file = request.data['file']
-		result = aws_upload_file(file)
-		if 'error' in result:
-			serializer_data = self.serializer_class([result], many=True).data
-		else:
-			image = self.model(key=result['key'])
-			image.save()
-			serializer_data = self.serializer_class([image], many=True).data
-		return Response(serializer_data)
+		if request.data['command'] == 'get':
+			result = []
+			for key in request.data['keys'].split(','):
+				if 'MapIcon' in key:
+					result += aws_get_file(key)
+				else: 
+					result += {'error': 'Not authorized'}
+			response = HttpResponse(result)
+			response['Content-Type'] = "image/png"
+			response['Cache-Control'] = "max-age=0"
+			return response
+		else:  # create
+			file = request.data['file']
+			result = aws_upload_file(file)
+			if 'error' in result:
+				serializer_data = self.serializer_class([result], many=True).data
+			else:
+				image = self.model(key=result['key'])
+				image.save()
+				serializer_data = self.serializer_class([image], many=True).data
+			return Response(serializer_data)
 
 	def partial_update(self, request, pk=None):  # PATCH {prefix}/{lookup}/
 		if request.data['command'] == 'get':
@@ -477,11 +494,6 @@ class ImageViewset(viewsets.ViewSet):
 			image = self.model.objects.get(pk=pk)
 			if image in event.images.all() and event in my_events:
 				result = aws_get_file(image.key)
-				#buffer = io.BytesIO()
-				#result.save(buffer, format = 'JPEG', quality = 75)
-
-				## You probably want
-				#result = buffer.getbuffer()
 				response = HttpResponse(result)
 				response['Content-Type'] = "image/jpg"
 				response['Cache-Control'] = "max-age=0"
@@ -518,12 +530,8 @@ def aws_get_file(key):
 			aws_access_key_id=config('AWS_ACCESS_KEY_ID'),
 			aws_secret_access_key=config('AWS_SECRET_ACCESS_KEY')
 		)
-		#bucket = s3_client.Bucket(config('AWS_BUCKET_ACCESS_POINT'))
-		#object = bucket.Object(key)
-
 		file_stream = io.BytesIO()
 		s3_client.download_fileobj(config('AWS_BUCKET_ACCESS_POINT'), key, file_stream)
-		#send = Image.open(file_stream)
 		send = base64.b64encode(file_stream.getbuffer())
 		return send
 	except ClientError as e:
