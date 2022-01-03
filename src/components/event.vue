@@ -183,10 +183,8 @@
 			isInvitedGuest (event) {
 				return f.isInvitedGuest(event)
 			},
-			//async getImage () {
-			//	let formData = new FormData()
-			//	formData.append('event_pk', 87)  // this.event.id
-			//	let result = await api.getImage(this.getimgid, formData)
+			//async getEventImage () {
+			//	let result = await api.getEventImage(this.getimgid, eventId) // this.event.id
 			//	this.imagetwo = "data:image/jpg;base64," + result['image_data']
 			//},
 		} // methods

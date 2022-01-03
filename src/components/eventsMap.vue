@@ -9,6 +9,12 @@
 		name: 'eventsMap',
 		data () {
 			return {
+				publicMapIcon: null,
+				publicPastMapIcon: null,
+				privatePastMapIcon: null,
+				privateMapIcon: null,
+				myMapIcon: null,
+				myPastMapIcon: null,
 			}
 		},
 		components: {
@@ -22,10 +28,18 @@
 		computed: {
 			today () { return new Date() },
 		},
-		mounted () {
+		async mounted () {
 			document.head.appendChild(this.scrip)
 			window.initMap = this.initMap
 			window.openEventModal = this.openEventModal
+			this.publicMapIcon = f.domain + '/media/publicMapIcon.png'
+			this.publicPastMapIcon = f.domain + '/media/publicPastMapIcon.png'
+			this.privateMapIcon = f.domain + '/media/privateMapIcon.png'
+			this.privatePastMapIcon = f.domain + '/media/privatePastMapIcon.png'
+			this.myMapIcon = f.domain + '/media/myMapIcon.png'
+			this.myPastMapIcon = f.domain + '/media/publicPastMapIcon.png'
+			//window.publicMapIcon = this.publicMapIcon
+			
 			this.$emit('endLoading')
 		},
 		methods: {
@@ -58,21 +72,21 @@
 					for (let i = 0; i < this.events.length; i++) {
 						if (this.events[i].latitude != 0 || this.events[i].longitude != 0) {
 							noEvents = false
-							let icon = f.domain + '/media/publicPastMapIcon.png'
+							let icon = this.publicPastMapIcon
 							if (f.isoStringDateToDateObject(this.events[i].date_time) > this.today) {
-								icon = f.domain + '/media/publicMapIcon.png'
+								icon = this.publicMapIcon
 							}
 							if (this.events[i].is_private && !this.isInvitedGuest(this.events[i])) {
 								if (f.isoStringDateToDateObject(this.events[i].date_time) > this.today) {
-									icon = f.domain + '/media/privateMapIcon.png'
+									icon = this.privateMapIcon
 								} else {
-									icon = f.domain + '/media/privatePastMapIcon.png'
+									icon = this.privatePastMapIcon
 								}
 							} else if (this.isInvitedGuest(this.events[i])) {
 								if (f.isoStringDateToDateObject(this.events[i].date_time) > this.today) {
-									icon = f.domain + '/media/myMapIcon.png'
+									icon = this.myMapIcon
 								} else {
-									icon = f.domain + '/media/myPastMapIcon.png'
+									icon = this.myPastMapIcon
 								}
 							}
 							infowindowContents.push(`
@@ -99,6 +113,7 @@
 							let image = new google.maps.MarkerImage(
 								icon, null, null, null, new google.maps.Size(25, 25)
 							)
+							console.log(image)
 							let marker = new google.maps.Marker({
 								position: position,
 								map: map,
@@ -113,9 +128,6 @@
 							google.maps.event.addListener(map, "click", function() {
 								infowindow.close()
 							})
-							console.log('FOR SOME REASON THE ZOOM IS MESSED UP EVERY TIME I GO BACK TO THE MAP, WHY?')
-							console.log(bounds)
-							console.log(position)
 							bounds.extend(position)
 							await map.fitBounds(bounds)
 							map.setZoom(12)

@@ -205,9 +205,18 @@ export default {
         let result = await this.imagesApi('post', null, formData)
         return result[0]
     },
-    async getImage(pk, formData) {
+    async getEventImage(pk, eventId) {
+        let formData = new FormData()
+        formData.append('event_pk', eventId)
         formData.append('command', 'get')
         let result = await this.imagesApi('patch', pk, formData)
         return result[0]
+    },
+    async getImage(keys) {
+        let formData = new FormData()
+        formData.append('keys', keys)
+        formData.append('command', 'get')
+        let result = await this.imagesApi('post', null, formData)
+        return result
     },
 }
