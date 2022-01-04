@@ -58,21 +58,21 @@
 					for (let i = 0; i < this.events.length; i++) {
 						if (this.events[i].latitude != 0 || this.events[i].longitude != 0) {
 							noEvents = false
-							let icon = f.domain + '/static/publicPastMapIcon.png'
+							let icon = f.domain + '/static/img/publicPastMapIcon.b38bd57.png'
 							if (f.isoStringDateToDateObject(this.events[i].date_time) > this.today) {
-								icon = f.domain + '/static/publicMapIcon.png'
+								icon = f.domain + '/static/img/publicMapIcon.80dbb2a.png'
 							}
 							if (this.events[i].is_private && !this.isInvitedGuest(this.events[i])) {
 								if (f.isoStringDateToDateObject(this.events[i].date_time) > this.today) {
-									icon = f.domain + '/static/privateMapIcon.png'
+									icon = f.domain + '/static/img/privateMapIcon.68ce6df.png'
 								} else {
-									icon = f.domain + '/static/privatePastMapIcon.png'
+									icon = f.domain + '/static/img/privatePastMapIcon.d08db01.png'
 								}
 							} else if (this.isInvitedGuest(this.events[i])) {
 								if (f.isoStringDateToDateObject(this.events[i].date_time) > this.today) {
-									icon = f.domain + '/static/myMapIcon.png'
+									icon = f.domain + '/static/img/myMapIcon.9a9fa3b.png'
 								} else {
-									icon = f.domain + '/static/myPastMapIcon.png'
+									icon = f.domain + '/static/img/myPastMapIcon.0a90495.png'
 								}
 							}
 							infowindowContents.push(`
