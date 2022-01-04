@@ -8,19 +8,18 @@
 				<div style="font-size: 20px;" v-else>
 					{{ t('WELCOME') }}&nbsp;{{ store.user.display_name }}
 				</div>
-				<div>
+				<!--div>
 					<img src="@/assets/eventhorizonLogo.png" style="max-width: 150px; max-height: 150px; z-index: 5">
 				</div>
-				<div style="font-size: 24px;">{{ t('EVENTS') }}:</div>
+				<div style="font-size: 24px;">{{ t('EVENTS') }}:</div-->
 			</div>
 			<div style="width: 100%;">
-				<div style="position: fixed; margin-top: 15px; right: 2px; z-index: 10;">
+				<!--div style="position: fixed; margin-top: 15px; right: 2px; z-index: 10;">
 					<button class="button" v-on:click.prevent="hideTop = !hideTop" style="border: 2px solid rgba(140, 128, 151, 0.6); border-radius: 7px; width: 25px; height: 25px; padding: 0; background-color: #18002e; padding-bottom: 1px;">
 						<img src="@/assets/fullScreen.png" class="icon" style="width: 80%; height: 80%"/>
 					</button>
-				</div>
-				<tabs :num-tabs="3" :initial="selectedTab" :key="selectedTab"
-						@on-click="(arg) => { selectedTab = arg }"
+				</div-->
+				<tabs :num-tabs="3" :initial="selectedTab" :key="selectedTab" @on-click="(arg) => { selectedTab = arg }"
 						class="tabs">
 					<div slot="1">
 						<img src="@/assets/mapIcon.png" class="icon"/>
@@ -93,6 +92,7 @@
 				selectedEventIdForMap: null,
 				selectedEventIdForList: null,
 				events: null,
+				myEvents: null,
 				loaded: false,
 				scrip: document.createElement('script'),
 				hideTop: false,
@@ -106,6 +106,7 @@
 		},
 		async created () {
 			this.events = await api.getAllEvents()
+			this.myEvents = f.filterEvents(this.events, this.store.user.id, ['id'], false)
 			let id = this.$route.params.id
 			if (id) {
 				this.showEventModal = Boolean(this.$route.params.id)
