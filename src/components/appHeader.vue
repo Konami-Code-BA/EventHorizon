@@ -10,11 +10,8 @@
 					<button class="no-border-button" style="display: flex; flex-direction: row; align-items: center;"
 							v-on:click.prevent="goToEvents()">
 						<div>EVENT</div>
-						<div v-if="this.$route.name != 'events'">
+						<div>
 							<img src="@/assets/eventhorizonTopIcon.png" style="height: 20px; vertical-align: middle;">
-						</div>
-						<div v-else>
-							&nbsp;
 						</div>
 						<div>HORIZON</div>
 					</button>
