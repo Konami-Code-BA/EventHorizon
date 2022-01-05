@@ -61,8 +61,8 @@
 				</div>
 				<div class="line-height"></div>
 				<div style="width: 100%">
-					<button v-on:click.prevent="selectedTab = 0; showQrModal = true" class="button">
-						{{t('GET QR CODES')}}
+					<button v-on:click.prevent="selectedTab = 0; $emit('modalPage', 'aboutUs')" class="button">
+						ABOUT US
 					</button>
 				</div>
 				<div class="line-height"></div>
@@ -131,7 +131,7 @@
 			async goToEvents () {
 				this.$emit('startLoading')
 				if (this.$route.name !== 'events') {
-					await this.$router.push({ name: 'events' })
+					this.$emit('modalPage', 'events')
 					this.$emit('endLoading')
 				} else {
 					await location.reload()
@@ -139,9 +139,7 @@
 			},
 			goToLoginRegister () {
 				this.$emit('startLoading')
-				if (this.$route.name !== 'loginRegister') {
-					this.$router.push({ name: 'loginRegister' })
-				}
+				this.$emit('modalPage', 'loginRegister')
 				this.selectedTab = 0
 				this.$emit('endLoading')
 			},

@@ -1,10 +1,33 @@
 <template>
 	<div id="app">
 		<div v-show="!loading" class="app">
-			<app-header @startLoading="headerLoading=true" @endLoading="headerLoading=false"/>
-			<router-view @startLoading="routerLoading=true" @endLoading="routerLoading=false" :key="$route.fullPath"
-					class="router"/>
-			<app-footer @startLoading="footerLoading=true" @endLoading="footerLoading=false"/>
+			<app-header
+					@startLoading="headerLoading=true"
+					@endLoading="headerLoading=false"
+					@modalPage="page => { modalPage = page }"
+			/>
+			<router-view
+					@startLoading="routerLoading=true"
+					@endLoading="routerLoading=false"
+					@modalPage="page => { modalPage = page }"
+					:key="$route.fullPath"
+					class="router"
+					v-show="modalPage === 'events'"
+			/>
+			<modal-view
+					@startLoading="modalLoading=true"
+					@endLoading="modalLoading=false"
+					@modalPage="page => { modalPage = page }"
+					class="router"
+					v-show="modalPage != 'events'"
+					:key="modalPage"
+					:page="modalPage"
+			/>
+			<app-footer
+					@startLoading="footerLoading=true"
+					@endLoading="footerLoading=false"
+					@modalPage="page => { modalPage = page }"
+			/>
 		</div>
 		<div class="loading" v-show="loading"></div>
 	</div>
@@ -13,20 +36,37 @@
 <script>
 	import store from '@/store'
 	import appHeader from '@/components/appHeader.vue'
+	import modalView from '@/views/modalView.vue'
 	import appFooter from '@/components/appFooter.vue'
+	import f from '@/functions/functions.js'
 	export default {
 		name: 'App',
 		components: {
 			appHeader,
+			modalView,
 			appFooter,
 		},
 		data () {
 			return {
+				modalPage: 'events',
 				headerLoading: true,
 				routerLoading: true,
+				modalLoading: true,
 				footerLoading: true,
+				history: ['events'],
 				loading: true,
 			}
+		},
+		created () {
+			window.popStateDetected = false
+			window.addEventListener('popstate', () => {
+				if (this.history.length === 1) {
+					window.history.go(-2)
+				} else {
+					this.history.pop()
+					this.modalPage = this.history.pop()
+				}
+			})
 		},
 		watch: {
 			'headerLoading' () {
@@ -35,15 +75,21 @@
 			'routerLoading' () {
 				this.checkLoading()
 			},
+			'modalLoading' () {
+				this.checkLoading()
+			},
 			'footerLoading' () {
 				this.checkLoading()
+			},
+			'modalPage' () {
+				this.history.push(this.modalPage)
 			},
 		},
 		methods: {
 			checkLoading () {
-				if (this.headerLoading || this.routerLoading || this.footerLoading) {
+				if (this.headerLoading || this.routerLoading || this.modalLoading || this.footerLoading) {
 					this.loading = true
-				} else if (!this.headerLoading && !this.routerLoading && !this.footerLoading) {
+				} else if (!this.headerLoading && !this.routerLoading && !this.modalLoading && !this.footerLoading) {
 					this.loading = false
 				}
 			},
@@ -235,6 +281,8 @@
 			border: 2px solid rgba(255, 255, 255, .3);
 			border-bottom-left-radius: 7px;
 			border-bottom-right-radius: 7px;
+			border-top-left-radius: 7px;
+			border-top-right-radius: 7px;
 			overflow-x: hidden;
 			overflow-y: hidden;
 		}

@@ -122,7 +122,7 @@
 				}
 				if (!user.error) {
 					if (this.next) {
-						this.$router.push({ name: this.next })
+						this.$emit('modalPage', this.next)
 						this.$emit('endLoading')
 						return
 					} else {
