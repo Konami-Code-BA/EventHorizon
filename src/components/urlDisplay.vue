@@ -1,21 +1,18 @@
 <template>
 	<div class="main">
-		<div style="font-size: 36px">{{ t('PEOPLE') }}</div>
-		<div class="line-height"></div>
-		<div style="color: grey">({{ t('COMING SOON') }})</div>
+		urls
 	</div>
 </template>
 <script>
 	import store from '@/store.js'
 	import translations from '@/functions/translations.js'
 	export default {
-		name: 'people',
+		name: 'urlDisplay',
 		components: {
 		},
 		data () {
 			return {
 				store: store,
-				displayName: '',
 			}
 		},
 		async mounted () {

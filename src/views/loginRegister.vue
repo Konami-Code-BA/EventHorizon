@@ -37,7 +37,7 @@
 			<div class="line-height"></div>
 			<div class="line-height"></div>
 			<div class="line-height"></div>
-			<button v-on:click.prevent="$router.push({ name: 'registerWithEmail' })" class="button">
+			<button v-on:click.prevent="$emit('modalPage', 'registerWithEmail')" class="button">
 				{{t('NEW USER REGISTRATION')}}
 			</button>
 			<div class="line-height"></div>
@@ -102,7 +102,7 @@
 				this.$emit('endLoading')
 				console.log('JEEZE', user)
 				if (!user.error) {
-					this.$router.push({ name: 'events' })
+					this.$emit('modalPage', 'events')
 				} else if (user.error === 'This email is not registered') {
 					this.emailError = user.error
 				} else if (user.error === 'Incorrect password') {
@@ -176,7 +176,7 @@
 			},
 			shakeFunction () {
 				this.shakeIt = true
-				setTimeout(() => { this.shakeIt = false; }, 1000);
+				setTimeout(() => { this.shakeIt = false; }, 1000)
 			},
 			replaceAll (str, match, replace) {
 				return str.replace(new RegExp(match, 'g'), () => replace);
@@ -199,12 +199,9 @@
 					this.$emit('startLoading')
 					await api.lineNewDevice(this.$route.query.code, 'loginRegister')
 					this.$emit('endLoading')
-					this.$router.push({ name: 'events' })
+					this.$emit('modalPage', 'events')
 				}
 			},
-			//goToPage2 () {
-			//	this.$router.push({ name: 'pageTwo', params: { thruParams: 'this was sent from the login page' } })
-			//},
 		} // methods
 	} // export
 </script>

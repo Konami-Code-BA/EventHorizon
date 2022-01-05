@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div class="footer" style="width: 100%">
-			<tabs :num-tabs="4" :initial="selectedTab" :key="selectedTab" @on-click="(arg) => { changeTab(arg) }"
+			<tabs :num-tabs="4" :initial="0" :key="selectedTab" @on-click="(arg) => { selectTab(arg) }"
 					style="background-color: rgba(0, 0, 0, .5);">
 				<div slot="1">
 					<img src="@/assets/homeIcon.png" class="icon" style="margin-bottom: 2px;"/>
@@ -10,18 +10,49 @@
 					<img src="@/assets/plusIcon.png" class="icon" style="margin-bottom: 1px;"/>
 				</div>
 				<div slot="3">
-					<img src="@/assets/shareIcon.png" class="icon" style="margin-bottom: 1px;"/>
+					<img src="@/assets/gearIcon.png" class="icon" style="margin-bottom: 1px;"/>
 				</div>
 				<div slot="4">
-					<img src="@/assets/gearIcon.png" class="icon" style="margin-bottom: 1px;"/>
+					<img src="@/assets/shareIcon.png" class="icon" style="margin-bottom: 1px;"/>
 				</div>
 			</tabs>
 		</div>
+		<modal v-if="showShareModal" @closeModals="showShareModal = false">
+			<div slot="contents" class="modal">
+				<div style="align-self: flex-end; padding-bottom: 5px;">
+					<button v-on:click.prevent="showShareModal = false" class="no-border-button x-button">
+						✖
+					</button>
+				</div>
+				<div style="width: 100%">
+					<button v-on:click.prevent="showShareModal = false; showQrModal = true" class="button" style="width: 100%">
+						{{ t('SHARE QR CODE') }}
+					</button>
+				</div>
+				<div class="line-height"></div>
+				<div style="width: 100%">
+					<button v-on:click.prevent="showShareModal = false; showUrlModal = true" class="button" style="width: 100%">
+						{{ t('SHARE URL') }}
+					</button>
+				</div>
+				<div class="line-height"></div>
+				<div style="width: 100%">
+					<button v-on:click.prevent="showShareModal = false; showImageModal = true" class="button" style="width: 100%">
+						{{ t('SHARE IMAGE') }}
+					</button>
+				</div>
+			</div>
+		</modal>
+		<qr-code-generator v-if="showQrModal" @closeModals="showQrModal = false"/>
+		<!--url-display v-if="showUrlModal"/-->
 	</div>
 </template>
 <script>
 	import store from '@/store'
+	import modal from '@/components/modal'
 	import tabs from '@/components/tabs.vue'
+	import qrCodeGenerator from '@/components/qrCodeGenerator.vue'
+	import urlDisplay from '@/components/urlDisplay.vue'
 	import translations from '@/functions/translations.js'
 	import api from '@/functions/apiFunctions.js'
 	export default {
@@ -29,13 +60,20 @@
 		data () {
 			return {
 				store: store,
-				languageMenu: false,
 				selectedTab: 0,
-				pages: ['events', 'addEvent', 'share', 'settings'],
+				showShareModal: false,
+				showQrModal: false,
+				showUrlModal: false,
+				showImageModal: false,
+				footerPages: ['events', 'addEvent', 'settings'],
+				actions: [this.events, this.addEvent, this.settings, this.share],
 			}
 		},
 		components: {
+			modal,
 			tabs,
+			qrCodeGenerator,
+			urlDisplay,
 		},
 		props: {
 		},
@@ -45,30 +83,23 @@
 			this.$emit('endLoading')
 		},
 		watch: {
-			'$route' () {
-				let ind = this.pages.indexOf(this.$route.name)
-				if (ind != -1) {
-					this.selectedTab = ind + 1
-				} else {
-					this.selectedTab = 0
-				}
-			},
 		},
 		methods: {
 			t (w) { return translations.t(w) },
-			changeTab (selectedTab) {
-				let routes = ''
-				if (selectedTab === 1) {
-					this.selectedTab = selectedTab
-				} else {
-					this.selectedTab = 0
-					routes += 'loginRegister'
-				}
-				for (let i = 0; i < this.pages.length; i++) {
-					if (selectedTab === i+1 && !(routes+this.pages[i]).includes(this.$route.name)) {
-						this.$router.push({ name: this.pages[i] }).catch(() => {})
-					}
-				}
+			selectTab (selectedTab) {
+				this.actions[selectedTab-1]()
+			},
+			events () {
+				this.$emit('modalPage', 'events')
+			},
+			addEvent () {
+				this.$emit('modalPage', 'addEvent')
+			},
+			settings () {
+				this.$emit('modalPage', 'settings')
+			},
+			share () {
+				this.showShareModal = true
 			},
 		}
 	}
