@@ -1,26 +1,74 @@
 <template>
 	<div v-if="loaded">
 		<div class="main" v-show="!showEventModal" style="padding-top: 5px;">
-			<div style="display: flex; flex-direction: column; align-items: center;" v-if="!hideTop">
-				<div style="font-size: 20px;" v-if="!isAuthenticatedUser">
+			<div class="viewer filters" style="display: flex; flex-direction: column; align-items: center; height: 50%; width: 100%"
+					v-if="!hideTop">
+				<!--div style="font-size: 20px;" v-if="!isAuthenticatedUser">
 					{{ t('REACH OUT TO NEW HORIZONS') }}
 				</div>
 				<div style="font-size: 20px;" v-else>
 					{{ t('WELCOME') }}&nbsp;{{ store.user.display_name }}
-				</div>
+				</div-->
 				<!--div>
 					<img src="@/assets/eventhorizonLogo.png" style="max-width: 150px; max-height: 150px; z-index: 5">
 				</div>
 				<div style="font-size: 24px;">{{ t('EVENTS') }}:</div-->
+				<div style="border-bottom: 2px solid rgba(255, 255, 255, .3); width: 100%; display: flex;
+						justify-content: center">
+					<div>
+						{{ t('SELECT WHAT EVENTS TO DISPLAY') }}
+					</div>
+					<div style="position: absolute; right: 2%;">
+						<button style="background: none; border: none"
+								v-on:click.prevent="showPeopleInfo = !showPeopleInfo">
+							<img src="@/assets/iIcon.png" class="icon" style="padding: 3px;" id="people-info"/>
+						</button>
+					</div>
+				</div>
+				<div style="display: flex; flex-direction: column; align-items: flex-start; width: 100%; padding-top: 5px">
+					<button class="people-button button" :class="{ selected : selectedFilter === 'all'}"
+							v-on:click.prevent="selectedFilter = 'all'">
+						{{ t('ALL') }}
+					</button>
+					<button class="people-button button"  :class="{ selected : selectedFilter === 'mine'}"
+							v-on:click.prevent="selectedFilter = 'mine'">
+						{{ t('MINE') }}
+					</button>
+					<button class="people-button button"  :class="{ selected : selectedFilter === 'allpeople'}"
+							v-on:click.prevent="selectedFilter = 'allpeople'">
+						{{ t('ALL PEOPLE I FOLLOW') }}
+					</button>
+					<button class="people-button button"  :class="{ selected : selectedFilter === 4}"
+							v-on:click.prevent="selectedFilter = 4">
+						
+					</button>
+					<button class="people-button button"  :class="{ selected : selectedFilter === 5}"
+							v-on:click.prevent="selectedFilter = 5">
+						
+					</button>
+				</div>
 			</div>
-			<div style="width: 100%;">
+			<div class="tabsdiv" style="width: 100%; display: flex; flex-direction: column;">
 				<!--div style="position: fixed; margin-top: 15px; right: 2px; z-index: 10;">
 					<button class="button" v-on:click.prevent="hideTop = !hideTop" style="border: 2px solid rgba(140, 128, 151, 0.6); border-radius: 7px; width: 25px; height: 25px; padding: 0; background-color: #18002e; padding-bottom: 1px;">
 						<img src="@/assets/fullScreen.png" class="icon" style="width: 80%; height: 80%"/>
 					</button>
 				</div-->
-				<tabs :num-tabs="3" :initial="selectedTab" :key="selectedTab" @on-click="(arg) => { selectedTab = arg }"
-						class="tabs">
+				<div style="display: flex;
+						justify-content: center">
+					<div>
+						{{ t('EVENTS') }}
+					</div>
+					<div style="position: absolute; right: 2%;">
+						<button style="background: none; border: none"
+								v-on:click.prevent="showEventsInfo = !showEventsInfo">
+							<img src="@/assets/iIcon.png" class="icon" style="padding: 3px;" id="events-info"/>
+						</button>
+					</div>
+				</div>
+				<tabs :num-tabs="3" :initial="selectedTab" :key="selectedTab"
+						@on-click="(arg) => { selectedTab = arg }"
+						style="border-left: none; border-right: none; border-bottom: none;">
 					<div slot="1">
 						<img src="@/assets/mapIcon.png" class="icon"/>
 					</div>
@@ -32,32 +80,17 @@
 					</div>
 				</tabs>
 			</div>
-			<events-map class="viewer" v-show="selectedTab==1" @openEventModal="openEventModal" :events="events"
-					:selectedEventId="selectedEventIdForMap" :key="selectedEventIdForMap+'map'" :scrip="scrip"
-					ref="eventsMap" :store="store"/>
-			<events-list class="viewer" v-show="selectedTab==2" @openEventModal="openEventModal" :events="events"
-					:store="store" :startingAt="selectedEventIdForList" :key="selectedEventIdForList+'list'"/>
-			<events-calendar class="viewer" v-show="selectedTab==3" @openEventModal="openEventModal" :events="events"
-					:store="store"/>
+			<events-map class="viewer events" v-show="selectedTab==1" @openEventModal="openEventModal"
+					:events="displayEvents" :selectedEventId="selectedEventIdForMap" :scrip="scrip" ref="eventsMap"
+					:store="store"
+					:key="createKey(displayEvents, selectedEventIdForMap, 'map')"/>
+			<events-list class="viewer events" v-show="selectedTab==2" @openEventModal="openEventModal"
+					:events="displayEvents" :store="store" :startingAt="selectedEventIdForList"
+					:key="createKey(displayEvents, selectedEventIdForList, 'list')"/>
+			<events-calendar class="viewer events" v-show="selectedTab==3" @openEventModal="openEventModal"
+					:events="displayEvents" :store="store"
+					:key="createKey(displayEvents, 0, 'cal')"/>
 		</div>
-		<!--modal v-if="showCookiesModal" @closeModals="closeCookiesModal()">
-			<div slot="contents" class="cookiesModal">
-				<div style="align-self: flex-end">
-					<button v-on:click.prevent="closeCookiesModal()" class="no-border-button x-button">
-						✖
-					</button>
-				</div>
-				<div style="white-space: pre-line; text-align: center; align-self: center; font-weight: 400;
-						width: 80%;">
-					{{t('THIS APP USES COOKIES')}}
-				</div><br>
-				<div style="align-self: center; width: 80%;">
-					<button v-on:click.prevent="closeCookiesModal()" class="button" style="width: 100%">
-						<big>{{t('OK')}}</big>
-					</button>
-				</div><br><br>
-			</div>
-		</modal-->
 		<event v-if="showEventModal" @goToMap="goToMap()" :eventId="selectedEventId" @closeModals="closeEventModal()"/>
 	</div>
 </template>
@@ -84,6 +117,7 @@
 		},
 		data () {
 			return {
+				params: this.$route.params,
 				store: store,
 				showCookiesModal: store.user.alerts.includes(1),
 				selectedTab: 1,
@@ -91,11 +125,13 @@
 				selectedEventId: null,
 				selectedEventIdForMap: null,
 				selectedEventIdForList: null,
-				events: null,
-				myEvents: null,
+				displayEvents: null,
+				events: {},
 				loaded: false,
 				scrip: document.createElement('script'),
 				hideTop: false,
+				selectedFilter: 'all',
+				showPeopleInfo: false,
 			}
 		},
 		computed : {
@@ -103,13 +139,21 @@
 			today () { return new Date() },
 		},
 		watch: {
+			async 'selectedFilter' () {
+				console.log(this.selectedFilter)
+				this.displayEvents = this.events[this.selectedFilter]
+				console.log(this.displayEvents)
+				console.log(this.createKey(this.displayEvents, this.selectedEventIdForMap, 'map'))
+				await this.$refs.eventsMap.initMap()
+			},
 		},
 		async created () {
-			this.events = await api.getAllEvents()
-			this.myEvents = f.filterEvents(this.events, this.store.user.id, ['id'], false)
-			let id = this.$route.params.id
+			this.events['all'] = await api.getAllEvents()
+			this.displayEvents = this.events['all']
+			this.events['mine'] = f.filterEvents(this.events, this.store.user.id, ['id'], false)
+			let id = this.params.id
 			if (id) {
-				this.showEventModal = Boolean(this.$route.params.id)
+				this.showEventModal = Boolean(this.params.id)
 				this.openEventModal(id)
 			} else {
 				this.selectedEventIdForList = f.getEventWithClosestFutureDate(this.events, this.today)['id']
@@ -139,42 +183,50 @@
 				}
 				this.showEventModal = true
 			},
-			closeEventModal () {
+			async closeEventModal () {
 				f.freeUpBackButton(this)
 				this.store.path = this.$route.path
-				this.$refs.eventsMap.initMap() // everything else is working well now with list, but map isnt zooming correctly when going back to it from event
+				await this.$refs.eventsMap.initMap()
 				this.showEventModal = false
 			},
 			goToMap () {
 				this.closeEventModal()
 				this.selectedTab = 1
 			},
-			goToCalendar () {
-
+			createKey(displayEvents, eventId, letters) {
+				let key = (displayEvents.length > 0 ? displayEvents[0]['id'] : 0).toString()
+				key += (eventId ? eventId : 0).toString() + letters
+				return key
 			},
 		} // methods
 	} // export
 </script>
 <style scoped>
-	.cookiesModal {
-		position: fixed;
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		z-index: 100;
-		background-color: #0b0015;
-		border: 1px solid #5300e1;
-		border-radius: 15px;
-		padding: 20px;
-		width: 50%;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-	}
-	.tabs {
+	.tabsdiv {
 		background-color: rgba(0, 0, 0, .2);
 		border-top-left-radius: 7px;
 		border-top-right-radius: 7px;
-		border-bottom: none !important;
+		border: 2px solid rgba(255, 255, 255, .3);
+	}
+	.events {
+		border-top: none;
+		border-top-left-radius: 0;
+		border-top-right-radius: 0;
+	}
+	.filters {
+		
+	}
+	.selected {
+		background-color: rgba(255, 255, 255, .2);  /*140,128,151,0.6 after combinging with #18002e*/
+		width: 100%;
+	}
+	.people-button {
+		border: none;
+		border-radius: 0;
+		height: 20px;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		width: 100%;
 	}
 </style>

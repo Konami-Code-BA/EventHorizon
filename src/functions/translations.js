@@ -278,13 +278,41 @@ export default {
             'EN': 'TODAY',
             'JP': '今日'
         },
-        'GET QR CODES': {
-            'EN': 'GET QR CODES',
-            'JP': 'QRコード出す'
+        'SHARE QR CODE': {
+            'EN': 'SHARE QR CODE',
+            'JP': 'QRコード共有'
+        },
+        'SHARE URL': {
+            'EN': 'SHARE URL',
+            'JP': 'URL共有'
+        },
+        'SHARE IMAGE': {
+            'EN': 'SHARE IMAGE',
+            'JP': '画像共有'
         },
         'EVENT NAME': {
             'EN': 'EVENT NAME',
             'JP': 'イベント名'
+        },
+        'SELECT WHAT EVENTS TO DISPLAY': {
+            'EN': 'SELECT WHAT EVENTS TO DISPLAY',
+            'JP': 'どんなイベントを表示しよう'
+        },
+        'ALL': {
+            'EN': 'ALL',
+            'JP': 'すべて'
+        },
+        'MINE': {
+            'EN': 'MINE',
+            'JP': '僕の'
+        },
+        'ALL PEOPLE I FOLLOW': {
+            'EN': 'ALL PEOPLE I FOLLOW',
+            'JP': 'フォローしている皆'
+        },
+        '\'S': {
+            'EN': '\'S',
+            'JP': 'の'
         },
         'DESCRIPTION': {
             'EN': 'DESCRIPTION',
