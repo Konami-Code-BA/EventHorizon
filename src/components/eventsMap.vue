@@ -16,22 +16,21 @@
 		props: {
 			events: { default: null },
 			selectedEventId: { default: null },
-			scrip: {},
 			store: { default: null },
 		},
 		computed: {
 			today () { return new Date() },
 		},
+		async created () {
+		},
 		async mounted () {
-			document.head.appendChild(this.scrip)
 			window.initMap = this.initMap
 			window.openEventModal = this.openEventModal
-			this.$emit('endLoading')
+			window.initMap()
 		},
 		methods: {
 			t (w) { return translations.t(w) },
 			async initMap () {
-				let bounds = new google.maps.LatLngBounds()
 				let map = new google.maps.Map(document.getElementById("map_canvas"), {
 					mapTypeId: 'roadmap',
 					streetViewControl: false,
@@ -39,6 +38,7 @@
 					controlSize: 30,
 					tilt: 45,
 					disableDefaultUI: true,
+					zoom: 12,
 					styles: [
 						{ elementType: "geometry", stylers: [{ color: "#242f3e" }] },
 						{ elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
@@ -106,6 +106,7 @@
 						},
 					],
 				})
+				let bounds = new google.maps.LatLngBounds()
 				let infowindow = new google.maps.InfoWindow({ map: map })
 				let markers = {}
 				let infowindowContents = []
@@ -176,19 +177,9 @@
 					}
 				}
 				if (noEvents) {
-					let address = '東京都千代田区千代田１−1'
-					let geocoder = new google.maps.Geocoder()
-					var result
-					await geocoder.geocode( { 'address': address }, function(results, status) {
-						if (status == google.maps.GeocoderStatus.OK) {
-							result = results[0]
-						} else {
-							alert('Geocode was not successful for the following reason: ' + status)
-						}
-					})
 					let position = new google.maps.LatLng(
-						result.geometry.location.lat(),
-						result.geometry.location.lng()
+						35.685174,
+						139.752744
 					)
 					let marker = new google.maps.Marker({
 						position: position,
