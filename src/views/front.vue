@@ -1,7 +1,7 @@
 <template>
 	<div v-if="loaded">
 		<div class="main" v-show="!showEventModal" style="padding-top: 5px;">
-			<div class="viewer filters" style="display: flex; flex-direction: column; align-items: center; height: 50%; width: 100%"
+			<div class="viewer filters" style="display: flex; flex-direction: column; align-items: center; height: 140px; width: 100%"
 					v-if="!hideTop">
 				<!--div style="font-size: 20px;" v-if="!isAuthenticatedUser">
 					{{ t('REACH OUT TO NEW HORIZONS') }}
@@ -13,7 +13,7 @@
 					<img src="@/assets/eventhorizonLogo.png" style="max-width: 150px; max-height: 150px; z-index: 5">
 				</div>
 				<div style="font-size: 24px;">{{ t('EVENTS') }}:</div-->
-				<div style="border-bottom: 2px solid rgba(255, 255, 255, .3); width: 100%; display: flex;
+				<div style="border-bottom: 2px solid rgba(255, 255, 255, .3); width: 100%; display: flex; height: auto;
 						justify-content: center">
 					<div>
 						{{ t('SELECT WHAT EVENTS TO DISPLAY') }}
@@ -25,27 +25,44 @@
 						</button>
 					</div>
 				</div>
-				<div style="display: flex; flex-direction: column; align-items: flex-start; width: 100%; padding-top: 5px">
-					<button class="people-button button" :class="{ selected : selectedFilter === 'all'}"
-							v-on:click.prevent="selectedFilter = 'all'">
-						{{ t('ALL') }}
-					</button>
-					<button class="people-button button"  :class="{ selected : selectedFilter === 'mine'}"
-							v-on:click.prevent="selectedFilter = 'mine'">
-						{{ t('MINE') }}
-					</button>
-					<button class="people-button button"  :class="{ selected : selectedFilter === 'allpeople'}"
-							v-on:click.prevent="selectedFilter = 'allpeople'">
-						{{ t('ALL PEOPLE I FOLLOW') }}
-					</button>
-					<button class="people-button button"  :class="{ selected : selectedFilter === 4}"
-							v-on:click.prevent="selectedFilter = 4">
-						
-					</button>
-					<button class="people-button button"  :class="{ selected : selectedFilter === 5}"
-							v-on:click.prevent="selectedFilter = 5">
-						
-					</button>
+				<div style="display: flex; flex-direction: column; align-items: flex-start; width: 100%;
+						padding-top: 5px; padding-bottom: 5px; height: auto;">
+					<div style="display: flex; flex-direction: row; width: 100%;">
+						<div>
+							<input type="checkbox" class="checkbox" v-model="allFilter"/>
+						</div>
+						<button class="people-button button" :class="{ selected : allFilter}"
+								v-on:click.prevent="allFilter=!allFilter">
+							<div>
+								{{ t('ALL') }}
+							</div>
+						</button>
+					</div>
+					<div style="display: flex; flex-direction: row; width: 100%;">
+						<div>
+							<input type="checkbox" class="checkbox" v-model="mineFilter"/>
+						</div>
+						<button class="people-button button" :class="{ selected : mineFilter}"
+								v-on:click.prevent="mineFilter=!mineFilter">
+							<div>
+								{{ t('MINE') }}
+							</div>
+						</button>
+					</div>
+					<div style="display: flex; flex-direction: row; width: 100%;">
+						<div>
+							<input type="checkbox" class="checkbox" v-model="allPeopleFilter"/>
+						</div>
+						<button class="people-button button" :class="{ selected : allPeopleFilter}"
+								v-on:click.prevent="allPeopleFilter=!allPeopleFilter" disabled>
+							<div>
+								{{ t('PEOPLE I FOLLOW') }}
+							</div>
+							<div>
+								<small>({{ t('COMING SOON') }})</small>
+							</div>
+						</button>
+					</div>
 				</div>
 			</div>
 			<div class="tabsdiv" style="width: 100%; display: flex; flex-direction: column;">
@@ -83,13 +100,13 @@
 			<events-map class="viewer events" v-show="selectedTab==1" @openEventModal="openEventModal"
 					:events="displayEvents" :selectedEventId="selectedEventIdForMap" ref="eventsMap"
 					:store="store"
-					:key="createKey(displayEvents, selectedEventIdForMap, 'map')"/>
+					:key="createKey(selectedEventIdForMap, 'map')"/>
 			<events-list class="viewer events" v-show="selectedTab==2" @openEventModal="openEventModal"
 					:events="displayEvents" :store="store" :startingAt="selectedEventIdForList"
-					:key="createKey(displayEvents, selectedEventIdForList, 'list')"/>
+					:key="createKey(selectedEventIdForList, 'list')"/>
 			<events-calendar class="viewer events" v-show="selectedTab==3" @openEventModal="openEventModal"
 					:events="displayEvents" :store="store"
-					:key="createKey(displayEvents, 0, 'cal')"/>
+					:key="createKey(0, 'cal')"/>
 		</div>
 		<event v-if="showEventModal" @goToMap="goToMap()" :eventId="selectedEventId" @closeModals="closeEventModal()"/>
 	</div>
@@ -106,7 +123,7 @@
 	import f from '@/functions/functions.js'
 	import event from '@/components/event.vue'
 	export default {
-		name: 'events',
+		name: 'front',
 		components: {
 			modal,
 			tabs,
@@ -129,7 +146,10 @@
 				events: {},
 				loaded: false,
 				hideTop: false,
-				selectedFilter: 'all',
+				filterKeys: ['all'],
+				allFilter: true,
+				mineFilter: false,
+				allPeopleFilter: false,
 				showPeopleInfo: false,
 			}
 		},
@@ -138,21 +158,42 @@
 			today () { return new Date() },
 		},
 		watch: {
-			async 'selectedFilter' () {
-				this.displayEvents = this.events[this.selectedFilter]
-				window.initMap()
+			'allFilter' () {
+				if (this.allFilter) {  // if selected
+					this.filterKeys = ['all']
+					this.mineFilter = false
+				} else {  // if deselected
+					if (this.filterKeys.lenth === 1) {
+						this.filterKeys = ['none']
+					}
+				}
+				this.doFiltering()
+			},
+			'mineFilter' () {
+				if (this.mineFilter) {  // if selected
+					if (this.allFilter) {
+						this.allFilter = false
+						this.removeFilterKey('all')
+					}
+					this.filterKeys.push('mine')
+				} else {  // if deselected
+					this.removeFilterKey('mine')
+				}
+				this.doFiltering()
 			},
 		},
 		async created () {
 			this.events['all'] = await api.getAllEvents()
 			this.displayEvents = this.events['all']
-			this.events['mine'] = f.filterEvents(this.events, this.store.user.id, ['id'], false)
+			this.events['mine'] = f.filterEvents(this.displayEvents, this.store.user.id, ['invited'], false)
+			console.log('MINE', this.events['mine'])
+			this.events['none'] = []
 			let id = this.params.id
 			if (id) {
 				this.showEventModal = Boolean(this.params.id)
 				this.openEventModal(id)
 			} else {
-				this.selectedEventIdForList = f.getEventWithClosestFutureDate(this.events, this.today)['id']
+				this.selectedEventIdForList = f.getEventWithClosestFutureDate(this.displayEvents, this.today)['id']
 			}
 
 			let scrip = document.createElement('script')
@@ -177,7 +218,7 @@
 				this.store.path = store.path + '/' + id
 				this.selectedEventId = id
 				this.selectedEventIdForList = id
-				let event = f.filterEvents(this.events, id, ['id'], true)
+				let event = f.filterEvents(this.events['all'], id, ['id'], true)
 				if (event.address) {
 					this.selectedEventIdForMap = id
 				}
@@ -193,10 +234,31 @@
 				this.closeEventModal()
 				this.selectedTab = 1
 			},
-			createKey(displayEvents, eventId, letters) {
-				let key = (displayEvents.length > 0 ? displayEvents[0]['id'] : 0).toString()
+			createKey(eventId, letters) {
+				let key = (this.displayEvents.length > 0 ? this.displayEvents[0]['id'] : 0).toString()
 				key += (eventId ? eventId : 0).toString() + letters
 				return key
+			},
+			removeFilterKey (toRemove) {
+				this.filterKeys = this.filterKeys.filter(filterKey => {
+					if (filterKey === toRemove) {
+						return false
+					} else {
+						return true
+					}
+				})
+			},
+			doFiltering () {
+				this.displayEvents = []
+				for (let i = 0; i < this.filterKeys.length; i++) {
+					this.displayEvents = this.displayEvents.concat(this.events[this.filterKeys[i]])
+				}
+				console.log('HERE', this.filterKeys)
+				console.log('HERE', this.displayEvents)
+				if (this.displayEvents.length > 0) {
+					this.selectedEventIdForList = f.getEventWithClosestFutureDate(this.displayEvents, this.today)['id']
+				}
+				window.initMap(google)
 			},
 		} // methods
 	} // export
@@ -224,9 +286,26 @@
 		border: none;
 		border-radius: 0;
 		height: 20px;
+		padding: 10px;
+		padding-left: 35px;
 		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
+		flex-direction: row;
+		align-items: center;
+		justify-content: flex-start;
 		width: 100%;
+	}
+	/*.dual-set {
+		display: flex;
+		flex-direction: row;
+		align-self: center;
+		align-items: center;
+		justify-content: center;
+		padding: 0;
+		width: 100%;
+	}*/
+	.checkbox {
+		position: fixed;
+		height: 15px;
+		width: 20px;
 	}
 </style>
