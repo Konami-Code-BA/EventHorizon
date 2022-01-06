@@ -306,9 +306,9 @@ export default {
             'EN': 'MINE',
             'JP': '僕の'
         },
-        'ALL PEOPLE I FOLLOW': {
-            'EN': 'ALL PEOPLE I FOLLOW',
-            'JP': 'フォローしている皆'
+        'PEOPLE I FOLLOW': {
+            'EN': 'PEOPLE I FOLLOW',
+            'JP': 'フォローしている人'
         },
         '\'S': {
             'EN': '\'S',

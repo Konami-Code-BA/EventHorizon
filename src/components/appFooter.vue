@@ -65,8 +65,8 @@
 				showQrModal: false,
 				showUrlModal: false,
 				showImageModal: false,
-				footerPages: ['events', 'addEvent', 'settings'],
-				actions: [this.events, this.addEvent, this.settings, this.share],
+				footerPages: ['front', 'addEvent', 'settings'],
+				actions: [this.front, this.addEvent, this.settings, this.share],
 			}
 		},
 		components: {
@@ -89,8 +89,8 @@
 			selectTab (selectedTab) {
 				this.actions[selectedTab-1]()
 			},
-			events () {
-				this.$emit('modalPage', 'events')
+			front () {
+				this.$emit('modalPage', 'front')
 			},
 			addEvent () {
 				this.$emit('modalPage', 'addEvent')

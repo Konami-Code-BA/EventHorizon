@@ -8,7 +8,7 @@
 				</div>
 				<div slot="2">
 					<button class="no-border-button" style="display: flex; flex-direction: row; align-items: center;"
-							v-on:click.prevent="goToEvents()">
+							v-on:click.prevent="goToFront()">
 						<div>EVENT</div>
 						<div>
 							<img src="@/assets/eventhorizonTopIcon.png" style="height: 20px; vertical-align: middle;">
@@ -107,7 +107,7 @@
 				} else if (this.selectedTab === 0 && !this.showQrModal) {  // closes a modal
 					f.freeUpBackButton(this)
 				} else if (this.selectedTab === 2) {
-					this.goToEvents()
+					this.goToFront()
 				}
 			},
 		},
@@ -128,10 +128,10 @@
 				this.selectedTab = 0
 				await api.updateUserLanguage()
 			},
-			async goToEvents () {
+			async goToFront () {
 				this.$emit('startLoading')
-				if (this.$route.name !== 'events') {
-					this.$emit('modalPage', 'events')
+				if (this.$route.name !== 'front') {
+					this.$emit('modalPage', 'front')
 					this.$emit('endLoading')
 				} else {
 					await location.reload()
@@ -147,7 +147,7 @@
 				this.$emit('startLoading')
 				await api.logout()
 				this.selectedTab = 0
-				this.goToEvents()
+				this.goToFront()
 			},
 			closeModal () {
 				f.freeUpBackButton(this)

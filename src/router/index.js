@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import temp from '@/views/temp'
-import events from '@/views/events'
+import front from '@/views/front'
 
 Vue.use(Router)
 
@@ -24,9 +24,9 @@ const router = new Router({
         component: temp,
         meta: { userGroups: [] },
     }, {
-        path: '/events',
-        name: 'events',
-        component: events,
+        path: '/front',
+        name: 'front',
+        component: front,
         meta: { userGroups: [] },
     }]
 })
@@ -39,15 +39,6 @@ router.beforeEach(
             next(false)
         }
 
-        //if (store.user.groups[0] === 100) { // if never logged in, not even to visitor account, login
-        //    console.log(process.env.PYTHON_ENV)
-        //    await api.login({})
-        //    if (store.user.groups.includes(3)) {
-        //        console.log('visitor')
-        //    } else {
-        //        console.log('existing user')
-        //    }
-        //}
         //if (to.meta.userGroups.length === 0) { // this path has no requirements, go ahead
         //    store.path = to.path
         //    next()
@@ -62,7 +53,7 @@ router.beforeEach(
         //            }
         //        }
         //    } // permission denied
-        //    // if path coming from is loginRegister or events page, don't change pages on failure
+        //    // if path coming from is loginRegister or front page, don't change pages on failure
         //    if (['loginRegister', 'event'].includes(from.name)) {
         //        return
         //    } else { // any other page, when permission denied, get sent to loginRegister
