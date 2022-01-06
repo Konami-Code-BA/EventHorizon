@@ -12,14 +12,14 @@
 					@modalPage="page => { modalPage = page }"
 					:key="$route.fullPath"
 					class="router"
-					v-show="modalPage === 'events'"
+					v-show="modalPage === 'front'"
 			/>
 			<modal-view
 					@startLoading="modalLoading=true"
 					@endLoading="modalLoading=false"
 					@modalPage="page => { modalPage = page }"
 					class="router"
-					v-show="modalPage != 'events'"
+					v-show="modalPage != 'front'"
 					:key="modalPage"
 					:page="modalPage"
 			/>
@@ -38,6 +38,7 @@
 	import appHeader from '@/components/appHeader.vue'
 	import modalView from '@/views/modalView.vue'
 	import appFooter from '@/components/appFooter.vue'
+	import api from '@/functions/apiFunctions.js'
 	import f from '@/functions/functions.js'
 	export default {
 		name: 'App',
@@ -48,16 +49,16 @@
 		},
 		data () {
 			return {
-				modalPage: 'events',
+				modalPage: 'front',
 				headerLoading: true,
 				routerLoading: true,
 				modalLoading: true,
 				footerLoading: true,
-				history: ['events'],
+				history: ['front'],
 				loading: true,
 			}
 		},
-		created () {
+		async created () {
 			window.popStateDetected = false
 			window.addEventListener('popstate', () => {
 				if (this.history.length === 1) {
@@ -67,6 +68,16 @@
 					this.modalPage = this.history.pop()
 				}
 			})
+			
+			if (store.user.groups[0] === 100) { // if never logged in, not even to visitor account, login
+				console.log(process.env.PYTHON_ENV)
+				await api.login({})
+				if (store.user.groups.includes(3)) {
+					console.log('visitor')
+				} else {
+					console.log('existing user')
+				}
+			}
 		},
 		watch: {
 			'headerLoading' () {

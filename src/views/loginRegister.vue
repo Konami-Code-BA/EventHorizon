@@ -99,10 +99,10 @@
 				this.showPassword = false
 				this.$emit('startLoading')
 				let user = await api.login({'email': this.emailInput, 'password': this.passwordInput})
+				console.log('USER IS', store.user)
 				this.$emit('endLoading')
-				console.log('JEEZE', user)
 				if (!user.error) {
-					this.$emit('modalPage', 'events')
+					this.$emit('modalPage', 'front')
 				} else if (user.error === 'This email is not registered') {
 					this.emailError = user.error
 				} else if (user.error === 'Incorrect password') {
@@ -199,7 +199,7 @@
 					this.$emit('startLoading')
 					await api.lineNewDevice(this.$route.query.code, 'loginRegister')
 					this.$emit('endLoading')
-					this.$emit('modalPage', 'events')
+					this.$emit('modalPage', 'front')
 				}
 			},
 		} // methods
