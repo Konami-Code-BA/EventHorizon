@@ -81,7 +81,7 @@
 				</tabs>
 			</div>
 			<events-map class="viewer events" v-show="selectedTab==1" @openEventModal="openEventModal"
-					:events="displayEvents" :selectedEventId="selectedEventIdForMap" :scrip="scrip" ref="eventsMap"
+					:events="displayEvents" :selectedEventId="selectedEventIdForMap" ref="eventsMap"
 					:store="store"
 					:key="createKey(displayEvents, selectedEventIdForMap, 'map')"/>
 			<events-list class="viewer events" v-show="selectedTab==2" @openEventModal="openEventModal"
@@ -128,7 +128,6 @@
 				displayEvents: null,
 				events: {},
 				loaded: false,
-				scrip: document.createElement('script'),
 				hideTop: false,
 				selectedFilter: 'all',
 				showPeopleInfo: false,
@@ -140,11 +139,8 @@
 		},
 		watch: {
 			async 'selectedFilter' () {
-				console.log(this.selectedFilter)
 				this.displayEvents = this.events[this.selectedFilter]
-				console.log(this.displayEvents)
-				console.log(this.createKey(this.displayEvents, this.selectedEventIdForMap, 'map'))
-				await this.$refs.eventsMap.initMap()
+				window.initMap()
 			},
 		},
 		async created () {
@@ -158,9 +154,13 @@
 			} else {
 				this.selectedEventIdForList = f.getEventWithClosestFutureDate(this.events, this.today)['id']
 			}
+
+			let scrip = document.createElement('script')
+			scrip.type = 'text/javascript'
 			let apiKey = await api.secretsApi('google-maps-api-key')
-			this.scrip.src = `https://maps.googleapis.com/maps/api/js?v=weekly&key=${apiKey}&callback=initMap`
-			this.scrip.async = true
+			scrip.src = `https://maps.googleapis.com/maps/api/js?v=weekly&key=${apiKey}&callback=initMap`
+			document.head.appendChild(scrip)
+
 			this.loaded = true
 			this.$emit('endLoading')
 		},
@@ -186,7 +186,7 @@
 			async closeEventModal () {
 				f.freeUpBackButton(this)
 				this.store.path = this.$route.path
-				await this.$refs.eventsMap.initMap()
+				window.initMap()
 				this.showEventModal = false
 			},
 			goToMap () {
