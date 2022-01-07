@@ -122,7 +122,7 @@
 				}
 				if (!user.error) {
 					if (this.next) {
-						this.$emit('modalPage', this.next)
+						this.$emit('modalPage', this.next, null)
 						this.$emit('endLoading')
 						return
 					} else {
