@@ -4,29 +4,30 @@
 			<app-header
 					@startLoading="headerLoading=true"
 					@endLoading="headerLoading=false"
-					@modalPage="page => { modalPage = page }"
+					@modalPage="(page, args) => changeModalPage(page, args)"
 			/>
 			<router-view
 					@startLoading="routerLoading=true"
 					@endLoading="routerLoading=false"
-					@modalPage="page => { modalPage = page }"
+					@modalPage="(page, args) => changeModalPage(page, args)"
 					:key="$route.fullPath"
 					class="router"
-					v-show="modalPage === 'front'"
+					v-show="modalPage.page === 'front'"
 			/>
 			<modal-view
 					@startLoading="modalLoading=true"
 					@endLoading="modalLoading=false"
-					@modalPage="page => { modalPage = page }"
+					@modalPage="(page, args) => changeModalPage(page, args)"
 					class="router"
-					v-show="modalPage != 'front'"
-					:key="modalPage"
-					:page="modalPage"
+					v-show="modalPage.page != 'front'"
+					:key="modalPage.page"
+					:page="modalPage.page"
+					:args="modalPage.args"
 			/>
 			<app-footer
 					@startLoading="footerLoading=true"
 					@endLoading="footerLoading=false"
-					@modalPage="page => { modalPage = page }"
+					@modalPage="(page, args) => changeModalPage(page, args)"
 			/>
 		</div>
 		<div class="loading" v-show="loading"></div>
@@ -49,12 +50,13 @@
 		},
 		data () {
 			return {
-				modalPage: 'front',
+				store: store,
+				modalPage: { page: 'front', args: null },
 				headerLoading: true,
 				routerLoading: true,
 				modalLoading: true,
 				footerLoading: true,
-				history: ['front'],
+				history: [{ page: 'front', args: null }, ],
 				loading: true,
 			}
 		},
@@ -64,9 +66,11 @@
 				if (this.history.length === 1) {
 					window.history.go(-2)
 				} else {
-					this.history.pop()
-					this.modalPage = this.history.pop()
+					this.history.pop()  // remove the current page
+					let modalPage = this.history.pop()  // get the previous page and go to that
+					this.changeModalPage(modalPage.page, modalPage.args)
 				}
+				console.log('HERE1', this.history)
 			})
 			
 			if (store.user.groups[0] === 100) { // if never logged in, not even to visitor account, login
@@ -92,9 +96,6 @@
 			'footerLoading' () {
 				this.checkLoading()
 			},
-			'modalPage' () {
-				this.history.push(this.modalPage)
-			},
 		},
 		methods: {
 			checkLoading () {
@@ -103,6 +104,16 @@
 				} else if (!this.headerLoading && !this.routerLoading && !this.modalLoading && !this.footerLoading) {
 					this.loading = false
 				}
+			},
+			changeModalPage (page, args) {
+				this.modalPage = { page: page, args: args }
+				if (args) {
+					this.store.path = `modalPage=${page}&args=${args}`
+				} else {
+					this.store.path = `modalPage=${page}`
+				}
+				this.history.push({ page: page, args: args })
+				console.log('HERE', this.history)
 			},
 		},
 	}

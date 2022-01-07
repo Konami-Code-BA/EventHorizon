@@ -90,13 +90,13 @@
 				this.actions[selectedTab-1]()
 			},
 			front () {
-				this.$emit('modalPage', 'front')
+				this.$emit('modalPage', 'front', null)
 			},
 			addEvent () {
-				this.$emit('modalPage', 'addEvent')
+				this.$emit('modalPage', 'addEvent', null)
 			},
 			settings () {
-				this.$emit('modalPage', 'settings')
+				this.$emit('modalPage', 'settings', null)
 			},
 			share () {
 				this.showShareModal = true

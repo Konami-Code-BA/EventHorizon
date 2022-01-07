@@ -61,7 +61,7 @@
 				</div>
 				<div class="line-height"></div>
 				<div style="width: 100%">
-					<button v-on:click.prevent="selectedTab = 0; $emit('modalPage', 'aboutUs')" class="button">
+					<button v-on:click.prevent="selectedTab = 0; $emit('modalPage', 'aboutUs', null)" class="button">
 						ABOUT US
 					</button>
 				</div>
@@ -128,26 +128,19 @@
 				this.selectedTab = 0
 				await api.updateUserLanguage()
 			},
-			async goToFront () {
-				this.$emit('startLoading')
-				if (this.$route.name !== 'front') {
-					this.$emit('modalPage', 'front')
-					this.$emit('endLoading')
-				} else {
-					await location.reload()
+			goToFront () {
+				if (this.store.path !== 'front') {
+					this.$emit('modalPage', 'front', null)
 				}
 			},
 			goToLoginRegister () {
-				this.$emit('startLoading')
-				this.$emit('modalPage', 'loginRegister')
+				this.$emit('modalPage', 'loginRegister', null)
 				this.selectedTab = 0
-				this.$emit('endLoading')
 			},
 			async logout () {
 				this.$emit('startLoading')
 				await api.logout()
-				this.selectedTab = 0
-				this.goToFront()
+				location.reload()
 			},
 			closeModal () {
 				f.freeUpBackButton(this)
