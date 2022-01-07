@@ -21,6 +21,11 @@
 		computed: {
 			today () { return new Date() },
 		},
+		watch: {
+			'store.user.language' () {
+				window.initMap()
+			},
+		},
 		async created () {
 		},
 		async mounted () {

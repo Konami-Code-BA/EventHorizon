@@ -29,10 +29,10 @@
 						padding-top: 5px; padding-bottom: 5px; height: auto;">
 					<div style="display: flex; flex-direction: row; width: 100%;">
 						<div>
-							<input type="checkbox" class="checkbox" v-model="allFilter"/>
+							<input type="checkbox" class="checkbox" v-model="filters['all']" @click="filterChange('all')"/>
 						</div>
-						<button class="people-button button" :class="{ selected : allFilter}"
-								v-on:click.prevent="allFilter=!allFilter">
+						<button class="people-button button" :class="{ selected : filters['all']}"
+								v-on:click.prevent="filters['all']=!filters['all']; filterChange('all')">
 							<div>
 								{{ t('ALL') }}
 							</div>
@@ -40,10 +40,10 @@
 					</div>
 					<div style="display: flex; flex-direction: row; width: 100%;">
 						<div>
-							<input type="checkbox" class="checkbox" v-model="mineFilter"/>
+							<input type="checkbox" class="checkbox" v-model="filters['mine']" @click="filterChange('mine')"/>
 						</div>
-						<button class="people-button button" :class="{ selected : mineFilter}"
-								v-on:click.prevent="mineFilter=!mineFilter">
+						<button class="people-button button" :class="{ selected : filters['mine']}"
+								v-on:click.prevent="filters['mine']=!filters['mine']; filterChange('mine')">
 							<div>
 								{{ t('MINE') }}
 							</div>
@@ -51,10 +51,11 @@
 					</div>
 					<div style="display: flex; flex-direction: row; width: 100%;">
 						<div>
-							<input type="checkbox" class="checkbox" v-model="allPeopleFilter"/>
+							<input type="checkbox" class="checkbox" v-model="filters['allPeople']" @click="filterChange('allPeople')"/>
 						</div>
-						<button class="people-button button" :class="{ selected : allPeopleFilter}"
-								v-on:click.prevent="allPeopleFilter=!allPeopleFilter" disabled>
+						<button class="people-button button" :class="{ selected : filters['allPeople']}"
+								v-on:click.prevent="filters['allPeople']=!filters['allPeople']; filterChange('allPeople')"
+								disabled>
 							<div>
 								{{ t('PEOPLE I FOLLOW') }}
 							</div>
@@ -100,13 +101,13 @@
 			<events-map class="viewer events" v-show="selectedTab==1" @openEventModal="openEventModal"
 					:events="displayEvents" :selectedEventId="selectedEventIdForMap" ref="eventsMap"
 					:store="store"
-					:key="createKey(selectedEventIdForMap, 'map')"/>
+					:key="createComponentKey(selectedEventIdForMap, 'map')"/>
 			<events-list class="viewer events" v-show="selectedTab==2" @openEventModal="openEventModal"
 					:events="displayEvents" :store="store" :startingAt="selectedEventIdForList"
-					:key="createKey(selectedEventIdForList, 'list')"/>
+					:key="createComponentKey(selectedEventIdForList, 'list')"/>
 			<events-calendar class="viewer events" v-show="selectedTab==3" @openEventModal="openEventModal"
 					:events="displayEvents" :store="store"
-					:key="createKey(0, 'cal')"/>
+					:key="createComponentKey(0, 'cal')"/>
 		</div>
 		<event v-if="showEventModal" @goToMap="goToMap()" :eventId="selectedEventId" @closeModals="closeEventModal()"/>
 	</div>
@@ -146,10 +147,7 @@
 				events: {},
 				loaded: false,
 				hideTop: false,
-				filterKeys: ['all'],
-				allFilter: true,
-				mineFilter: false,
-				allPeopleFilter: false,
+				filters: {'all': true, 'mine': false, 'allPeople': false},
 				showPeopleInfo: false,
 			}
 		},
@@ -158,35 +156,11 @@
 			today () { return new Date() },
 		},
 		watch: {
-			'allFilter' () {
-				if (this.allFilter) {  // if selected
-					this.filterKeys = ['all']
-					this.mineFilter = false
-				} else {  // if deselected
-					if (this.filterKeys.lenth === 1) {
-						this.filterKeys = ['none']
-					}
-				}
-				this.doFiltering()
-			},
-			'mineFilter' () {
-				if (this.mineFilter) {  // if selected
-					if (this.allFilter) {
-						this.allFilter = false
-						this.removeFilterKey('all')
-					}
-					this.filterKeys.push('mine')
-				} else {  // if deselected
-					this.removeFilterKey('mine')
-				}
-				this.doFiltering()
-			},
 		},
 		async created () {
 			this.events['all'] = await api.getAllEvents()
 			this.displayEvents = this.events['all']
 			this.events['mine'] = f.filterEvents(this.displayEvents, this.store.user.id, ['invited'], false)
-			console.log('MINE', this.events['mine'])
 			this.events['none'] = []
 			let id = this.params.id
 			if (id) {
@@ -214,8 +188,7 @@
 				await api.updateUserAlerts('Show Cookies')
 			},
 			openEventModal (id) {
-				f.setBackButtonToCloseModal(this, window, this.closeEventModal)
-				this.store.path = store.path + '/' + id
+				this.$emit('modalPage', 'event', id)
 				this.selectedEventId = id
 				this.selectedEventIdForList = id
 				let event = f.filterEvents(this.events['all'], id, ['id'], true)
@@ -234,32 +207,49 @@
 				this.closeEventModal()
 				this.selectedTab = 1
 			},
-			createKey(eventId, letters) {
+			createComponentKey(eventId, letters) {
 				let key = (this.displayEvents.length > 0 ? this.displayEvents[0]['id'] : 0).toString()
 				key += (eventId ? eventId : 0).toString() + letters
 				return key
 			},
-			removeFilterKey (toRemove) {
-				this.filterKeys = this.filterKeys.filter(filterKey => {
-					if (filterKey === toRemove) {
-						return false
-					} else {
-						return true
-					}
-				})
-			},
 			doFiltering () {
 				this.displayEvents = []
-				for (let i = 0; i < this.filterKeys.length; i++) {
-					this.displayEvents = this.displayEvents.concat(this.events[this.filterKeys[i]])
+				let keys = Object.keys(this.filters)
+				for (let i = 0; i < keys.length; i++) {
+					if (this.filters[keys[i]]) {  // if this filter is true
+						this.displayEvents = this.displayEvents.concat(this.events[keys[i]])
+					}
 				}
-				console.log('HERE', this.filterKeys)
-				console.log('HERE', this.displayEvents)
 				if (this.displayEvents.length > 0) {
 					this.selectedEventIdForList = f.getEventWithClosestFutureDate(this.displayEvents, this.today)['id']
 				}
 				window.initMap(google)
 			},
+			filterChange (changed) {
+				let keys = Object.keys(this.filters)
+				if (changed === 'all') {  // if it was 'all' that changed
+					if (this.filters[changed]) {  // if selected, deselect all others
+						for (let i = 0; i < keys.length; i++) {
+							if (keys[i] != changed) {
+								this.filters[keys[i]] = false
+							}
+						}
+					} else {  // if deselected, 'all' can only be deselected if its the only one selected, so
+						this.filters['none'] = true  // make 'none' true
+					}
+				} else {  // if it was some other filter selection that changed
+					if (this.filters[changed]) {  // if selected
+						if (this.filters['all']) {  // deselect 'all' filter, if it is selected
+							this.filters['all'] = false
+						}
+					} else {  // if deselected
+						if (!Object.values(this.filters).includes(true)) {  // if no other filter is selected
+							this.filters['none'] = true  // make 'none' true
+						} // otherwise do nothing special, the changed filter has already been changed
+					}
+				}
+				this.doFiltering()
+			}
 		} // methods
 	} // export
 </script>

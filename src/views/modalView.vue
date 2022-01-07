@@ -1,10 +1,15 @@
 <template>
 	<div>
-		<login-register v-show="page==='loginRegister'" @modalPage="page => $emit('modalPage', page)"/>
-		<register-with-email v-show="page==='registerWithEmail'" @modalPage="page => $emit('modalPage', page)"/>
-		<add-event v-show="page==='addEvent'" @modalPage="page => $emit('modalPage', page)"/>
-		<settings v-show="page==='settings'" @modalPage="page => $emit('modalPage', page)"/>
-		<aboutUs v-show="page==='aboutUs'" @modalPage="page => $emit('modalPage', page)"/>
+		<login-register v-show="page==='loginRegister'"
+				@modalPage="(page, args) => $emit('modalPage', page, args)"/>
+		<register-with-email v-show="page==='registerWithEmail'"
+				@modalPage="(page, args) => $emit('modalPage', page, args)"/>
+		<add-event v-show="page==='addEvent'"
+				@modalPage="(page, args) => $emit('modalPage', page, args)"/>
+		<settings v-show="page==='settings'"
+				@modalPage="(page, args) => $emit('modalPage', page, args)"/>
+		<aboutUs v-show="page==='aboutUs'"
+				@modalPage="(page, args) => $emit('modalPage', page, args)"/>
 	</div>
 </template>
 <script>
@@ -24,11 +29,11 @@
 		},
 		data () {
 			return {
-				history: []
 			}
 		},
 		props: {
 			page: { default: null },
+			args: { default: null },
 		},
 		mounted () {
 			this.$emit('endLoading')

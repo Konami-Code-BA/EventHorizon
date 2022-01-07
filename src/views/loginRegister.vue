@@ -37,7 +37,7 @@
 			<div class="line-height"></div>
 			<div class="line-height"></div>
 			<div class="line-height"></div>
-			<button v-on:click.prevent="$emit('modalPage', 'registerWithEmail')" class="button">
+			<button v-on:click.prevent="$emit('modalPage', 'registerWithEmail', null)" class="button">
 				{{t('NEW USER REGISTRATION')}}
 			</button>
 			<div class="line-height"></div>
@@ -102,7 +102,7 @@
 				console.log('USER IS', store.user)
 				this.$emit('endLoading')
 				if (!user.error) {
-					this.$emit('modalPage', 'front')
+					this.$emit('modalPage', 'front', null)
 				} else if (user.error === 'This email is not registered') {
 					this.emailError = user.error
 				} else if (user.error === 'Incorrect password') {
@@ -199,7 +199,7 @@
 					this.$emit('startLoading')
 					await api.lineNewDevice(this.$route.query.code, 'loginRegister')
 					this.$emit('endLoading')
-					this.$emit('modalPage', 'front')
+					this.$emit('modalPage', 'front', null)
 				}
 			},
 		} // methods
