@@ -1,19 +1,9 @@
 <template>
 	<div v-if="loaded">
 		<div class="main" v-show="!showEventModal" style="padding-top: 5px;">
-			<div class="viewer filters" style="display: flex; flex-direction: column; align-items: center; height: 140px; width: 100%"
-					v-if="!hideTop">
-				<!--div style="font-size: 20px;" v-if="!isAuthenticatedUser">
-					{{ t('REACH OUT TO NEW HORIZONS') }}
-				</div>
-				<div style="font-size: 20px;" v-else>
-					{{ t('WELCOME') }}&nbsp;{{ store.user.display_name }}
-				</div-->
-				<!--div>
-					<img src="@/assets/eventhorizonLogo.png" style="max-width: 150px; max-height: 150px; z-index: 5">
-				</div>
-				<div style="font-size: 24px;">{{ t('EVENTS') }}:</div-->
-				<div style="border-bottom: 2px solid rgba(255, 255, 255, .3); width: 100%; display: flex; height: auto;
+			<div class="viewer filters" style="display: flex; flex-direction: column; align-items: center;
+					width: 100%; min-height: 100px; height: 100px;">
+				<div style="border-bottom: 2px solid rgba(255, 255, 255, .3); width: 100%; display: flex;
 						justify-content: center">
 					<div>
 						{{ t('SELECT WHAT EVENTS TO DISPLAY') }}
@@ -26,12 +16,12 @@
 					</div>
 				</div>
 				<div style="display: flex; flex-direction: column; align-items: flex-start; width: 100%;
-						padding-top: 5px; padding-bottom: 5px; height: auto;">
+						padding-top: 5px; padding-bottom: 5px;">
 					<div style="display: flex; flex-direction: row; width: 100%;">
 						<div>
 							<input type="checkbox" class="checkbox" v-model="filters['all']" @click="filterChange('all')"/>
 						</div>
-						<button class="people-button button" :class="{ selected : filters['all']}"
+						<button class="filter-button button" :class="{ selected : filters['all']}"
 								v-on:click.prevent="filters['all']=!filters['all']; filterChange('all')">
 							<div>
 								{{ t('ALL') }}
@@ -42,7 +32,7 @@
 						<div>
 							<input type="checkbox" class="checkbox" v-model="filters['mine']" @click="filterChange('mine')"/>
 						</div>
-						<button class="people-button button" :class="{ selected : filters['mine']}"
+						<button class="filter-button button" :class="{ selected : filters['mine']}"
 								v-on:click.prevent="filters['mine']=!filters['mine']; filterChange('mine')">
 							<div>
 								{{ t('MINE') }}
@@ -53,7 +43,7 @@
 						<div>
 							<input type="checkbox" class="checkbox" v-model="filters['allPeople']" @click="filterChange('allPeople')"/>
 						</div>
-						<button class="people-button button" :class="{ selected : filters['allPeople']}"
+						<button class="filter-button button" :class="{ selected : filters['allPeople']}"
 								v-on:click.prevent="filters['allPeople']=!filters['allPeople']; filterChange('allPeople')"
 								disabled>
 							<div>
@@ -167,7 +157,10 @@
 				this.showEventModal = Boolean(this.params.id)
 				this.openEventModal(id)
 			} else {
-				this.selectedEventIdForList = f.getEventWithClosestFutureDate(this.displayEvents, this.today)['id']
+				let event = f.getEventWithClosestFutureDate(this.displayEvents, this.today)
+				if (event) {
+					this.selectedEventIdForList = event['id']
+				}
 			}
 
 			let scrip = document.createElement('script')
@@ -272,7 +265,7 @@
 		background-color: rgba(255, 255, 255, .2);  /*140,128,151,0.6 after combinging with #18002e*/
 		width: 100%;
 	}
-	.people-button {
+	.filter-button {
 		border: none;
 		border-radius: 0;
 		height: 20px;
@@ -283,6 +276,7 @@
 		align-items: center;
 		justify-content: flex-start;
 		width: 100%;
+		z-index: 2;
 	}
 	/*.dual-set {
 		display: flex;
@@ -297,5 +291,6 @@
 		position: fixed;
 		height: 15px;
 		width: 20px;
+		z-index: 1;
 	}
 </style>
