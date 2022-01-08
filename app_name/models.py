@@ -119,7 +119,7 @@ class Event(models.Model):
 
 class EventAdmin(admin.ModelAdmin):
 	readonly_fields = ('id',)
-	list_display = ('name', 'id')
+	list_display = ('name', 'id', 'date_time')
 	fields = (
 		'id', 'name', 'description', 'is_private', 'address', 'postal_code', 'venue_name', 'latitude', 'longitude',
 		'rand_latitude', 'rand_longitude', 'date_time', 'include_time', 'hosts', 'invited', 'confirmed_guests',

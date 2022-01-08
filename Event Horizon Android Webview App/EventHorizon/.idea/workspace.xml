@@ -30,7 +30,10 @@
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1fce7ac0-6cef-42bc-aee1-cddb71ec37b9" name="Default Changelist" comment="" />
+    <list default="true" id="1fce7ac0-6cef-42bc-aee1-cddb71ec37b9" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/../../db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/../../db.sqlite3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../src/views/front.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../../src/views/front.vue" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -46,7 +49,7 @@
     </projectState>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
   </component>
   <component name="KotlinCodeInsightWorkspaceSettings">
     <option name="optimizeImportsOnTheFly" value="true" />
@@ -253,48 +256,9 @@
     <option name="LAST_COMMIT_MESSAGE" value="there is a test and a regular setup. change by commenting and uncommenting" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="477" y="266" key="#PSD" timestamp="1624786919265">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state x="92" y="92" width="1736" height="848" key="AVDManager" timestamp="1641613734354">
+      <screen x="0" y="0" width="1920" height="1032" />
     </state>
-    <state x="477" y="266" key="#PSD/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1624786919265" />
-    <state x="292" y="339" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1626567831169">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="-1628" y="339" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1624785478487" />
-    <state x="292" y="339" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1626567831169" />
-    <state x="107" y="100" width="1720" height="840" key="AVDManager" timestamp="1626576704063">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="107" y="100" width="1720" height="840" key="AVDManager/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1626576704063" />
-    <state x="92" y="92" width="1736" height="856" key="DiffContextDialog" timestamp="1626224009067">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="92" y="92" width="1736" height="856" key="DiffContextDialog/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1626224009067" />
-    <state x="740" y="274" key="FileChooserDialogImpl" timestamp="1626224116740">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="740" y="274" key="FileChooserDialogImpl/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1626224116740" />
-    <state x="584" y="222" key="RollbackChangesDialog" timestamp="1626225486378">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="584" y="222" key="RollbackChangesDialog/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1626225486378" />
-    <state x="552" y="252" key="Vcs.Push.Dialog.v2" timestamp="1626872280385">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="552" y="252" key="Vcs.Push.Dialog.v2/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1626872280385" />
-    <state x="552" y="252" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1625729297146" />
-    <state x="560" y="253" key="VcsDiffUtil.ChangesDialog" timestamp="1626223685976">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="560" y="253" key="VcsDiffUtil.ChangesDialog/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1626223685976" />
-    <state x="421" y="248" width="893" height="644" key="find.popup" timestamp="1626837197529">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="421" y="248" width="893" height="644" key="find.popup/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1626837197529" />
-    <state x="690" y="421" key="git4idea.remote.GitConfigureRemotesDialog" timestamp="1625729108407">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="690" y="421" key="git4idea.remote.GitConfigureRemotesDialog/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1624787001149" />
-    <state x="690" y="421" key="git4idea.remote.GitConfigureRemotesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1625729108407" />
+    <state x="92" y="92" width="1736" height="848" key="AVDManager/0.0.1920.1032/-1920.0.1920.1032@0.0.1920.1032" timestamp="1641613734354" />
   </component>
 </project>
