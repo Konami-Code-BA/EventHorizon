@@ -10,8 +10,7 @@
 					<img src="@/assets/languageIcon.png" style="height: 24px; margin-top: 4px;">
 				</div>
 				<div slot="3">
-					<div class="no-border-button" style="display: flex; flex-direction: row; align-items: center;"
-							v-on:click.prevent="goToFront()">
+					<div class="no-border-button" style="display: flex; flex-direction: row; align-items: center;">
 						<div>EVENT</div>
 						<div>
 							<img src="@/assets/eventhorizonTopIcon.png" style="height: 20px; vertical-align: middle;">
@@ -20,7 +19,7 @@
 					</div>
 				</div>
 				<div slot="4">
-					<img src="@/assets/threeBarsIcon.png" class="icon" style="height: 22px; margin-bottom: 3px;"/>
+					<img src="@/assets/threeBarsIcon.png" class="icon" style="height: 21px; margin-bottom: 2px;"/>
 				</div>
 				<div slot="5"/>
 			</tabs>
@@ -114,7 +113,7 @@
 			selectATab (tab) {
 				this.selectedTab = tab
 				if (tab === 3) {
-					this.goToFront()
+					location.reload()
 				} else if (tab === 1) {
 					this.$emit('back')
 				}
@@ -130,11 +129,6 @@
 				store.user.language = lang
 				this.selectedTab = 0
 				await api.updateUserLanguage()
-			},
-			goToFront () {
-				if (this.store.path != '/') {
-					this.$emit('modalPage', 'front', null)
-				}
 			},
 			goToLoginRegister () {
 				this.$emit('modalPage', 'loginRegister', null)
