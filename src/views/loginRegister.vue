@@ -105,6 +105,7 @@
 				this.$emit('endLoading')
 				if (!user.error) {
 					this.$emit('modalPage', this.next.page, this.next.args)
+					window.initMap()
 				} else if (user.error === 'This email is not registered') {
 					this.emailError = user.error
 				} else if (user.error === 'Incorrect password') {
