@@ -342,6 +342,14 @@ export default {
             'EN': 'ALL EVENTS',
             'JP': 'オール　イベント'
         },
+        'CURRENTLY, ONLY ADMIN CAN CREATE EVENTS. BUT THIS FEATURE WILL BECOME OPEN TO THE PUBLIC SOON!': {
+            'EN': 'CURRENTLY, ONLY ADMIN CAN CREATE EVENTS. BUT THIS FEATURE WILL BECOME OPEN TO THE PUBLIC SOON!',
+            'JP': '現在、イベントを作成できるのは管理者のみです。 しかし、この機能はまもなく公開されます！'
+        },
+        'COPIED!': {
+            'EN': 'COPIED!',
+            'JP': 'コピーされた！'
+        },
     },
 
     t: function(w) {

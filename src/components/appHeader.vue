@@ -33,13 +33,13 @@
 						ENGLISH
 					</button>
 				</div>
-				<div class="line-height"></div>
+				<div class="line-height"/>
 				<div style="width: 100%">
 					<button v-on:click.prevent="japanese()" class="button">
 						日本語
 					</button>
 				</div>
-				<div class="line-height"></div>
+				<div class="line-height"/>
 			</div>
 		</modal>
 		<modal v-if="selectedTab === 3" @closeModals="selectedTab = 0">
@@ -59,13 +59,13 @@
 						{{ t('LOGOUT') }}
 					</button>
 				</div>
-				<div class="line-height"></div>
+				<div class="line-height"/>
 				<div style="width: 100%">
 					<button v-on:click.prevent="selectedTab = 0; $emit('modalPage', 'aboutUs', null)" class="button">
 						ABOUT US
 					</button>
 				</div>
-				<div class="line-height"></div>
+				<div class="line-height"/>
 			</div>
 		</modal>
 		<qr-code-generator v-if="showQrModal" @closeModals="showQrModal=false"/>
@@ -129,7 +129,7 @@
 				await api.updateUserLanguage()
 			},
 			goToFront () {
-				if (this.store.path !== 'front') {
+				if (this.store.path !== '/front') {
 					this.$emit('modalPage', 'front', null)
 				}
 			},

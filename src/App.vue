@@ -23,6 +23,7 @@
 					:key="modalPage.page"
 					:page="modalPage.page"
 					:args="modalPage.args"
+					:next="this.next"
 			/>
 			<app-footer
 					@startLoading="footerLoading=true"
@@ -30,7 +31,8 @@
 					@modalPage="(page, args) => changeModalPage(page, args)"
 			/>
 		</div>
-		<div class="loading" v-show="loading"></div>
+		<div class="loading" v-if="loading"/>
+		<opening-logo class="load" :class="fadeOutClass" v-if="load"/>
 	</div>
 </template>
 
@@ -39,6 +41,8 @@
 	import appHeader from '@/components/appHeader.vue'
 	import modalView from '@/views/modalView.vue'
 	import appFooter from '@/components/appFooter.vue'
+	import openingLogo from '@/views/openingLogo.vue'
+	import translations from '@/functions/translations.js'
 	import api from '@/functions/apiFunctions.js'
 	import f from '@/functions/functions.js'
 	export default {
@@ -47,6 +51,7 @@
 			appHeader,
 			modalView,
 			appFooter,
+			openingLogo,
 		},
 		data () {
 			return {
@@ -58,10 +63,13 @@
 				footerLoading: true,
 				history: [{ page: 'front', args: null }, ],
 				loading: true,
+				load: true,
+				fadeOutClass: null,
+				next: null,
 			}
 		},
 		async created () {
-			window.popStateDetected = false
+			// back button setup
 			window.addEventListener('popstate', () => {
 				if (this.history.length === 1) {
 					window.history.go(-2)
@@ -73,6 +81,7 @@
 				console.log('HERE1', this.history)
 			})
 			
+			// user auto-login from cookies
 			if (store.user.groups[0] === 100) { // if never logged in, not even to visitor account, login
 				console.log(process.env.PYTHON_ENV)
 				await api.login({})
@@ -82,6 +91,13 @@
 					console.log('existing user')
 				}
 			}
+		},
+		async mounted () {
+			await new Promise(r => setTimeout(r, 2000))
+			this.fadeOutClass = 'fade-out'
+			await new Promise(r => setTimeout(r, 1000))
+			this.load = false
+			this.fadeOutClass = null
 		},
 		watch: {
 			'headerLoading' () {
@@ -98,6 +114,7 @@
 			},
 		},
 		methods: {
+			t (w) { return translations.t(w) },
 			checkLoading () {
 				if (this.headerLoading || this.routerLoading || this.modalLoading || this.footerLoading) {
 					this.loading = true
@@ -106,14 +123,18 @@
 				}
 			},
 			changeModalPage (page, args) {
+				if (page === 'loginRegister') {
+					this.next = this.history[this.history.length-1]
+				} else {
+					this.next = null
+				}
 				this.modalPage = { page: page, args: args }
 				if (args) {
-					this.store.path = `modalPage=${page}&args=${args}`
+					this.store.path = `/?page=${page}&args=${args}`
 				} else {
-					this.store.path = `modalPage=${page}`
+					this.store.path = `/?page=${page}`
 				}
 				this.history.push({ page: page, args: args })
-				console.log('HERE', this.history)
 			},
 		},
 	}
@@ -349,6 +370,19 @@
 			border-radius: 4px;
 			background-color: rgba(0, 0, 0, .5);
 			border: 2px solid rgba(255, 255, 255, .3);
+		}
+		.load {
+			position: fixed;
+			z-index: 100000;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: #18002e;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
 		}
 
 		/* LOADING SPINNER */

@@ -1,25 +1,31 @@
 <template>
-	<div class="main">
-		<div style="font-size: 36px">{{ t('SEARCH') }}</div>
+	<div>
+		<div style="font-size: 40px;">
+			EVENT HORIZON
+		</div>
 		<div class="line-height"/>
-		<div style="color: grey">({{ t('COMING SOON') }})</div>
+		<div>
+			<img src="@/assets/eventhorizonLogo.png" style="max-width: 250px; max-height: 250px">
+		</div>
+		<div class="line-height"/>
+		<div style="font-size: 20px;">
+			{{ t('REACH OUT TO NEW HORIZONS') }}
+		</div>
 	</div>
 </template>
 <script>
-	import store from '@/store.js'
 	import translations from '@/functions/translations.js'
 	export default {
-		name: 'search',
+		name: 'openingLogo',
 		components: {
+		},
+		watch: {
 		},
 		data () {
 			return {
-				store: store,
-				displayName: '',
 			}
 		},
 		async mounted () {
-			this.$emit('endLoading')
 		},
 		methods: {
 			t (w) { return translations.t(w) },
