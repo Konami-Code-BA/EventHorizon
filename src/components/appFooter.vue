@@ -108,7 +108,6 @@
 				}
 			},
 			settings () {
-				console.log(this.store.path)
 				if(this.isAuthenticatedUser) {
 					this.$emit('modalPage', 'settings', null)
 				} else if (this.store.path != '/?page=loginRegister') {

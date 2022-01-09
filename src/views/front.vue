@@ -43,9 +43,9 @@
 						<div>
 							<input type="checkbox" class="checkbox" v-model="filters['allPeople']" @click="filterChange('allPeople')"/>
 						</div>
-						<button class="filter-button button" :class="{ selected : filters['allPeople']}"
-								v-on:click.prevent="filters['allPeople']=!filters['allPeople']; filterChange('allPeople')"
-								disabled>
+						<button class="filter-button button" :class="{ selected : filters['allPeople']}" disabled
+								v-on:click.prevent="filters['allPeople']=!filters['allPeople'];
+								filterChange('allPeople')" style="display: flex; justify-content: space-between">
 							<div>
 								{{ t('PEOPLE I FOLLOW') }}
 							</div>
