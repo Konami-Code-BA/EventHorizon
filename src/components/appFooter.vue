@@ -7,10 +7,14 @@
 					<img src="@/assets/homeIcon.png" class="icon" style="margin-bottom: 2px;"/>
 				</div>
 				<div slot="2">
-					<img src="@/assets/plusIcon.png" class="icon" style="margin-bottom: 1px;"/>
+					<img v-if="isAuthenticatedUser" src="@/assets/plusIcon.png" class="icon"
+							style="margin-bottom: 1px;"/>
+					<img v-else src="@/assets/greyPlusIcon.png" class="icon" style="margin-bottom: 1px;"/>
 				</div>
 				<div slot="3">
-					<img src="@/assets/gearIcon.png" class="icon" style="margin-bottom: 1px;"/>
+					<img v-if="isAuthenticatedUser" src="@/assets/gearIcon.png" class="icon"
+							style="margin-bottom: 1px;"/>
+					<img v-else src="@/assets/greyGearIcon.png" class="icon" style="margin-bottom: 1px;"/>
 				</div>
 				<div slot="4">
 					<img src="@/assets/shareIcon.png" class="icon" style="margin-bottom: 1px;"/>
@@ -55,6 +59,7 @@
 	import urlDisplay from '@/components/urlDisplay.vue'
 	import translations from '@/functions/translations.js'
 	import api from '@/functions/apiFunctions.js'
+	import f from '@/functions/functions.js'
 	export default {
 		name: 'appFooter',
 		data () {
@@ -78,6 +83,9 @@
 		props: {
 		},
 		computed: {
+			isAuthenticatedUser () {
+				return f.isAuthenticatedUser
+			},
 		},
 		mounted () {
 			this.$emit('endLoading')
@@ -93,10 +101,19 @@
 				this.$emit('modalPage', 'front', null)
 			},
 			addEvent () {
-				this.$emit('modalPage', 'addEvent', null)
+				if(this.isAuthenticatedUser) {
+					this.$emit('modalPage', 'addEvent', null)
+				} else if (this.store.path != '/?page=loginRegister') {
+					this.$emit('modalPage', 'loginRegister', null)
+				}
 			},
 			settings () {
-				this.$emit('modalPage', 'settings', null)
+				console.log(this.store.path)
+				if(this.isAuthenticatedUser) {
+					this.$emit('modalPage', 'settings', null)
+				} else if (this.store.path != '/?page=loginRegister') {
+					this.$emit('modalPage', 'loginRegister', null)
+				}
 			},
 			share () {
 				this.showShareModal = true
