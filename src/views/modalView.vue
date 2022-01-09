@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<login-register v-show="page==='loginRegister'"
+		<login-register v-show="page==='loginRegister'" :next="next"
 				@modalPage="(page, args) => $emit('modalPage', page, args)"/>
 		<register-with-email v-show="page==='registerWithEmail'"
 				@modalPage="(page, args) => $emit('modalPage', page, args)"/>
@@ -34,6 +34,7 @@
 		props: {
 			page: { default: null },
 			args: { default: null },
+			next: {}, 
 		},
 		mounted () {
 			this.$emit('endLoading')

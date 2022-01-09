@@ -34,13 +34,13 @@
 			<!--button class="no-border-button small-button" v-on:click.prevent="sendEmail()">
 				<small><small>{{t('FORGOT PASSWORD')}}</small></small>
 			</button-->
-			<div class="line-height"></div>
-			<div class="line-height"></div>
-			<div class="line-height"></div>
+			<div class="line-height"/>
+			<div class="line-height"/>
+			<div class="line-height"/>
 			<button v-on:click.prevent="$emit('modalPage', 'registerWithEmail', null)" class="button">
 				{{t('NEW USER REGISTRATION')}}
 			</button>
-			<div class="line-height"></div>
+			<div class="line-height"/>
 			<button v-on:click.prevent="loginByLine()" class="button line-coloring">
 				<div class="line-button">
 					<div class="line-alignment">
@@ -78,6 +78,9 @@
 				passwordError: '',
 			}
 		},
+		props: {
+			next: {},
+		},
 		async mounted () {
 			await this.tryLineNewDevice()
 			this.passwordHasErrors()
@@ -99,10 +102,9 @@
 				this.showPassword = false
 				this.$emit('startLoading')
 				let user = await api.login({'email': this.emailInput, 'password': this.passwordInput})
-				console.log('USER IS', store.user)
 				this.$emit('endLoading')
 				if (!user.error) {
-					this.$emit('modalPage', 'front', null)
+					this.$emit('modalPage', this.next.page, this.next.args)
 				} else if (user.error === 'This email is not registered') {
 					this.emailError = user.error
 				} else if (user.error === 'Incorrect password') {
