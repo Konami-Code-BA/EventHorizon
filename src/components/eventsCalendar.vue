@@ -1,24 +1,26 @@
 <template>
 	<div v-if="loaded">
+		<!--month view-->
 		<div style="width: 100%; height: 100%; padding-left: 5px; padding-right: 5px; padding-top: 5px;"
 				v-show="selectedDate === 0">
 			<div style="width: 100%; display: flex; flex-direction: row; align-items: center;
 					justify-content: space-between">
-				<button v-on:click.prevent="changeMonth(-1)" class="button" style="padding-bottom: 1px;">
+				<button v-on:click.prevent="changeMonth(-1)" class="button" style="padding-bottom: 1px; width: 20px;">
 					{{'⇦'}}
 				</button>
-				<button v-on:click.prevent="goToToday()" class="button" style="width: 50px; font-size: 10px;">
+				<button v-on:click.prevent="goToToday()" class="button" style="width: 45px; font-size: 10px;">
 					{{t('TODAY')}}
 				</button>
-				<div style="width: 100px; display: flex; justify-content: space-between;">
+				<div style="width: 125px; display: flex; justify-content: space-around;">
 					<div>{{ selectedYear }}</div><div>{{ t('month ' + selectedMonth) }}</div>
 				</div>
-				<div style="width: 50px"/>
-				<button v-on:click.prevent="changeMonth(1)" class="button" style="padding-bottom: 1px;">
+				<div style="width: 45px"/>
+				<button v-on:click.prevent="changeMonth(1)" class="button" style="padding-bottom: 1px; width: 20px;">
 					{{'⇨'}}
 				</button>
 			</div>
-			<div style="height: 87%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+			<div style="height: 87%; display: flex; flex-direction: column; justify-content: center;
+					align-items: center;">
 				<div class="weeks">
 					<div v-for="week in 6" style="margin-bottom: 5px;">
 						<div class="days">
@@ -41,35 +43,41 @@
 				</div>
 			</div>
 		</div>
-		<div style="width: 100%; height: 100%; padding-left: 5px; padding-right: 5px" v-if="selectedDate != 0">
+		<!--day view-->
+		<div style="width: 100%; height: 100%; padding-left: 5px; padding-right: 5px; padding-top: 5px;"
+				v-if="selectedDate != 0">
 			<div style="width: 100%; display: flex; flex-direction: row; align-items: center;
 					justify-content: space-between">
-				<button v-on:click.prevent="changeDay(-1)" class="button" style="padding-bottom: 1px;">
+				<button v-on:click.prevent="changeDay(-1)" class="button" style="padding-bottom: 1px; width: 20px;">
 					{{'⇦'}}
 				</button>
 				<button v-on:click.prevent="selectedDate = 0" class="button"
-						style="width: 50px; font-size: 10px">
+						style="width: 45px; font-size: 10px; justify-self: flex-start">
 					{{t('MONTH VIEW')}}
 				</button>
-				<div style="display: flex; flex-direction: row; align-items: center; justify-content: center">
-					<div style="width: 40px; text-align: center">
-						{{ selectedYear }}
+				<div style="display: flex; flex-direction: row; align-items: center; justify-content: space-between;
+						width: 125px;">
+					<div style="display: flex; flex-direction: row; align-items: center;">
+						<div style="width: 40px; text-align: center">
+							{{ selectedYear }}
+						</div>
+						/
+						<div style="width: 20px; text-align: center">
+							{{ selectedMonth + 1 }}
+						</div>
+						/
+						<div style="width: 20px; text-align: center">
+							{{ selectedDate.getDate() }}
+						</div>
 					</div>
-					/
-					<div style="width: 20px; text-align: center">
-						{{ selectedMonth + 1 }}
-					</div>
-					/
-					<div style="width: 20px; text-align: center">
-						{{ selectedDate.getDate() }}
-					</div>
-					<div style="width: 5px"/>
-					<div style="width: 25px; text-align: center">
-						{{ t('day ' + selectedDate.getDay()) }}
+					<div>
+						<div style="width: 20px; text-align: center;">
+							{{ t('day ' + selectedDate.getDay()) }}
+						</div>
 					</div>
 				</div>
-				<div style="width: 50px"/>
-				<button v-on:click.prevent="changeDay(1)" class="button" style="padding-bottom: 1px;">
+				<div style="width: 45px"/>
+				<button v-on:click.prevent="changeDay(1)" class="button" style="padding-bottom: 1px; width: 20px;">
 					{{'⇨'}}
 				</button>
 			</div>

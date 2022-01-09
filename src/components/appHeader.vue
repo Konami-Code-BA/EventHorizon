@@ -1,27 +1,31 @@
 <template>
 	<div>
 		<div class="header" style="width: 100%;">
-			<tabs :num-tabs="3" :initial="0" @on-click="(arg) => { selectedTab = arg }"
+			<tabs :num-tabs="5" :initial="0" @on-click="tab => { selectATab(tab) }"
 					style="background-color: rgba(0, 0, 0, .5);">
-				<div slot="1" style="vertical-align: bottom;">
-					A/あ
+				<div slot="1">
+					<img src="@/assets/backIcon.png" style="height: 22px; margin-top: 4px;">
 				</div>
 				<div slot="2">
-					<button class="no-border-button" style="display: flex; flex-direction: row; align-items: center;"
+					<img src="@/assets/languageIcon.png" style="height: 24px; margin-top: 4px;">
+				</div>
+				<div slot="3">
+					<div class="no-border-button" style="display: flex; flex-direction: row; align-items: center;"
 							v-on:click.prevent="goToFront()">
 						<div>EVENT</div>
 						<div>
 							<img src="@/assets/eventhorizonTopIcon.png" style="height: 20px; vertical-align: middle;">
 						</div>
 						<div>HORIZON</div>
-					</button>
+					</div>
 				</div>
-				<div slot="3">
-					<img src="@/assets/threeBarsIcon.png" class="icon" style="height: 16px; margin-bottom: 3px;"/>
+				<div slot="4">
+					<img src="@/assets/threeBarsIcon.png" class="icon" style="height: 22px; margin-bottom: 3px;"/>
 				</div>
+				<div slot="5"/>
 			</tabs>
 		</div>
-		<modal v-if="selectedTab === 1" @closeModals="selectedTab = 0">
+		<modal v-if="selectedTab === 2" @closeModals="selectedTab = 0">
 			<div slot="contents" class="modal">
 				<div style="align-self: flex-end; padding-bottom: 5px;">
 					<button v-on:click.prevent="selectedTab = 0" class="no-border-button x-button">
@@ -42,7 +46,7 @@
 				<div class="line-height"/>
 			</div>
 		</modal>
-		<modal v-if="selectedTab === 3" @closeModals="selectedTab = 0">
+		<modal v-if="selectedTab === 4" @closeModals="selectedTab = 0">
 			<div slot="contents" class="modal">
 				<div style="align-self: flex-end; padding-bottom: 5px;">
 					<button v-on:click.prevent="selectedTab = 0" class="no-border-button x-button">
@@ -101,21 +105,20 @@
 			},
 		},
 		watch: {
-			'selectedTab' () {
-				if (this.selectedTab != 0) {  // opens a modal
-					f.setBackButtonToCloseModal(this, window, this.closeModal)
-				} else if (this.selectedTab === 0 && !this.showQrModal) {  // closes a modal
-					f.freeUpBackButton(this)
-				} else if (this.selectedTab === 2) {
-					this.goToFront()
-				}
-			},
 		},
 		async mounted () {
 			this.$emit('endLoading')
 		},
 		methods: {
 			t (w) { return translations.t(w) },
+			selectATab (tab) {
+				this.selectedTab = tab
+				if (tab === 3) {
+					this.goToFront()
+				} else if (tab === 1) {
+					this.$emit('back')
+				}
+			},
 			async english () {
 				let lang = 'EN'
 				store.user.language = lang

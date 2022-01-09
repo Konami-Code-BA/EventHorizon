@@ -5,6 +5,7 @@
 					@startLoading="headerLoading=true"
 					@endLoading="headerLoading=false"
 					@modalPage="(page, args) => changeModalPage(page, args)"
+					@back="goBack()"
 			/>
 			<router-view
 					@startLoading="routerLoading=true"
@@ -70,16 +71,7 @@
 		},
 		async created () {
 			// back button setup
-			window.addEventListener('popstate', () => {
-				if (this.history.length === 1) {
-					window.history.go(-2)
-				} else {
-					this.history.pop()  // remove the current page
-					let modalPage = this.history.pop()  // get the previous page and go to that
-					this.changeModalPage(modalPage.page, modalPage.args)
-				}
-				console.log('HERE1', this.history)
-			})
+			window.addEventListener('popstate', () => { this.goBack() })
 			
 			// user auto-login from cookies
 			if (store.user.groups[0] === 100) { // if never logged in, not even to visitor account, login
@@ -133,10 +125,19 @@
 					this.store.path = `/?page=${page}&args=${args}`
 				} else if (page != 'front') {
 					this.store.path = `/?page=${page}`
-				} else {
+				} else if (page === 'front') {
 					this.store.path = '/'
 				}
 				this.history.push({ page: page, args: args })
+			},
+			goBack () {
+				if (this.history.length === 1) {
+					window.history.go(-2)
+				} else {
+					this.history.pop()  // remove the current page
+					let modalPage = this.history.pop()  // get the previous page and go to that
+					this.changeModalPage(modalPage.page, modalPage.args)
+				}
 			},
 		},
 	}
