@@ -32,23 +32,23 @@ class UserViewset(viewsets.ModelViewSet):
 	queryset = model.objects.all()
 
 	def list(self, request):  # GET {prefix}/
-		self.queryset = [request.user]
+		self.queryset = [request.user]  # SECURITY: list only returns yourself
 		serializer_data = self.serializer_class(self.queryset, many=True).data
 		return Response(serializer_data)
 
 	def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
-		self.queryset = [request.user]
+		self.queryset = [request.user]  # SECURITY: retrieve only returns yourself
 		serializer_data = self.serializer_class(self.queryset, many=True).data
 		return Response(serializer_data)
 
 	def update(self, request, pk=None):  # PUT {prefix}/{lookup}/
-		self.queryset = [request.user]
+		self.queryset = [request.user]  # SECURITY: update only returns yourself
 		serializer_data = self.serializer_class(self.queryset, many=True).data
 		return Response(serializer_data)
 
 	# PARTIAL_UPDATE ###############################################################################
 	def partial_update(self, request, pk=None):  # PATCH {prefix}/{lookup}/
-		user = eval(f"self.{request.data['command']}(request, pk)")
+		user = eval(f"self.{request.data['command']}(request, pk)")  # SECURITY: inside each command function
 		self.queryset = [user]
 		if hasattr(self.queryset[0], 'error'):
 			serializer_data = [OrderedDict([('error', self.queryset[0].error)])]
@@ -63,9 +63,14 @@ class UserViewset(viewsets.ModelViewSet):
 			user = namedtuple('user', 'error')
 			user.error = 'a user with this id could not be found'
 			return user
-		user.language = request.data['language']
-		user.save()
-		return user
+		if user == request.user:  # SECURITY: you can only do this for yourself
+			user.language = request.data['language']
+			user.save()
+			return user
+		else:
+			user = namedtuple('user', 'error')
+			user.error = 'you don\'t have permission'
+			return user
 	
 	def update_user_do_get_emails(self, request, pk):
 		try:
@@ -74,9 +79,14 @@ class UserViewset(viewsets.ModelViewSet):
 			user = namedtuple('user', 'error')
 			user.error = 'a user with this id could not be found'
 			return user
-		user.do_get_emails = request.data['do_get_emails']
-		user.save()
-		return user
+		if user == request.user:  # SECURITY: you can only do this for yourself
+			user.do_get_emails = request.data['do_get_emails']
+			user.save()
+			return user
+		else:
+			user = namedtuple('user', 'error')
+			user.error = 'you don\'t have permission'
+			return user
 	
 	def update_user_do_get_lines(self, request, pk):
 		try:
@@ -85,29 +95,38 @@ class UserViewset(viewsets.ModelViewSet):
 			user = namedtuple('user', 'error')
 			user.error = 'a user with this id could not be found'
 			return user
-		user.do_get_lines = request.data['do_get_lines']
-		user.save()
-		return user
-	
-	def update_user_alerts(self, request, pk):
-		try:
-			user = self.model.objects.get(pk=pk)
-		except self.model.DoesNotExist:
-			user = namedtuple('user', 'error')
-			user.error = 'a user with this id could not be found'
+		if user == request.user:  # SECURITY: you can only do this for yourself
+			user.do_get_lines = request.data['do_get_lines']
+			user.save()
 			return user
-		alert = Alert.objects.get(name=request.data['name'])
-		if user.alerts.filter(name=request.data['name']).exists():  # if user has this alert, remove it
-			alert.user_set.remove(user)
-		else:  # if user does not have this alert, add it
-			alert.user_set.add(user)
-		return user
+		else:
+			user = namedtuple('user', 'error')
+			user.error = 'you don\'t have permission'
+			return user
+	
+	#def update_user_alerts(self, request, pk):
+	#	try:
+	#		user = self.model.objects.get(pk=pk)
+	#	except self.model.DoesNotExist:
+	#		user = namedtuple('user', 'error')
+	#		user.error = 'a user with this id could not be found'
+	#		return user
+	#	alert = Alert.objects.get(name=request.data['name'])
+	#	if user.alerts.filter(name=request.data['name']).exists():  # if user has this alert, remove it
+	#		alert.user_set.remove(user)
+	#	else:  # if user does not have this alert, add it
+	#		alert.user_set.add(user)
+	#	return user
 	
 	def register_email(self, request, pk):
 		if ('email' in request.data and 'password' in request.data and request.data['email'] != '' and
 				request.data['password'] != ''):
 			try:  # get the current user
 				current_user = self.model.objects.get(pk=pk)
+				if current_user != request.user:  # SECURITY: you can only do this for yourself
+					user = namedtuple('user', 'error')
+					user.error = 'you don\'t have permission'
+					return user
 				if current_user.groups.filter(id=3).exists():  # if user is visitor, should be in register_with_email
 					user = namedtuple('user', 'error')
 					user.error = 'something strange happened... a visitor should not be able to run this'
@@ -138,11 +157,11 @@ class UserViewset(viewsets.ModelViewSet):
 			return user
 
 	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
-		return Response()
+		return Response()  # SECURITY: this just does nothing
 
 	# CREATE #######################################################################################
 	def create(self, request):  # POST {prefix}/
-		user = eval(f"self.{request.data['command']}(request)")
+		user = eval(f"self.{request.data['command']}(request)")  # SECURITY: inside each command function
 		self.queryset = [user]
 		if hasattr(self.queryset[0], 'error'):
 			serializer_data = [OrderedDict([('error', self.queryset[0].error)])]
@@ -150,7 +169,7 @@ class UserViewset(viewsets.ModelViewSet):
 			serializer_data = self.serializer_class(self.queryset, many=True).data
 		return Response(serializer_data)
 
-	def register_with_email(self, request):
+	def register_with_email(self, request):  # SECURITY: anyone is allowed to make a new user
 		if ('email' in request.data and 'password' in request.data and 'display_name' in request.data and
 				request.data['email'] != '' and request.data['password'] != '' and request.data['display_name'] != ''):
 			try:  # check this email hasn't already been registered
@@ -176,7 +195,7 @@ class UserViewset(viewsets.ModelViewSet):
 			user.error = 'email / password / display name are missing or empty'
 			return user
 
-	def line_new_device(self, request):
+	def line_new_device(self, request):  # SECURITY: anyone is allowed to make a new line device
 		if config('PYTHON_ENV', default='\'"production"\'') == 'development':  # get url depending on dev, test, or prod
 			uri = 'http://127.0.0.1:8080/' + request.data['path']
 		elif config('PYTHON_ENV', default='\'"production"\'') == '\'"test"\'':
@@ -225,7 +244,7 @@ class UserViewset(viewsets.ModelViewSet):
 		return user
 		
 
-	def login(self, request):
+	def login(self, request):  # SECURITY: anyone is allowed to login
 		#return authenticate_login(request)  # FOR EMERGENCY LOGIN (also in backends)
 		visitor = False
 		try:
@@ -247,7 +266,7 @@ class UserViewset(viewsets.ModelViewSet):
 		else:  # if couldn't login to anything, probably got an error, so return user anyway
 			return user
 
-	def logout(self, request):
+	def logout(self, request):  # SECURITY: anyone is allowed to logout
 		try:
 			user = self.model.objects.get(pk=request.user.pk)
 			auth.logout(request)
@@ -268,10 +287,12 @@ class UserViewset(viewsets.ModelViewSet):
 class LineViewset(viewsets.ViewSet):
 	queryset = []
 	def create(self, request):
-		response = eval(f"self.{request.data['command']}(request)")
-		return Response(response)
+		if request.user.is_superuser:  # SECURITY: only superuser can
+			response = eval(f"self.{request.data['command']}(request)")  # SECURITY: inside each command function
+			return Response(response)
+		return Response('')
 
-	def consumption(self, request):
+	def consumption(self, request):  # SECURITY: messaging channel access token only used here in backend
 		url = 'https://api.line.me/v2/bot/message/quota/consumption'
 		headers = {
 			'Content-Type': 'application/json',
@@ -280,7 +301,7 @@ class LineViewset(viewsets.ViewSet):
 		response = requests.get(url, headers=headers)
 		return response
 
-	def broadcast(self, request):
+	def broadcast(self, request):  # SECURITY: messaging channel access token only used here in backend
 		url = 'https://api.line.me/v2/bot/message/broadcast'
 		headers = {
 			'Content-Type': 'application/json',
@@ -295,7 +316,7 @@ class LineViewset(viewsets.ViewSet):
 		response = requests.post(url, headers=headers, data=data)
 		return response
 
-	def push(self, request):
+	def push(self, request):  # SECURITY: messaging channel access token only used here in backend
 		mikeyOrStu = {
 			'mikey': config('MIKEY_LINE_USER_ID'),
 			'stu': config('STU_LINE_USER_ID'),
@@ -316,14 +337,21 @@ class LineViewset(viewsets.ViewSet):
 class SecretsViewset(viewsets.ViewSet):
 	queryset = []
 	def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
-		secrets_dict = {
-			'new-random-secret': secrets.token_urlsafe(16),
-			'login-channel-id': config('LOGIN_CHANNEL_ID'),
-			'google-maps-api-key': config('GOOGLE_MAPS_API_KEY'),
-			'mikey-line-user-id': config('MIKEY_LINE_USER_ID'),
-			'stu-line-user-id': config('STU_LINE_USER_ID'),
-		}
-		return Response(secrets_dict[pk])
+		if ((pk in ['mikey-line-user-id', 'stu-line-user-id'] and request.user.is_superuser)
+				or pk not in ['mikey-line-user-id', 'stu-line-user-id']):  # SECURITY: only superuser can get our ids
+			secrets_dict = {
+				'new-random-secret': secrets.token_urlsafe(16),
+				# SECURITY: this is safe because of domain restriction, and channel secret not used in client, only back
+				'login-channel-id': config('LOGIN_CHANNEL_ID'),
+				# SECURITY: this is safe because of domain restriction
+				'google-maps-api-key': config('GOOGLE_MAPS_API_KEY'),
+				# SECURITY: this is safe because only superuser can get it
+				'mikey-line-user-id': config('MIKEY_LINE_USER_ID'),
+				# SECURITY: this is safe because only superuser can get it
+				'stu-line-user-id': config('STU_LINE_USER_ID'),
+			}
+			return Response(secrets_dict[pk])
+		return Response()
 
 
 # EVENTS VIEW SET ######################################################################################################
@@ -333,12 +361,12 @@ class EventViewset(viewsets.ViewSet):
 	queryset = []
 
 	def create(self, request):  # POST {prefix}/
-		response = eval(f"self.{request.data['command']}(request)")
+		response = eval(f"self.{request.data['command']}(request)")  # SECURITY: inside each command function
 		return Response(response)
 
 	def add_event(self, request):
 		event = None
-		if request.user.is_superuser:
+		if request.user.is_superuser:  # SECURITY: only superuser can add event
 			if request.data['address']:
 				gmaps = googlemaps.Client(key=config('GOOGLE_MAPS_API_KEY'))
 				geocoded = gmaps.geocode(request.data['address'])
@@ -375,11 +403,13 @@ class EventViewset(viewsets.ViewSet):
 			serializer_data = self.serializer_class([], many=True).data
 		return serializer_data
 
-	def my_events(self, request):
+	def my_events(self, request):  # SECURITY: anyone can get my events
 		invited_events = self.model.objects.filter(invited=request.user.id)
 		interested_public_events = self.model.objects.filter(Q(is_private=False) & Q(interested=request.user.id) & ~Q(invited=request.user.id))
 		interested_private_events = self.model.objects.filter(Q(is_private=True) & Q(interested=request.user.id) & ~Q(invited=request.user.id))
+		# SECURITY: freely gives invited_events and interested_public_events
 		serializer_data1 = self.serializer_class(invited_events.union(interested_public_events), many=True).data
+		# SECURITY: gives only limited info on interested_private_events 
 		serializer_data2 = serializer_private(interested_private_events)
 		return serializer_data1 + serializer_data2
 	
@@ -389,30 +419,32 @@ class EventViewset(viewsets.ViewSet):
 	#	print(date_time, type(date_time))
 
 	def partial_update(self, request, pk=None):  # PATCH {prefix}/{lookup}/
-		return Response()
+		return Response()  # SECURITY: this just does nothing
 
 	def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
-		events = self.model.objects.filter(invited=request.user.id) # gotta include public events
+		my_events = self.model.objects.filter(invited=request.user.id) # gotta include public events
 		event = self.model.objects.get(pk=pk)
-		if event in events or not event.is_private:
+		if event in my_events or not event.is_private:  # SECURITY: only get event if public or mine
 			serializer_data = self.serializer_class([event], many=True).data
 		else:
 			serializer_data = serializer_private([event])
 		return Response(serializer_data)
 
 	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
-		return Response()
+		return Response()  # SECURITY: this just does nothing
 
 	def list(self, request):  # GET {prefix}/
 		my_events = self.model.objects.filter(invited=request.user.id)
 		public_events = self.model.objects.filter(is_private=False)
 		private_events = self.model.objects.filter(Q(is_private=True) & ~Q(invited=request.user.id))
+		# SECURITY: freely gives my events and public events
 		serializer_data1 = self.serializer_class(my_events.union(public_events), many=True).data
+		# SECURITY: gives private events but i only get limited info on them
 		serializer_data2 = serializer_private(private_events)
 		return Response(serializer_data1 + serializer_data2)
 
 	def update(self, request, pk=None):  # PUT {prefix}/{lookup}/
-		return Response()
+		return Response()  # SECURITY: this just does nothing
 
 
 def randomize_lat_lng(address):
