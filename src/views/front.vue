@@ -180,7 +180,7 @@
 				this.showCookiesModal = false
 				await api.updateUserAlerts('Show Cookies')
 			},
-			openEventModal (id) {
+			openEventModal (id) {  // THIS SHOULD BE NEW NOW
 				this.$emit('modalPage', 'event', id)
 				this.selectedEventId = id
 				this.selectedEventIdForList = id
@@ -190,7 +190,7 @@
 				}
 				this.showEventModal = true
 			},
-			async closeEventModal () {
+			async closeEventModal () {  // THIS SHOULD BE NEW NOW
 				f.freeUpBackButton(this)
 				this.store.path = this.$route.path
 				window.initMap()

@@ -2,7 +2,7 @@
 	<div>
 		<div class="main">
 			<div style="font-size: 36px;">{{ t('SETTINGS') }}</div>
-			<div class="line-height"></div>
+			<div class="line-height"/>
 			<button class="button" v-if="store.user.email === ''" v-on:click.prevent="openAddEmailModal()">
 				{{ t('ADD EMAIL ADDRESS') }}
 			</button>
@@ -12,7 +12,7 @@
 				</button>
 				<input type="checkbox" class="checkbox" v-model="do_get_emails"/>
 			</div>
-			<div class="line-height"></div>
+			<div class="line-height"/>
 			<button v-on:click.prevent="loginByLine()" class="button line-coloring">
 				<div class="line-button">
 					<div class="line-alignment">

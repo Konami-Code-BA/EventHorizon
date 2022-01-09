@@ -29,13 +29,13 @@
 						{{ t('SHARE QR CODE') }}
 					</button>
 				</div>
-				<div class="line-height"></div>
+				<div class="line-height"/>
 				<div style="width: 100%">
 					<button v-on:click.prevent="showShareModal = false; showUrlModal = true" class="button" style="width: 100%">
 						{{ t('SHARE URL') }}
 					</button>
 				</div>
-				<div class="line-height"></div>
+				<div class="line-height"/>
 				<div style="width: 100%">
 					<button v-on:click.prevent="showShareModal = false; showImageModal = true" class="button" style="width: 100%">
 						{{ t('SHARE IMAGE') }}
@@ -44,7 +44,7 @@
 			</div>
 		</modal>
 		<qr-code-generator v-if="showQrModal" @closeModals="showQrModal = false"/>
-		<!--url-display v-if="showUrlModal"/-->
+		<url-display v-if="showUrlModal" @closeModals="showUrlModal = false"/>
 	</div>
 </template>
 <script>
