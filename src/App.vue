@@ -131,8 +131,10 @@
 				this.modalPage = { page: page, args: args }
 				if (args) {
 					this.store.path = `/?page=${page}&args=${args}`
-				} else {
+				} else if (page != 'front') {
 					this.store.path = `/?page=${page}`
+				} else {
+					this.store.path = '/'
 				}
 				this.history.push({ page: page, args: args })
 			},

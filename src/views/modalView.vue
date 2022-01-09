@@ -2,24 +2,24 @@
 	<div>
 		<login-register v-show="page==='loginRegister'" :next="next"
 				@modalPage="(page, args) => $emit('modalPage', page, args)"
-				@startLoading="this.$emit('startLoading')"
-				@endLoading="this.$emit('endLoading')"/>
+				@startLoading="$emit('startLoading')"
+				@endLoading="$emit('endLoading')"/>
 		<register-with-email v-show="page==='registerWithEmail'"
 				@modalPage="(page, args) => $emit('modalPage', page, args)"
-				@startLoading="this.$emit('startLoading')"
-				@endLoading="this.$emit('endLoading')"/>
+				@startLoading="$emit('startLoading')"
+				@endLoading="$emit('endLoading')"/>
 		<add-event v-show="page==='addEvent'"
 				@modalPage="(page, args) => $emit('modalPage', page, args)"
-				@startLoading="this.$emit('startLoading')"
-				@endLoading="this.$emit('endLoading')"/>
+				@startLoading="$emit('startLoading')"
+				@endLoading="$emit('endLoading')"/>
 		<settings v-show="page==='settings'"
 				@modalPage="(page, args) => $emit('modalPage', page, args)"
-				@startLoading="this.$emit('startLoading')"
-				@endLoading="this.$emit('endLoading')"/>
+				@startLoading="$emit('startLoading')"
+				@endLoading="$emit('endLoading')"/>
 		<aboutUs v-show="page==='aboutUs'"
 				@modalPage="(page, args) => $emit('modalPage', page, args)"
-				@startLoading="this.$emit('startLoading')"
-				@endLoading="this.$emit('endLoading')"/>
+				@startLoading="$emit('startLoading')"
+				@endLoading="$emit('endLoading')"/>
 	</div>
 </template>
 <script>

@@ -129,7 +129,7 @@
 				await api.updateUserLanguage()
 			},
 			goToFront () {
-				if (this.store.path !== '/front') {
+				if (this.store.path != '/') {
 					this.$emit('modalPage', 'front', null)
 				}
 			},
