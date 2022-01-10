@@ -1,5 +1,5 @@
 <template>
-	<div class="main" v-if="event">
+	<div class="main">
 		<div class="flex-row" style="align-items: center; justify-content: space-between; height: 60px;">
 			<div style="width: 16px"></div>
 			<h2 style="text-align: center; max-width: 80%; overflow-x: scroll;">{{event.name}}</h2>
@@ -21,7 +21,7 @@
 			<div style="align-self: center">
 				{{ event.description }}
 			</div>
-			<div v-if="(!event.is_private || this.isInvited) && event.venue_name" class="flex-table">
+			<div v-if="(!event.is_private || isInvited) && event.venue_name" class="flex-table">
 				<br>
 				<div>
 					VENUE:
@@ -43,7 +43,7 @@
 				</div>
 				<button v-on:click.prevent="" class="button" style="align-self: center"
 						:disabled="!isInvited && event.is_private">
-					<div v-if="this.isInvited || !event.is_private" class="flex-row" style="align-self: center">
+					<div v-if="isInvited || !event.is_private" class="flex-row" style="align-self: center">
 						{{ event.hosts.length }}
 						<div v-if="event.hosts.length > 1">
 							&nbsp;people
@@ -69,7 +69,7 @@
 				</div>
 				<button v-on:click.prevent="" class="button" style="align-self: center"
 						:disabled="!isInvited && event.is_private">
-					<div v-if="this.isInvited || !event.is_private" class="flex-row" style="align-self: center">
+					<div v-if="isInvited || !event.is_private" class="flex-row" style="align-self: center">
 						{{ event.invited.length }}
 						<div v-if="event.invited.length > 1">
 							&nbsp;people
@@ -95,7 +95,7 @@
 				</div>
 				<button v-on:click.prevent="" class="button" style="align-self: center"
 						:disabled="!isInvited && event.is_private">
-					<div v-if="this.isInvited || !event.is_private" class="flex-row" style="align-self: center">
+					<div v-if="isInvited || !event.is_private" class="flex-row" style="align-self: center">
 						{{ event.confirmed_guests.length }}
 						<div v-if="event.confirmed_guests.length > 1">
 							&nbsp;people
@@ -121,7 +121,7 @@
 				</div>
 				<button v-on:click.prevent="" class="button" style="align-self: center"
 						:disabled="!isInvited && event.is_private">
-					<div v-if="this.isInvited || !event.is_private" class="flex-row" style="align-self: center">
+					<div v-if="isInvited || !event.is_private" class="flex-row" style="align-self: center">
 						{{ event.interested.length }}
 						<div v-if="0 >= event.interested.length > 1">
 							&nbsp;people
@@ -156,19 +156,18 @@
 		data () {
 			return {
 				store: store,
-				event: null,
-				isInvited: null,
+				event: null,  // just make sure the key fro this component has event in it
 			}
 		},
-		props: {
-			eventId: { default: null },
-		},
 		computed: {
+			isInvited () {
+				return f.isInvited(this.event)
+			},
 		},
-		async mounted () {
-			this.event = await api.getEvent(this.eventId)
-			this.isInvited = this.isInvitedGuest(this.event)
-			this.$emit('endLoading')
+		created () {
+			this.store.events.selected = f.filterEvents(this.store.events.all, f.currentPage.args.id, ['id'], true)[0]
+			this.event = this.store.events.selected
+			console.log('I AM HERE', this.event)
 		},
 		methods: {
 			t (w) { return translations.t(w) },
@@ -180,9 +179,7 @@
 				time = time[0] + ':' + time[1]
 				return date + '\xa0\xa0-\xa0\xa0' + time
 			},
-			isInvitedGuest (event) {
-				return f.isInvitedGuest(event)
-			},
+			//// do not delete, this will be used soon. and it took forever to get this shit to work
 			//async getEventImage () {
 			//	let result = await api.getEventImage(this.getimgid, eventId) // this.event.id
 			//	this.imagetwo = "data:image/jpg;base64," + result['image_data']

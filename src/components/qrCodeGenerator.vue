@@ -89,7 +89,7 @@
 		},
 		computed: {
 			url () {
-				return f.domain+store.path
+				return f.currentUrl
 			},
 		},
 		watch: {
@@ -105,7 +105,7 @@
 				} else {
 					let QRCode = require('qrcode')
 					this.image_file = await QRCode.toDataURL(this.url)
-					this.image_name = `EventHorizonQrCode${this.store.path.replace('/', '_')}.jpg`
+					this.image_name = `EventHorizonQrCode${f.currentPage.page.replace('/', '_')}.jpg`
 				}
 			},
 			async share () {
@@ -115,7 +115,7 @@
 				} else {
 					let QRCode = require('qrcode')
 					this.image_file = await QRCode.toDataURL(this.url)
-					this.image_name = `EventHorizonQrCode${this.store.path.replace('/', '_')}.jpg`
+					this.image_name = `EventHorizonQrCode${f.currentPage.page.replace('/', '_')}.jpg`
 				}
 				let image = await fetch(this.image_file)
 				let blob = await image.blob()

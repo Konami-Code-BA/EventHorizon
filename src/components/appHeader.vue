@@ -64,7 +64,8 @@
 				</div>
 				<div class="line-height"/>
 				<div style="width: 100%">
-					<button v-on:click.prevent="selectedTab = 0; $emit('modalPage', 'aboutUs', null)" class="button">
+					<button v-on:click.prevent="selectedTab = 0; goToPage({ page: 'aboutUs', args: {} })"
+							class="button">
 						ABOUT US
 					</button>
 				</div>
@@ -96,8 +97,6 @@
 			tabs,
 			qrCodeGenerator,
 		},
-		props: {
-		},
 		computed: {
 			isAuthenticatedUser () {
 				return f.isAuthenticatedUser
@@ -110,12 +109,15 @@
 		},
 		methods: {
 			t (w) { return translations.t(w) },
+			goToPage (page) {
+				f.goToPage({ page: page, args: {} })
+			},
 			selectATab (tab) {
 				this.selectedTab = tab
 				if (tab === 3) {
 					location.reload()
 				} else if (tab === 1) {
-					this.$emit('back')
+					f.goBack()
 				}
 			},
 			async english () {
@@ -131,7 +133,7 @@
 				await api.updateUserLanguage()
 			},
 			goToLoginRegister () {
-				this.$emit('modalPage', 'loginRegister', null)
+				f.goToPage({ page: 'loginRegister', args: {} })
 				this.selectedTab = 0
 			},
 			async logout () {
@@ -140,7 +142,7 @@
 				location.reload()
 			},
 			closeModal () {
-				f.freeUpBackButton(this)
+				f.freeUpBackButton(this)  // this should change
 				this.selectedTab = 0
 				this.showQrModal = false
 			},

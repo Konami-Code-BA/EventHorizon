@@ -7,10 +7,12 @@
 				{{ t('ADD EMAIL ADDRESS') }}
 			</button>
 			<div v-else class="dual-set">
-				<button class="button" style="width: 100%" v-on:click.prevent="do_get_emails=!do_get_emails">
+				<button class="button" style="width: 100%"
+						v-on:click.prevent="updateUserDoGetEmails()">
 					{{ t('GET EMAILS') }}&nbsp;
 				</button>
-				<input type="checkbox" class="checkbox" v-model="do_get_emails"/>
+				<input type="checkbox" class="checkbox" v-model="store.user.do_get_emails"
+						:key="store.user.do_get_emails"/>
 			</div>
 			<div class="line-height"/>
 			<button v-on:click.prevent="loginByLine()" class="button line-coloring">
@@ -71,16 +73,9 @@
 			return {
 				store: store,
 				showAddEmailModal: false,
-				do_get_emails: store.user.do_get_emails,
 				showAddEmailModal: false,
 				stateCookie: JSON.parse('{"' + this.replaceAll(this.replaceAll(document.cookie, '=', '": "'), '; ', '", "') + '"}')['state'],
 			}
-		},
-		watch: {
-			async 'do_get_emails' () {  // if do_get_emails changes, update it in the DB
-				this.store.user.do_get_emails = this.do_get_emails
-				await api.updateUserDoGetEmails()  // update it in the DB
-			},
 		},
 		async mounted () {
 			await this.tryLineNewDevice()
@@ -88,6 +83,10 @@
 		},
 		methods: {
 			t (w) { return translations.t(w) },
+			async updateUserDoGetEmails () {
+				store.user.do_get_emails = !store.user.do_get_emails
+				await api.updateUserDoGetEmails()  // update it in the DB
+			},
 			openAddEmailModal () {
 				f.setBackButtonToCloseModal(this, window, this.closeAddEmailModal)
 				this.showAddEmailModal = true
@@ -137,7 +136,8 @@
 		position: fixed;
 		height: 20px;
 		width: 20px;
-		transform: translate(60px, 0)
+		transform: translate(60px, 0);
+		z-index: 1;
 	}
 	.line-coloring {
 		background-color: #00b300;
@@ -159,5 +159,6 @@
 	}
 	.button {
 		width: 80%;
+		z-index:2;
 	}
 </style>

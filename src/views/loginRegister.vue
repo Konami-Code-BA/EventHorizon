@@ -37,7 +37,7 @@
 			<div class="line-height"/>
 			<div class="line-height"/>
 			<div class="line-height"/>
-			<button v-on:click.prevent="$emit('modalPage', 'registerWithEmail', null)" class="button">
+			<button v-on:click.prevent="goToPage({ page: 'registerWithEmail', args: {} })" class="button">
 				{{t('NEW USER REGISTRATION')}}
 			</button>
 			<div class="line-height"/>
@@ -78,9 +78,6 @@
 				passwordError: '',
 			}
 		},
-		props: {
-			next: {},
-		},
 		async mounted () {
 			await this.tryLineNewDevice()
 			this.passwordHasErrors()
@@ -94,6 +91,9 @@
 		},
 		methods: {
 			t (w) { return translations.t(w) },
+			goToPage (pageDict) {
+				f.goToPage(pageDict)
+			},
 			async login () {
 				if (this.passwordError.length > 0 || this.emailError.length > 0) {
 					this.shakeFunction()
@@ -104,7 +104,7 @@
 				let user = await api.login({'email': this.emailInput, 'password': this.passwordInput})
 				this.$emit('endLoading')
 				if (!user.error) {
-					this.$emit('modalPage', this.next.page, this.next.args)
+					f.goToPage(f.previousPage)
 					window.initMap()
 				} else if (user.error === 'This email is not registered') {
 					this.emailError = user.error
@@ -202,7 +202,7 @@
 					this.$emit('startLoading')
 					await api.lineNewDevice(this.$route.query.code, 'loginRegister')
 					this.$emit('endLoading')
-					this.$emit('modalPage', 'front', null)
+					f.goToPage({ page: 'home', args: {} })
 				}
 			},
 		} // methods

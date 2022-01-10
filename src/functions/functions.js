@@ -1,19 +1,19 @@
 import store from '@/store'
+import api from '@/functions/apiFunctions.js'
 export default {
-    get domain() {
-        return (window.location.protocol + '//' + window.location.host).replace('8080', '8000')
+    get currentPage() {
+        return store.pages[store.pages.length - 1]
     },
-    focusCursor(documentt, id) {
-        setTimeout(() => { documentt.getElementById(id).focus() }, 200)
+    get previousPage() {
+        return store.pages[store.pages.length - 2]
     },
-    setBackButtonToCloseModal(thiss, windoww, closeFunc) {
-        thiss.$router.allowBack = false
-        windoww.addEventListener('popstate', () => {
-            closeFunc()
-        })
-    },
-    freeUpBackButton(thiss) {
-        thiss.$router.allowBack = true
+    get currentUrl() {
+        let result = window.origin + '/?page=' + this.currentPage.page
+        let argKeys = Object.keys(this.currentPage.args)
+        for (let i = 0; i < argKeys.length; i++) {
+            result += '&' + argKeys[i] + '=' + this.currentPage.args[argKeys[i]]
+        }
+        return result
     },
     get isAuthenticatedUser() {
         return [1, 2].includes(store.user.groups[0])
@@ -21,7 +21,23 @@ export default {
     get isAdmin() {
         return [1].includes(store.user.groups[0])
     },
-    isInvitedGuest(event) {
+    get today() {
+        return new Date()
+    },
+    goToPage(pageDict) {
+        store.pages.push(pageDict)
+    },
+    goBack() {
+        if (store.pages.length === 1) {
+            window.history.go(-2)
+        } else {
+            store.pages.pop() // remove the current page
+        }
+    },
+    focusCursor(documentt, id) {
+        setTimeout(() => { documentt.getElementById(id).focus() }, 200)
+    },
+    isInvited(event) {
         if (Array.isArray(event.invited)) {
             return event.invited.includes(store.user.id)
         } else {
@@ -34,6 +50,12 @@ export default {
         } else {
             return false
         }
+    },
+    async getEvents() {
+        let events = await api.getAllEvents()
+        store.events.all = this.sortEventsByDate(events)
+        store.events.mine = this.filterEvents(store.events.all, store.user.id, ['invited'], false)
+        store.events.display = store.events.all
     },
     sortEventsByDate(events) {
         let sorted_events = []
