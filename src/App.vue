@@ -4,32 +4,24 @@
 			<app-header
 					@startLoading="headerLoading=true"
 					@endLoading="headerLoading=false"
-					@modalPage="(page, args) => changeModalPage(page, args)"
-					@back="goBack()"
 			/>
 			<router-view
 					@startLoading="routerLoading=true"
 					@endLoading="routerLoading=false"
-					@modalPage="(page, args) => changeModalPage(page, args)"
 					:key="$route.fullPath"
 					class="router"
-					v-show="modalPage.page === 'front'"
+					v-show="page === 'home'"
 			/>
 			<modal-view
 					@startLoading="modalLoading=true"
 					@endLoading="modalLoading=false"
-					@modalPage="(page, args) => changeModalPage(page, args)"
 					class="router"
-					v-show="modalPage.page != 'front'"
-					:key="modalPage.page"
-					:page="modalPage.page"
-					:args="modalPage.args"
-					:next="this.next"
+					v-show="page != 'home'"
+					:key="page"
 			/>
 			<app-footer
 					@startLoading="footerLoading=true"
 					@endLoading="footerLoading=false"
-					@modalPage="(page, args) => changeModalPage(page, args)"
 			/>
 		</div>
 		<div class="loading" v-if="loading"/>
@@ -57,21 +49,19 @@
 		data () {
 			return {
 				store: store,
-				modalPage: { page: 'front', args: null },
 				headerLoading: true,
 				routerLoading: true,
 				modalLoading: true,
 				footerLoading: true,
-				history: [{ page: 'front', args: null }, ],
 				loading: true,
 				load: true,
 				fadeOutClass: null,
-				next: null,
+				page: null,
 			}
 		},
 		async created () {
 			// back button setup
-			window.addEventListener('popstate', () => { this.goBack() })
+			window.addEventListener('popstate', () => { f.goBack() })
 			
 			// user auto-login from cookies
 			if (store.user.groups[0] === 100) { // if never logged in, not even to visitor account, login
@@ -83,8 +73,22 @@
 					console.log('existing user')
 				}
 			}
+
+			// get events
+			await f.getEvents()
+
+			// google maps
+			if (!document.getElementById('mapscrip')) {
+				let scrip = document.createElement('script')
+				scrip.id = 'mapscrip'
+				scrip.type = 'text/javascript'
+				let apiKey = await api.secretsApi('google-maps-api-key')
+				scrip.src = `https://maps.googleapis.com/maps/api/js?v=weekly&key=${apiKey}&callback=initMap`
+				document.head.appendChild(scrip)
+			}
 		},
 		async mounted () {
+			// openingLogo
 			await new Promise(r => setTimeout(r, 2000))
 			this.fadeOutClass = 'fade-out'
 			await new Promise(r => setTimeout(r, 1000))
@@ -104,6 +108,10 @@
 			'footerLoading' () {
 				this.checkLoading()
 			},
+			'store.pages' () {
+				this.page = f.currentPage.page
+				window.history.pushState({ path: f.currentUrl }, '', f.currentUrl)
+			},
 		},
 		methods: {
 			t (w) { return translations.t(w) },
@@ -112,31 +120,6 @@
 					this.loading = true
 				} else if (!this.headerLoading && !this.routerLoading && !this.modalLoading && !this.footerLoading) {
 					this.loading = false
-				}
-			},
-			changeModalPage (page, args) {
-				if (page === 'loginRegister') {
-					this.next = this.history[this.history.length-1]
-				} else {
-					this.next = null
-				}
-				this.modalPage = { page: page, args: args }
-				if (args) {
-					this.store.path = `/?page=${page}&args=${args}`
-				} else if (page != 'front') {
-					this.store.path = `/?page=${page}`
-				} else if (page === 'front') {
-					this.store.path = '/'
-				}
-				this.history.push({ page: page, args: args })
-			},
-			goBack () {
-				if (this.history.length === 1) {
-					window.history.go(-2)
-				} else {
-					this.history.pop()  // remove the current page
-					let modalPage = this.history.pop()  // get the previous page and go to that
-					this.changeModalPage(modalPage.page, modalPage.args)
 				}
 			},
 		},

@@ -1,6 +1,6 @@
 <template>
 	<div v-if="loaded">
-		<div class="main" v-show="!showEventModal" style="padding-top: 5px;">
+		<div class="main" style="padding-top: 5px;">
 			<div class="viewer filters" style="display: flex; flex-direction: column; align-items: center;
 					width: 100%; min-height: 100px; height: 100px;">
 				<div style="border-bottom: 2px solid rgba(255, 255, 255, .3); width: 100%; display: flex;
@@ -88,18 +88,13 @@
 					</div>
 				</tabs>
 			</div>
-			<events-map class="viewer events" v-show="selectedTab==1" @openEventModal="openEventModal"
-					:events="displayEvents" :selectedEventId="selectedEventIdForMap" ref="eventsMap"
-					:store="store"
-					:key="createComponentKey(selectedEventIdForMap, 'map')"/>
-			<events-list class="viewer events" v-show="selectedTab==2" @openEventModal="openEventModal"
-					:events="displayEvents" :store="store" :startingAt="selectedEventIdForList"
-					:key="createComponentKey(selectedEventIdForList, 'list')"/>
-			<events-calendar class="viewer events" v-show="selectedTab==3" @openEventModal="openEventModal"
-					:events="displayEvents" :store="store"
-					:key="createComponentKey(0, 'cal')"/>
+			<events-map class="viewer events" v-show="selectedTab==1"
+					:key="createComponentKey('map')"/>
+			<events-list class="viewer events" v-show="selectedTab==2"
+					:key="createComponentKey('list')"/>
+			<events-calendar class="viewer events" v-show="selectedTab==3"
+					:key="createComponentKey('cal')"/>
 		</div>
-		<event v-if="showEventModal" @goToMap="goToMap()" :eventId="selectedEventId" @closeModals="closeEventModal()"/>
 	</div>
 </template>
 <script>
@@ -112,29 +107,19 @@
 	import translations from '@/functions/translations.js'
 	import api from '@/functions/apiFunctions.js'
 	import f from '@/functions/functions.js'
-	import event from '@/components/event.vue'
 	export default {
-		name: 'front',
+		name: 'home',
 		components: {
 			modal,
 			tabs,
 			eventsMap,
 			eventsCalendar,
 			eventsList,
-			event,
 		},
 		data () {
 			return {
-				params: this.$route.params,
 				store: store,
-				showCookiesModal: store.user.alerts.includes(1),
 				selectedTab: 1,
-				showEventModal: null,
-				selectedEventId: null,
-				selectedEventIdForMap: null,
-				selectedEventIdForList: null,
-				displayEvents: null,
-				events: {},
 				loaded: false,
 				hideTop: false,
 				filters: {'all': true, 'mine': false, 'allPeople': false},
@@ -143,80 +128,45 @@
 		},
 		computed : {
 			isAuthenticatedUser () { return f.isAuthenticatedUser },
-			today () { return new Date() },
-		},
-		watch: {
 		},
 		async created () {
-			this.events['all'] = await api.getAllEvents()
-			this.displayEvents = this.events['all']
-			this.events['mine'] = f.filterEvents(this.displayEvents, this.store.user.id, ['invited'], false)
-			this.events['none'] = []
-			let id = this.params.id
-			if (id) {
-				this.showEventModal = Boolean(this.params.id)
-				this.openEventModal(id)
+			// get query
+			let params = this.$route.params
+			let keys = Object.keys(params)
+			if (keys.length === 0) {
+				f.goToPage({ page: 'home', args: {} }) // this will push the given parameters as the initial page info
+			} else if (keys.length === 1) {
+				f.goToPage({ page: params[keys[0]], args: {} })
 			} else {
-				let event = f.getEventWithClosestFutureDate(this.displayEvents, this.today)
-				if (event) {
-					this.selectedEventIdForList = event['id']
-				}
+				let page = params[keys[0]]
+				delete params[keys[0]]
+				f.goToPage({ page: page, args: params })
 			}
-
-			let scrip = document.createElement('script')
-			scrip.type = 'text/javascript'
-			let apiKey = await api.secretsApi('google-maps-api-key')
-			scrip.src = `https://maps.googleapis.com/maps/api/js?v=weekly&key=${apiKey}&callback=initMap`
-			document.head.appendChild(scrip)
-
-			this.loaded = true
-			this.$emit('endLoading')
 		},
-		mounted () {
+		async mounted () {
+			this.$emit('endLoading')
+			this.loaded = true
 		},
 		methods: {
 			t (w) { return translations.t(w) },
-			async closeCookiesModal () {
-				this.showCookiesModal = false
-				await api.updateUserAlerts('Show Cookies')
-			},
-			openEventModal (id) {  // THIS SHOULD BE NEW NOW
-				this.$emit('modalPage', 'event', id)
-				this.selectedEventId = id
-				this.selectedEventIdForList = id
-				let event = f.filterEvents(this.events['all'], id, ['id'], true)
-				if (event.address) {
-					this.selectedEventIdForMap = id
-				}
-				this.showEventModal = true
-			},
-			async closeEventModal () {  // THIS SHOULD BE NEW NOW
-				f.freeUpBackButton(this)
-				this.store.path = this.$route.path
-				window.initMap()
-				this.showEventModal = false
-			},
-			goToMap () {
+			goToMap () {  // what do i do with this
 				this.closeEventModal()
 				this.selectedTab = 1
 			},
-			createComponentKey(eventId, letters) {
-				let key = (this.displayEvents.length > 0 ? this.displayEvents[0]['id'] : 0).toString()
-				key += (eventId ? eventId : 0).toString() + letters
+			createComponentKey(letters) {
+				let key = (this.store.events.display.length > 0 ? this.store.events.display[0]['id'] : 0).toString()
+				key += (this.store.events.selected ? this.store.events.selected.id : 0).toString() + letters
 				return key
 			},
 			doFiltering () {
-				this.displayEvents = []
+				this.store.events.display = []
 				let keys = Object.keys(this.filters)
 				for (let i = 0; i < keys.length; i++) {
 					if (this.filters[keys[i]]) {  // if this filter is true
-						this.displayEvents = this.displayEvents.concat(this.events[keys[i]])
+						this.store.events.display = this.store.events.display.concat(this.store.events[keys[i]])
 					}
 				}
-				if (this.displayEvents.length > 0) {
-					this.selectedEventIdForList = f.getEventWithClosestFutureDate(this.displayEvents, this.today)['id']
-				}
-				window.initMap(google)
+				window.initMap()
 			},
 			filterChange (changed) {
 				let keys = Object.keys(this.filters)

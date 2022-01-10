@@ -8,8 +8,8 @@
 				align-items: center" id="scroller">
 			<div style="width: 90%;">
 				<div class="list">
-					<div v-for="event in sorted_events">
-						<button v-on:click.prevent="$emit('openEventModal', event.id)" class="no-border-button"
+					<div v-for="event in listEvents">
+						<button v-on:click.prevent="openEventModal(event.id)" class="no-border-button"
 								style="text-align: left; white-space: nowrap" :id="`item${event.id}`">
 							{{ event.date_time.split('T')[0] }}: {{ event.name }}
 						</button>
@@ -20,6 +20,7 @@
 	</div>
 </template>
 <script defer>
+	import store from '@/store.js'
 	import translations from '@/functions/translations.js'
 	import f from '@/functions/functions.js'
 	import api from '@/functions/apiFunctions.js'
@@ -27,10 +28,12 @@
 		name: 'eventsList',
 		data () {
 			return {
-				sorted_events: {},
-				search: null,
+				store: store,
+				listEvents: null,
+				selectedEvent: null,
+				search: '',
 				observer: new MutationObserver((mutations, obs) => {
-					let el = document.getElementById(`item${this.startingAt}`)
+					let el = document.getElementById(`item${this.selectedEvent.id}`)
 					if (el) {
 						this.scrollIt(el)
 						return
@@ -38,42 +41,36 @@
 				}),
 			}
 		},
-		components: {
-		},
-		props: {
-			events: { default: null },
-			store: { default: null },
-			startingAt: { default: null },
-		},
-		computed: {
-			today () {
-				return new Date()
-			},
-		},
 		watch: {
 			'search' () {
-				this.sorted_events = f.filterEvents(
-					f.sortEventsByDate(this.events),
+				this.listEvents = f.filterEvents(
+					this.store.events.display,
 					this.search,
 					['name', 'description', 'address', 'venue_name'])
 			},
 		},
 		created () {
-			this.sorted_events = f.sortEventsByDate(this.events)
+			this.listEvents = this.store.events.display
+			if (!this.store.events.selected) {
+				this.selectedEvent = f.getEventWithClosestFutureDate(this.listEvents, f.today)
+			} else {
+				this.selectedEvent = this.store.events.selected
+			}
 		},
 		mounted () {
 			this.observer.observe(document, {childList: true, subtree: true})
 		},
-		watch: {
-		},
 		methods: {
 			t (w) { return translations.t(w) },
 			scrollIt () {
-				let el = document.getElementById(`item${this.startingAt}`)
+				let el = document.getElementById(`item${this.selectedEvent.id}`)
 				let scroller = document.getElementById('scroller')
 				let offsetTop = el.offsetTop
 				scroller.scrollTop = el.offsetTop - scroller.offsetTop
 			},
+			openEventModal (id) {
+				f.goToPage({ page: 'event', args: { id: id } })
+			}
 		}
 	}
 </script>
