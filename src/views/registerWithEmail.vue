@@ -1,7 +1,7 @@
 <template>
 	<div class="main" style="display: flex; flex-direction: column; justify-content: center">
 		<register-with-email-internal style="width: 80%;" @startLoading="$emit('startLoading')"
-			@endLoading="$emit('endLoading')" :next="'front'"/>
+			@endLoading="$emit('endLoading')" :next="'home'"/>
 	</div>
 </template>
 <script>

@@ -70,8 +70,8 @@
 				showQrModal: false,
 				showUrlModal: false,
 				showImageModal: false,
-				footerPages: ['front', 'addEvent', 'settings'],
-				actions: [this.front, this.addEvent, this.settings, this.share],
+				footerPages: ['home', 'addEvent', 'settings'],
+				actions: [this.home, this.addEvent, this.settings, this.share],
 			}
 		},
 		components: {
@@ -79,8 +79,6 @@
 			tabs,
 			qrCodeGenerator,
 			urlDisplay,
-		},
-		props: {
 		},
 		computed: {
 			isAuthenticatedUser () {
@@ -97,21 +95,21 @@
 			selectTab (selectedTab) {
 				this.actions[selectedTab-1]()
 			},
-			front () {
-				this.$emit('modalPage', 'front', null)
+			home () {
+				f.goToPage({ page: 'home', args: {} })
 			},
 			addEvent () {
 				if(this.isAuthenticatedUser) {
-					this.$emit('modalPage', 'addEvent', null)
-				} else if (this.store.path != '/?page=loginRegister') {
-					this.$emit('modalPage', 'loginRegister', null)
+					f.goToPage({ page: 'addEvent', args: {} })
+				} else if (f.currentPage.page != 'loginRegister') {
+					f.goToPage({ page: 'loginRegister', args: {} })
 				}
 			},
 			settings () {
 				if(this.isAuthenticatedUser) {
-					this.$emit('modalPage', 'settings', null)
-				} else if (this.store.path != '/?page=loginRegister') {
-					this.$emit('modalPage', 'loginRegister', null)
+					f.goToPage({ page: 'settings', args: {} })
+				} else if (f.currentPage.page != 'loginRegister') {
+					f.goToPage({ page: 'loginRegister', args: {} })
 				}
 			},
 			share () {

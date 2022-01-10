@@ -84,7 +84,7 @@
 			<div style="height: 87%">
 				<ul v-if="getEventsFromDate(selectedDate).length > 0" style="list-style-type: none">
 					<li v-for="event in getEventsFromDate(selectedDate)">
-						<button v-on:click.prevent="$emit('openEventModal', event.id)" class="no-border-button">
+						<button v-on:click.prevent="openEventModal(event.id)" class="no-border-button">
 							{{ event.name }}
 						</button>
 					</li>
@@ -99,11 +99,14 @@
 	</div>
 </template>
 <script>
+	import store from '@/store.js'
 	import translations from '@/functions/translations.js'
+	import f from '@/functions/functions.js'
 	export default {
 		name: 'eventsCalendar',
 		data () {
 			return {
+				store: store,
 				selectedMonth: 0,  // note: month goes from 0 to 11 (so dumb)
 				selectedYear: 0,
 				selectedDate: 0,
@@ -113,42 +116,28 @@
 				noEventsModalClass: null,
 			}
 		},
-		components: {
-		},
-		props: {
-			events: { default: null },
-			store: { default: null },
-		},
-		computed: {
-			today () {
-				return new Date()
-			},
-		},
-		watch: {
-		},
 		created () {
-			this.selectedMonth = this.today.getMonth()  // note: month goes from 0 to 11 (so dumb)
-			this.selectedYear = this.today.getYear() - 100 + 2000
+			this.selectedMonth = f.today.getMonth()  // note: month goes from 0 to 11 (so dumb)
+			this.selectedYear = f.today.getYear() - 100 + 2000
 			this.getAllEvents()
 			this.loaded = true
 		},
 		methods: {
 			t (w) { return translations.t(w) },
 			getAllEvents () {
-				for ( let i = 0; i < this.events.length; i++) {
-					let dateTime = new Date(this.events[i].date_time)
+				for ( let i = 0; i < this.store.events.display.length; i++) {
+					let dateTime = new Date(this.store.events.display[i].date_time)
 					let date = new Date(
 						dateTime.getYear() - 100 + 2000, dateTime.getMonth(), dateTime.getDate(), 0, 0, 0, 0
 					).getTime()
 					if (date in this.eventDates) {
-						this.eventDates[date].push(this.events[i])
+						this.eventDates[date].push(this.store.events.display[i])
 					} else {
-						this.eventDates[date] = [this.events[i]]
+						this.eventDates[date] = [this.store.events.display[i]]
 					}
 				}
 			},
 			getDateOfCalendarLocation (calendarLocation) {
-				let today = this.today
 				let dayOfWeekOfFirstOfMonth = new Date(
 					this.selectedYear, this.selectedMonth, 1, 0, 0, 0, 0
 				).getDay()
@@ -192,7 +181,7 @@
 				let calendarLocation = (week - 1) * 7 + day - 1
 				let date = this.getDateOfCalendarLocation(calendarLocation)
 				let dayDate = date.getDate()
-				if (date.toString().split(' ').slice(0, 4).toString() === this.today.toString().split(' ').slice(0, 4).toString()) {
+				if (date.toString().split(' ').slice(0, 4).toString() === f.today.toString().split(' ').slice(0, 4).toString()) {
 					style['border-radius'] = '50%'
 					style['border'] = '2px solid #95c4ff'
 					style['background-color'] = 'none'
@@ -229,9 +218,12 @@
 				}
 			},
 			goToToday () {
-				this.selectedMonth = this.today.getMonth()
-				this.selectedYear = this.today.getYear() - 100 + 2000
+				this.selectedMonth = f.today.getMonth()
+				this.selectedYear = f.today.getYear() - 100 + 2000
 			},
+			openEventModal (id) {
+				f.goToPage({ page: 'event', args: { id: id } })
+			}
 		}
 	}
 </script>

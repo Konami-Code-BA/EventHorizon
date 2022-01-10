@@ -43,7 +43,7 @@
 		},
 		computed: {
 			url () {
-				return f.domain+store.path
+				return f.currentUrl
 			},
 		},
 		async mounted () {

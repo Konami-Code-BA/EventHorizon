@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import temp from '@/views/temp'
-import front from '@/views/front'
+import home from '@/views/home'
 
 Vue.use(Router)
 
@@ -24,9 +24,9 @@ const router = new Router({
         component: temp,
         meta: { userGroups: [] },
     }, {
-        path: '/front',
-        name: 'front',
-        component: front,
+        path: '/home',
+        name: 'home',
+        component: home,
         meta: { userGroups: [] },
     }]
 })

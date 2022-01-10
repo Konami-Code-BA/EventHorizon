@@ -12,7 +12,7 @@
 		props: {
 		},
 		mounted () {
-			this.$router.push({ name: 'front', params: this.$route.params })
+			this.$router.push({ name: 'home', params: this.$route.params })
 		},
 		methods: {
 		}
