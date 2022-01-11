@@ -1,12 +1,7 @@
 <template>
-	<div class="main">
-		<div class="flex-row" style="align-items: center; justify-content: space-between; height: 60px;">
-			<div style="width: 16px"></div>
-			<h2 style="text-align: center; max-width: 80%; overflow-x: scroll;">{{event.name}}</h2>
-			<button v-on:click.prevent="$emit('closeModals')" class="no-border-button x-button" style="align-self: flex-start">
-				✖
-			</button>
-			<!-- let say we come here from map. and we go back. itd be cool if list and calendar are focuson on this event -->
+	<div class="main" v-if="store.events.selected">
+		<div class="flex-row" style="align-items: center; justify-content: center; height: 60px;">
+			<h2 style="max-width: 80%; overflow-x: scroll;">{{event.name}}</h2>
 		</div>
 		<div class="flex-table">
 			<div class="flex-row" style="justify-content: space-between">
@@ -156,7 +151,7 @@
 		data () {
 			return {
 				store: store,
-				event: null,  // just make sure the key fro this component has event in it
+				event: store.events.selected,  // just make sure the key fro this component has event in it
 			}
 		},
 		computed: {
@@ -164,7 +159,7 @@
 				return f.isInvited(this.event)
 			},
 		},
-		created () {
+		mounted () {
 			this.store.events.selected = f.filterEvents(this.store.events.all, f.currentPage.args.id, ['id'], true)[0]
 			this.event = this.store.events.selected
 		},

@@ -1,7 +1,7 @@
 <template>
 	<div class="main" style="justify-content: center;">
 		<div style="width: 80%">
-			<div style="font-size: 24px; align-self: flex-start">{{ t('LOGIN') }}</div>
+			<div style="font-size: 24px; align-self: flex-start">{{ t('LOGIN WITH EMAIL') }}</div>
 			<form v-on:keyup.enter="login()">
 				<div>
 					<input :placeholder="t('EMAIL')" v-model="emailInput" type="text"
@@ -29,7 +29,7 @@
 				<small>{{t(passwordError)}}</small>
 			</div>
 			<button v-on:click.prevent="login()" class="button">
-				{{ t('LOGIN') }}
+				{{ t('LOGIN WITH EMAIL') }}
 			</button>
 			<!--button class="no-border-button small-button" v-on:click.prevent="sendEmail()">
 				<small><small>{{t('FORGOT PASSWORD')}}</small></small>
@@ -38,19 +38,13 @@
 			<div class="line-height"/>
 			<div class="line-height"/>
 			<button v-on:click.prevent="goToPage({ page: 'registerWithEmail', args: {} })" class="button">
-				{{t('NEW USER REGISTRATION')}}
+				{{t('REGISTER EMAIL')}}
 			</button>
 			<div class="line-height"/>
-			<button v-on:click.prevent="loginByLine()" class="button line-coloring">
-				<div class="line-button">
-					<div class="line-alignment">
-						<div>
-							<img src="@/assets/line.png" class="line-img">
-						</div>
-						<div>
-							LINE
-						</div>
-					</div>
+			<button v-on:click.prevent="loginByLine()" class="button line-coloring" style="display: flex; flex-direction: row; align-items: center; justify-items: center;">
+				<img src="@/assets/line.png" style="height: 27px;">
+				<div>
+					&nbsp;{{t('LINE LOGIN / REGISTER')}}
 				</div>
 			</button>
 		</div>
@@ -82,7 +76,6 @@
 			await this.tryLineNewDevice()
 			this.passwordHasErrors()
 			this.emailHasErrors()
-			this.$emit('endLoading')
 			f.focusCursor(document, 'email')
 		},
 		watch: {
@@ -100,12 +93,12 @@
 					return
 				}
 				this.showPassword = false
-				this.$emit('startLoading')
+				this.store.loading = true
 				let user = await api.login({'email': this.emailInput, 'password': this.passwordInput})
-				this.$emit('endLoading')
 				if (!user.error) {
 					f.goToPage(f.previousPage)
 					window.initMap()
+					this.store.loading = false
 				} else if (user.error === 'This email is not registered') {
 					this.emailError = user.error
 				} else if (user.error === 'Incorrect password') {
@@ -141,7 +134,7 @@
 				if (this.emailInput.length < 1) {
 					this.emailError = 'Required'
 					return true
-				} else if (this.hasInvalidEmailStructure() || this.hasIllegalSymbols(this.emailInput)) {
+				} else if (f.hasInvalidEmailStructure(this.emailInput) || f.hasIllegalSymbols(this.emailInput)) {
 					this.emailError = 'This is an impossible email'
 					return true
 				} else if (this.emailInput.length > 75) {
@@ -152,31 +145,6 @@
 					return false
 				}
 			},
-			hasIllegalSymbols (value) {
-				let symbols = '`~!#$%^&*()=[{]}\\|;:\'",<>/?'
-				for (let i = 0; i < symbols.length; i++) {
-					if (value.includes(symbols[i])) {
-						return true
-					}
-				}
-				return false
-			},
-			hasInvalidEmailStructure () {
-				let atSplit = this.emailInput.split('@')
-				if (atSplit.length != 2) {
-					return true
-				}
-				let [mailPrefix, mailDomain] = atSplit
-				let periodSplit = mailDomain.split('.')
-				if (periodSplit.length != 2) {
-					return true
-				}
-				let [domainPrefix, domainSuffix] = periodSplit
-				if (mailPrefix.length < 1 || domainPrefix.length < 1 || domainSuffix.length < 2) {
-					return true
-				}
-				return false
-			},
 			shakeFunction () {
 				this.shakeIt = true
 				setTimeout(() => { this.shakeIt = false; }, 1000)
@@ -185,24 +153,41 @@
 				return str.replace(new RegExp(match, 'g'), () => replace);
 			},
 			async loginByLine () {
-				this.$emit('startLoading')
+				this.store.loading = true
 				let loginChannelId = await api.secretsApi('login-channel-id')
 				let state = await api.secretsApi('new-random-secret')
 				document.cookie = `state=${state}; path=/`
-				let lineLoginRedirectUrl = 'https%3A%2F%2Fwww.eventhorizon.vip%2FloginRegister'
+				let lineLoginRedirectUrl = 'https%3A%2F%2Fwww.eventhorizon.vip'
 				if (process.env.PYTHON_ENV == 'development') {
-					lineLoginRedirectUrl = 'http%3A%2F%2F127.0.0.1%3A8080%2FloginRegister'
+					lineLoginRedirectUrl = 'http%3A%2F%2F127.0.0.1%3A8080'
 				} else if (process.env.PYTHON_ENV == '"test"') {
-					lineLoginRedirectUrl = 'https%3A%2F%2Fevent-horizon-test.herokuapp.com%2FloginRegister'
+					lineLoginRedirectUrl = 'https%3A%2F%2Fevent-horizon-test.herokuapp.com'
+				}
+				lineLoginRedirectUrl += '%2F%3Fpage%3DloginRegister%26next%3D' + f.previousPage.page
+				let argKeys = Object.keys(f.previousPage.args)
+				if (argKeys.length > 0) {
+					lineLoginRedirectUrl += '%26' + argKeys[0] + '%3D' + f.previousPage.args[argKeys[0]]  // could add more with a for loop
 				}
 				window.location.replace(`https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=${loginChannelId}&redirect_uri=${lineLoginRedirectUrl}&state=${state}&prompt=consent&bot_prompt=aggressive&scope=profile%20openid`)
 			},
 			async tryLineNewDevice () {
-				if (this.$route.query.code && this.stateCookie === this.$route.query.state) {
-					this.$emit('startLoading')
-					await api.lineNewDevice(this.$route.query.code, 'loginRegister')
-					this.$emit('endLoading')
-					f.goToPage({ page: 'home', args: {} })
+				if (f.currentPage && f.currentPage.args.code && this.stateCookie === f.currentPage.args.state) {
+					let uri = '?page=loginRegister&next=' + f.currentPage.args.next
+					let args = {...f.currentPage.args}
+					delete args.code
+					delete args.friendship_status_changed
+					delete args.state
+					delete args.next
+					let keys = Object.keys(args)
+					if (keys.length > 0) {
+						uri += '&' + keys[0] + '=' + args[keys[0]]  // could add more with a for loop
+					}
+					await api.lineNewDevice(f.currentPage.args.code, uri)
+					let finalArgs = {}
+					if (keys.length > 0) {
+						finalArgs[keys[0]] = args[keys[0]]  // could add more with a for loop
+					}
+					f.goToPage({ page: f.currentPage.args.next, args: finalArgs })
 				}
 			},
 		} // methods
@@ -214,18 +199,6 @@
 		color: white;
 		padding: 0;
 		border-color: #00b300;
-	}
-	.line-alignment {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		width: 90px;
-		justify-content: space-between;
-		height: inherit !important;
-	}
-	.line-img {
-		height: 27px;
-		transform: translate(0, 2px);
 	}
 	.button {
 		width: 100%;

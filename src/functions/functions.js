@@ -24,6 +24,10 @@ export default {
     get today() {
         return new Date()
     },
+    get queryFromUrl() {
+        let urlSearchParams = new URLSearchParams(window.location.search)
+        return Object.fromEntries(urlSearchParams.entries())
+    },
     goToPage(pageDict) {
         store.pages.push(pageDict)
     },
@@ -109,5 +113,30 @@ export default {
             return event[0]
         }
         return event
+    },
+    hasInvalidEmailStructure(email) {
+        let atSplit = email.split('@')
+        if (atSplit.length != 2) {
+            return true
+        }
+        let [mailPrefix, mailDomain] = atSplit
+        let periodSplit = mailDomain.split('.')
+        if (periodSplit.length != 2) {
+            return true
+        }
+        let [domainPrefix, domainSuffix] = periodSplit
+        if (mailPrefix.length < 1 || domainPrefix.length < 1 || domainSuffix.length < 2) {
+            return true
+        }
+        return false
+    },
+    hasIllegalSymbols(value) {
+        let symbols = '`~!#$%^&*()=[{]}\\|;:\'",<>/?'
+        for (let i = 0; i < symbols.length; i++) {
+            if (value.includes(symbols[i])) {
+                return true
+            }
+        }
+        return false
     },
 }

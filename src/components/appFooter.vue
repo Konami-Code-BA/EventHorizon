@@ -7,9 +7,7 @@
 					<img src="@/assets/homeIcon.png" class="icon" style="margin-bottom: 2px;"/>
 				</div>
 				<div slot="2">
-					<img v-if="isAuthenticatedUser" src="@/assets/plusIcon.png" class="icon"
-							style="margin-bottom: 1px;"/>
-					<img v-else src="@/assets/greyPlusIcon.png" class="icon" style="margin-bottom: 1px;"/>
+					<img src="@/assets/plusIcon.png" class="icon" style="margin-bottom: 1px;"/>
 				</div>
 				<div slot="3">
 					<img v-if="isAuthenticatedUser" src="@/assets/gearIcon.png" class="icon"
@@ -86,7 +84,6 @@
 			},
 		},
 		mounted () {
-			this.$emit('endLoading')
 		},
 		watch: {
 		},
@@ -99,11 +96,7 @@
 				f.goToPage({ page: 'home', args: {} })
 			},
 			addEvent () {
-				if(this.isAuthenticatedUser) {
-					f.goToPage({ page: 'addEvent', args: {} })
-				} else if (f.currentPage.page != 'loginRegister') {
-					f.goToPage({ page: 'loginRegister', args: {} })
-				}
+				f.goToPage({ page: 'addEvent', args: {} })
 			},
 			settings () {
 				if(this.isAuthenticatedUser) {

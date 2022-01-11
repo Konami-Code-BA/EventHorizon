@@ -1,7 +1,6 @@
 <template>
 	<div class="main" style="display: flex; flex-direction: column; justify-content: center">
-		<register-with-email-internal style="width: 80%;" @startLoading="$emit('startLoading')"
-			@endLoading="$emit('endLoading')" :next="'home'"/>
+		<register-with-email-internal style="width: 80%;" :next="'home'"/>
 	</div>
 </template>
 <script>
@@ -16,7 +15,6 @@
 			}
 		},
 		async mounted () {
-			this.$emit('endLoading')
 		},
 		watch: {
 		},

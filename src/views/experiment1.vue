@@ -33,7 +33,6 @@
 			}
 		},
 		async mounted () {
-			this.$emit('endLoading')
 		},
 		methods: {
 			t (w) { return translations.t(w) },

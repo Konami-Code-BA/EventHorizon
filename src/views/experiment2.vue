@@ -20,8 +20,6 @@
 			}
 		},
 		async mounted () {
-			this.$emit('endLoading')
-			console.log('RECEIVING QUERY', this.$route.query.id)
 		},
 		methods: {
 			t (w) { return translations.t(w) },

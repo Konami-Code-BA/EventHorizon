@@ -113,7 +113,6 @@
 				}
 				this.showPassword = false
 				this.showPassword2 = false
-				this.$emit('startLoading')
 				if (this.includeDisplayName) {
 					let user = await api.registerWithEmail(this.emailInput, this.passwordInput,
 							this.displayNameInput)
@@ -123,11 +122,9 @@
 				if (!user.error) {
 					if (this.next) {
 						f.goToPage(this.next)
-						this.$emit('endLoading')
 						return
 					} else {
 						this.$emit('closeModals')
-						this.$emit('endLoading')
 						return
 					}
 				} else if (user.error == 'Incorrect password for this email') {
@@ -139,7 +136,6 @@
 					this.showError = true
 					this.shakeFunction()
 				}
-				this.$emit('endLoading')
 			},
 			showButton () {
 				f.focusCursor(document, 'password')
@@ -177,14 +173,13 @@
 				}
 			},
 			emailHasErrors() {
-				if (this.passwordError
-						=== 'Incorrect password for this email') {
+				if (this.passwordError === 'Incorrect password for this email') {
 					this.passwordError = ''
 				}
 				if (this.emailInput.length < 1) {
 					this.emailError = 'Required'
 					return true
-				} else if (this.hasInvalidEmailStructure() || this.hasIllegalSymbols(this.emailInput)) {
+				} else if (f.hasInvalidEmailStructure(this.emailInput) || f.hasIllegalSymbols(this.emailInput)) {
 					this.emailError = 'This is an impossible email'
 					return true
 				} else if (this.emailInput.length > 75) {
@@ -199,7 +194,7 @@
 				if (this.displayNameInput.length < 1) {
 					this.displayNameError = 'Required'
 					return true
-				} else if (this.hasIllegalSymbols(this.displayNameInput)) {
+				} else if (f.hasIllegalSymbols(this.displayNameInput)) {
 					this.displayNameError = 'Only these symbols are allowed: . _ - @'
 					return true
 				} else if (this.displayNameInput.length > 40) {
@@ -209,31 +204,6 @@
 					this.displayNameError = ''
 					return false
 				}
-			},
-			hasIllegalSymbols (value) {
-				let symbols = '`~!#$%^&*()=[{]}\\|;:\'",<>/?'
-				for (let i = 0; i < symbols.length; i++) {
-					if (value.includes(symbols[i])) {
-						return true
-					}
-				}
-				return false
-			},
-			hasInvalidEmailStructure () {
-				let atSplit = this.emailInput.split('@')
-				if (atSplit.length != 2) {
-					return true
-				}
-				let [mailPrefix, mailDomain] = atSplit
-				let periodSplit = mailDomain.split('.')
-				if (periodSplit.length != 2) {
-					return true
-				}
-				let [domainPrefix, domainSuffix] = periodSplit
-				if (mailPrefix.length < 1 || domainPrefix.length < 1 || domainSuffix.length < 2) {
-					return true
-				}
-				return false
 			},
 			shakeFunction () {
 				this.shakeIt = true

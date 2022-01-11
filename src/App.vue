@@ -1,31 +1,19 @@
 <template>
 	<div id="app">
-		<div v-show="!loading" class="app">
-			<app-header
-					@startLoading="headerLoading=true"
-					@endLoading="headerLoading=false"
-			/>
+		<div v-show="!store.loading" class="app" v-if="initialLoadCompleted">
+			<app-header/>
 			<router-view
-					@startLoading="routerLoading=true"
-					@endLoading="routerLoading=false"
 					:key="$route.fullPath"
 					class="router"
-					v-show="page === 'home'"
-			/>
+					v-show="page === 'home'"/>
 			<modal-view
-					@startLoading="modalLoading=true"
-					@endLoading="modalLoading=false"
 					class="router"
 					v-show="page != 'home'"
-					:key="page"
-			/>
-			<app-footer
-					@startLoading="footerLoading=true"
-					@endLoading="footerLoading=false"
-			/>
+					:key="page"/>
+			<app-footer/>
 		</div>
-		<div class="loading" v-if="loading"/>
-		<opening-logo class="load" :class="fadeOutClass" v-if="load"/>
+		<div class="loading" v-if="store.loading"/>
+		<opening-logo class="opening" :class="fadeOutClass" v-if="opening"/>
 	</div>
 </template>
 
@@ -49,14 +37,10 @@
 		data () {
 			return {
 				store: store,
-				headerLoading: true,
-				routerLoading: true,
-				modalLoading: true,
-				footerLoading: true,
-				loading: true,
-				load: true,
+				opening: true,
 				fadeOutClass: null,
 				page: null,
+				initialLoadCompleted: false,
 			}
 		},
 		async created () {
@@ -86,28 +70,19 @@
 				scrip.src = `https://maps.googleapis.com/maps/api/js?v=weekly&key=${apiKey}&callback=initMap`
 				document.head.appendChild(scrip)
 			}
+
+			this.initialLoadCompleted = true
+			store.loading = false
 		},
 		async mounted () {
 			// openingLogo
 			await new Promise(r => setTimeout(r, 2000))
 			this.fadeOutClass = 'fade-out'
 			await new Promise(r => setTimeout(r, 1000))
-			this.load = false
+			this.opening = false
 			this.fadeOutClass = null
 		},
 		watch: {
-			'headerLoading' () {
-				this.checkLoading()
-			},
-			'routerLoading' () {
-				this.checkLoading()
-			},
-			'modalLoading' () {
-				this.checkLoading()
-			},
-			'footerLoading' () {
-				this.checkLoading()
-			},
 			'store.pages' () {
 				this.page = f.currentPage.page
 				window.history.pushState({ path: f.currentUrl }, '', f.currentUrl)
@@ -116,11 +91,7 @@
 		methods: {
 			t (w) { return translations.t(w) },
 			checkLoading () {
-				if (this.headerLoading || this.routerLoading || this.modalLoading || this.footerLoading) {
-					this.loading = true
-				} else if (!this.headerLoading && !this.routerLoading && !this.modalLoading && !this.footerLoading) {
-					this.loading = false
-				}
+
 			},
 		},
 	}
@@ -357,7 +328,7 @@
 			background-color: rgba(0, 0, 0, .5);
 			border: 2px solid rgba(255, 255, 255, .3);
 		}
-		.load {
+		.opening {
 			position: fixed;
 			z-index: 100000;
 			top: 0;
