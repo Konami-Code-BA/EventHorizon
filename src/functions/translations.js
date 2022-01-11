@@ -6,9 +6,9 @@ export default {
             'EN': 'REACH OUT TO NEW HORIZONS',
             'JP': '新たな地平線を求めて'
         },
-        'LOGIN': {
-            'EN': 'LOGIN',
-            'JP': 'ログイン'
+        'LOGIN WITH EMAIL': {
+            'EN': 'LOGIN WITH EMAIL',
+            'JP': 'Eメールでログイン'
         },
         'REGISTER': {
             'EN': 'REGISTER',
@@ -18,9 +18,17 @@ export default {
             'EN': 'LOGIN / REGISTER',
             'JP': 'ログイン・登録'
         },
-        'NEW USER REGISTRATION': {
-            'EN': 'NEW USER REGISTRATION',
-            'JP': '新規登録'
+        'REGISTER EMAIL': {
+            'EN': 'REGISTER EMAIL',
+            'JP': 'Eメールで新規登録'
+        },
+        'LINE LOGIN / REGISTER': {
+            'EN': 'LINE LOGIN / REGISTER',
+            'JP': 'LINEでログイン/新規登録'
+        },
+        'ADD LINE': {
+            'EN': 'ADD LINE',
+            'JP': 'LINE登録'
         },
         'MENU': {
             'EN': 'MENU',

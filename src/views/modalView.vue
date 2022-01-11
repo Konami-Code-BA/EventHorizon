@@ -1,26 +1,17 @@
 <template>
 	<div>
-		<event v-if="page === 'event'"/>
+		<event v-if="page === 'event'"
+				:key="page + 'event'"/>
 		<login-register v-show="page === 'loginRegister'"
-				:key="page + 'loginRegister'"
-				@startLoading="$emit('startLoading')"
-				@endLoading="$emit('endLoading')"/>
+				:key="page + 'loginRegister'"/>
 		<register-with-email v-show="page === 'registerWithEmail'"
-				:key="page + 'registerWithEmail'"
-				@startLoading="$emit('startLoading')"
-				@endLoading="$emit('endLoading')"/>
+				:key="page + 'registerWithEmail'"/>
 		<add-event v-show="page === 'addEvent'"
-				:key="page + 'addEvent'"
-				@startLoading="$emit('startLoading')"
-				@endLoading="$emit('endLoading')"/>
+				:key="page + 'addEvent'"/>
 		<settings v-show="page === 'settings'"
-				:key="page + 'settings'"
-				@startLoading="$emit('startLoading')"
-				@endLoading="$emit('endLoading')"/>
+				:key="page + 'settings'"/>
 		<aboutUs v-show="page === 'aboutUs'"
-				:key="page + 'aboutUs'"
-				@startLoading="$emit('startLoading')"
-				@endLoading="$emit('endLoading')"/>
+				:key="page + 'aboutUs'"/>
 	</div>
 </template>
 <script>
@@ -50,7 +41,6 @@
 		},
 		computed: {
 			page () {
-				console.log('here', f.currentPage.page)
 				if (f.currentPage) {
 					return f.currentPage.page
 				}
@@ -63,7 +53,6 @@
 		//	},
 		//},
 		mounted () {
-			this.$emit('endLoading')
 		},
 		methods: {
 		}

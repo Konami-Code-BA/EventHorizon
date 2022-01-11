@@ -105,7 +105,6 @@
 		watch: {
 		},
 		async mounted () {
-			this.$emit('endLoading')
 		},
 		methods: {
 			t (w) { return translations.t(w) },
@@ -137,7 +136,8 @@
 				this.selectedTab = 0
 			},
 			async logout () {
-				this.$emit('startLoading')
+				this.store.loading = true
+				f.goToPage({ page: 'home', args: {} })
 				await api.logout()
 				location.reload()
 			},

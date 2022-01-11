@@ -1,5 +1,5 @@
 <template>
-	<div v-if="loaded">
+	<div>
 		<div class="main" style="padding-top: 5px;">
 			<div class="viewer filters" style="display: flex; flex-direction: column; align-items: center;
 					width: 100%; min-height: 100px; height: 100px;">
@@ -10,7 +10,7 @@
 					</div>
 					<div style="position: absolute; right: 2%;">
 						<button style="background: none; border: none"
-								v-on:click.prevent="showPeopleInfo = !showPeopleInfo">
+								v-on:click.prevent="showInformation = 'peopleFilters'">
 							<img src="@/assets/iIcon.png" class="icon" style="padding: 3px;" id="people-info"/>
 						</button>
 					</div>
@@ -69,7 +69,7 @@
 					</div>
 					<div style="position: absolute; right: 2%;">
 						<button style="background: none; border: none"
-								v-on:click.prevent="showEventsInfo = !showEventsInfo">
+								v-on:click.prevent="showInformation = 'events'">
 							<img src="@/assets/iIcon.png" class="icon" style="padding: 3px;" id="events-info"/>
 						</button>
 					</div>
@@ -95,11 +95,13 @@
 			<events-calendar class="viewer events" v-show="selectedTab==3"
 					:key="createComponentKey('cal')"/>
 		</div>
+		<information v-if="showInformation" :closeInfo="() => {showInformation=null}" :whichInfo="showInformation"/>
 	</div>
 </template>
 <script>
 	import store from '@/store.js'
 	import modal from '@/components/modal.vue'
+	import information from '@/components/information'
 	import tabs from '@/components/tabs.vue'
 	import eventsMap from '@/components/eventsMap.vue'
 	import eventsCalendar from '@/components/eventsCalendar.vue'
@@ -111,6 +113,7 @@
 		name: 'home',
 		components: {
 			modal,
+			information,
 			tabs,
 			eventsMap,
 			eventsCalendar,
@@ -120,10 +123,10 @@
 			return {
 				store: store,
 				selectedTab: 1,
-				loaded: false,
 				hideTop: false,
 				filters: {'all': true, 'mine': false, 'allPeople': false},
 				showPeopleInfo: false,
+				showInformation: null,
 			}
 		},
 		computed : {
@@ -136,16 +139,14 @@
 			if (keys.length === 0) {
 				f.goToPage({ page: 'home', args: {} }) // this will push the given parameters as the initial page info
 			} else if (keys.length === 1) {
-				f.goToPage({ page: params[keys[0]], args: {} })
+				f.goToPage({ page: params.page, args: {} })
 			} else {
-				let page = params[keys[0]]
-				delete params[keys[0]]
+				let page = params.page
+				delete params.page
 				f.goToPage({ page: page, args: params })
 			}
 		},
 		async mounted () {
-			this.$emit('endLoading')
-			this.loaded = true
 		},
 		methods: {
 			t (w) { return translations.t(w) },
@@ -192,7 +193,7 @@
 					}
 				}
 				this.doFiltering()
-			}
+			},
 		} // methods
 	} // export
 </script>

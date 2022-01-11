@@ -122,7 +122,6 @@
 			}
 			this.date = year + '-' + month + '-' + day
 			this.time = hour + ':' + minute
-			this.$emit('endLoading')
 		},
 		methods: {
 			t (w) { return translations.t(w) },
@@ -140,11 +139,9 @@
 					let image_id = await this.saveImage()
 					data['images'] = [image_id]
 				}
-				this.$emit('startLoading')
 				let newEvent = await api.createEvent(data)
 				await f.getEvents()
 				f.goToPage({ page: 'event', args: { id: newEvent.id}})
-				this.$emit('endLoading')
 			},
 			async saveImage () {
 				let formData = new FormData()
