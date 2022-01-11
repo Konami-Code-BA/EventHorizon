@@ -15,4 +15,5 @@ export default {
         all: [],
         mine: [],
     },
+    loading: true,
 }

@@ -15,16 +15,10 @@
 						:key="store.user.do_get_emails"/>
 			</div>
 			<div class="line-height"/>
-			<button v-on:click.prevent="loginByLine()" class="button line-coloring">
-				<div class="line-button">
-					<div class="line-alignment">
-						<div>
-							<img src="@/assets/line.png" class="line-img">
-						</div>
-						<div>
-							ADD LINE
-						</div>
-					</div>
+			<button v-on:click.prevent="loginByLine()" class="button line-coloring" style="display: flex; flex-direction: row; align-items: center; justify-items: center;">
+				<img src="@/assets/line.png" style="height: 27px;">
+				<div>
+					&nbsp;{{ t('ADD LINE') }}
 				</div>
 			</button>
 			<!--div>
@@ -50,8 +44,7 @@
 						✖
 					</button>
 				</div>
-				<register-with-email-internal @startLoading="$emit('startLoading')" @endLoading="$emit('endLoading')"
-					:includeDisplayName="false" @closeModals="closeAddEmailModal()"/>
+				<register-with-email-internal :includeDisplayName="false" @closeModals="closeAddEmailModal()"/>
 			</div>
 		</modal>
 	</div>
@@ -79,7 +72,6 @@
 		},
 		async mounted () {
 			await this.tryLineNewDevice()
-			this.$emit('endLoading')
 		},
 		methods: {
 			t (w) { return translations.t(w) },
@@ -100,7 +92,6 @@
 				return str.replace(new RegExp(match, 'g'), () => replace);
 			},
 			async loginByLine () {
-				this.$emit('startLoading')
 				let loginChannelId = await api.secretsApi('login-channel-id')
 				let state = await api.secretsApi('new-random-secret')
 				document.cookie = `state=${state}; path=/`
@@ -114,9 +105,7 @@
 			},
 			async tryLineNewDevice () {
 				if (this.$route.query.code && this.stateCookie === this.$route.query.state) {
-					this.$emit('startLoading')
-					await api.lineNewDevice(this.$route.query.code, 'settings')
-					this.$emit('endLoading')
+					await api.lineNewDevice(this.$route.query.code, '?page=loginRegister')
 				}
 			}
 		} // methods
