@@ -167,7 +167,6 @@
 		created () {
 			this.store.events.selected = f.filterEvents(this.store.events.all, f.currentPage.args.id, ['id'], true)[0]
 			this.event = this.store.events.selected
-			console.log('I AM HERE', this.event)
 		},
 		methods: {
 			t (w) { return translations.t(w) },

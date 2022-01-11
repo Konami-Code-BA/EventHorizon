@@ -109,8 +109,8 @@
 		},
 		methods: {
 			t (w) { return translations.t(w) },
-			goToPage (page) {
-				f.goToPage({ page: page, args: {} })
+			goToPage (pageDict) {
+				f.goToPage(pageDict)
 			},
 			selectATab (tab) {
 				this.selectedTab = tab
