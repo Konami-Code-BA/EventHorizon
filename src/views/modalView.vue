@@ -50,6 +50,7 @@
 		},
 		computed: {
 			page () {
+				console.log('here', f.currentPage.page)
 				if (f.currentPage) {
 					return f.currentPage.page
 				}
