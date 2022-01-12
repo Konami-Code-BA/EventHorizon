@@ -31,6 +31,7 @@
 			<button v-on:click.prevent="login()" class="button">
 				{{ t('LOGIN WITH EMAIL') }}
 			</button>
+			<br>
 			<div style="width: 100%; display: flex; flex-direction: column; justify-content: center;">
 				<button class="link-button" v-on:click.prevent="resetPassword()">
 					Forgot Password
@@ -63,8 +64,6 @@
 	import f from '@/functions/functions.js'
 	export default {
 		name: 'loginRegister',
-		components: {
-		},
 		data () {
 			return {
 				stateCookie: JSON.parse('{"' + this.replaceAll(this.replaceAll(document.cookie, '=', '": "'), '; ', '", "') + '"}')['state'],
@@ -101,7 +100,7 @@
 				this.store.loading = true
 				let user = await api.login({'email': this.emailInput, 'password': this.passwordInput})
 				if (!user.error) {
-					f.goToPage(f.previousPage)
+					f.goToPage(this.store.lastNonLoginRegisterPage)
 					window.initMap()
 					this.store.loading = false
 				} else if (user.error === 'This email is not registered') {
@@ -168,31 +167,15 @@
 				} else if (process.env.PYTHON_ENV == '"test"') {
 					lineLoginRedirectUrl = 'https%3A%2F%2Fevent-horizon-test.herokuapp.com'
 				}
-				lineLoginRedirectUrl += '%2F%3Fpage%3DloginRegister%26next%3D' + f.previousPage.page
-				let argKeys = Object.keys(f.previousPage.args)
-				if (argKeys.length > 0) {
-					lineLoginRedirectUrl += '%26' + argKeys[0] + '%3D' + f.previousPage.args[argKeys[0]]  // could add more with a for loop
-				}
+				lineLoginRedirectUrl += f.createUriForReturnFromLogin(f.currentPage, this.store.lastNonLoginRegisterPage, true)
 				window.location.replace(`https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=${loginChannelId}&redirect_uri=${lineLoginRedirectUrl}&state=${state}&prompt=consent&bot_prompt=aggressive&scope=profile%20openid`)
 			},
 			async tryLineNewDevice () {
 				if (f.currentPage && f.currentPage.args.code && this.stateCookie === f.currentPage.args.state) {
-					let uri = '?page=loginRegister&next=' + f.currentPage.args.next
-					let args = {...f.currentPage.args}
-					delete args.code
-					delete args.friendship_status_changed
-					delete args.state
-					delete args.next
-					let keys = Object.keys(args)
-					if (keys.length > 0) {
-						uri += '&' + keys[0] + '=' + args[keys[0]]  // could add more with a for loop
-					}
+					let nextPage = f.createNextPageFromCurrentPage(f.currentPage)
+					let uri = f.createUriForReturnFromLogin(f.currentPage, nextPage, false)
 					await api.lineNewDevice(f.currentPage.args.code, uri)
-					let finalArgs = {}
-					if (keys.length > 0) {
-						finalArgs[keys[0]] = args[keys[0]]  // could add more with a for loop
-					}
-					f.goToPage({ page: f.currentPage.args.next, args: finalArgs })
+					f.goToPage(nextPage)
 				}
 			},
 			resetPassword () {

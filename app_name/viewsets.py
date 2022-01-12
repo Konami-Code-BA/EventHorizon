@@ -208,11 +208,11 @@ class UserViewset(viewsets.ModelViewSet):
 
 	def line_new_device(self, request):  # SECURITY: anyone is allowed to make a new line device
 		if config('PYTHON_ENV', default='\'"production"\'') == 'development':  # get url depending on dev, test, or prod
-			uri = 'http://127.0.0.1:8080/' + request.data['path']
+			uri = 'http://127.0.0.1:8080' + request.data['path']
 		elif config('PYTHON_ENV', default='\'"production"\'') == '\'"test"\'':
-			uri = 'https://event-horizon-test.herokuapp.com/' + request.data['path']
+			uri = 'https://event-horizon-test.herokuapp.com' + request.data['path']
 		else:
-			uri = 'https://www.eventhorizon.vip/' + request.data['path']
+			uri = 'https://www.eventhorizon.vip' + request.data['path']
 		url = 'https://api.line.me/oauth2/v2.1/token'  # use code to get access token
 		data = {
 			'grant_type': 'authorization_code',
@@ -253,7 +253,6 @@ class UserViewset(viewsets.ModelViewSet):
 			user = authenticate_login(request)  # login user
 			print('LOGGED IN')
 		return user
-		
 
 	def login(self, request):  # SECURITY: anyone is allowed to login
 		#return authenticate_login(request)  # FOR EMERGENCY LOGIN (also in backends)

@@ -1,6 +1,6 @@
 <template>
 	<div class="main" style="display: flex; flex-direction: column; justify-content: center">
-		<email-password style="width: 80%;" action="resetPassword"/>
+		
 	</div>
 </template>
 <script>
@@ -11,7 +11,7 @@
 	import api from '@/functions/apiFunctions.js'
 	import f from '@/functions/functions.js'
 	export default {
-		name: 'resetPassword',
+		name: 'forgotPassword',
 		components: {
 			modal,
 			emailPassword,

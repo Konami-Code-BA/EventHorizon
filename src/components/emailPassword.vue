@@ -50,7 +50,8 @@
 			</div>
 		</form>
 		<button v-on:click.prevent="emailPassword()" class="button">
-			{{ t('REGISTER') }}
+			{{ action === 'registerWithEmail' ? t('REGISTER') :
+					action === 'addAnEmail' ? t('ADD EMAIL') : t('RESET PASSWORD')}}
 		</button>
 	</div>
 </template>
@@ -82,7 +83,6 @@
 		},
 		props: {
 			action: {},
-			next: { default: null },
 		},
 		async mounted () {
 			if (this.action === 'registerWithEmail') {
@@ -113,21 +113,17 @@
 				}
 				this.showPassword = false
 				this.showPassword2 = false
+				let user = null
 				if (this.action === 'registerWithEmail') {
-					let user = await api.registerWithEmail(this.emailInput, this.passwordInput, this.displayNameInput)
+					user = await api.registerWithEmail(this.emailInput, this.passwordInput, this.displayNameInput)
 				} else if (this.action === 'addAnEmail') {
-					let user = await api.addAnEmail(this.emailInput, this.passwordInput)
+					user = await api.addAnEmail(this.emailInput, this.passwordInput)
 				} else if (this.action === 'changePassword') {
-					let user = await api.changePassword(this.emailInput, this.passwordInput)
-				} else 
+					user = await api.changePassword(this.emailInput, this.passwordInput)
+				}
 				if (!user.error) {
-					if (this.next) {
-						f.goToPage(this.next)
-						return
-					} else {
-						this.$emit('closeModals')
-						return
-					}
+					console.log('AND WHEN I GOT HERE WHAT WAS THE PAGE?', this.store.lastNonLoginRegisterPage)
+					f.goToPage(this.store.lastNonLoginRegisterPage)
 				} else if (user.error == 'Incorrect password for this email') {
 					this.passwordError = user.error
 					this.showError = true

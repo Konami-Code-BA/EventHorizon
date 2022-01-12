@@ -30,6 +30,9 @@ export default {
     },
     goToPage(pageDict) {
         store.pages.push(pageDict)
+        if (!['loginRegister', 'registerWithEmail', 'forgotPassword', 'resetPassword'].includes(pageDict.page)) {
+            store.lastNonLoginRegisterPage = pageDict
+        }
     },
     goBack() {
         if (store.pages.length === 1) {
@@ -138,5 +141,49 @@ export default {
             }
         }
         return false
+    },
+    createUriForReturnFromLogin(loginPageDict, returnToPageDict, encode) {
+        let e = {
+            '/': '%2F',
+            '?': '%3F',
+            '=': '%3D',
+            '&': '%26',
+        }
+        let uri = null
+        let argKeys = Object.keys(returnToPageDict.args)
+        if (encode) {
+            uri = `${e['/']}${e['?']}page${e['=']}${loginPageDict.page}${e['&']}next`
+            uri += `${e['=']}${returnToPageDict.page}`
+        } else {
+            uri = `/?page=${loginPageDict.page}&next=${returnToPageDict.page}`
+        }
+        if (argKeys.length > 0) {
+            for (let i = 0; i < argKeys.length; i++) {
+                if (['code', 'friendship_status_changed', 'state'].includes(argKeys[i])) {
+                    continue
+                }
+                if (encode) {
+                    uri += `${e['&']}${argKeys[i]}${e['=']}${returnToPageDict.args[argKeys[i]]}`
+                } else {
+                    uri += `&${argKeys[i]}=${returnToPageDict.args[argKeys[i]]}`
+                }
+            }
+        }
+        return uri
+    },
+    createNextPageFromCurrentPage(loginPageDict) {
+        let nextArgKeys = Object.keys(loginPageDict.args)
+        let nextPage = loginPageDict.args.next
+        let nextArgs = {}
+        if (nextArgKeys.length > 0) {
+            for (let i = 0; i < nextArgKeys.length; i++) {
+                if (['next', 'code', 'friendship_status_changed', 'state'].includes(nextArgKeys[i])) {
+                    continue
+                } else {
+                    nextArgs[nextArgKeys[i]] = loginPageDict.args[nextArgKeys[i]]
+                }
+            }
+        }
+        return { page: nextPage, args: nextArgs }
     },
 }
