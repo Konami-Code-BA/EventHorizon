@@ -8,6 +8,7 @@ export default {
         groups: [100],
     },
     pages: [],
+    lastNonLoginRegisterPage: null,
     events: {
         selected: null,
         none: [],

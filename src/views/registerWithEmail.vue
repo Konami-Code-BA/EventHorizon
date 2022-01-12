@@ -1,6 +1,6 @@
 <template>
 	<div class="main" style="display: flex; flex-direction: column; justify-content: center">
-		<email-password style="width: 80%;" :next="'home'"/>
+		<email-password style="width: 80%;" action="registerWithEmail"/>
 	</div>
 </template>
 <script>
