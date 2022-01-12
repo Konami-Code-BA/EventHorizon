@@ -4,21 +4,27 @@
 	</div>
 </template>
 <script>
+	import store from '@/store.js'
 	import emailPassword from '@/components/emailPassword.vue'
+	import modal from '@/components/modal.vue'
+	import translations from '@/functions/translations.js'
+	import api from '@/functions/apiFunctions.js'
+	import f from '@/functions/functions.js'
 	export default {
-		name: 'registerWithEmail',
+		name: 'resetPassword',
 		components: {
+			modal,
 			emailPassword,
 		},
 		data () {
 			return {
+				store: store,
 			}
 		},
 		async mounted () {
 		},
-		watch: {
-		},
 		methods: {
+			t (w) { return translations.t(w) },
 		} // methods
 	} // export
 </script>

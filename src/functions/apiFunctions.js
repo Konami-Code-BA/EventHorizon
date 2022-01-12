@@ -97,21 +97,28 @@ export default {
             })
     },
     // USERS ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-    async registerWithEmail(email, password, displayName = null) {
-        if (displayName && displayName !== '') {
-            return await this.userApi('post', null, {
-                command: 'register_with_email',
-                display_name: displayName,
-                email: email,
-                password: password,
-            })
-        } else {
-            return await this.userApi('patch', store.user.id, {
-                command: 'register_email',
-                email: email,
-                password: password,
-            })
-        }
+    async registerWithEmail(email, password, displayName) {
+        return await this.userApi('post', null, {
+            command: 'register_with_email',
+            display_name: displayName,
+            email: email,
+            password: password,
+        })
+    },
+    async addAnEmail(email, password) {
+        return await this.userApi('patch', store.user.id, {
+            command: 'register_email',
+            email: email,
+            password: password,
+        })
+    },
+    async changePassword(email, password, code) {
+        return await this.userApi('patch', null, {
+            command: 'change_password',
+            email: email,
+            password: password,
+            code: code,
+        })
     },
     async login(data) {
         data['command'] = 'login'

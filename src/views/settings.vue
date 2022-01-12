@@ -44,14 +44,14 @@
 						✖
 					</button>
 				</div>
-				<register-with-email-internal :includeDisplayName="false" @closeModals="closeAddEmailModal()"/>
+				<email-password :includeDisplayName="false" @closeModals="closeAddEmailModal()"/>
 			</div>
 		</modal>
 	</div>
 </template>
 <script>
 	import store from '@/store.js'
-	import registerWithEmailInternal from '@/components/registerWithEmailInternal.vue'
+	import emailPassword from '@/components/emailPassword.vue'
 	import modal from '@/components/modal.vue'
 	import translations from '@/functions/translations.js'
 	import api from '@/functions/apiFunctions.js'
@@ -60,7 +60,7 @@
 		name: 'settings',
 		components: {
 			modal,
-			registerWithEmailInternal,
+			emailPassword,
 		},
 		data () {
 			return {
