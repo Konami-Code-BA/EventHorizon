@@ -10,6 +10,8 @@
 				:key="page + 'addEvent'"/>
 		<settings v-show="page === 'settings'"
 				:key="page + 'settings'"/>
+		<reset-password v-show="page === 'resetPassword'"
+				:key="page + 'resetPassword'"/>
 		<aboutUs v-show="page === 'aboutUs'"
 				:key="page + 'aboutUs'"/>
 	</div>
@@ -21,6 +23,7 @@
 	import registerWithEmail from '@/views/registerWithEmail'
 	import addEvent from '@/views/addEvent'
 	import settings from '@/views/settings'
+	import resetPassword from '@/views/resetPassword'
 	import aboutUs from '@/views/aboutUs'
 	import f from '@/functions/functions.js'
 	export default {
@@ -31,6 +34,7 @@
 			registerWithEmail,
 			addEvent,
 			settings,
+			resetPassword,
 			aboutUs,
 		},
 		data () {

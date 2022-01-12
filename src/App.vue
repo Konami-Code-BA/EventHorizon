@@ -213,6 +213,19 @@
 			justify-content: center;
 			white-space: nowrap;
 		}
+		.link-button {
+			background: none;
+			color: #ffe07a;
+			border: none;
+			outline: none;
+			width: auto;
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			justify-content: center;
+			white-space: nowrap;
+  			text-decoration: underline;
+		}
 		input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus,
 		input:-webkit-autofill:active, input[type=text], input[type=email], input[type=password],
 		input[type=text]:focus, input[type=email]:focus, input[type=password]:focus, textarea {
