@@ -1,7 +1,7 @@
 <template>
 	<div style="min-width: 235px">
-		<form v-on:keyup.enter="registerWithEmail()">
-			<div v-if="includeDisplayName">
+		<form v-on:keyup.enter="emailPassword()">
+			<div v-if="action === 'registerWithEmail'">
 				<input :placeholder="t('DISPLAY NAME')" v-model="displayNameInput" type="text" id="displayName"
 						autocorrect="off" autocapitalize="none" style="width: 100%"/>
 				<div class="line-height error-text" :class="{'shake' : shakeIt}">
@@ -49,7 +49,7 @@
 				{{t(password2Error)}}
 			</div>
 		</form>
-		<button v-on:click.prevent="registerWithEmail()" class="button">
+		<button v-on:click.prevent="emailPassword()" class="button">
 			{{ t('REGISTER') }}
 		</button>
 	</div>
@@ -60,7 +60,7 @@
 	import api from '@/functions/apiFunctions.js'
 	import f from '@/functions/functions.js'
 	export default {
-		name: 'registerWithEmailInternal',
+		name: 'emailPassword',
 		components: {
 		},
 		data () {
@@ -81,11 +81,11 @@
 			}
 		},
 		props: {
-			includeDisplayName: { default: true },
+			action: {},
 			next: { default: null },
 		},
 		async mounted () {
-			if (this.includeDisplayName) {
+			if (this.action === 'registerWithEmail') {
 				f.focusCursor(document, 'displayName')
 			} else {
 				f.focusCursor(document, 'email')
@@ -93,7 +93,7 @@
 			this.passwordHasErrors()
 			this.password2HasErrors()
 			this.emailHasErrors()
-			if (this.includeDisplayName) {
+			if (this.action === 'registerWithEmail') {
 				this.displayNameHasErrors()
 			}
 		},
@@ -105,7 +105,7 @@
 		},
 		methods: {
 			t (w) { return translations.t(w) },
-			async registerWithEmail () {
+			async emailPassword () {
 				if (this.passwordError.length > 0 || this.password2Error.length > 0 || this.emailError.length > 0
 						|| this.displayNameError.length > 0) {
 					this.shakeFunction()
@@ -113,12 +113,13 @@
 				}
 				this.showPassword = false
 				this.showPassword2 = false
-				if (this.includeDisplayName) {
-					let user = await api.registerWithEmail(this.emailInput, this.passwordInput,
-							this.displayNameInput)
-				} else {
-					let user = await api.registerWithEmail(this.emailInput, this.passwordInput)
-				}
+				if (this.action === 'registerWithEmail') {
+					let user = await api.registerWithEmail(this.emailInput, this.passwordInput, this.displayNameInput)
+				} else if (this.action === 'addAnEmail') {
+					let user = await api.addAnEmail(this.emailInput, this.passwordInput)
+				} else if (this.action === 'changePassword') {
+					let user = await api.changePassword(this.emailInput, this.passwordInput)
+				} else 
 				if (!user.error) {
 					if (this.next) {
 						f.goToPage(this.next)

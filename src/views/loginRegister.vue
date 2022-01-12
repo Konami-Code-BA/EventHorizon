@@ -31,6 +31,11 @@
 			<button v-on:click.prevent="login()" class="button">
 				{{ t('LOGIN WITH EMAIL') }}
 			</button>
+			<div style="width: 100%; display: flex; flex-direction: column; justify-content: center;">
+				<button class="link-button" v-on:click.prevent="resetPassword()">
+					Forgot Password
+				</button>
+			</div>
 			<!--button class="no-border-button small-button" v-on:click.prevent="sendEmail()">
 				<small><small>{{t('FORGOT PASSWORD')}}</small></small>
 			</button-->
@@ -189,6 +194,9 @@
 					}
 					f.goToPage({ page: f.currentPage.args.next, args: finalArgs })
 				}
+			},
+			resetPassword () {
+				f.goToPage({ page: 'resetPassword', args: {} })
 			},
 		} // methods
 	} // export

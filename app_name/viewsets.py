@@ -155,6 +155,17 @@ class UserViewset(viewsets.ModelViewSet):
 			user = namedtuple('user', 'error')
 			user.error = 'missing email / password info'
 			return user
+		
+	def change_password(self, request, pk=None):
+		user = self.model.objects.get(email=request.data['email'])
+		if user.random_secret == request.data['code']:
+			user.password = make_password(request.data['password'])
+			user.save()
+			user = authenticate_login(request)  # login user
+		else:
+			user = namedtuple('user', 'error')
+			user.error = 'This link can\'t be used'
+		return user
 
 	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
 		return Response()  # SECURITY: this just does nothing
