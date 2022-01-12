@@ -44,7 +44,7 @@
 						✖
 					</button>
 				</div>
-				<email-password :includeDisplayName="false" @closeModals="closeAddEmailModal()"/>
+				<!--email-password @closeModals="closeAddEmailModal()" :next="" action="addAnEmail"/-->
 			</div>
 		</modal>
 	</div>
@@ -92,22 +92,27 @@
 				return str.replace(new RegExp(match, 'g'), () => replace);
 			},
 			async loginByLine () {
+				this.store.loading = true
 				let loginChannelId = await api.secretsApi('login-channel-id')
 				let state = await api.secretsApi('new-random-secret')
 				document.cookie = `state=${state}; path=/`
-				let lineLoginRedirectUrl = 'https%3A%2F%2Fwww.eventhorizon.vip%2Fsettings'
+				let lineLoginRedirectUrl = 'https%3A%2F%2Fwww.eventhorizon.vip'
 				if (process.env.PYTHON_ENV == 'development') {
-					lineLoginRedirectUrl = 'http%3A%2F%2F127.0.0.1%3A8080%2Fsettings'
+					lineLoginRedirectUrl = 'http%3A%2F%2F127.0.0.1%3A8080'
 				} else if (process.env.PYTHON_ENV == '"test"') {
-					lineLoginRedirectUrl = 'https%3A%2F%2Fevent-horizon-test.herokuapp.com%2Fsettings'
+					lineLoginRedirectUrl = 'https%3A%2F%2Fevent-horizon-test.herokuapp.com'
 				}
+				lineLoginRedirectUrl += f.createUriForReturnFromLogin(f.currentPage, f.currentPage, true)
 				window.location.replace(`https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=${loginChannelId}&redirect_uri=${lineLoginRedirectUrl}&state=${state}&prompt=consent&bot_prompt=aggressive&scope=profile%20openid`)
 			},
 			async tryLineNewDevice () {
-				if (this.$route.query.code && this.stateCookie === this.$route.query.state) {
-					await api.lineNewDevice(this.$route.query.code, '?page=loginRegister')
+				if (f.currentPage && f.currentPage.args.code && this.stateCookie === f.currentPage.args.state) {
+					let nextPage = f.createNextPageFromCurrentPage(f.currentPage)
+					let uri = f.createUriForReturnFromLogin(f.currentPage, nextPage, false)
+					await api.lineNewDevice(f.currentPage.args.code, uri)
+					f.goToPage(nextPage)
 				}
-			}
+			},
 		} // methods
 	} // export
 </script>

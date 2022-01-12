@@ -22,6 +22,10 @@ export default {
             'EN': 'REGISTER EMAIL',
             'JP': 'Eメールで新規登録'
         },
+        'RESET PASSWORD': {
+            'EN': 'RESET PASSWORD',
+            'JP': 'パスワードをリセット'
+        },
         'LINE LOGIN / REGISTER': {
             'EN': 'LINE LOGIN / REGISTER',
             'JP': 'LINEでログイン/新規登録'

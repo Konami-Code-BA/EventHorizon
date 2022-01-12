@@ -90,9 +90,6 @@
 		},
 		methods: {
 			t (w) { return translations.t(w) },
-			checkLoading () {
-
-			},
 		},
 	}
 </script>
