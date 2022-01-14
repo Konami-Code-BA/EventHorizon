@@ -5,17 +5,18 @@
 			<form v-on:keyup.enter="login()">
 				<div>
 					<input :placeholder="t('EMAIL')" v-model="emailInput" type="text"
-						id="email" autocorrect="off" autocapitalize="none" style="width: 100%"/>
+						id="email+login" autocorrect="off" autocapitalize="none" style="width: 100%"/>
 				</div>
+
 				<div class="line-height" :class="{'shake' : shakeIt}" style="color: red">
 					<small>{{t(emailError)}}</small>
 				</div>
+
 				<div style="display: flex; flex-direction: row">
 					<input :placeholder="t('PASSWORD')" v-model="passwordInput"
 						:type="[showPassword ? 'text' : 'password']" style="flex-grow: 1; width: 100%"
-						id="password" autocorrect="off" autocapitalize="none"/>
-					<button v-on:click.prevent="showButton()" class="button" style="width: 70px"
-						id="show" type="button">
+						id="password+login" autocorrect="off" autocapitalize="none"/>
+					<button v-on:click.prevent="showButton()" class="button" style="width: 70px" type="button">
 						<small v-if="!showPassword">
 							{{ t('SHOW') }}
 						</small>
@@ -25,9 +26,11 @@
 					</button>
 				</div>
 			</form>
+
 			<div class="line-height" :class="{'shake' : shakeIt}" style="color: red">
 				<small>{{t(passwordError)}}</small>
 			</div>
+			
 			<button v-on:click.prevent="login()" class="button">
 				{{ t('LOGIN WITH EMAIL') }}
 			</button>
@@ -40,13 +43,21 @@
 			<!--button class="no-border-button small-button" v-on:click.prevent="sendEmail()">
 				<small><small>{{t('FORGOT PASSWORD')}}</small></small>
 			</button-->
+
 			<div class="line-height"/>
+
+
 			<div class="line-height"/>
+
+
 			<div class="line-height"/>
+
 			<button v-on:click.prevent="goToPage({ page: 'registerWithEmail', args: {} })" class="button">
 				{{t('REGISTER EMAIL')}}
 			</button>
+
 			<div class="line-height"/>
+
 			<button v-on:click.prevent="loginByLine()" class="button line-coloring" style="display: flex; flex-direction: row; align-items: center; justify-items: center;">
 				<img src="@/assets/line.png" style="height: 27px;">
 				<div>
@@ -80,7 +91,7 @@
 			await this.tryLineNewDevice()
 			this.passwordHasErrors()
 			this.emailHasErrors()
-			f.focusCursor(document, 'email')
+			f.focusCursor(document, 'email+login')
 		},
 		watch: {
 			'passwordInput' () { this.passwordHasErrors() },
@@ -110,7 +121,7 @@
 				}
 			},
 			showButton () {
-				f.focusCursor(document, 'password')
+				f.focusCursor(document, 'password+login')
 				this.showPassword = !this.showPassword
 			},
 			async sendEmail() {

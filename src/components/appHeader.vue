@@ -36,13 +36,17 @@
 						ENGLISH
 					</button>
 				</div>
+
 				<div class="line-height"/>
+
 				<div style="width: 100%">
 					<button v-on:click.prevent="japanese()" class="button">
 						日本語
 					</button>
 				</div>
+
 				<div class="line-height"/>
+
 			</div>
 		</modal>
 		<modal v-if="selectedTab === 4" @closeModals="selectedTab = 0">
@@ -62,14 +66,18 @@
 						{{ t('LOGOUT') }}
 					</button>
 				</div>
+
 				<div class="line-height"/>
+
 				<div style="width: 100%">
 					<button v-on:click.prevent="selectedTab = 0; goToPage({ page: 'aboutUs', args: {} })"
 							class="button">
 						ABOUT US
 					</button>
 				</div>
+
 				<div class="line-height"/>
+
 			</div>
 		</modal>
 		<qr-code-generator v-if="showQrModal" @closeModals="showQrModal=false"/>

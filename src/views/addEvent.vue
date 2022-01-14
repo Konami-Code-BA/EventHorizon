@@ -2,7 +2,9 @@
 	<div>
 		<div class="main">
 			<div style="font-size: 36px;">{{ t('ADD EVENT') }}</div>
+
 			<div class="line-height"/>
+
 			<div style="display: flex; flex-direction: column; align-items: center; width: 80%;">
 				<form v-on:keyup.enter="login()" v-if="isAdmin">
 					<div style="padding-bottom: 5px;">
@@ -187,6 +189,6 @@
 		position: fixed;
 		height: 20px;
 		width: 20px;
-		transform: translate(80px, 0)
+		transform: translate(110px, 0)
 	}
 </style>

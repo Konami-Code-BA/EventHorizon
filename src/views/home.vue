@@ -19,7 +19,8 @@
 						padding-top: 5px; padding-bottom: 5px;">
 					<div style="display: flex; flex-direction: row; width: 100%;">
 						<div>
-							<input type="checkbox" class="checkbox" v-model="filters['all']" @click="filterChange('all')"/>
+							<input type="checkbox" class="checkbox" v-model="filters['all']"
+									@click="filterChange('all')"/>
 						</div>
 						<button class="filter-button button" :class="{ selected : filters['all']}"
 								v-on:click.prevent="filters['all']=!filters['all']; filterChange('all')">
@@ -30,7 +31,8 @@
 					</div>
 					<div style="display: flex; flex-direction: row; width: 100%;">
 						<div>
-							<input type="checkbox" class="checkbox" v-model="filters['mine']" @click="filterChange('mine')"/>
+							<input type="checkbox" class="checkbox" v-model="filters['mine']"
+									@click="filterChange('mine')"/>
 						</div>
 						<button class="filter-button button" :class="{ selected : filters['mine']}"
 								v-on:click.prevent="filters['mine']=!filters['mine']; filterChange('mine')">
@@ -41,7 +43,8 @@
 					</div>
 					<div style="display: flex; flex-direction: row; width: 100%;">
 						<div>
-							<input type="checkbox" class="checkbox" v-model="filters['allPeople']" @click="filterChange('allPeople')"/>
+							<input type="checkbox" class="checkbox" v-model="filters['allPeople']"
+									@click="filterChange('allPeople')"/>
 						</div>
 						<button class="filter-button button" :class="{ selected : filters['allPeople']}" disabled
 								v-on:click.prevent="filters['allPeople']=!filters['allPeople'];
@@ -130,7 +133,9 @@
 			}
 		},
 		computed : {
-			isAuthenticatedUser () { return f.isAuthenticatedUser },
+			isAuthenticatedUser () {
+				return f.isAuthenticatedUser
+			},
 		},
 		async created () {
 			// get query

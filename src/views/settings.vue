@@ -2,7 +2,9 @@
 	<div>
 		<div class="main">
 			<div style="font-size: 36px;">{{ t('SETTINGS') }}</div>
+
 			<div class="line-height"/>
+
 			<button class="button" v-if="store.user.email === ''" v-on:click.prevent="openAddEmailModal()">
 				{{ t('ADD EMAIL ADDRESS') }}
 			</button>
@@ -14,13 +16,27 @@
 				<input type="checkbox" class="checkbox" v-model="store.user.do_get_emails"
 						:key="store.user.do_get_emails"/>
 			</div>
+
 			<div class="line-height"/>
-			<button v-on:click.prevent="loginByLine()" class="button line-coloring" style="display: flex; flex-direction: row; align-items: center; justify-items: center;">
+
+			<button v-on:click.prevent="loginByLine()" class="button line-coloring"
+					style="display: flex; flex-direction: row; align-items: center; justify-items: center;">
 				<img src="@/assets/line.png" style="height: 27px;">
 				<div>
 					&nbsp;{{ t('ADD LINE') }}
 				</div>
 			</button>
+
+			<div class="line-height"/>
+
+			<div v-if="store.user.line_id != ''" class="dual-set">
+				<button class="button" style="width: 100%"
+						v-on:click.prevent="updateUserDoGetLines()">
+					{{ t('GET LINE MESSAGES') }}&nbsp;
+				</button>
+				<input type="checkbox" class="checkbox" v-model="store.user.do_get_lines"
+						:key="store.user.do_get_lines"/>
+			</div>
 			<!--div>
 				<h2>{{ t('CHANGE PASSWORD') }}</h2>
 			</div-->
@@ -77,7 +93,11 @@
 			t (w) { return translations.t(w) },
 			async updateUserDoGetEmails () {
 				store.user.do_get_emails = !store.user.do_get_emails
-				await api.updateUserDoGetEmails()  // update it in the DB
+				await api.updateUserDoGetEmails()
+			},
+			async updateUserDoGetLines () {
+				store.user.do_get_lines = !store.user.do_get_lines
+				await api.updateUserDoGetLines()
 			},
 			openAddEmailModal () {
 				f.setBackButtonToCloseModal(this, window, this.closeAddEmailModal)
@@ -130,7 +150,7 @@
 		position: fixed;
 		height: 20px;
 		width: 20px;
-		transform: translate(60px, 0);
+		transform: translate(110px, 0);
 		z-index: 1;
 	}
 	.line-coloring {

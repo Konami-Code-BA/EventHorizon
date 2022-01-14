@@ -31,13 +31,17 @@
 						{{ t('SHARE QR CODE') }}
 					</button>
 				</div>
+
 				<div class="line-height"/>
+
 				<div style="width: 100%">
 					<button v-on:click.prevent="showShareModal = false; showUrlModal = true" class="button" style="width: 100%">
 						{{ t('SHARE URL') }}
 					</button>
 				</div>
+
 				<div class="line-height"/>
+
 				<div style="width: 100%">
 					<button v-on:click.prevent="showShareModal = false; showImageModal = true" class="button" style="width: 100%">
 						{{ t('SHARE IMAGE') }}
