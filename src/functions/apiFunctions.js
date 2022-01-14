@@ -97,6 +97,11 @@ export default {
             })
     },
     // USERS ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+    async myself() {
+        return await this.userApi('get', null, {
+            command: 'myself', // unused
+        })
+    },
     async registerWithEmail(email, password, displayName) {
         return await this.userApi('post', null, {
             command: 'register_with_email',
@@ -154,12 +159,18 @@ export default {
             do_get_emails: store.user.do_get_emails,
         })
     },
-    async updateUserAlerts(name) {
+    async updateUserDoGetLines() {
         return await this.userApi('patch', store.user.id, {
-            command: 'update_user_alerts',
-            name: name,
+            command: 'update_user_do_get_lines',
+            do_get_lines: store.user.do_get_lines,
         })
     },
+    //async updateUserAlerts(name) {
+    //    return await this.userApi('patch', store.user.id, {
+    //        command: 'update_user_alerts',
+    //        name: name,
+    //    })
+    //},
     // LINE ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     async sendWebhook(data) {
         await this.lineApi('post', '/webhook/', data)

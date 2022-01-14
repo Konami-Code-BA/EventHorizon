@@ -2,23 +2,28 @@
 	<div style="min-width: 235px">
 		<form v-on:keyup.enter="emailPassword()">
 			<div v-if="action === 'registerWithEmail'">
-				<input :placeholder="t('DISPLAY NAME')" v-model="displayNameInput" type="text" id="displayName"
-						autocorrect="off" autocapitalize="none" style="width: 100%"/>
+				<input :placeholder="t('DISPLAY NAME')" v-model="displayNameInput" type="text"
+						:id="`displayName+${action}`" autocorrect="off" autocapitalize="none"
+						style="width: 100%"/>
+
 				<div class="line-height error-text" :class="{'shake' : shakeIt}">
 					{{t(displayNameError)}}
 				</div>
+
 			</div>
 			<div>
 				<input :placeholder="t('EMAIL')" v-model="emailInput" type="email" autocorrect="off"
-						autocapitalize="none" id="email" style="width: 100%"/>
+						autocapitalize="none" :id="`email+${action}`" style="width: 100%"/>
 			</div>
+
 			<div class="line-height error-text" :class="{'shake' : shakeIt}" style="color: red">
 				<small>{{t(emailError)}}</small>
 			</div>
+
 			<div style="display: flex">
 				<input :placeholder="t('PASSWORD')" v-model="passwordInput" :type="[showPassword ? 'text' : 'password']"
-						style="flex-grow: 1" id="password" autocorrect="off" autocapitalize="none"/>
-				<button v-on:click.prevent="showButton()" class="button" style="width: 70px; font-weight: 400" id="show"
+						style="flex-grow: 1" :id="`password+${action}`" autocorrect="off" autocapitalize="none"/>
+				<button v-on:click.prevent="showButton()" class="button" style="width: 70px; font-weight: 400"
 						type="button">
 					<small v-if="!showPassword">
 						{{ t('SHOW') }}
@@ -28,15 +33,17 @@
 					</small>
 				</button>
 			</div>
+
 			<div class="line-height error-text" :class="{'shake' : shakeIt}" style="color: red">
 				{{t(passwordError)}}
 			</div>
+
 			<div style="display: flex">
 				<input :placeholder="t('PASSWORD (AGAIN)')" v-model="password2Input"
-						:type="[showPassword2 ? 'text' : 'password']" style="flex-grow: 1" id="password2"
+						:type="[showPassword2 ? 'text' : 'password']" style="flex-grow: 1" :id="`password2+${action}`"
 						autocorrect="off" autocapitalize="none"/>
 				<button v-on:click.prevent="showButton2()" class="button" style="width: 70px; font-weight: 400"
-						id="show" type="button">
+						type="button">
 					<small v-if="!showPassword2">
 						{{ t('SHOW') }}
 					</small>
@@ -45,9 +52,11 @@
 					</small>
 				</button>
 			</div>
+
 			<div class="line-height error-text" :class="{'shake' : shakeIt}" style="color: red">
 				{{t(password2Error)}}
 			</div>
+			
 		</form>
 		<button v-on:click.prevent="emailPassword()" class="button">
 			{{ action === 'registerWithEmail' ? t('REGISTER') :
@@ -86,9 +95,9 @@
 		},
 		async mounted () {
 			if (this.action === 'registerWithEmail') {
-				f.focusCursor(document, 'displayName')
+				f.focusCursor(document, `displayName+${this.action}`)
 			} else {
-				f.focusCursor(document, 'email')
+				f.focusCursor(document, `email+${this.action}`)
 			}
 			this.passwordHasErrors()
 			this.password2HasErrors()
@@ -135,11 +144,11 @@
 				}
 			},
 			showButton () {
-				f.focusCursor(document, 'password')
+				f.focusCursor(document, `password+${this.action}`)
 				this.showPassword = !this.showPassword
 			},
 			showButton2 () {
-				f.focusCursor(document, 'password2')
+				f.focusCursor(document, `password2+${this.action}`)
 				this.showPassword2 = !this.showPassword2
 			},
 			passwordHasErrors() {

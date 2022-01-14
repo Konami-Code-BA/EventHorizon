@@ -12,20 +12,26 @@
 						This Page QR
 					</button>
 				</div>
+
 				<div class="line-height"/>
+
 				<div style="width: 100%">
 					<button v-on:click.prevent="closeModal=true; selectedQr = instagram; getQr()"
 							class="button">
 						Instagram QR
 					</button>
 				</div>
+
 				<div class="line-height"/>
+
 				<div style="width: 100%">
 					<button v-on:click.prevent="closeModal=true; selectedQr = line; getQr()" class="button">
 						Line QR
 					</button>
 				</div>
+
 				<div class="line-height"/>
+
 			</div>
 		</modal>
 		<modal v-if="image_name!=null" @closeModals="$emit('closeModals')">

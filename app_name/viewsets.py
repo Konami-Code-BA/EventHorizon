@@ -234,6 +234,7 @@ class UserViewset(viewsets.ModelViewSet):
 			user = self.model.objects.get(line_id=profile_response['userId'])
 			user.line_access_token = getAccessToken_response['access_token']
 			user.line_refresh_token = getAccessToken_response['refresh_token']
+			user.do_get_lines = True
 			if user.groups.filter(id=5).exists():  # if this user is a temp line friend
 				user.groups.clear()  # clear temp line friend group
 				user.groups.add(2)  # change to user
@@ -248,6 +249,7 @@ class UserViewset(viewsets.ModelViewSet):
 			user.line_access_token = getAccessToken_response['access_token']
 			user.line_refresh_token = getAccessToken_response['refresh_token']
 			user.do_get_line_display_name = True
+			user.do_get_lines = True
 			user.save()
 			print('SAVED USER')
 			user = authenticate_login(request)  # login user
