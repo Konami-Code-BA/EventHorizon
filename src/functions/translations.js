@@ -86,6 +86,10 @@ export default {
             'EN': 'GET EMAILS',
             'JP': 'メール送信'
         },
+        'GET LINE MESSAGES': {
+            'EN': 'GET LINE MESSAGES',
+            'JP': 'LINEのメール送信'
+        },
         'UPCOMING EVENTS': {
             'EN': 'UPCOMING EVENTS',
             'JP': '今後のイベント'

@@ -13,7 +13,9 @@
 					</button>
 						{{url}}
 				</div>
+
 				<div class="line-height"/>
+
 				<button v-on:click.prevent="share()" class="button">
 					<img src="@/assets/shareIcon.png" class="icon"/>
 				</button>

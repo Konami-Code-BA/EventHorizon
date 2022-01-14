@@ -1,8 +1,8 @@
 <template>
 	<div style="display: flex; flex-direction: column; align-items: center; padding-top: 5px;">
 		<div>
-			<input :placeholder="t('SEARCH')" v-model="search" type="text" id="email" autocorrect="off"
-					autocapitalize="none" style="width: 100%"/>
+			<input :placeholder="t('SEARCH')" v-model="search" type="text" autocorrect="off" autocapitalize="none"
+					style="width: 100%"/>
 		</div>
 		<div style="width: 100%; overflow-y: scroll; overflow-x: hidden; display: flex; flex-direction: column;
 				align-items: center" id="scroller">
