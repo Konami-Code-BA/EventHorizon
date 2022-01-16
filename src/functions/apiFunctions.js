@@ -124,13 +124,18 @@ export default {
             return_link: returnLink,
         })
     },
-    async changePassword(email, password, code) {
-        return await this.userApi('post', null, {
+    async changePassword(email, newPassword, code = null, currentPassword = null) {
+        let data = {
             command: 'change_password',
             email: email,
-            password: password,
-            code: code,
-        })
+            new_password: newPassword,
+        }
+        if (code) {
+            data.code = code
+        } else if (currentPassword) {
+            data.current_password = currentPassword
+        }
+        return await this.userApi('post', null, data)
     },
     async login(data) {
         data['command'] = 'login'

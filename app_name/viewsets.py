@@ -309,15 +309,20 @@ class UserViewset(viewsets.ModelViewSet):
 	def change_password(self, request):
 		current_user = self.model.objects.get(pk=request.user.pk)
 		user = self.model.objects.get(email=request.data['email'])
-		if user.random_secret == request.data['code']:
-			user.password = make_password(request.data['password'])
+		if ((
+			'code' in request.data and user.random_secret == request.data['code']
+		) or (
+			'current_password' in request.data and user.check_password(request.data['current_password'])
+		)):
+			user.password = make_password(request.data['new_password'])
 			user.random_secret = ''
 			user.save()
-			current_user.delete()
+			if current_user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists():
+				current_user.delete()
 			user = authenticate_login(request)  # login user
 		else:
 			user = namedtuple('user', 'error')
-			user.error = 'This link can\'t be used'
+			user.error = 'wrong code or password'
 		return user
 
 
