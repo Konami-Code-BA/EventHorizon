@@ -130,6 +130,10 @@ export default {
             'EN': 'SEND CHANGE PASSWORD EMAIL',
             'JP': 'パスワード変更メールを送る'
         },
+        'CURRENT PASSWORD IS INCORRECT': {
+            'EN': 'CURRENT PASSWORD IS INCORRECT',
+            'JP': '現在のパスワードが間違っている'
+        },
         'PASSWORD-CHANGE EMAIL SENT!': {
             'EN': 'PASSWORD-CHANGE EMAIL SENT!',
             'JP': 'パスワード変更メールを送りました！'

@@ -122,7 +122,7 @@
 			selectATab (tab) {
 				this.selectedTab = tab
 				if (tab === 3) {
-					location.reload()
+					window.location.replace(window.origin)
 				} else if (tab === 1) {
 					f.goBack()
 				}

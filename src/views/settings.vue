@@ -9,7 +9,7 @@
 
 			<div class="line-height"/>
 
-			<button class="button" v-if="store.user.email === ''" v-on:click.prevent="openAddEmailModal()">
+			<button class="button" v-if="store.user.email === ''" v-on:click.prevent="showAddEmailModal = true">
 				{{ t('ADD EMAIL ADDRESS') }}
 			</button>
 			<div v-else class="dual-set">
@@ -33,26 +33,18 @@
 				<input type="checkbox" class="checkbox" v-model="store.user.do_get_lines"
 						:key="store.user.do_get_lines"/>
 			</div>
-			<!--div>
-				<h2>{{ t('CHANGE PASSWORD') }}</h2>
-			</div-->
-			<!--a href="https://lin.ee/UeSvNxR" class="line-coloring">
-				<div class="line-button">
-					<div class="line-alignment">
-						<div>
-							<img src="@/assets/line.png" class="line-img">
-						</div>
-						<div style="white-space: nowrap">
-							ADD FRIEND
-						</div>
-					</div>
-				</div>
-			</a-->
+
+			<div class="line-height"/>
+
+			<button class="button" v-if="store.user.password != ''" v-on:click.prevent="showChangePasswordModal = true">
+				{{ t('CHANGE PASSWORD') }}
+			</button>
 		</div>
-		<modal v-show="showAddEmailModal" @closeModals="closeAddEmailModal()">
+
+		<modal v-show="showAddEmailModal" @closeModals="showAddEmailModal = false">
 			<div slot="contents" class="modal">
 				<div style="align-self: flex-end">
-					<button v-on:click.prevent="closeAddEmailModal()" class="no-border-button x-button">
+					<button v-on:click.prevent="showAddEmailModal = false" class="no-border-button x-button">
 						✖
 					</button>
 				</div>
@@ -65,6 +57,27 @@
 				</button>
 			</div>
 		</modal>
+		<modal v-show="showChangePasswordModal" @closeModals="showChangePasswordModal = false">
+			<div slot="contents" class="modal">
+				<div style="align-self: flex-end">
+					<button v-on:click.prevent="showChangePasswordModal = false" class="no-border-button x-button">
+						✖
+					</button>
+				</div>
+				<form v-on:keyup.enter="changePassword()" style="width: 100%;">
+					<password-input ref="passwordInput1" :doublePassword="false" usage="ChangePassword1"
+							customPlaceholder="CURRENT PASSWORD"/>
+					<password-input ref="passwordInput2" :doublePassword="true" usage="ChangePassword2"
+							customPlaceholder="NEW PASSWORD"/>
+				</form>
+				<button v-on:click.prevent="changePassword()" class="button" style="width: 100%">
+					{{ t('CHANGE PASSWORD') }}
+				</button>
+			</div>
+		</modal>
+		<div v-if="showFlashModal" :class="flashModalClass" class="success-modal">
+			{{ t('PASSWORD CHANGED!') }}
+		</div>
 	</div>
 </template>
 <script>
@@ -88,6 +101,9 @@
 			return {
 				store: store,
 				showAddEmailModal: false,
+				showChangePasswordModal: false,
+				showFlashModal: false,
+				flashModalClass: null,
 			}
 		},
 		props: {
@@ -103,7 +119,6 @@
 				await this.$refs.lineButton.tryLineNewDevice()
 			}
 			f.focusCursor(document, 'emailAddEmail')
-			console.log('USER', this.store.user)
 		},
 		methods: {
 			t (w) { return translations.t(w) },
@@ -114,13 +129,6 @@
 			async updateUserDoGetLines () {
 				store.user.do_get_lines = !store.user.do_get_lines
 				await api.updateUserDoGetLines()
-			},
-			openAddEmailModal () {
-				this.showAddEmailModal = true
-			},
-			closeAddEmailModal () {
-				this.do_get_emails = this.store.user.do_get_emails
-				this.showAddEmailModal = false
 			},
 			async addEmail () {
 				if (
@@ -142,7 +150,7 @@
 				if (!user.error) {
 					f.goToPage(this.store.lastNonLoginRegisterPage)
 					window.initMap()
-					this.closeAddEmailModal()
+					this.showAddEmailModal = false
 					this.store.loading = false
 					return
 				}
@@ -151,6 +159,37 @@
 				}
 				this.store.loading = false
 				f.shakeFunction([this.$refs.passwordInput, this.$refs.emailInput])
+			},
+			async changePassword () {
+				if (
+					this.$refs.passwordInput1.error.length > 0
+					|| this.$refs.passwordInput2.error2.length > 0
+				) {
+					f.shakeFunction([this.$refs.passwordInput1, this.$refs.passwordInput2])
+					return
+				}
+				this.$refs.passwordInput1.showPassword = false
+				this.$refs.passwordInput2.showPassword = false
+				this.$refs.passwordInput2.showPassword2 = false
+				this.store.loading = true
+
+				let user = await api.changePassword(
+					this.store.user.email,
+					this.$refs.passwordInput2.password,
+					null,
+					this.$refs.passwordInput1.password,
+				)
+				if (!user.error) {
+					this.showChangePasswordModal = false
+					this.store.loading = false
+					await f.flashModal(this, 1000)  // flash password changed modal
+					return
+				}
+				if (user.error == 'wrong code or password') {
+					this.$refs.passwordInput1.error = 'CURRENT PASSWORD IS INCORRECT'
+				}
+				this.store.loading = false
+				f.shakeFunction([this.$refs.passwordInput1, this.$refs.passwordInput2])
 			},
 		} // methods
 	} // export
@@ -193,5 +232,17 @@
 	.button {
 		width: 80%;
 		z-index:2;
+	}
+	.success-modal {
+		position: fixed;
+		color: white;
+		font-size: 24px;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -50%);
+		background-color: rgba(0, 0, 0, .8);
+		z-index: 1000;
+		width: 90%;
+		text-align: center;
 	}
 </style>
