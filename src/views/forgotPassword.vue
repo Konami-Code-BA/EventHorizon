@@ -5,7 +5,6 @@
 </template>
 <script>
 	import store from '@/store.js'
-	import emailPassword from '@/components/emailPassword.vue'
 	import modal from '@/components/modal.vue'
 	import translations from '@/functions/translations.js'
 	import api from '@/functions/apiFunctions.js'
@@ -14,7 +13,6 @@
 		name: 'forgotPassword',
 		components: {
 			modal,
-			emailPassword,
 		},
 		data () {
 			return {

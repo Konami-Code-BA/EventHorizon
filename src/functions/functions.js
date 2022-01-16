@@ -117,22 +117,6 @@ export default {
         }
         return event
     },
-    hasInvalidEmailStructure(email) {
-        let atSplit = email.split('@')
-        if (atSplit.length != 2) {
-            return true
-        }
-        let [mailPrefix, mailDomain] = atSplit
-        let periodSplit = mailDomain.split('.')
-        if (periodSplit.length != 2) {
-            return true
-        }
-        let [domainPrefix, domainSuffix] = periodSplit
-        if (mailPrefix.length < 1 || domainPrefix.length < 1 || domainSuffix.length < 2) {
-            return true
-        }
-        return false
-    },
     hasIllegalSymbols(value) {
         let symbols = '`~!#$%^&*()=[{]}\\|;:\'",<>/?'
         for (let i = 0; i < symbols.length; i++) {
@@ -185,5 +169,16 @@ export default {
             }
         }
         return { page: nextPage, args: nextArgs }
+    },
+    shakeFunction(thiss) {
+        if (Array.isArray(thiss)) {
+            for (let i = 0; i < thiss.length; i++) {
+                thiss[i].shakeIt = true
+                setTimeout(() => { thiss[i].shakeIt = false; }, 1000)
+            }
+        } else {
+            thiss.shakeIt = true
+            setTimeout(() => { thiss.shakeIt = false; }, 1000)
+        }
     },
 }

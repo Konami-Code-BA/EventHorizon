@@ -19,17 +19,9 @@
 
 			<div class="line-height"/>
 
-			<button v-on:click.prevent="loginByLine()" class="button line-coloring"
-					style="display: flex; flex-direction: row; align-items: center; justify-items: center;">
-				<img src="@/assets/line.png" style="height: 27px;">
-				<div>
-					&nbsp;{{ t('ADD LINE') }}
-				</div>
-			</button>
-
-			<div class="line-height"/>
-
-			<div v-if="store.user.line_id != ''" class="dual-set">
+			<line-button :pageToReturnTo="currentPage" :wording="t('ADD LINE')" v-if="store.user.line_id === ''"
+					ref="lineButton"/>
+			<div v-else class="dual-set">
 				<button class="button" style="width: 100%"
 						v-on:click.prevent="updateUserDoGetLines()">
 					{{ t('GET LINE MESSAGES') }}&nbsp;
@@ -60,34 +52,53 @@
 						✖
 					</button>
 				</div>
-				<!--email-password @closeModals="closeAddEmailModal()" :next="" action="addAnEmail"/-->
+				<form v-on:keyup.enter="addEmail()" style="width: 80%;">
+					<email-input ref="emailInput" usage="AddEmail"/>
+					<password-input ref="passwordInput" :doublePassword="true" usage="AddEmail"/>
+				</form>
+				<button v-on:click.prevent="addEmail()" class="button">
+					{{ t('ADD EMAIL ADDRESS') }}
+				</button>
 			</div>
 		</modal>
 	</div>
 </template>
 <script>
 	import store from '@/store.js'
-	import emailPassword from '@/components/emailPassword.vue'
-	import modal from '@/components/modal.vue'
 	import translations from '@/functions/translations.js'
-	import api from '@/functions/apiFunctions.js'
 	import f from '@/functions/functions.js'
+	import api from '@/functions/apiFunctions.js'
+	import emailInput from '@/components/emailInput.vue'
+	import passwordInput from '@/components/passwordInput.vue'
+	import lineButton from '@/components/lineButton.vue'
+	import modal from '@/components/modal.vue'
 	export default {
 		name: 'settings',
 		components: {
 			modal,
-			emailPassword,
+			lineButton,
+			emailInput,
+			passwordInput,
 		},
 		data () {
 			return {
 				store: store,
 				showAddEmailModal: false,
-				showAddEmailModal: false,
-				stateCookie: JSON.parse('{"' + this.replaceAll(this.replaceAll(document.cookie, '=', '": "'), '; ', '", "') + '"}')['state'],
+			}
+		},
+		props: {
+			tryLine: { default: false },
+		},
+		computed: {
+			currentPage () {
+				return f.currentPage
 			}
 		},
 		async mounted () {
-			await this.tryLineNewDevice()
+			if (this.$refs.lineButton && this.tryLine) {
+				await this.$refs.lineButton.tryLineNewDevice()
+			}
+			f.focusCursor(document, 'emailAddEmail')
 		},
 		methods: {
 			t (w) { return translations.t(w) },
@@ -100,38 +111,41 @@
 				await api.updateUserDoGetLines()
 			},
 			openAddEmailModal () {
-				f.setBackButtonToCloseModal(this, window, this.closeAddEmailModal)
 				this.showAddEmailModal = true
 			},
 			closeAddEmailModal () {
-				f.freeUpBackButton(this)
 				this.do_get_emails = this.store.user.do_get_emails
 				this.showAddEmailModal = false
 			},
-			replaceAll (str, match, replace) {
-				return str.replace(new RegExp(match, 'g'), () => replace);
-			},
-			async loginByLine () {
+			async addEmail () {
+				if (
+					this.$refs.passwordInput.error.length > 0
+					|| this.$refs.passwordInput.error2.length > 0
+					|| this.$refs.emailInput.error.length > 0
+				) {
+					f.shakeFunction([this.$refs.passwordInput, this.$refs.emailInput])
+					return
+				}
+				this.$refs.passwordInput.showPassword = false
+				this.$refs.passwordInput.showPassword2 = false
 				this.store.loading = true
-				let loginChannelId = await api.secretsApi('login-channel-id')
-				let state = await api.secretsApi('new-random-secret')
-				document.cookie = `state=${state}; path=/`
-				let lineLoginRedirectUrl = 'https%3A%2F%2Fwww.eventhorizon.vip'
-				if (process.env.PYTHON_ENV == 'development') {
-					lineLoginRedirectUrl = 'http%3A%2F%2F127.0.0.1%3A8080'
-				} else if (process.env.PYTHON_ENV == '"test"') {
-					lineLoginRedirectUrl = 'https%3A%2F%2Fevent-horizon-test.herokuapp.com'
+
+				let user = await api.addAnEmail(
+					this.$refs.emailInput.email,
+					this.$refs.passwordInput.password,
+				)
+				if (!user.error) {
+					f.goToPage(this.store.lastNonLoginRegisterPage)
+					window.initMap()
+					this.closeAddEmailModal()
+					this.store.loading = false
+					return
 				}
-				lineLoginRedirectUrl += f.createUriForReturnFromLogin(f.currentPage, f.currentPage, true)
-				window.location.replace(`https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=${loginChannelId}&redirect_uri=${lineLoginRedirectUrl}&state=${state}&prompt=consent&bot_prompt=aggressive&scope=profile%20openid`)
-			},
-			async tryLineNewDevice () {
-				if (f.currentPage && f.currentPage.args.code && this.stateCookie === f.currentPage.args.state) {
-					let nextPage = f.createNextPageFromCurrentPage(f.currentPage)
-					let uri = f.createUriForReturnFromLogin(f.currentPage, nextPage, false)
-					await api.lineNewDevice(f.currentPage.args.code, uri)
-					f.goToPage(nextPage)
+				if (user.error == 'Incorrect password for this email') {
+					this.$refs.passwordInput.error = user.error
 				}
+				this.store.loading = false
+				f.shakeFunction([this.$refs.passwordInput, this.$refs.emailInput])
 			},
 		} // methods
 	} // export
