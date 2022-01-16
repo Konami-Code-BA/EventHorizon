@@ -2,7 +2,7 @@
 	<div>
 		<div>
 			<div style="display: flex; flex-direction: row">
-				<input :placeholder="t('PASSWORD')" v-model="password"
+				<input :placeholder="placeholder" v-model="password"
 					:type="[showPassword ? 'text' : 'password']" style="flex-grow: 1; width: 100%"
 					:id="`password${usage}`" autocorrect="off" autocapitalize="none"/>
 				<button v-on:click.prevent="showButton()" class="button" style="width: 70px" type="button">
@@ -20,7 +20,7 @@
 		</div>
 		<div v-if="doublePassword">
 			<div style="display: flex; flex-direction: row">
-				<input :placeholder="t('PASSWORD')" v-model="password2"
+				<input :placeholder="placeholder" v-model="password2"
 					:type="[showPassword2 ? 'text' : 'password']" style="flex-grow: 1; width: 100%"
 					:id="`password2${usage}`" autocorrect="off" autocapitalize="none"/>
 				<button v-on:click.prevent="showButton2()" class="button" style="width: 70px" type="button">
@@ -54,11 +54,21 @@
 				showPassword2: false,
 				error2: '',
 				shakeIt: false,
+				placeholder: '',
 			}
 		},
 		props: {
 			doublePassword: { default: false },
 			usage: {},
+			customPlaceholder: { default: '' },
+		},
+		created () {
+			if (this.customPlaceholder) {
+				this.placeholder = this.customPlaceholder
+			} else {
+				this.placeholder = this.t('PASSWORD')
+			}
+			
 		},
 		mounted () {
 			this.hasErrors()

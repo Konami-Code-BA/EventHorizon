@@ -49,6 +49,7 @@
 					f.currentPage.args.email,
 					this.$refs.passwordInput.password,
 					f.currentPage.args.code,
+					null,
 				)
 				if (!user.error) {
 					this.store.loading = false
@@ -57,6 +58,9 @@
 					let nextPage = f.createNextPageFromCurrentPage()
 					f.goToPage(nextPage)
 					return
+				}
+				if (user.error == 'wrong code or password') {
+					this.$refs.passwordInput1.error = 'Can\'t use this link'
 				}
 				this.store.loading = false
 				f.shakeFunction(this.$refs.passwordInput)
