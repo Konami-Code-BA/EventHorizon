@@ -10,6 +10,8 @@
 				:key="page + 'addEvent'"/>
 		<settings v-show="page === 'settings'" :tryLine="page === 'settings'"
 				:key="page + 'settings'"/>
+		<forgot-password v-show="page === 'forgotPassword'"
+				:key="page + 'forgotPassword'"/>
 		<reset-password v-show="page === 'resetPassword'"
 				:key="page + 'resetPassword'"/>
 		<aboutUs v-show="page === 'aboutUs'"
@@ -29,6 +31,7 @@
 	import addEvent from '@/views/addEvent'
 	import settings from '@/views/settings'
 	import resetPassword from '@/views/resetPassword'
+	import forgotPassword from '@/views/forgotPassword'
 	import aboutUs from '@/views/aboutUs'
 	import experiment1 from '@/views/experiment1'
 	import experiment2 from '@/views/experiment2'
@@ -42,6 +45,7 @@
 			addEvent,
 			settings,
 			resetPassword,
+			forgotPassword,
 			aboutUs,
 			experiment1,
 			experiment2,

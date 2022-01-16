@@ -21,7 +21,7 @@
 				</button>
 			</div>
 		</modal>
-		<div v-if="showCopiedModal" :class="copiedModalClass" class="copied-modal">
+		<div v-if="showFlashModal" :class="flashModalClass" class="success-modal">
 			{{ t('COPIED!') }}
 		</div>
 	</div>
@@ -39,8 +39,8 @@
 		data () {
 			return {
 				store: store,
-				showCopiedModal: false,
-				copiedModalClass: null,
+				showFlashModal: false,
+				flashModalClass: null,
 			}
 		},
 		computed: {
@@ -53,7 +53,6 @@
 		methods: {
 			t (w) { return translations.t(w) },
 			async copyToClipboard () {
-				// copy
 				navigator.clipboard.writeText(this.url)
 				//// if the above fails on some browser, this is supposed to work. maybe use both if the first fails
 				//let textArea = document.createElement("textarea")
@@ -63,13 +62,7 @@
 				//textArea.select()
 				//document.execCommand('copy')
 
-				// show 'copied' modal
-				this.showCopiedModal = true
-				await new Promise(r => setTimeout(r, 700))  // .5 seconds
-				this.copiedModalClass = 'fade-out'
-				await new Promise(r => setTimeout(r, 1000))  // 1 seconds
-				this.showCopiedModal = false
-				this.copiedModalClass = null
+				await f.flashModal(this)  // flash copied! modal
 			},
 			share () {
 				navigator.share({url: this.url})
@@ -78,7 +71,7 @@
 	} // export
 </script>
 <style scoped>
-	.copied-modal {
+	.success-modal {
 		position: fixed;
 		color: white;
 		font-size: 32px;

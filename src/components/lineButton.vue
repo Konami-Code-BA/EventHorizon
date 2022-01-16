@@ -34,12 +34,7 @@
 				let loginChannelId = await api.secretsApi('login-channel-id')
 				let state = await api.secretsApi('new-random-secret')
 				document.cookie = `state=${state};`
-				let lineLoginRedirectUrl = 'https%3A%2F%2Fwww.eventhorizon.vip'
-				if (process.env.PYTHON_ENV == 'development') {
-					lineLoginRedirectUrl = 'http%3A%2F%2F127.0.0.1%3A8080'
-				} else if (process.env.PYTHON_ENV == '"test"') {
-					lineLoginRedirectUrl = 'https%3A%2F%2Fevent-horizon-test.herokuapp.com'
-				}
+				let lineLoginRedirectUrl = f.createEncodedURL()
 				lineLoginRedirectUrl += f.createUriForReturnFromLogin(f.currentPage, this.pageToReturnTo, true)
 				let lineUrl = `https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=${loginChannelId}`
 				lineUrl += `&redirect_uri=${lineLoginRedirectUrl}&state=${state}&prompt=consent&bot_prompt=aggressive`
@@ -53,7 +48,7 @@
 				let allCookies = '{"' + this.replaceAll(this.replaceAll(document.cookie, '=', '": "'), '; ', '", "') + '"}'
 				let stateCookie = JSON.parse(allCookies)['state']
 				if (f.currentPage && f.currentPage.args.code && stateCookie === f.currentPage.args.state) {
-					let nextPage = f.createNextPageFromCurrentPage(f.currentPage)
+					let nextPage = f.createNextPageFromCurrentPage()
 					let uri = f.createUriForReturnFromLogin(f.currentPage, nextPage, false)
 					await api.lineNewDevice(f.currentPage.args.code, uri)
 					f.goToPage(nextPage)
