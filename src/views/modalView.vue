@@ -2,18 +2,23 @@
 	<div>
 		<event v-if="page === 'event'"
 				:key="page + 'event'"/>
-		<login-register v-show="page === 'loginRegister'"
+		<login-register v-show="page === 'loginRegister'" :tryLine="page === 'loginRegister'"
 				:key="page + 'loginRegister'"/>
 		<register-with-email v-show="page === 'registerWithEmail'"
 				:key="page + 'registerWithEmail'"/>
 		<add-event v-show="page === 'addEvent'"
 				:key="page + 'addEvent'"/>
-		<settings v-show="page === 'settings'"
+		<settings v-show="page === 'settings'" :tryLine="page === 'settings'"
 				:key="page + 'settings'"/>
 		<reset-password v-show="page === 'resetPassword'"
 				:key="page + 'resetPassword'"/>
 		<aboutUs v-show="page === 'aboutUs'"
 				:key="page + 'aboutUs'"/>
+		<experiment1 v-show="page === 'experiment1'"
+				:key="page + 'experiment1'"/>
+		<experiment2 v-show="page === 'experiment2'"
+				:key="page + 'experiment2'"/>
+		<!-- COMMENT THIS OUT BEFORE PUSHING TO PRODUCTION -->
 	</div>
 </template>
 <script>
@@ -25,6 +30,8 @@
 	import settings from '@/views/settings'
 	import resetPassword from '@/views/resetPassword'
 	import aboutUs from '@/views/aboutUs'
+	import experiment1 from '@/views/experiment1'
+	import experiment2 from '@/views/experiment2'
 	import f from '@/functions/functions.js'
 	export default {
 		name: 'modalView',
@@ -36,6 +43,8 @@
 			settings,
 			resetPassword,
 			aboutUs,
+			experiment1,
+			experiment2,
 		},
 		data () {
 			return {
@@ -50,12 +59,6 @@
 				}
 			},
 		},
-		//watch: {
-		//	'store.pages' () {
-		//		console.log('did this happen?', f.currentPage.page)
-		//		this.page = f.currentPage.page
-		//	},
-		//},
 		mounted () {
 		},
 		methods: {

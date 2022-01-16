@@ -56,7 +56,7 @@
 			<div class="line-height error-text" :class="{'shake' : shakeIt}" style="color: red">
 				{{t(password2Error)}}
 			</div>
-			
+
 		</form>
 		<button v-on:click.prevent="emailPassword()" class="button">
 			{{ action === 'registerWithEmail' ? t('REGISTER') :
@@ -131,16 +131,15 @@
 					user = await api.changePassword(this.emailInput, this.passwordInput)
 				}
 				if (!user.error) {
-					console.log('AND WHEN I GOT HERE WHAT WAS THE PAGE?', this.store.lastNonLoginRegisterPage)
 					f.goToPage(this.store.lastNonLoginRegisterPage)
 				} else if (user.error == 'Incorrect password for this email') {
 					this.passwordError = user.error
 					this.showError = true
-					this.shakeFunction()
+					f.shakeFunction(this)
 				} else if (user.error == "This email is already registered") {
 					this.emailError = user.error
 					this.showError = true
-					this.shakeFunction()
+					f.shakeFunction(this)
 				}
 			},
 			showButton () {
@@ -210,10 +209,6 @@
 					this.displayNameError = ''
 					return false
 				}
-			},
-			shakeFunction () {
-				this.shakeIt = true
-				setTimeout(() => { this.shakeIt = false; }, 1000);
 			},
 		} // methods
 	} // export

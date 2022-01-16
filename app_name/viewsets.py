@@ -1,8 +1,8 @@
 from rest_framework import viewsets
-from .models import Alert
 from .serializers import UserSerializer, EventSerializer, ImageSerializer
+from django.contrib.auth.models import Group
 from rest_framework.response import Response
-from django.http import StreamingHttpResponse, HttpResponse
+from django.http import HttpResponse
 from django.contrib import auth
 from django.conf import settings
 from decouple import config
@@ -18,7 +18,6 @@ import boto3
 from botocore.exceptions import ClientError
 import io
 from datetime import datetime
-from  PIL import Image
 import base64
 
 
@@ -127,7 +126,8 @@ class UserViewset(viewsets.ModelViewSet):
 					user = namedtuple('user', 'error')
 					user.error = 'you don\'t have permission'
 					return user
-				if current_user.groups.filter(id=3).exists():  # if user is visitor, should be in register_with_email
+				# if user is visitor, should be in register_with_email
+				if current_user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists():
 					user = namedtuple('user', 'error')
 					user.error = 'something strange happened... a visitor should not be able to run this'
 					return user
@@ -191,7 +191,7 @@ class UserViewset(viewsets.ModelViewSet):
 			except self.model.DoesNotExist:  # if this email not already registered, turn visitor into user & add info
 				user = self.model.objects.get(pk=request.user.pk)  # get visitor account (already logged in)
 				user.groups.clear()  # clear visitor group
-				user.groups.add(2)  # change to user
+				user.groups.add(Group.objects.get(name='User').id)  # change to user
 				user.display_name = request.data['display_name']  # add new user account info
 				user.email = request.data['email']
 				user.password = make_password(request.data['password'])
@@ -230,20 +230,22 @@ class UserViewset(viewsets.ModelViewSet):
 		url = 'https://api.line.me/v2/profile'  # use access token to get profile info
 		headers = {'Authorization': 'Bearer ' + getAccessToken_response['access_token']}
 		profile_response = json.loads(requests.get(url, headers=headers).content)
-		try:  # try to get a user with this user id, if there is one then set all the new data to their account
+		try:  # try to get a user with this line id, if there is one then set all the new data to their account
 			user = self.model.objects.get(line_id=profile_response['userId'])
 			user.line_access_token = getAccessToken_response['access_token']
 			user.line_refresh_token = getAccessToken_response['refresh_token']
 			user.do_get_lines = True
-			if user.groups.filter(id=5).exists():  # if this user is a temp line friend
+			# if this user is a temp line friend
+			if user.groups.filter(id=Group.objects.get(name='Temp Line Friend').id).exists():
 				user.groups.clear()  # clear temp line friend group
-				user.groups.add(2)  # change to user
+				user.groups.add(Group.objects.get(name='User').id)  # change to user
 			print('CHANGING TEMP LINE FRIEND TO USER')
 			user = verify_update_line_info(request, user)  # verify validity of current line data and put new data
-		except self.model.DoesNotExist:  # if there was no user with this id, turn visitor into user & add info
-			user = self.model.objects.get(pk=request.user.pk)  # get visitor account (already logged in)
-			user.groups.clear()  # clear visitor group
-			user.groups.add(2)  # change to user
+		except self.model.DoesNotExist:  # if there was no user with this id, add line info to existing account
+			user = self.model.objects.get(pk=request.user.pk)  # get account (already logged in)
+			if user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists():  # if visitor
+				user.groups.clear()  # clear visitor group
+				user.groups.add(Group.objects.get(name='User').id)  # change to user
 			user.display_name = profile_response['displayName']  # add new user account info
 			user.line_id = profile_response['userId']
 			user.line_access_token = getAccessToken_response['access_token']
@@ -261,7 +263,8 @@ class UserViewset(viewsets.ModelViewSet):
 		visitor = False
 		try:
 			user = self.model.objects.get(pk=request.user.pk)  # get current user that made this request
-			if user.groups.filter(id=3).exists():  # if visitor made this request, remember that
+			# if visitor made this request, remember that
+			if user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists():
 				visitor = request.user
 		except self.model.DoesNotExist:  # if there is no currently existing user or visitor, make a new visitor
 			user = new_visitor(request)
@@ -270,7 +273,8 @@ class UserViewset(viewsets.ModelViewSet):
 		if not hasattr(user, 'error'):  # if logged into a user
 			user.visit_count += 1  # add to the visit count
 			user.save()
-			if not user.groups.filter(id=3).exists() and visitor:  # if not visitor, but a visitor made the request
+			# if not visitor, but a visitor made the request
+			if not user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists() and visitor:
 				user.visit_count += visitor.visit_count
 				user.save()
 				visitor.delete()  # delete the visitor account that made the request
@@ -293,6 +297,20 @@ class UserViewset(viewsets.ModelViewSet):
 		email_from = settings.EMAIL_HOST_USER
 		recipient_list = ['mdsimeone@gmail.com',]
 		send_mail(subject, message, email_from, recipient_list, fail_silently=False)
+		return self.model.objects.get(pk=request.user.pk)
+	
+	def forgot_password(self, request):
+		user = self.model.objects.get(email=request.data['email'])
+		user.random_secret = secrets.token_urlsafe(16)
+		user.save()
+		subject = 'Event Horizon - Change Password Link'
+		message = f'Please follow this link to change your password:\n'
+		message += request.data['return_link'] + '&code=' + user.random_secret
+		email_from = settings.EMAIL_HOST_USER
+		recipient_list = [request.data['email'],]
+		result = send_mail(subject, message, email_from, recipient_list, fail_silently=False)
+		print('THE RESULT IS', result)
+		return self.model.objects.get(pk=request.user.pk)
 
 
 # LINE VIEW SET ########################################################################################################

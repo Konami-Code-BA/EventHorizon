@@ -144,7 +144,7 @@ export default {
     },
     async sendEmail() {
         return await this.userApi('post', null, {
-            command: 'sendEmail',
+            command: 'send_email',
         })
     },
     async updateUserLanguage() {

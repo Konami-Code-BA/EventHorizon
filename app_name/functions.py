@@ -105,7 +105,7 @@ def add_line_friend(line_id):
 			do_get_line_display_name = True,
 			random_secret = secrets.token_urlsafe(16)
 		)
-		user.groups.add(5)  # temp line friend
+		user.groups.add(Group.objects.get(name='Temp Line Friend').id)  # temp line friend
 		user.save()
 		print('ADDED NEW TEMP LINE FRIEND')
 	print('out here')
@@ -132,7 +132,8 @@ def authenticate_login(request):
 
 def verify_update_line_info(request, user):  # for exisitng user with line id, access token already gotten
 	visitor = None
-	if request.user.groups.filter(id=3).exists():  # if visitor made this request to login by line
+	# if visitor made this request to login by line
+	if request.user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists():
 		visitor = type(user).objects.get(pk=request.user.pk)  # get visitor account making the request
 	url = 'https://api.line.me/oauth2/v2.1/token'  # no matter if access token expired or not, refresh access token 1st
 	headers = {'Content-Type': 'application/x-www-form-urlencoded'}
@@ -167,7 +168,8 @@ def verify_update_line_info(request, user):  # for exisitng user with line id, a
 		request.data['line_id'] = user.line_id
 		user = authenticate_login(request)  # login again just in case, and to get new location info
 		if not hasattr(user, 'error'):  # logged into a user
-			if not user.groups.filter(id=3).exists() and visitor:  # if not visitor, but request made by visitor
+			# if not visitor, but request made by visitor
+			if not user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists() and visitor:
 				user.visit_count += visitor.visit_count
 				user.save()
 				visitor.delete()  # delete the visitor account that made the request
