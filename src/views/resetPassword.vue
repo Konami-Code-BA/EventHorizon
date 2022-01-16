@@ -1,11 +1,9 @@
 <template>
 	<div class="main" style="display: flex; flex-direction: column; justify-content: center">
-		<email-password style="width: 80%;" action="resetPassword"/>
 	</div>
 </template>
 <script>
 	import store from '@/store.js'
-	import emailPassword from '@/components/emailPassword.vue'
 	import modal from '@/components/modal.vue'
 	import translations from '@/functions/translations.js'
 	import api from '@/functions/apiFunctions.js'
@@ -14,7 +12,6 @@
 		name: 'resetPassword',
 		components: {
 			modal,
-			emailPassword,
 		},
 		data () {
 			return {
