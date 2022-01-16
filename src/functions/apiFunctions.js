@@ -117,8 +117,15 @@ export default {
             password: password,
         })
     },
+    async forgotPassword(email, returnLink) {
+        return await this.userApi('post', null, {
+            command: 'forgot_password',
+            email: email,
+            return_link: returnLink,
+        })
+    },
     async changePassword(email, password, code) {
-        return await this.userApi('patch', null, {
+        return await this.userApi('post', null, {
             command: 'change_password',
             email: email,
             password: password,

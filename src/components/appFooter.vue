@@ -10,9 +10,9 @@
 					<img src="@/assets/plusIcon.png" class="icon" style="margin-bottom: 1px;"/>
 				</div>
 				<div slot="3">
-					<img v-if="isAuthenticatedUser" src="@/assets/gearIcon.png" class="icon"
+					<img v-if="isAuthenticatedUser" src="@/assets/profileIcon.png" class="icon"
 							style="margin-bottom: 1px;"/>
-					<img v-else src="@/assets/greyGearIcon.png" class="icon" style="margin-bottom: 1px;"/>
+					<img v-else src="@/assets/greyProfileIcon.png" class="icon" style="margin-bottom: 1px;"/>
 				</div>
 				<div slot="4">
 					<img src="@/assets/shareIcon.png" class="icon" style="margin-bottom: 1px;"/>

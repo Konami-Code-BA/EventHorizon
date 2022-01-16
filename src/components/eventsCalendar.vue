@@ -38,7 +38,7 @@
 						</div>
 					</div>
 				</div>
-				<div v-show="showNoEventsModal" :class="noEventsModalClass" class="no-events-modal">
+				<div v-show="showFlashModal" :class="flashModalClass" class="success-modal">
 					{{ t('NO EVENTS') }}
 				</div>
 			</div>
@@ -112,8 +112,8 @@
 				selectedDate: 0,
 				eventDates: {},
 				loaded: false,
-				showNoEventsModal: false,
-				noEventsModalClass: null,
+				showFlashModal: false,
+				flashModalClass: null,
 			}
 		},
 		created () {
@@ -209,12 +209,7 @@
 				if (this.getEventsFromDate(date).length > 0) {
 					this.selectedDate = date
 				} else {
-					this.showNoEventsModal = true
-					await new Promise(r => setTimeout(r, 700))  // .5 seconds
-					this.noEventsModalClass = 'fade-out'
-					await new Promise(r => setTimeout(r, 1000))  // 1 seconds
-					this.showNoEventsModal = false
-					this.noEventsModalClass = null
+					await f.flashModal(this)  // flash no events modal
 				}
 			},
 			goToToday () {
@@ -249,7 +244,7 @@
 		align-items: center !important;
 		justify-content: center;
 	}
-	.no-events-modal {
+	.success-modal {
 		position: fixed;
 		color: white;
 		font-size: 32px;

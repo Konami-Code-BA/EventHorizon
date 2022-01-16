@@ -126,7 +126,16 @@ export default {
         }
         return false
     },
-    createUriForReturnFromLogin(loginPageDict, returnToPageDict, encode) {
+    createEncodedURL() {
+        let url = 'https%3A%2F%2Fwww.eventhorizon.vip'
+        if (process.env.PYTHON_ENV == 'development') {
+            url = 'http%3A%2F%2F127.0.0.1%3A8080'
+        } else if (process.env.PYTHON_ENV == '"test"') {
+            url = 'https%3A%2F%2Fevent-horizon-test.herokuapp.com'
+        }
+        return url
+    },
+    createUriForReturnFromLogin(currentPageDict, returnToPageDict, encode) {
         let e = {
             '/': '%2F',
             '?': '%3F',
@@ -136,10 +145,10 @@ export default {
         let uri = null
         let argKeys = Object.keys(returnToPageDict.args)
         if (encode) {
-            uri = `${e['/']}${e['?']}page${e['=']}${loginPageDict.page}${e['&']}next`
+            uri = `${e['/']}${e['?']}page${e['=']}${currentPageDict.page}${e['&']}next`
             uri += `${e['=']}${returnToPageDict.page}`
         } else {
-            uri = `/?page=${loginPageDict.page}&next=${returnToPageDict.page}`
+            uri = `/?page=${currentPageDict.page}&next=${returnToPageDict.page}`
         }
         if (argKeys.length > 0) {
             for (let i = 0; i < argKeys.length; i++) {
@@ -155,20 +164,31 @@ export default {
         }
         return uri
     },
-    createNextPageFromCurrentPage(loginPageDict) {
-        let nextArgKeys = Object.keys(loginPageDict.args)
-        let nextPage = loginPageDict.args.next
+    createNextPageFromCurrentPage() {
+        let nextArgKeys = Object.keys(this.currentPage.args)
+        let nextPage = this.currentPage.args.next
         let nextArgs = {}
         if (nextArgKeys.length > 0) {
             for (let i = 0; i < nextArgKeys.length; i++) {
                 if (['next', 'code', 'friendship_status_changed', 'state'].includes(nextArgKeys[i])) {
                     continue
                 } else {
-                    nextArgs[nextArgKeys[i]] = loginPageDict.args[nextArgKeys[i]]
+                    nextArgs[nextArgKeys[i]] = this.currentPage.args[nextArgKeys[i]]
                 }
             }
         }
         return { page: nextPage, args: nextArgs }
+    },
+    createUrlForPasswordChange(email) {
+        let nextArgKeys = Object.keys(store.lastNonLoginRegisterPage.args)
+        let returnUrl = `${window.origin}/?page=resetPassword&next=${store.lastNonLoginRegisterPage.page}`
+        returnUrl += `&email=${encodeURIComponent(email)}`
+        if (nextArgKeys.length > 0) {
+            for (let i = 0; i < nextArgKeys.length; i++) {
+                returnUrl += `&${nextArgKeys[i]}=${store.lastNonLoginRegisterPage.args[nextArgKeys[i]]}`
+            }
+        }
+        return returnUrl
     },
     shakeFunction(thiss) {
         if (Array.isArray(thiss)) {
@@ -180,5 +200,13 @@ export default {
             thiss.shakeIt = true
             setTimeout(() => { thiss.shakeIt = false; }, 1000)
         }
+    },
+    async flashModal(thiss, time = 700) { // .7 seconds
+        thiss.showFlashModal = true
+        await new Promise(r => setTimeout(r, time))
+        thiss.flashModalClass = 'fade-out'
+        await new Promise(r => setTimeout(r, 1000)) // 1 seconds
+        thiss.showFlashModal = false
+        thiss.flashModalClass = null
     },
 }
