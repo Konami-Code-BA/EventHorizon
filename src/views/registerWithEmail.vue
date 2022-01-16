@@ -30,7 +30,7 @@
 				store: store,
 			}
 		},
-		async mounted () {
+		mounted () {
 			f.focusCursor(document, 'displayNameRegistration')
 		},
 		watch: {

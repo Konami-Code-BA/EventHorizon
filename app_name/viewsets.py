@@ -155,17 +155,6 @@ class UserViewset(viewsets.ModelViewSet):
 			user = namedtuple('user', 'error')
 			user.error = 'missing email / password info'
 			return user
-		
-	def change_password(self, request, pk=None):
-		user = self.model.objects.get(email=request.data['email'])
-		if user.random_secret == request.data['code']:
-			user.password = make_password(request.data['password'])
-			user.save()
-			user = authenticate_login(request)  # login user
-		else:
-			user = namedtuple('user', 'error')
-			user.error = 'This link can\'t be used'
-		return user
 
 	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
 		return Response()  # SECURITY: this just does nothing
@@ -300,17 +289,36 @@ class UserViewset(viewsets.ModelViewSet):
 		return self.model.objects.get(pk=request.user.pk)
 	
 	def forgot_password(self, request):
+		try:
+			user = self.model.objects.get(email=request.data['email'])
+			user.random_secret = secrets.token_urlsafe(16)
+			user.save()
+			subject = 'Event Horizon - Change Password Link'
+			message = f'Please follow this link to change your password:\n'
+			message += request.data['return_link'] + '&code=' + user.random_secret
+			email_from = settings.EMAIL_HOST_USER
+			recipient_list = [request.data['email'],]
+			result = send_mail(subject, message, email_from, recipient_list, fail_silently=False)
+			print('THE RESULT IS', result)
+			user = self.model.objects.get(pk=request.user.pk)
+		except self.model.DoesNotExist:
+			user = namedtuple('user', 'error')
+			user.error = 'This email is not registered'
+		return user
+		
+	def change_password(self, request):
+		current_user = self.model.objects.get(pk=request.user.pk)
 		user = self.model.objects.get(email=request.data['email'])
-		user.random_secret = secrets.token_urlsafe(16)
-		user.save()
-		subject = 'Event Horizon - Change Password Link'
-		message = f'Please follow this link to change your password:\n'
-		message += request.data['return_link'] + '&code=' + user.random_secret
-		email_from = settings.EMAIL_HOST_USER
-		recipient_list = [request.data['email'],]
-		result = send_mail(subject, message, email_from, recipient_list, fail_silently=False)
-		print('THE RESULT IS', result)
-		return self.model.objects.get(pk=request.user.pk)
+		if user.random_secret == request.data['code']:
+			user.password = make_password(request.data['password'])
+			user.random_secret = ''
+			user.save()
+			current_user.delete()
+			user = authenticate_login(request)  # login user
+		else:
+			user = namedtuple('user', 'error')
+			user.error = 'This link can\'t be used'
+		return user
 
 
 # LINE VIEW SET ########################################################################################################

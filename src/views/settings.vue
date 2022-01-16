@@ -5,6 +5,10 @@
 
 			<div class="line-height"/>
 
+			<div style="font-size: 24px;">{{ store.user.display_name }}</div>
+
+			<div class="line-height"/>
+
 			<button class="button" v-if="store.user.email === ''" v-on:click.prevent="openAddEmailModal()">
 				{{ t('ADD EMAIL ADDRESS') }}
 			</button>
@@ -99,6 +103,7 @@
 				await this.$refs.lineButton.tryLineNewDevice()
 			}
 			f.focusCursor(document, 'emailAddEmail')
+			console.log('USER', this.store.user)
 		},
 		methods: {
 			t (w) { return translations.t(w) },

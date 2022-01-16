@@ -126,6 +126,22 @@ export default {
             'EN': 'ADD EMAIL ADDRESS',
             'JP': 'メールアドレスを追加する'
         },
+        'SEND CHANGE PASSWORD EMAIL': {
+            'EN': 'SEND CHANGE PASSWORD EMAIL',
+            'JP': 'パスワード変更メールを送る'
+        },
+        'PASSWORD-CHANGE EMAIL SENT!': {
+            'EN': 'PASSWORD-CHANGE EMAIL SENT!',
+            'JP': 'パスワード変更メールを送りました！'
+        },
+        'PASSWORD CHANGED!': {
+            'EN': 'PASSWORD CHANGED!',
+            'JP': 'パスワード変更しました！'
+        },
+        'CHANGE PASSWORD': {
+            'EN': 'CHANGE PASSWORD',
+            'JP': 'パスワード変更する'
+        },
         'Password can\'t be empty': {
             'EN': 'Password can\'t be empty',
             'JP': 'メールアドレスを追加する'

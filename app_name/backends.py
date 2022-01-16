@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.sessions.models import Session
 from app_name.functions import verify_update_line_info
 from collections import namedtuple
+from django.contrib.auth.models import Group
 
 
 class UserBackend(BaseAuthentication):
@@ -44,7 +45,12 @@ class UserBackend(BaseAuthentication):
 		elif 'random_secret' in request.data and request.data['random_secret'] != '':  # random_secret
 			try:
 				user = self.UserModel.objects.get(random_secret=request.data['random_secret'])
-				return user
+				if user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists():
+					return user  # confirmed visitor, so return user and login
+				else:
+					user = namedtuple('user', 'error')
+					user.error = 'only visitors can log in using random secret'
+					return user
 			except self.UserModel.DoesNotExist:
 				user = namedtuple('user', 'error')
 				user.error = 'this random_secret is not registered'
