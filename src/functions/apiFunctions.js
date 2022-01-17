@@ -40,6 +40,7 @@ export default {
     async lineApi(method, uri, data) {
         return await this.axiosCall[method](this.baseUrl + uri, data)
             .then(response => {
+                console.log('HERE', response.data)
                 if (!('error' in response.data)) {
                     console.log(`success - lineApi ${data.command}`)
                     return response.data
@@ -185,21 +186,21 @@ export default {
     //},
     // LINE ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     async sendWebhook(data) {
-        await this.lineApi('post', '/webhook/', data)
+        return await this.lineApi('post', '/webhook/', data)
     },
     async lineConsumption() {
-        await this.lineApi('post', '/api/line/', {
+        return await this.lineApi('post', '/api/line/', {
             command: 'consumption',
         })
     },
     async linePush(data) {
-        await this.lineApi('post', '/api/line/', {
+        return await this.lineApi('post', '/api/line/', {
             command: 'push',
             data: data,
         })
     },
     async lineBroadcast() {
-        await this.lineApi('post', '/api/line/', {
+        return await this.lineApi('post', '/api/line/', {
             command: 'broadcast',
             message: 'sup this is a broadcast message',
         })
