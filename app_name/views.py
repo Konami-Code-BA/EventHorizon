@@ -36,6 +36,5 @@ def line_webhook(request):  # https://developers.line.biz/en/reference/messaging
 			data['messages'][0]['originalContentUrl'] = reply['image']
 			data['messages'][0]['previewImageUrl'] = reply['image']
 		data = json.dumps(data)
-		print('DATA', data)
 		response = requests.post(url, headers=headers, data=data)
 	return HttpResponse(response)
