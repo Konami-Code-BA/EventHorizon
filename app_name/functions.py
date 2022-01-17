@@ -67,15 +67,16 @@ def line_bot(line_body):
 		remove_line_friend(events['source']['userId'])
 	elif events['type'] == 'message':  # its a message (not a follow etc)
 		if events['message']['type'] == 'text':  # its a text message (not an image etc)
-			if events['message']['text'][:2] == '. ':  # it has a bot trigger
-				received = events['message']['text'][2:]  # save the text minus the bot trigger
+			if events['message']['text'][0] == '.':  # it has a bot trigger
+				received = events['message']['text'][1:]  # save the text minus the bot trigger
 			elif events['source']['type'] == 'user':  # it doesn't have a bot trigger but it is a 1-user private room
 				received = events['message']['text']  # private room doesn't need bot trigger, so save all the text
+	print('RECEIVED', received)
 	if 'replyToken' in events:
-		send_to = {'type': 'replyToken', 'to': events['replyToken']}
+		send_to = {'type': 'reply_token', 'to': events['replyToken']}
 	if 'to' in events:
 		send_to = {'type': 'to', 'to': events['to']}
-	if received in ['Status', 'status']:
+	if 'status' in received or 'Status' in received:
 		reply = {'type': 'text', 'text': events['reply']}
 	elif received in ['Image', 'image']:
 		reply = {'type': 'image', 'image': events['reply']}

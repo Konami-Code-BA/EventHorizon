@@ -332,8 +332,11 @@ class LineViewset(viewsets.ViewSet):
 	def create(self, request):
 		if request.user.is_superuser:  # SECURITY: only superuser can
 			response = eval(f"self.{request.data['command']}(request)")  # SECURITY: inside each command function
-			return Response(response)
-		return Response('')
+		else:
+			response = {}
+			response['error'] = 'only superuser can do this'
+		print('response', response)
+		return Response(response)
 
 	def consumption(self, request):  # SECURITY: messaging channel access token only used here in backend
 		url = 'https://api.line.me/v2/bot/message/quota/consumption'
