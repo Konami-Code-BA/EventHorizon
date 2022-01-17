@@ -29,15 +29,16 @@
 			t (w) { return translations.t(w) },
 			async sendWebhook() {
 				let mikeyId = await api.secretsApi('mikey-line-user-id')
-				let events = [{
-					'type': 'message',
-					'message': {
-						'type': 'text',
-						'text': '. ' + this.type
-					},
-					'to': mikeyId,
-					'reply': this.text
-				}]
+				//let events = [{
+				//	'type': 'message',
+				//	'message': {
+				//		'type': 'text',
+				//		'text': '. ' + this.type
+				//	},
+				//	'to': mikeyId,
+				//	'reply': this.text
+				//}]
+				let events = [{'type': 'message', 'message': {'type': 'text', 'id': '15434917999800', 'text': 'Status'}, 'timestamp': 1642424126557, 'source': {'type': 'user', 'userId': 'U09e3b108910c1711d2732a8b9ac8a19d'}, 'replyToken': '99ea8de6b36042618ffd156347a6eab5', 'mode': 'active'}]
 				await api.sendWebhook({
 					'events': events,
 				})
