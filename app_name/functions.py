@@ -80,9 +80,10 @@ def line_bot(line_body):
 		send_to = {'type': 'to', 'to': events['to']}
 	print('HERE2')
 	if received and ('status' in received or 'Status' in received):
-		reply = {'type': 'text', 'text': events['reply']}
+		print('HERE3')
+		reply = {'type': 'text', 'text': 'Here is your status brah'}
 	elif received and ('image' in received or 'Image' in received):
-		reply = {'type': 'image', 'image': events['reply']}
+		reply = {'type': 'image', 'image': 'Here is your image brah'}
 	print('INSIDE LINE BOT - SEND TO', send_to)
 	print('INSIDE LINE BOT - REPLY', reply)
 	return send_to, reply
