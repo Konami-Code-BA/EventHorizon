@@ -73,7 +73,7 @@ def line_bot(line_body):
 				received = events['message']['text']  # private room doesn't need bot trigger, so save all the text
 	print('RECEIVED', received)
 	if 'replyToken' in events:
-		send_to = {'type': 'reply_token', 'to': events['replyToken']}
+		send_to = {'type': 'replyToken', 'to': events['replyToken']}
 	if 'to' in events:
 		send_to = {'type': 'to', 'to': events['to']}
 	if 'status' in received or 'Status' in received:
