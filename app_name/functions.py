@@ -74,8 +74,11 @@ def line_bot(line_body):
 	print('RECEIVED', received)
 	if 'replyToken' in events:
 		send_to = {'type': 'replyToken', 'to': events['replyToken']}
+		print('send_to', send_to)
+	print('HERE1')
 	if 'to' in events:
 		send_to = {'type': 'to', 'to': events['to']}
+	print('HERE2')
 	if 'status' in received or 'Status' in received:
 		reply = {'type': 'text', 'text': events['reply']}
 	elif received in ['Image', 'image']:
