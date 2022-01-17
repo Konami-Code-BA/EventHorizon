@@ -57,7 +57,6 @@ def line_bot(line_body):
 	replyToken, reply, received = None, None, None
 	if len(line_body['events']) > 0:
 		events = line_body['events'][0]
-		print('INSIDE LINE BOT - INCOMING', events)
 	else: 
 		return replyToken, reply
 	if events['type'] == 'follow':
@@ -71,36 +70,26 @@ def line_bot(line_body):
 				received = events['message']['text'][1:]  # save the text minus the bot trigger
 			elif events['source']['type'] == 'user':  # it doesn't have a bot trigger but it is a 1-user private room
 				received = events['message']['text']  # private room doesn't need bot trigger, so save all the text
-	print('RECEIVED', received)
 	if 'replyToken' in events:
 		send_to = {'type': 'replyToken', 'to': events['replyToken']}
-		print('send_to', send_to)
-	print('HERE1')
 	if 'to' in events:
 		send_to = {'type': 'to', 'to': events['to']}
-	print('HERE2')
 	if received and ('status' in received or 'Status' in received):
-		print('HERE3')
 		reply = {'type': 'text', 'text': 'Here is your status brah'}
 	elif received and ('image' in received or 'Image' in received):
-		reply = {'type': 'image', 'image': 'Here is your image brah'}
-	print('INSIDE LINE BOT - SEND TO', send_to)
-	print('INSIDE LINE BOT - REPLY', reply)
+		reply = {'type': 'image', 'image': 'Here is your image brah'}  # need to send an image file not text here.
 	return send_to, reply
 
 
 def add_line_friend(line_id):
 	from app_name.viewsets import UserViewset
-	print('start')
 	try:  # if user with this line id exists
-		print(line_id)
 		user = UserViewset.model.objects.get(line_id=line_id)
 		user.is_line_friend = True
 		user.do_get_lines = True
 		user.save()
 		print('CHANGED is_line_friend AND do_get_lines FOR EXISTING LINE FRIEND')
 	except UserViewset.model.DoesNotExist:  # if no user with this line id exists
-		print('in here')
 		# this wasn't done on the site, it was done in line so there is no visitor, and can't make session
 		user = UserViewset.model.objects.create_user(  # create temporary line friend user
 			line_id = line_id,
@@ -113,7 +102,6 @@ def add_line_friend(line_id):
 		user.groups.add(Group.objects.get(name='Temp Line Friend').id)  # temp line friend
 		user.save()
 		print('ADDED NEW TEMP LINE FRIEND')
-	print('out here')
 
 
 def remove_line_friend(line_id):
