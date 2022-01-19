@@ -24,6 +24,20 @@ import base64
 random.seed(1)
 
 
+## gotta make sure all of these are secure for every API
+#def list(self, request):  # GET {prefix}/
+#	pass
+#def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
+#	pass
+#def update(self, request, pk=None):  # PUT {prefix}/{lookup}/
+#	pass
+#def partial_update(self, request, pk):  # PATCH {prefix}/{lookup}/
+#	pass
+#def create(self, request):  # POST {prefix}/
+#	pass
+#def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
+#	pass
+
 # USER VIEW SET ########################################################################################################
 class UserViewset(viewsets.ModelViewSet):
 	serializer_class = UserSerializer
@@ -44,6 +58,9 @@ class UserViewset(viewsets.ModelViewSet):
 		self.queryset = [request.user]  # SECURITY: update only returns yourself
 		serializer_data = self.serializer_class(self.queryset, many=True).data
 		return Response(serializer_data)
+
+	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
+		return Response()  # SECURITY: this just does nothing
 
 	# PARTIAL_UPDATE #############################################################
 	def partial_update(self, request, pk):  # PATCH {prefix}/{lookup}/
@@ -156,9 +173,6 @@ class UserViewset(viewsets.ModelViewSet):
 			user.error = 'missing email / password info'
 			return user
 
-	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
-		return Response()  # SECURITY: this just does nothing
-
 	# CREATE #####################################################################
 	def create(self, request):  # POST {prefix}/
 		user = eval(f"self.{request.data['command']}(request)")  # SECURITY: inside each command function
@@ -181,7 +195,6 @@ class UserViewset(viewsets.ModelViewSet):
 				('display_name', all_user_info_dont_send_me.display_name),
 				('limited_user', True),
 			])]
-		print(serializer_data)
 		return serializer_data
 
 	def register_with_email(self, request):  # SECURITY: anyone is allowed to make a new user
@@ -314,7 +327,6 @@ class UserViewset(viewsets.ModelViewSet):
 			email_from = settings.EMAIL_HOST_USER
 			recipient_list = [request.data['email'],]
 			result = send_mail(subject, message, email_from, recipient_list, fail_silently=False)
-			print('THE RESULT IS', result)
 			user = self.model.objects.get(pk=request.user.pk)
 		except self.model.DoesNotExist:
 			user = namedtuple('user', 'error')
@@ -344,13 +356,28 @@ class UserViewset(viewsets.ModelViewSet):
 # LINE VIEW SET ########################################################################################################
 class LineViewset(viewsets.ViewSet):
 	queryset = []
+
+	def list(self, request):  # GET {prefix}/
+		pass
+
+	def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
+		pass
+
+	def update(self, request, pk=None):  # PUT {prefix}/{lookup}/
+		pass
+
+	def partial_update(self, request, pk):  # PATCH {prefix}/{lookup}/
+		pass
+
+	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
+		pass
+
 	def create(self, request):
 		if request.user.is_superuser:  # SECURITY: only superuser can
 			response = eval(f"self.{request.data['command']}(request)")  # SECURITY: inside each command function
 		else:
 			response = {}
 			response['error'] = 'only superuser can do this'
-		print('response', response)
 		return Response(response)
 
 	def consumption(self, request):  # SECURITY: messaging channel access token only used here in backend
@@ -397,6 +424,22 @@ class LineViewset(viewsets.ViewSet):
 # SECRETS VIEW SET #####################################################################################################
 class SecretsViewset(viewsets.ViewSet):
 	queryset = []
+	
+	def list(self, request):  # GET {prefix}/
+		pass
+	
+	def update(self, request, pk=None):  # PUT {prefix}/{lookup}/
+		pass
+
+	def partial_update(self, request, pk):  # PATCH {prefix}/{lookup}/
+		pass
+
+	def create(self, request):  # POST {prefix}/
+		pass
+
+	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
+		pass
+
 	def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
 		if ((pk in ['mikey-line-user-id', 'stu-line-user-id'] and request.user.is_superuser)
 				or pk not in ['mikey-line-user-id', 'stu-line-user-id']):  # SECURITY: only superuser can get our ids
@@ -420,6 +463,12 @@ class EventViewset(viewsets.ViewSet):
 	serializer_class = EventSerializer
 	model = serializer_class.Meta.model
 	queryset = []
+
+	def update(self, request, pk=None):  # PUT {prefix}/{lookup}/
+		pass
+
+	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
+		pass
 
 	# CREATE #####################################################################
 	def create(self, request):  # POST {prefix}/
@@ -480,41 +529,49 @@ class EventViewset(viewsets.ViewSet):
 	#	invited_events = self.model.objects.filter(invited=request.user.id)
 	#	print(date_time, type(date_time))
 
-	def partial_update(self, request, pk=None):  # PATCH {prefix}/{lookup}/
-		return Response()  # SECURITY: this just does nothing
-
 	def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
-		my_events = self.model.objects.filter(invited=request.user.id) # gotta include public events
+		my_hosting = self.model.objects.filter(hosts=request.user.id)
+		my_invited = self.model.objects.filter(Q(invited=request.user.id) & ~Q(hosts=request.user.id))
 		event = self.model.objects.get(pk=pk)
-		if event in my_events or not event.is_private:  # SECURITY: only get event if public or mine
-			serializer_data = self.serializer_class([event], many=True).data
+		if event in my_hosting:
+			serializer_data = serializer_host([event])  # SECURITY: see serializers
+		elif event in my_invited or not event.is_private:
+			serializer_data = serializer_public_invited([event])
 		else:
 			serializer_data = serializer_private([event])
 		return Response(serializer_data)
 
-	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
-		return Response()  # SECURITY: this just does nothing
-
 	def list(self, request):  # GET {prefix}/
-		my_events = self.model.objects.filter(invited=request.user.id)
-		public_events = self.model.objects.filter(is_private=False)
-		private_events = self.model.objects.filter(Q(is_private=True) & ~Q(invited=request.user.id))
-		# SECURITY: freely gives my events and public events
-		serializer_data1 = self.serializer_class(my_events.union(public_events), many=True).data
-		# SECURITY: gives private events but i only get limited info on them
-		serializer_data2 = serializer_private(private_events)
-		return Response(serializer_data1 + serializer_data2)
-
-	def update(self, request, pk=None):  # PUT {prefix}/{lookup}/
-		return Response()  # SECURITY: this just does nothing
+		my_hosting = self.model.objects.filter(
+			hosts=request.user.id
+		)
+		serializer_data_my_hosting = serializer_host(my_hosting)  # SECURITY: see serializers
+		my_invited = self.model.objects.filter(
+			Q(invited=request.user.id) & ~Q(hosts=request.user.id)
+		)
+		serializer_data_my_invited = serializer_public_invited(my_invited)
+		public_events = self.model.objects.filter(
+			Q(is_private=False) & ~Q(invited=request.user.id) & ~Q(hosts=request.user.id)
+		)
+		serializer_data_public_events = serializer_public_invited(public_events)
+		private_events = self.model.objects.filter(
+			Q(is_private=True) & ~Q(invited=request.user.id) & ~Q(hosts=request.user.id)
+		)
+		serializer_data_private_events = serializer_private(private_events)
+		return Response(
+			serializer_data_my_hosting
+			+ serializer_data_my_invited
+			+ serializer_data_public_events
+			+ serializer_data_private_events
+		)
 
 	# PARTIAL_UPDATE #############################################################
 	def partial_update(self, request, pk):  # PATCH {prefix}/{lookup}/
 		eval(f"self.{request.data['command']}(request, pk)")  # SECURITY: inside each command function
-		return Response()
+		return Response()  # SECURITY: returns nothing
 	
 	def update_guest_status(self, request, pk):
-		event = self.model.objects.get(pk=pk)
+		event = self.model.objects.get(pk=pk)  # SECURITY: in the following comments
 		if event.hosts.filter(id=request.user.id).exists():  # only host can change other users statuses
 			if request.data['user_id']:
 				user_to_change = request.data['user_id']
@@ -527,8 +584,9 @@ class EventViewset(viewsets.ViewSet):
 			event.maybe.remove(user_to_change)
 			event.attending.remove(user_to_change)
 			event.wait_list.remove(user_to_change)
+			event.invite_request.remove(user_to_change)
 		elif request.data['status'] == 'invite_request':
-			if not request.user.id.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists():
+			if not request.user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists():
 				event.invite_request.add(user_to_change)  # only non-visitors can request an invite
 		elif request.data['status'] == 'invited':
 			if event.hosts.filter(id=request.user.id).exists():  # only host can invite user
@@ -548,7 +606,7 @@ class EventViewset(viewsets.ViewSet):
 				event.maybe.remove(user_to_change)
 				event.wait_list.remove(user_to_change)
 				event.attending.add(user_to_change)
-		return {}
+		return {}  # SECURITY: returns nothing
 
 
 def randomize_lat_lng(address):
@@ -572,7 +630,13 @@ def randomize_lat_lng(address):
 	rand_longitude = float(longitude) + rand_value / outter * rand_sign
 	return postal_code, rand_latitude, rand_longitude
 
-
+# SECURITY:
+# address only shows postal_code if not invited
+# no venu_name if not invited
+# random lat and long if not invited
+# everyone can see hosts and images
+# can't see invited/attending/ maybe people if not invited
+# can't see wait_list, invite_request people if not host
 def serializer_private(events):
 	serializer_data = []
 	for event in events:
@@ -592,8 +656,58 @@ def serializer_private(events):
 			'maybe': event.maybe.count(),
 			'wait_list': event.wait_list.count(),
 			'invite_request': event.invite_request.count(),
+			'images': event.images.all().values_list('id', flat=True),
 		})]
-	print('herebrah', serializer_data[0]['name'], serializer_data[0]['hosts'])
+	return serializer_data
+
+
+def serializer_public_invited(events):
+	serializer_data = []
+	for event in events:
+		serializer_data += [OrderedDict({
+			'id': event.id,
+			'name': event.name,
+			'address': event.address,
+			'venue_name': event.venue_name,
+			'description': event.description,
+			'latitude': event.latitude,
+			'longitude': event.longitude,
+			'date_time': event.date_time,
+			'include_time': event.include_time,
+			'is_private': event.is_private,
+			'hosts': event.hosts.all().values_list('id', flat=True),
+			'invited': event.invited.all().values_list('id', flat=True),
+			'attending': event.attending.all().values_list('id', flat=True),
+			'maybe': event.maybe.all().values_list('id', flat=True),
+			'wait_list': event.wait_list.count(),
+			'invite_request': event.invite_request.count(),
+			'images': event.images.all().values_list('id', flat=True),
+		})]
+	return serializer_data
+
+
+def serializer_host(events):
+	serializer_data = []
+	for event in events:
+		serializer_data += [OrderedDict({
+			'id': event.id,
+			'name': event.name,
+			'address': event.address,
+			'venue_name': event.venue_name,
+			'description': event.description,
+			'latitude': event.latitude,
+			'longitude': event.longitude,
+			'date_time': event.date_time,
+			'include_time': event.include_time,
+			'is_private': event.is_private,
+			'hosts': event.hosts.all().values_list('id', flat=True),
+			'invited': event.invited.all().values_list('id', flat=True),
+			'attending': event.attending.all().values_list('id', flat=True),
+			'maybe': event.maybe.all().values_list('id', flat=True),
+			'wait_list': event.wait_list.all().values_list('id', flat=True),
+			'invite_request': event.invite_request.all().values_list('id', flat=True),
+			'images': event.images.all().values_list('id', flat=True),
+		})]
 	return serializer_data
 
 
@@ -602,6 +716,18 @@ class ImageViewset(viewsets.ViewSet):
 	serializer_class = ImageSerializer
 	model = serializer_class.Meta.model
 	queryset = []
+
+	def list(self, request):  # GET {prefix}/
+		pass
+
+	def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
+		pass
+
+	def update(self, request, pk=None):  # PUT {prefix}/{lookup}/
+		pass
+
+	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
+		pass
 
 	def create(self, request):  # POST {prefix}/
 		if request.data['command'] == 'get':
@@ -626,7 +752,7 @@ class ImageViewset(viewsets.ViewSet):
 				serializer_data = self.serializer_class([image], many=True).data
 			return Response(serializer_data)
 
-	def partial_update(self, request, pk=None):  # PATCH {prefix}/{lookup}/
+	def partial_update(self, request, pk):  # PATCH {prefix}/{lookup}/
 		if request.data['command'] == 'get':
 			my_events = EventSerializer.Meta.model.objects.filter(invited=request.user.id)
 			event = EventSerializer.Meta.model.objects.get(pk=request.data['event_pk'])

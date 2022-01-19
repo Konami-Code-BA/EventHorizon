@@ -226,6 +226,10 @@ export default {
             'EN': 'PEOPLE',
             'JP': '人'
         },
+        'PERSON': {
+            'EN': 'PERSON',
+            'JP': '人'
+        },
         'SEARCH': {
             'EN': 'SEARCH',
             'JP': '検索'
@@ -377,6 +381,30 @@ export default {
         'IMAGE': {
             'EN': 'IMAGE',
             'JP': '画像'
+        },
+        'HOSTS': {
+            'EN': 'HOSTS',
+            'JP': 'HOSTS'
+        },
+        'ATTENDING': {
+            'EN': 'ATTENDING',
+            'JP': 'ATTENDING'
+        },
+        'MAYBE': {
+            'EN': 'MAYBE',
+            'JP': 'MAYBE'
+        },
+        'WAIT LIST': {
+            'EN': 'WAIT LIST',
+            'JP': 'WAIT LIST'
+        },
+        'INVITE REQUESTS': {
+            'EN': 'INVITE REQUESTS',
+            'JP': 'INVITE REQUESTS'
+        },
+        'INVITED': {
+            'EN': 'INVITED',
+            'JP': 'INVITED'
         },
         'ALL EVENTS': {
             'EN': 'ALL EVENTS',

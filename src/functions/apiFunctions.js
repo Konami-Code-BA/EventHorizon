@@ -23,6 +23,9 @@ export default {
                     console.log(`success - userApi ${data.command}`)
                     store.user = store.defaultUser
                     return store.user
+                } else if (response.data.length == 0) {
+                    console.log(`success - userApi ${data.command}`)
+                    return []
                 } else if ('limited_user' in response.data[0]) {
                     console.log(`success - userApi ${data.command}`)
                     return response.data
