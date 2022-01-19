@@ -12,19 +12,20 @@
 			</div>
 		</div>
 		<br>
-		<div v-if="attendingStatus['invited'] || !event.is_private"
-				style="width: 100%; display: flex; flex-direction: column; align-items: center;">
-			<div class="dual-set" v-if="attendingStatus['invited']">
+		<div style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+			<div class="dual-set" v-if="myAttendingStatus['invited']">
 				YOU ARE INVITED
 				<input type="checkbox" class="checkbox" checked="checked" onclick="return false;"/>
 			</div>
-			<tabs :num-tabs="3" :initial="0" style="width: 100%;">
+			<!--if invited, can click maybe / attending / decline-->
+			<tabs :num-tabs="3" :initial="0" style="width: 100%;"
+					v-if="myAttendingStatus['invited']">
 				<div slot="1">
 					<div class="dual-set">
 						<button class="button" style="width: auto"
 								v-on:click.prevent="changeAttendingStatus('maybe')">
 							MAYBE
-							<input type="checkbox" class="checkbox" v-model="attendingStatus['maybe']"/>
+							<input type="checkbox" class="checkbox" v-model="myAttendingStatus['maybe']"/>
 						</button>
 					</div>
 				</div>
@@ -33,7 +34,7 @@
 						<button class="button" style="width: auto"
 								v-on:click.prevent="changeAttendingStatus('attending')">
 							I WILL ATTEND
-							<input type="checkbox" class="checkbox" v-model="attendingStatus['attending']"/>
+							<input type="checkbox" class="checkbox" v-model="myAttendingStatus['attending']"/>
 						</button>
 					</div>
 				</div>
@@ -46,12 +47,60 @@
 					</div>
 				</div>
 			</tabs>
+			<!--if public and not invited, can click maybe / attending-->
+			<tabs :num-tabs="2" :initial="0" style="width: 100%;"
+					v-if="myAttendingStatus['invited'] && !event.is_private">
+				<div slot="1">
+					<div class="dual-set">
+						<button class="button" style="width: auto"
+								v-on:click.prevent="changeAttendingStatus('maybe')">
+							MAYBE
+							<input type="checkbox" class="checkbox" v-model="myAttendingStatus['maybe']"/>
+						</button>
+					</div>
+				</div>
+				<div slot="2">
+					<div class="dual-set"><!--if limit is not surpassed, otherwise show a waitlist option-->
+						<button class="button" style="width: auto"
+								v-on:click.prevent="changeAttendingStatus('attending')">
+							I WILL ATTEND
+							<input type="checkbox" class="checkbox" v-model="myAttendingStatus['attending']"/>
+						</button>
+					</div>
+				</div>
+			</tabs>
+			<!--if private and not invited and authenticated user, can click invite request-->
+			<tabs :num-tabs="1" :initial="0" style="width: 100%;"
+					v-if="!myAttendingStatus['invited'] && event.is_private && isAuthenticatedUser">
+				<div slot="1">
+					<div class="dual-set">
+						<button class="button" style="width: auto"
+								v-on:click.prevent="changeAttendingStatus('invite_request')">
+							INVITE REQUEST
+							<input type="checkbox" class="checkbox" v-model="myAttendingStatus['invite_request']"/>
+						</button>
+					</div>
+				</div>
+			</tabs>
+			<!--if private and not invited and not authenticated user, invite request goes to login-->
+			<tabs :num-tabs="1" :initial="0" style="width: 100%;"
+					v-if="!myAttendingStatus['invited'] && event.is_private && !isAuthenticatedUser ">
+				<div slot="1">
+					<div class="dual-set">
+						<button class="button" style="width: auto"
+								v-on:click.prevent="goToLogin()">
+							INVITE REQUEST
+							<input type="checkbox" class="checkbox" onclick="return false;"/>
+						</button>
+					</div>
+				</div>
+			</tabs>
 		</div>
 		<div class="flex-table">
 			<div style="align-self: center">
 				{{ event.description }}
 			</div>
-			<div v-if="(!event.is_private || attendingStatus['invited']) && event.venue_name" class="flex-table">
+			<div v-if="(!event.is_private || myAttendingStatus['invited']) && event.venue_name" class="flex-table">
 				<br>
 				<div>
 					VENUE:
@@ -69,99 +118,185 @@
 			<br>
 			<div class="flex-row" style="justify-content: space-between">
 				<div style="align-self: center">
-					HOSTS
+					{{ t('HOSTS') }}
 				</div>
-				<button v-on:click.prevent="showHosts=true" class="button" style="align-self: center"><!--everyone can see hosts-->
-					<div class="flex-row" style="align-self: center"><!--everyone can see hosts-->
+				<!--everyone can see hosts-->
+				<button v-on:click.prevent="showStatus = 'hosts'" class="button" style="align-self: center">
+					<div class="flex-row" style="align-self: center">
 						{{ event.hosts.length }}
 						<div v-if="event.hosts.length > 1">
-							&nbsp;people
+							&nbsp;{{ t('PEOPLE') }}
 						</div>
 						<div v-else>
-							&nbsp;person
+							&nbsp;{{ t('PERSON') }}
 						</div>
 					</div>
 				</button>
 			</div>
 			<div class="flex-row" style="justify-content: space-between">
 				<div style="align-self: center">
-					INVITED
+					{{ t('INVITED') }}
 				</div>
-				<button v-on:click.prevent="" class="button" style="align-self: center"
-						:disabled="!attendingStatus['invited'] && event.is_private">
-					<div v-if="attendingStatus['invited'] || !event.is_private" class="flex-row"
+				<!--can't see invited people if not invited-->
+				<button v-on:click.prevent="showStatus = 'invited'" class="button" style="align-self: center"
+						:disabled="(!myAttendingStatus['invited'] && event.is_private) || event.invited.length === 0">
+					<div v-if="myAttendingStatus['invited'] || !event.is_private" class="flex-row"
 							style="align-self: center">
 						{{ event.invited.length }}
-						<div v-if="Array.isArray(event.invited)">
-							&nbsp;people
+						<div v-if="event.invited.length != 1">
+							&nbsp;{{ t('PEOPLE') }}
 						</div>
 						<div v-else>
-							&nbsp;person
+							&nbsp;{{ t('PERSON') }}
 						</div>
 					</div>
 					<div v-else class="flex-row" style="align-self: center">
 						{{ event.invited }}
-						<div v-if="Array.isArray(event.invited)">
-							&nbsp;people
+						<div v-if="event.invited != 1">
+							&nbsp;{{ t('PEOPLE') }}
 						</div>
 						<div v-else>
-							&nbsp;person
+							&nbsp;{{ t('PERSON') }}
 						</div>
 					</div>
 				</button>
 			</div>
 			<div class="flex-row" style="justify-content: space-between">
 				<div style="align-self: center">
-					ATTENDING
+					{{ t('ATTENDING') }}
 				</div>
-				<button v-on:click.prevent="" class="button" style="align-self: center"
-						:disabled="!attendingStatus['invited'] && event.is_private">
-					<div v-if="attendingStatus['invited'] || !event.is_private" class="flex-row"
+				<!--can't see attending people if not invited-->
+				<button v-on:click.prevent="showStatus = 'attending'" class="button" style="align-self: center"
+						:disabled="(!myAttendingStatus['invited'] && event.is_private) || event.attending.length === 0">
+					<div v-if="myAttendingStatus['invited'] || !event.is_private" class="flex-row"
 							style="align-self: center">
 						{{ event.attending.length }}
+						<div v-if="event.attending.length != 1">
+							&nbsp;{{ t('PEOPLE') }}
+						</div>
+						<div v-else>
+							&nbsp;{{ t('PERSON') }}
+						</div>
 					</div>
 					<div v-else class="flex-row" style="align-self: center">
 						{{ event.attending }}
-					</div>
-					<div v-if="Array.isArray(event.attending)">
-						&nbsp;people
-					</div>
-					<div v-else>
-						&nbsp;person
+						<div v-if="event.attending != 1">
+							&nbsp;{{ t('PEOPLE') }}
+						</div>
+						<div v-else>
+							&nbsp;{{ t('PERSON') }}
+						</div>
 					</div>
 				</button>
 			</div>
 			<div class="flex-row" style="justify-content: space-between">
 				<div style="align-self: center">
-					MAYBE
+					{{ t('MAYBE') }}
 				</div>
-				<button v-on:click.prevent="" class="button" style="align-self: center"
-						:disabled="!attendingStatus['invited'] && event.is_private">
-					<div v-if="attendingStatus['invited'] || !event.is_private" class="flex-row"
+				<!--can't see maybe people if not invited-->
+				<button v-on:click.prevent="showStatus = 'maybe'" class="button" style="align-self: center"
+						:disabled="(!myAttendingStatus['invited'] && event.is_private) || event.maybe.length === 0">
+					<div v-if="myAttendingStatus['invited'] || !event.is_private" class="flex-row"
 							style="align-self: center">
 						{{ event.maybe.length }}
-						<div v-if="0 >= event.maybe.length > 1">
-							&nbsp;people
+						<div v-if="event.maybe.length != 1">
+							&nbsp;{{ t('PEOPLE') }}
 						</div>
 						<div v-else>
-							&nbsp;person
+							&nbsp;{{ t('PERSON') }}
 						</div>
 					</div>
 					<div v-else class="flex-row" style="align-self: center">
 						{{ event.maybe }}
-						<div v-if="event.maybe > 1">
-							&nbsp;people
+						<div v-if="event.maybe != 1">
+							&nbsp;{{ t('PEOPLE') }}
 						</div>
 						<div v-else>
-							&nbsp;person
+							&nbsp;{{ t('PERSON') }}
+						</div>
+					</div>
+				</button>
+			</div>
+			<div class="flex-row" style="justify-content: space-between">
+				<div style="align-self: center">
+					{{ t('WAIT LIST') }}
+				</div>
+				<!--can't see wait_list people if not host-->
+				<button v-on:click.prevent="showStatus = 'wait_list'" class="button" style="align-self: center"
+						:disabled="!myAttendingStatus['host'] || event.wait_list.length === 0">
+					<div v-if="myAttendingStatus['invited'] || !event.is_private" class="flex-row"
+							style="align-self: center">
+						{{ event.wait_list.length }}
+						<div v-if="event.wait_list.length != 1">
+							&nbsp;{{ t('PEOPLE') }}
+						</div>
+						<div v-else>
+							&nbsp;{{ t('PERSON') }}
+						</div>
+					</div>
+					<div v-else class="flex-row" style="align-self: center">
+						{{ event.wait_list }}
+						<div v-if="event.wait_list != 1">
+							&nbsp;{{ t('PEOPLE') }}
+						</div>
+						<div v-else>
+							&nbsp;{{ t('PERSON') }}
+						</div>
+					</div>
+				</button>
+			</div>
+			<div class="flex-row" style="justify-content: space-between">
+				<div style="align-self: center">
+					{{ t('INVITE REQUESTS') }}
+				</div>
+				<!--can't see invite_request people if not host-->
+				<button v-on:click.prevent="showStatus = 'invite_request'" class="button" style="align-self: center"
+						:disabled="!myAttendingStatus['host'] || event.invite_request.length === 0">
+					<div v-if="myAttendingStatus['invited'] || !event.is_private" class="flex-row"
+							style="align-self: center">
+						{{ event.invite_request.length }}
+						<div v-if="event.invite_request.length != 1">
+							&nbsp;{{ t('PEOPLE') }}
+						</div>
+						<div v-else>
+							&nbsp;{{ t('PERSON') }}
+						</div>
+					</div>
+					<div v-else class="flex-row" style="align-self: center">
+						{{ event.invite_request }}
+						<div v-if="event.invite_request != 1">
+							&nbsp;{{ t('PEOPLE') }}
+						</div>
+						<div v-else>
+							&nbsp;{{ t('PERSON') }}
 						</div>
 					</div>
 				</button>
 			</div>
 		</div>
-		<div v-if="showHosts">
-			{{hosts}}
-		</div>
+		<modal v-if="showStatus" @closeModals="showStatus = null">
+			<div slot="contents" class="modal" style="height: 50%;">
+				<div style="width: 100%; display: flex; flex-direction: row; justify-content: space-between;
+						align-content: flex-start">
+					<div/>
+					<div style="font-size: 24px;">
+						{{ statusNames[showStatus] }}
+					</div>
+					<div style="padding-bottom: 5px;">
+						<button v-on:click.prevent="showStatus = null" class="no-border-button x-button">
+							✖
+						</button>
+					</div>
+				</div>
+				<div style="width: 100%; overflow-y: scroll;">
+					<div v-for="person in people[showStatus]">
+						<div style="font-size: 24px;">
+							{{person.display_name}}
+						</div>
+					</div>
+				</div>
+			</div>
+		</modal>
 	</div>
 </template>
 <script>
@@ -170,25 +305,42 @@
 	import api from '@/functions/apiFunctions.js'
 	import f from '@/functions/functions.js'
 	import tabs from '@/components/tabs.vue'
+	import modal from '@/components/modal.vue'
 	export default {
 		name: 'event',
 		components: {
 			tabs,
+			modal,
 		},
 		data () {
 			return {
 				store: store,
 				event: store.events.selected,  // just make sure the key fro this component has event in it
-				attendingStatus: {
-					'host': false,
+				myAttendingStatus: {
+					'hosts': false,
 					'invited': false,
 					'attending': false,
 					'maybe': false,
-					'waitList': false,
-					'inviteRequest': false,
+					'wait_list': false,
+					'invite_request': false,
 				},
-				hosts: [],
-				showHosts: false,
+				people: {
+					'hosts': [],
+					'invited': [],
+					'attending': [],
+					'maybe': [],
+					'wait_list': [],
+					'invite_request': [],
+				},
+				showStatus: null,
+				statusNames: {
+					'hosts': this.t('HOSTS'),
+					'invited': this.t('INVITED'),
+					'attending': this.t('ATTENDING'),
+					'maybe': this.t('MAYBE'),
+					'wait_list': this.t('WAIT LIST'),
+					'invite_request': this.t('INVITE REQUESTS'),
+				}
 			}
 		},
 		computed: {
@@ -200,35 +352,56 @@
 				time = time[0] + ':' + time[1]
 				return date + '\xa0\xa0-\xa0\xa0' + time
 			},
+			isAuthenticatedUser () {
+				return f.isAuthenticatedUser
+			},
 		},
 		async mounted () {
 			// we start with an id in args and get this event. save to this.event, and then save to store
-			this.event = f.filterEvents(this.store.events.all, f.currentPage.args.id, ['id'], true)[0]
-			this.store.events.selected = this.event
-			this.hosts = await api.getUserLimitedInfo(this.event.hosts)
-			console.log('HERE IT IS BRAH', this.hosts)
-			this.attendingStatus['hosts'] = f.isGuestStatus(this.event, 'hosts')
-			this.attendingStatus['invited'] = f.isGuestStatus(this.event, 'invited')
-			this.attendingStatus['attending'] = f.isGuestStatus(this.event, 'attending')
-			this.attendingStatus['maybe'] = f.isGuestStatus(this.event, 'maybe')
-			this.attendingStatus['wait_list'] = f.isGuestStatus(this.event, 'wait_list')
-			this.attendingStatus['invite_request'] = f.isGuestStatus(this.event, 'invite_request')
+			this.getEventAndMyStatusAndPeople()
 		},
 		methods: {
 			t (w) { return translations.t(w) },
-			async changeAttendingStatus (status) {
-				store.loading = true
-				await api.changeGuestStatus(this.event.id, status, null)
-				await f.getEvents()
+			goToLogin () {
+				f.goToPage({ page: 'loginRegister', args: {} })
+			},
+			async getEventAndMyStatusAndPeople () {
 				this.event = f.filterEvents(this.store.events.all, f.currentPage.args.id, ['id'], true)[0]
 				this.store.events.selected = this.event
-				this.attendingStatus['hosts'] = f.isGuestStatus(this.event, 'hosts')
-				this.attendingStatus['invited'] = f.isGuestStatus(this.event, 'invited')
-				this.attendingStatus['attending'] = f.isGuestStatus(this.event, 'attending')
-				this.attendingStatus['maybe'] = f.isGuestStatus(this.event, 'maybe')
-				this.attendingStatus['wait_list'] = f.isGuestStatus(this.event, 'wait_list')
-				this.attendingStatus['invite_request'] = f.isGuestStatus(this.event, 'invite_request')
-				store.loading = false
+
+				this.myAttendingStatus['hosts'] = f.isGuestStatus(this.event, 'hosts')
+				this.myAttendingStatus['invited'] = f.isGuestStatus(this.event, 'invited')
+				this.myAttendingStatus['attending'] = f.isGuestStatus(this.event, 'attending')
+				this.myAttendingStatus['maybe'] = f.isGuestStatus(this.event, 'maybe')
+				this.myAttendingStatus['wait_list'] = f.isGuestStatus(this.event, 'wait_list')
+				this.myAttendingStatus['invite_request'] = f.isGuestStatus(this.event, 'invite_request')
+
+				this.people['hosts'] = await api.getUserLimitedInfo(this.event.hosts)
+				if (this.myAttendingStatus['hosts'] || this.myAttendingStatus['invited']) {
+					this.people['invited'] = await api.getUserLimitedInfo(this.event.invited)
+					this.people['maybe'] = await api.getUserLimitedInfo(this.event.maybe)
+					this.people['attending'] = await api.getUserLimitedInfo(this.event.attending)
+					if (this.myAttendingStatus['hosts']) {
+						this.people['wait_list'] = await api.getUserLimitedInfo(this.event.wait_list)
+						this.people['invite_request'] = await api.getUserLimitedInfo(this.event.invite_request)
+					}
+				}
+			},
+			async changeAttendingStatus (status) {
+				if (status === 'decline' || !this.myAttendingStatus[status]) {
+					store.loading = true
+					await api.changeGuestStatus(this.event.id, status, null)
+					await f.getEvents()
+					await this.getEventAndMyStatusAndPeople()
+					store.loading = false
+				} else if (status === 'invite_request') {
+					// if my status is already this status, only change it if im changing invite_request
+					store.loading = true
+					await api.changeGuestStatus(this.event.id, 'decline', null)
+					await f.getEvents()
+					await this.getEventAndMyStatusAndPeople()
+					store.loading = false
+				}  // otherwise, if my status is already this status, do nothing
 			},
 			//// do not delete, this will be used soon. and it took forever to get this shit to work
 			//async getEventImage () {
