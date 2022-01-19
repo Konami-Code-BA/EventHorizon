@@ -71,7 +71,7 @@
 				<div style="align-self: center">
 					HOSTS
 				</div>
-				<button v-on:click.prevent="" class="button" style="align-self: center"><!--everyone can see hosts-->
+				<button v-on:click.prevent="showHosts=true" class="button" style="align-self: center"><!--everyone can see hosts-->
 					<div class="flex-row" style="align-self: center"><!--everyone can see hosts-->
 						{{ event.hosts.length }}
 						<div v-if="event.hosts.length > 1">
@@ -159,6 +159,9 @@
 				</button>
 			</div>
 		</div>
+		<div v-if="showHosts">
+			{{hosts}}
+		</div>
 	</div>
 </template>
 <script>
@@ -184,6 +187,8 @@
 					'waitList': false,
 					'inviteRequest': false,
 				},
+				hosts: [],
+				showHosts: false,
 			}
 		},
 		computed: {
@@ -196,10 +201,12 @@
 				return date + '\xa0\xa0-\xa0\xa0' + time
 			},
 		},
-		mounted () {
+		async mounted () {
 			// we start with an id in args and get this event. save to this.event, and then save to store
 			this.event = f.filterEvents(this.store.events.all, f.currentPage.args.id, ['id'], true)[0]
 			this.store.events.selected = this.event
+			this.hosts = await api.getUserLimitedInfo(this.event.hosts)
+			console.log('HERE IT IS BRAH', this.hosts)
 			this.attendingStatus['hosts'] = f.isGuestStatus(this.event, 'hosts')
 			this.attendingStatus['invited'] = f.isGuestStatus(this.event, 'invited')
 			this.attendingStatus['attending'] = f.isGuestStatus(this.event, 'attending')
