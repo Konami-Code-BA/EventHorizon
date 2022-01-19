@@ -165,9 +165,24 @@ class UserViewset(viewsets.ModelViewSet):
 		self.queryset = [user]
 		if hasattr(self.queryset[0], 'error'):
 			serializer_data = [OrderedDict([('error', self.queryset[0].error)])]
+		elif type(user) != self.model:
+			serializer_data = user
 		else:
 			serializer_data = self.serializer_class(self.queryset, many=True).data
 		return Response(serializer_data)
+
+	def get_user_limited_info(self, request):  # SECURITY: retrieve only returns id/pk and name of user
+		user_array = self.model.objects.filter(pk__in=request.data['ids'])
+		serializer_data = []
+		for all_user_info_dont_send_me in user_array:
+			serializer_data += [OrderedDict([
+				('id', all_user_info_dont_send_me.id),
+				('pk', all_user_info_dont_send_me.pk),
+				('display_name', all_user_info_dont_send_me.display_name),
+				('limited_user', True),
+			])]
+		print(serializer_data)
+		return serializer_data
 
 	def register_with_email(self, request):  # SECURITY: anyone is allowed to make a new user
 		if ('email' in request.data and 'password' in request.data and 'display_name' in request.data and
