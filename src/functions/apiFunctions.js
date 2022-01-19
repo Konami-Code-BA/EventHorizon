@@ -23,6 +23,9 @@ export default {
                     console.log(`success - userApi ${data.command}`)
                     store.user = store.defaultUser
                     return store.user
+                } else if ('limited_user' in response.data[0]) {
+                    console.log(`success - userApi ${data.command}`)
+                    return response.data
                 } else if (!('error' in response.data[0])) {
                     console.log(`success - userApi ${data.command}`)
                     store.user = response.data[0]
@@ -97,9 +100,11 @@ export default {
             })
     },
     // USERS ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-    async myself() {
-        return await this.userApi('get', null, {
-            command: 'myself', // unused
+    async getUserLimitedInfo(userIds) { // userIds is an array
+        return await this.userApi('post', null, {
+            command: 'get_user_limited_info',
+            ids: userIds,
+            pks: userIds,
         })
     },
     async registerWithEmail(email, password, displayName) {
