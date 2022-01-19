@@ -40,7 +40,6 @@ export default {
     async lineApi(method, uri, data) {
         return await this.axiosCall[method](this.baseUrl + uri, data)
             .then(response => {
-                console.log('HERE', response.data)
                 if (!('error' in response.data)) {
                     console.log(`success - lineApi ${data.command}`)
                     return response.data
@@ -210,8 +209,8 @@ export default {
         let result = await this.eventsApi('get', null, null)
         return result
     },
-    async getEvent(pk) {
-        let result = await this.eventsApi('get', pk, null)
+    async getEvent(eventId) {
+        let result = await this.eventsApi('get', eventId, null)
         return result[0]
     },
     async createEvent(data) {
@@ -222,6 +221,13 @@ export default {
     async getMyEvents() {
         let result = await this.eventsApi('post', null, { command: 'my_events' })
         return result
+    },
+    async changeGuestStatus(eventId, status, userId = null) {
+        return await this.eventsApi('patch', eventId, {
+            command: 'update_guest_status',
+            status: status,
+            user_id: userId,
+        })
     },
     //async getEventWithClosestFutureDate(date_time) {
     //    let data = {

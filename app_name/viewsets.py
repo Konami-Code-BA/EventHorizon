@@ -45,8 +45,8 @@ class UserViewset(viewsets.ModelViewSet):
 		serializer_data = self.serializer_class(self.queryset, many=True).data
 		return Response(serializer_data)
 
-	# PARTIAL_UPDATE ###############################################################################
-	def partial_update(self, request, pk=None):  # PATCH {prefix}/{lookup}/
+	# PARTIAL_UPDATE #############################################################
+	def partial_update(self, request, pk):  # PATCH {prefix}/{lookup}/
 		user = eval(f"self.{request.data['command']}(request, pk)")  # SECURITY: inside each command function
 		self.queryset = [user]
 		if hasattr(self.queryset[0], 'error'):
@@ -159,7 +159,7 @@ class UserViewset(viewsets.ModelViewSet):
 	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
 		return Response()  # SECURITY: this just does nothing
 
-	# CREATE #######################################################################################
+	# CREATE #####################################################################
 	def create(self, request):  # POST {prefix}/
 		user = eval(f"self.{request.data['command']}(request)")  # SECURITY: inside each command function
 		self.queryset = [user]
@@ -406,6 +406,7 @@ class EventViewset(viewsets.ViewSet):
 	model = serializer_class.Meta.model
 	queryset = []
 
+	# CREATE #####################################################################
 	def create(self, request):  # POST {prefix}/
 		response = eval(f"self.{request.data['command']}(request)")  # SECURITY: inside each command function
 		return Response(response)
@@ -440,6 +441,7 @@ class EventViewset(viewsets.ViewSet):
 			event.save()
 			event.hosts.add(request.user.id)
 			event.invited.add(request.user.id)
+			event.maybe.add(request.user.id)
 			if 'images' in request.data:
 				event.images.add(request.data['images'])
 		try:
@@ -451,14 +453,13 @@ class EventViewset(viewsets.ViewSet):
 
 	def my_events(self, request):  # SECURITY: anyone can get my events
 		invited_events = self.model.objects.filter(invited=request.user.id)
-		interested_public_events = self.model.objects.filter(Q(is_private=False) & Q(interested=request.user.id) & ~Q(invited=request.user.id))
-		interested_private_events = self.model.objects.filter(Q(is_private=True) & Q(interested=request.user.id) & ~Q(invited=request.user.id))
-		# SECURITY: freely gives invited_events and interested_public_events
-		serializer_data1 = self.serializer_class(invited_events.union(interested_public_events), many=True).data
-		# SECURITY: gives only limited info on interested_private_events 
-		serializer_data2 = serializer_private(interested_private_events)
+		invite_request_private_events = self.model.objects.filter(Q(is_private=True) & Q(invite_request=request.user.id) & ~Q(invited=request.user.id))
+		# SECURITY: freely gives invited_events
+		serializer_data1 = self.serializer_class(invited_events, many=True).data
+		# SECURITY: gives only limited info on invite_request_private_events 
+		serializer_data2 = serializer_private(invite_request_private_events)
 		return serializer_data1 + serializer_data2
-	
+
 	#def closest_future_date(self, request):
 	#	date_time = request.data['date_time']
 	#	invited_events = self.model.objects.filter(invited=request.user.id)
@@ -491,6 +492,48 @@ class EventViewset(viewsets.ViewSet):
 
 	def update(self, request, pk=None):  # PUT {prefix}/{lookup}/
 		return Response()  # SECURITY: this just does nothing
+
+	# PARTIAL_UPDATE #############################################################
+	def partial_update(self, request, pk):  # PATCH {prefix}/{lookup}/
+		eval(f"self.{request.data['command']}(request, pk)")  # SECURITY: inside each command function
+		return Response()
+	
+	def update_guest_status(self, request, pk):
+		event = self.model.objects.get(pk=pk)
+		if event.hosts.filter(id=request.user.id).exists():  # only host can change other users statuses
+			if request.data['user_id']:
+				user_to_change = request.data['user_id']
+			else:
+				user_to_change = request.user.id
+		else:  # non host can only change his own status
+			user_to_change = request.user.id
+		if request.data['status'] == 'decline':  # anyone can decline
+			event.invited.remove(user_to_change)
+			event.maybe.remove(user_to_change)
+			event.attending.remove(user_to_change)
+			event.wait_list.remove(user_to_change)
+		elif request.data['status'] == 'invite_request':
+			if not request.user.id.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists():
+				event.invite_request.add(user_to_change)  # only non-visitors can request an invite
+		elif request.data['status'] == 'invited':
+			if event.hosts.filter(id=request.user.id).exists():  # only host can invite user
+				event.invited.add(user_to_change)
+		elif request.data['status'] == 'wait_list':
+			if event.invited.filter(id=user_to_change).exists():  # only invited can be changed to wait_list
+				event.attending.remove(user_to_change)
+				event.maybe.remove(user_to_change)
+				event.wait_list.add(user_to_change)
+		elif request.data['status'] == 'maybe':
+			if event.invited.filter(id=user_to_change).exists():  # only invited can be changed to maybe
+				event.attending.remove(user_to_change)
+				event.wait_list.remove(user_to_change)
+				event.maybe.add(user_to_change)
+		elif request.data['status'] == 'attending':
+			if event.invited.filter(id=user_to_change).exists():  # only invited can be changed to maybe
+				event.maybe.remove(user_to_change)
+				event.wait_list.remove(user_to_change)
+				event.attending.add(user_to_change)
+		return {}
 
 
 def randomize_lat_lng(address):
@@ -528,11 +571,14 @@ def serializer_private(events):
 			'date_time': event.date_time,
 			'include_time': event.include_time,
 			'is_private': event.is_private,
-			'hosts': event.hosts.count(),
+			'hosts': event.hosts.all().values_list('id', flat=True),
 			'invited': event.invited.count(),
-			'confirmed_guests': event.confirmed_guests.count(),
-			'interested': event.interested.count(),
+			'attending': event.attending.count(),
+			'maybe': event.maybe.count(),
+			'wait_list': event.wait_list.count(),
+			'invite_request': event.invite_request.count(),
 		})]
+	print('herebrah', serializer_data[0]['name'], serializer_data[0]['hosts'])
 	return serializer_data
 
 

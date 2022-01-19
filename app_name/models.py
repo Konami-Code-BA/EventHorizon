@@ -109,8 +109,10 @@ class Event(models.Model):
 	include_time = models.BooleanField(default=False)
 	hosts = models.ManyToManyField(User, blank=True, related_name='hosts')
 	invited = models.ManyToManyField(User, blank=True, related_name='invited')
-	confirmed_guests = models.ManyToManyField(User, blank=True, related_name='confirmed_guests')
-	interested = models.ManyToManyField(User, blank=True, related_name='interested')
+	attending = models.ManyToManyField(User, blank=True, related_name='attending')
+	maybe = models.ManyToManyField(User, blank=True, related_name='maybe')
+	wait_list = models.ManyToManyField(User, blank=True, related_name='wait_list')
+	invite_request = models.ManyToManyField(User, blank=True, related_name='invite_request')
 	images = models.ManyToManyField(Image, blank=True, related_name='images')
 
 	def __str__(self):
@@ -122,6 +124,6 @@ class EventAdmin(admin.ModelAdmin):
 	list_display = ('name', 'id', 'date_time')
 	fields = (
 		'id', 'name', 'description', 'is_private', 'address', 'postal_code', 'venue_name', 'latitude', 'longitude',
-		'rand_latitude', 'rand_longitude', 'date_time', 'include_time', 'hosts', 'invited', 'confirmed_guests',
-		'interested', 'images'
+		'rand_latitude', 'rand_longitude', 'date_time', 'include_time', 'hosts', 'invited', 'attending', 'maybe',
+		'wait_list', 'invite_request', 'images',
 	)
