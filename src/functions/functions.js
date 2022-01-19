@@ -44,16 +44,9 @@ export default {
     focusCursor(documentt, id) {
         setTimeout(() => { documentt.getElementById(id).focus() }, 200)
     },
-    isInvited(event) {
-        if (Array.isArray(event.invited)) {
-            return event.invited.includes(store.user.id)
-        } else {
-            return false
-        }
-    },
-    isHost(event) {
-        if (Array.isArray(event.hosts)) {
-            return event.hosts.includes(store.user.id)
+    isGuestStatus(event, guestStatus) {
+        if (Array.isArray(event[guestStatus])) {
+            return event[guestStatus].includes(store.user.id)
         } else {
             return false
         }

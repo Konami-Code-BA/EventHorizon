@@ -113,19 +113,21 @@
 					let noEvents = true
 					if (this.store.events.display.length != 0) {
 						for (let i = 0; i < this.store.events.display.length; i++) {
-							if (this.store.events.display[i].latitude != 0 || this.store.events.display[i].longitude != 0) {
+							if (this.store.events.display[i].latitude != 0
+									|| this.store.events.display[i].longitude != 0) {
 								noEvents = false
 								let icon = window.origin.replace('8080', '8000') + '/static/publicPastMapIcon.png'
 								if (f.isoStringDateToDateObject(this.store.events.display[i].date_time) > f.today) {
 									icon = window.origin.replace('8080', '8000') + '/static/publicMapIcon.png'
 								}
-								if (this.store.events.display[i].is_private && !f.isInvited(this.store.events.display[i])) {
+								if (this.store.events.display[i].is_private
+										&& !f.isGuestStatus(this.store.events.display[i], 'invited')) {
 									if (f.isoStringDateToDateObject(this.store.events.display[i].date_time) > f.today) {
 										icon = window.origin.replace('8080', '8000') + '/static/privateMapIcon.png'
 									} else {
 										icon = window.origin.replace('8080', '8000') + '/static/privatePastMapIcon.png'
 									}
-								} else if (f.isInvited(this.store.events.display[i])) {
+								} else if (f.isGuestStatus(this.store.events.display[i], 'invited')) {
 									if (f.isoStringDateToDateObject(this.store.events.display[i].date_time) > f.today) {
 										icon = window.origin.replace('8080', '8000') + '/static/myMapIcon.png'
 									} else {

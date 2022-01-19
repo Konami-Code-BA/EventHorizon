@@ -134,6 +134,10 @@ export default {
             'EN': 'CURRENT PASSWORD IS INCORRECT',
             'JP': '現在のパスワードが間違っている'
         },
+        'MAYBE': {
+            'EN': 'MAYBE',
+            'JP': '未決定'
+        },
         'PASSWORD-CHANGE EMAIL SENT!': {
             'EN': 'PASSWORD-CHANGE EMAIL SENT!',
             'JP': 'パスワード変更メールを送りました！'
