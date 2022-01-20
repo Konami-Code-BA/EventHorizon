@@ -1,5 +1,5 @@
 from rest_framework import viewsets
-from .serializers import UserSerializer, EventSerializer, ImageSerializer
+from .serializers import UserSerializer, EventSerializer, ImageSerializer, PlusOneSerializer
 from django.contrib.auth.models import Group
 from rest_framework.response import Response
 from django.http import HttpResponse
@@ -185,17 +185,62 @@ class UserViewset(viewsets.ModelViewSet):
 			serializer_data = self.serializer_class(self.queryset, many=True).data
 		return Response(serializer_data)
 
-	def get_user_limited_info(self, request):  # SECURITY: retrieve only returns id/pk and name of user
-		user_array = self.model.objects.filter(pk__in=request.data['ids'])
-		serializer_data = []
-		for all_user_info_dont_send_me in user_array:
-			serializer_data += [OrderedDict([
-				('id', all_user_info_dont_send_me.id),
-				('pk', all_user_info_dont_send_me.pk),
-				('display_name', all_user_info_dont_send_me.display_name),
-				('limited_user', True),
-			])]
-		return serializer_data
+	#def get_user_limited_info(self, request):  # SECURITY: retrieve only returns id/pk and name of user
+	#	user_array = self.model.objects.filter(pk__in=request.data['ids'])
+	#	serializer_data = []
+	#	for all_user_info_dont_send_me in user_array:
+	#		serializer_data += [OrderedDict([
+	#			('id', all_user_info_dont_send_me.id),
+	#			('pk', all_user_info_dont_send_me.pk),
+	#			('display_name', all_user_info_dont_send_me.display_name),
+	#			('limited_user', True),
+	#			('plus_ones', []),
+	#		])]
+	#	return serializer_data
+
+	def get_event_user_info(self, request):  # SECURITY: retrieve only returns display_name of user
+		# everyone can see hosts
+		# can't see invited/attending/maybe people if not invited
+		# can't see wait_list, invite_request people if not host
+		event = EventSerializer.Meta.model.objects.get(pk=request.data['event_id'])
+		plus_ones = event.plus_ones.all()
+		guest_ids = getattr(event, request.data['guest_type']).all().values_list('id', flat=True)
+		actual_guest_array = list(self.model.objects.filter(pk__in=guest_ids))
+		final_guest_array = []
+		for guest in actual_guest_array:
+			if guest.id == request.user.id:
+				final_guest_array += [OrderedDict([
+					('id', guest.id),
+					('display_name', guest.display_name),
+					('limited_user', True),
+					('plus_one', False),
+				])]
+			else:
+				final_guest_array += [OrderedDict([
+					('display_name', guest.display_name),
+					('limited_user', True),
+					('plus_one', False),
+				])]
+			if request.data['guest_type'] != 'hosts':  # hosts' plus-ones aren't added to hosts, they're added elsewhere
+				plus_one = plus_ones.filter(chaperone=guest.id)  # get plus-one for this guest
+				if len(plus_one) > 0:  # if there is a plus-one
+					final_guest_array += [OrderedDict([
+						('display_name', plus_one[0].name),
+						('limited_user', True),
+						('plus_one', True),
+					])]
+		if (  # if im a host, i can get anyone.
+			request.user.id in event.hosts.all().values_list('id', flat=True)
+			or (  # or if im invited and
+				request.user.id in event.invited.all().values_list('id', flat=True)
+				and request.data['guest_type'] in ['invited', 'attending', 'maybe']  # getting invited/attending/maybe.
+			) or (  # meanwhile anyone can get hosts
+				request.data['guest_type'] == 'hosts'
+			)
+		):
+			return final_guest_array
+		else:
+			return len(final_guest_array)
 
 	def register_with_email(self, request):  # SECURITY: anyone is allowed to make a new user
 		if ('email' in request.data and 'password' in request.data and 'display_name' in request.data and
@@ -516,13 +561,13 @@ class EventViewset(viewsets.ViewSet):
 		return serializer_data
 
 	def my_events(self, request):  # SECURITY: anyone can get my events
-		invited_events = self.model.objects.filter(invited=request.user.id)
-		invite_request_private_events = self.model.objects.filter(Q(is_private=True) & Q(invite_request=request.user.id) & ~Q(invited=request.user.id))
-		# SECURITY: freely gives invited_events
-		serializer_data1 = self.serializer_class(invited_events, many=True).data
-		# SECURITY: gives only limited info on invite_request_private_events 
-		serializer_data2 = serializer_private(invite_request_private_events)
-		return serializer_data1 + serializer_data2
+		my_hosting = self.model.objects.filter(hosts=request.user.id)
+		serializer_data_my_hosting = serializer_host(my_hosting)  # SECURITY: see serializers
+		my_invited = self.model.objects.filter(Q(invited=request.user.id) & ~Q(hosts=request.user.id))
+		serializer_data_my_invited = serializer_public_invited(my_invited)
+		my_invite_requests = self.model.objects.filter(Q(is_private=True) & Q(invite_request=request.user.id))
+		serializer_data_my_invite_requests = serializer_private(my_invite_requests)
+		return serializer_data_my_hosting + serializer_data_my_invited + serializer_data_my_invite_requests
 
 	#def closest_future_date(self, request):
 	#	date_time = request.data['date_time']
@@ -802,3 +847,51 @@ def aws_get_file(key):
 	except ClientError as e:
 		print('AWS S3 UPLOAD ERROR:', e)
 		return {'error': e}
+
+
+# IMAGES VIEW SET ######################################################################################################
+class PlusOneViewset(viewsets.ViewSet):
+	serializer_class = PlusOneSerializer
+	model = serializer_class.Meta.model
+	queryset = []
+	
+	# everyone can see hosts
+	# can't see invited/attending/maybe plus ones if not invited
+	# can't see wait_list/invite_request plus ones if not host
+	def list(self, request):  # GET {prefix}/
+		pass  # SECURITY: does nothing
+
+	def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
+		pass  # SECURITY: does nothing
+
+	def update(self, request, pk=None):  # PUT {prefix}/{lookup}/
+		pass  # SECURITY: does nothing
+
+	def partial_update(self, request, event_pk):  # PATCH {prefix}/{lookup}/
+		result = eval(f"self.{request.data['command']}(request, event_pk)")  # SECURITY: inside each command function
+		return Response(result)
+
+	def set_plus_one(self, request, event_pk):  # get is done in get_event_user_info
+		event = EventSerializer.Meta.model.objects.get(pk=event_pk)
+		if event.plus_ones.filter(chaperone=request.user.id).exists():  # SECURITY: user can't add more than 1 plus-one
+			return [OrderedDict([('error', 'user can\'t add more than 1 plus-one')])]
+		if (  # SECURITY:  only someone part of this event (in any way) can add a plus-one
+			event.hosts.filter(id=request.user.id).exists()
+			or event.invited.filter(id=request.user.id).exists()
+			or event.attending.filter(id=request.user.id).exists()
+			or event.maybe.filter(id=request.user.id).exists()
+			or event.wait_list.filter(id=request.user.id).exists()
+			or event.invite_request.filter(id=request.user.id).exists()
+		):
+			plus_one = self.model(name='(+1) ' + request.data['name'])
+			plus_one.save()
+			plus_one.chaperone.add(request.user.id)
+			return [OrderedDict([('success', plus_one.id)])]
+		else:
+			return [OrderedDict([('error', 'you are not affiliated with this event')])]
+
+	def create(self, request):  # POST {prefix}/
+		pass  # SECURITY: does nothing
+
+	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
+		pass  # SECURITY: does nothing
