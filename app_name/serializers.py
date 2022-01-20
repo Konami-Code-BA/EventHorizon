@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Event, Image
+from .models import User, Event, Image, PlusOne
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -17,4 +17,10 @@ class EventSerializer(serializers.ModelSerializer):
 class ImageSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Image
+		fields = '__all__'
+
+
+class PlusOneSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = PlusOne
 		fields = '__all__'

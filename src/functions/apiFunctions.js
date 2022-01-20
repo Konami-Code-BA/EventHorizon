@@ -23,10 +23,13 @@ export default {
                     console.log(`success - userApi ${data.command}`)
                     store.user = store.defaultUser
                     return store.user
-                } else if (response.data.length == 0) {
+                } else if ((typeof response.data) === 'number') { // when getting a count of users
                     console.log(`success - userApi ${data.command}`)
-                    return []
-                } else if ('limited_user' in response.data[0]) {
+                    return response.data
+                } else if (response.data.length === 0) { // when gettin an empty array of users
+                    console.log(`success - userApi ${data.command}`)
+                    return response.data
+                } else if ('limited_user' in response.data[0]) { // when getting an array of users
                     console.log(`success - userApi ${data.command}`)
                     return response.data
                 } else if (!('error' in response.data[0])) {
@@ -103,11 +106,18 @@ export default {
             })
     },
     // USERS ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-    async getUserLimitedInfo(userIds) { // userIds is an array
+    //async getUserLimitedInfo(userIds) { // userIds is an array
+    //    return await this.userApi('post', null, {
+    //        command: 'get_user_limited_info',
+    //        ids: userIds,
+    //        pks: userIds,
+    //    })
+    //},
+    async getEventUserInfo(eventId, guestType) {
         return await this.userApi('post', null, {
-            command: 'get_user_limited_info',
-            ids: userIds,
-            pks: userIds,
+            command: 'get_event_user_info',
+            event_id: eventId,
+            guest_type: guestType,
         })
     },
     async registerWithEmail(email, password, displayName) {
@@ -148,7 +158,6 @@ export default {
     async login(data) {
         data['command'] = 'login'
         return await this.userApi('post', null, data)
-
     },
     async lineNewDevice(code, path) {
         return await this.userApi('post', null, {

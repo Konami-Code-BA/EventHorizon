@@ -94,6 +94,22 @@ class Image(models.Model):
 		return str(self.id)
 
 
+class PlusOne(models.Model):
+	name = models.CharField(max_length=40, default='', blank=True)
+	chaperone = models.ManyToManyField(User, blank=True, related_name='chaperone')
+
+	def __str__(self):
+		return self.name
+
+
+class PlusOneAdmin(admin.ModelAdmin):
+	readonly_fields = ('id',)
+	list_display = ('name', 'id')
+	fields = (
+		'id', 'name', 'chaperone',
+	)
+
+
 class Event(models.Model):
 	name = models.CharField(max_length=40, default='', blank=True)
 	description = models.TextField(default='', blank=True)
@@ -113,7 +129,9 @@ class Event(models.Model):
 	maybe = models.ManyToManyField(User, blank=True, related_name='maybe')
 	wait_list = models.ManyToManyField(User, blank=True, related_name='wait_list')
 	invite_request = models.ManyToManyField(User, blank=True, related_name='invite_request')
+	plus_ones = models.ManyToManyField(PlusOne, blank=True, related_name='plus_ones')
 	images = models.ManyToManyField(Image, blank=True, related_name='images')
+	attending_limit = models.IntegerField(default=9999999999, blank=False)
 
 	def __str__(self):
 		return self.name
@@ -125,5 +143,5 @@ class EventAdmin(admin.ModelAdmin):
 	fields = (
 		'id', 'name', 'description', 'is_private', 'address', 'postal_code', 'venue_name', 'latitude', 'longitude',
 		'rand_latitude', 'rand_longitude', 'date_time', 'include_time', 'hosts', 'invited', 'attending', 'maybe',
-		'wait_list', 'invite_request', 'images',
+		'wait_list', 'invite_request', 'images', 'attending_limit', 'plus_ones'
 	)

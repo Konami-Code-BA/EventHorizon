@@ -1,5 +1,5 @@
 <template>
-	<div class="main" v-if="store.events.selected">
+	<div class="main" v-if="store.events.selected && !store.loading">
 		<div class="flex-row" style="align-items: center; justify-content: center; height: 60px;">
 			<h2 style="max-width: 80%; overflow-x: scroll;">{{event.name}}</h2>
 		</div>
@@ -123,8 +123,8 @@
 				<!--everyone can see hosts-->
 				<button v-on:click.prevent="showStatus = 'hosts'" class="button" style="align-self: center">
 					<div class="flex-row" style="align-self: center">
-						{{ event.hosts.length }}
-						<div v-if="event.hosts.length > 1">
+						{{ people['hosts'].length }}
+						<div v-if="people['hosts'].length > 1">
 							&nbsp;{{ t('PEOPLE') }}
 						</div>
 						<div v-else>
@@ -135,15 +135,15 @@
 			</div>
 			<div class="flex-row" style="justify-content: space-between">
 				<div style="align-self: center">
-					{{ t('INVITED') }}
+					{{ t('TOTAL INVITED') }}
 				</div>
 				<!--can't see invited people if not invited-->
 				<button v-on:click.prevent="showStatus = 'invited'" class="button" style="align-self: center"
-						:disabled="(!myAttendingStatus['invited'] && event.is_private) || event.invited.length === 0">
-					<div v-if="myAttendingStatus['invited'] || !event.is_private" class="flex-row"
+						:disabled="!Array.isArray(people['invited'])">
+					<div v-if="Array.isArray(people['invited'])" class="flex-row"
 							style="align-self: center">
-						{{ event.invited.length }}
-						<div v-if="event.invited.length != 1">
+						{{ people['invited'].length }}
+						<div v-if="people['invited'].length != 1">
 							&nbsp;{{ t('PEOPLE') }}
 						</div>
 						<div v-else>
@@ -151,8 +151,8 @@
 						</div>
 					</div>
 					<div v-else class="flex-row" style="align-self: center">
-						{{ event.invited }}
-						<div v-if="event.invited != 1">
+						{{ people['invited'] }}
+						<div v-if="people['invited'] != 1">
 							&nbsp;{{ t('PEOPLE') }}
 						</div>
 						<div v-else>
@@ -167,11 +167,11 @@
 				</div>
 				<!--can't see attending people if not invited-->
 				<button v-on:click.prevent="showStatus = 'attending'" class="button" style="align-self: center"
-						:disabled="(!myAttendingStatus['invited'] && event.is_private) || event.attending.length === 0">
-					<div v-if="myAttendingStatus['invited'] || !event.is_private" class="flex-row"
+						:disabled="!Array.isArray(people['attending'])">
+					<div v-if="Array.isArray(people['attending'])" class="flex-row"
 							style="align-self: center">
-						{{ event.attending.length }}
-						<div v-if="event.attending.length != 1">
+						{{ people['attending'].length }}
+						<div v-if="people['attending'].length != 1">
 							&nbsp;{{ t('PEOPLE') }}
 						</div>
 						<div v-else>
@@ -179,8 +179,8 @@
 						</div>
 					</div>
 					<div v-else class="flex-row" style="align-self: center">
-						{{ event.attending }}
-						<div v-if="event.attending != 1">
+						{{ people['attending'] }}
+						<div v-if="people['attending'] != 1">
 							&nbsp;{{ t('PEOPLE') }}
 						</div>
 						<div v-else>
@@ -195,11 +195,11 @@
 				</div>
 				<!--can't see maybe people if not invited-->
 				<button v-on:click.prevent="showStatus = 'maybe'" class="button" style="align-self: center"
-						:disabled="(!myAttendingStatus['invited'] && event.is_private) || event.maybe.length === 0">
-					<div v-if="myAttendingStatus['invited'] || !event.is_private" class="flex-row"
+						:disabled="!Array.isArray(people['maybe'])">
+					<div v-if="Array.isArray(people['maybe'])" class="flex-row"
 							style="align-self: center">
-						{{ event.maybe.length }}
-						<div v-if="event.maybe.length != 1">
+						{{ people['maybe'].length }}
+						<div v-if="people['maybe'].length != 1">
 							&nbsp;{{ t('PEOPLE') }}
 						</div>
 						<div v-else>
@@ -207,8 +207,8 @@
 						</div>
 					</div>
 					<div v-else class="flex-row" style="align-self: center">
-						{{ event.maybe }}
-						<div v-if="event.maybe != 1">
+						{{ people['maybe'] }}
+						<div v-if="people['maybe'] != 1">
 							&nbsp;{{ t('PEOPLE') }}
 						</div>
 						<div v-else>
@@ -223,11 +223,11 @@
 				</div>
 				<!--can't see wait_list people if not host-->
 				<button v-on:click.prevent="showStatus = 'wait_list'" class="button" style="align-self: center"
-						:disabled="!myAttendingStatus['host'] || event.wait_list.length === 0">
-					<div v-if="myAttendingStatus['invited'] || !event.is_private" class="flex-row"
+						:disabled="!Array.isArray(people['wait_list'])">
+					<div v-if="Array.isArray(people['wait_list'])" class="flex-row"
 							style="align-self: center">
-						{{ event.wait_list.length }}
-						<div v-if="event.wait_list.length != 1">
+						{{ people['wait_list'].length }}
+						<div v-if="people['wait_list'].length != 1">
 							&nbsp;{{ t('PEOPLE') }}
 						</div>
 						<div v-else>
@@ -235,8 +235,8 @@
 						</div>
 					</div>
 					<div v-else class="flex-row" style="align-self: center">
-						{{ event.wait_list }}
-						<div v-if="event.wait_list != 1">
+						{{ people['wait_list'] }}
+						<div v-if="people['wait_list'] != 1">
 							&nbsp;{{ t('PEOPLE') }}
 						</div>
 						<div v-else>
@@ -251,11 +251,11 @@
 				</div>
 				<!--can't see invite_request people if not host-->
 				<button v-on:click.prevent="showStatus = 'invite_request'" class="button" style="align-self: center"
-						:disabled="!myAttendingStatus['host'] || event.invite_request.length === 0">
-					<div v-if="myAttendingStatus['invited'] || !event.is_private" class="flex-row"
+						:disabled="!Array.isArray(people['invite_request'])">
+					<div v-if="Array.isArray(people['invite_request'])" class="flex-row"
 							style="align-self: center">
-						{{ event.invite_request.length }}
-						<div v-if="event.invite_request.length != 1">
+						{{ people['invite_request'].length }}
+						<div v-if="people['invite_request'].length != 1">
 							&nbsp;{{ t('PEOPLE') }}
 						</div>
 						<div v-else>
@@ -263,8 +263,8 @@
 						</div>
 					</div>
 					<div v-else class="flex-row" style="align-self: center">
-						{{ event.invite_request }}
-						<div v-if="event.invite_request != 1">
+						{{ people['invite_request'] }}
+						<div v-if="people['invite_request'] != 1">
 							&nbsp;{{ t('PEOPLE') }}
 						</div>
 						<div v-else>
@@ -275,7 +275,7 @@
 			</div>
 		</div>
 		<modal v-if="showStatus" @closeModals="showStatus = null">
-			<div slot="contents" class="modal" style="height: 50%;">
+			<div slot="contents" class="modal" style="max-height: 50%;">
 				<div style="width: 100%; display: flex; flex-direction: row; justify-content: space-between;
 						align-content: flex-start">
 					<div/>
@@ -335,7 +335,7 @@
 				showStatus: null,
 				statusNames: {
 					'hosts': this.t('HOSTS'),
-					'invited': this.t('INVITED'),
+					'invited': this.t('TOTAL INVITED'),
 					'attending': this.t('ATTENDING'),
 					'maybe': this.t('MAYBE'),
 					'wait_list': this.t('WAIT LIST'),
@@ -356,9 +356,11 @@
 				return f.isAuthenticatedUser
 			},
 		},
+		created () {
+			this.store.loading = true
+		},
 		async mounted () {
-			// we start with an id in args and get this event. save to this.event, and then save to store
-			this.getEventAndMyStatusAndPeople()
+			await this.getEventAndMyStatusAndPeople()
 		},
 		methods: {
 			t (w) { return translations.t(w) },
@@ -366,26 +368,38 @@
 				f.goToPage({ page: 'loginRegister', args: {} })
 			},
 			async getEventAndMyStatusAndPeople () {
+				this.store.loading = true
 				this.event = f.filterEvents(this.store.events.all, f.currentPage.args.id, ['id'], true)[0]
 				this.store.events.selected = this.event
 
-				this.myAttendingStatus['hosts'] = f.isGuestStatus(this.event, 'hosts')
-				this.myAttendingStatus['invited'] = f.isGuestStatus(this.event, 'invited')
-				this.myAttendingStatus['attending'] = f.isGuestStatus(this.event, 'attending')
-				this.myAttendingStatus['maybe'] = f.isGuestStatus(this.event, 'maybe')
-				this.myAttendingStatus['wait_list'] = f.isGuestStatus(this.event, 'wait_list')
-				this.myAttendingStatus['invite_request'] = f.isGuestStatus(this.event, 'invite_request')
+				this.people['hosts'] = await api.getEventUserInfo(this.event.id, 'hosts')
+				this.people['invited'] = await api.getEventUserInfo(this.event.id, 'invited')
+				this.people['maybe'] = await api.getEventUserInfo(this.event.id, 'maybe')
+				this.people['attending'] = await api.getEventUserInfo(this.event.id, 'attending')
+				this.people['wait_list'] = await api.getEventUserInfo(this.event.id, 'wait_list')
+				this.people['invite_request'] = await api.getEventUserInfo(this.event.id, 'invite_request')
 
-				this.people['hosts'] = await api.getUserLimitedInfo(this.event.hosts)
-				if (this.myAttendingStatus['hosts'] || this.myAttendingStatus['invited']) {
-					this.people['invited'] = await api.getUserLimitedInfo(this.event.invited)
-					this.people['maybe'] = await api.getUserLimitedInfo(this.event.maybe)
-					this.people['attending'] = await api.getUserLimitedInfo(this.event.attending)
-					if (this.myAttendingStatus['hosts']) {
-						this.people['wait_list'] = await api.getUserLimitedInfo(this.event.wait_list)
-						this.people['invite_request'] = await api.getUserLimitedInfo(this.event.invite_request)
+				this.myAttendingStatus['hosts'] = this.checkPeopleList('hosts')
+				this.myAttendingStatus['invited'] = this.checkPeopleList('invited')
+				this.myAttendingStatus['attending'] = this.checkPeopleList('attending')
+				this.myAttendingStatus['maybe'] = this.checkPeopleList('maybe')
+				this.myAttendingStatus['wait_list'] = this.checkPeopleList('wait_list')
+				this.myAttendingStatus['invite_request'] = this.checkPeopleList('invite_request')
+				this.store.loading = false
+			},
+			checkPeopleList (guestStatus) {
+				let me = {
+					id: this.store.user.id,
+					display_name: this.store.user.display_name,
+					limited_user: true,
+					plus_one: false,
+				}
+				for (let i = 0; i < this.people[guestStatus].length; i++ ) {
+					if (JSON.stringify(this.people[guestStatus][i]) === JSON.stringify(me)) {
+						return true
 					}
 				}
+				return false
 			},
 			async changeAttendingStatus (status) {
 				if (status === 'decline' || !this.myAttendingStatus[status]) {
@@ -421,6 +435,7 @@
 		width: 100%;
 		display: flex;
 		flex-direction: row;
+		justify-content: center;
 	}
 	.dual-set {
 		display: flex;
@@ -434,5 +449,8 @@
 		height: 20px;
 		width: 20px;
 		z-index: 1;
+	}
+	.button {
+		min-width: 100px;
 	}
 </style>
