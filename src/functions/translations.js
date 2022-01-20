@@ -402,9 +402,9 @@ export default {
             'EN': 'INVITE REQUESTS',
             'JP': 'INVITE REQUESTS'
         },
-        'INVITED': {
-            'EN': 'INVITED',
-            'JP': 'INVITED'
+        'TOTAL INVITED': {
+            'EN': 'TOTAL INVITED',
+            'JP': 'TOTAL INVITED'
         },
         'ALL EVENTS': {
             'EN': 'ALL EVENTS',
