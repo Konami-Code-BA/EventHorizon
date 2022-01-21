@@ -14,8 +14,10 @@
 				:key="page + 'forgotPassword'"/>
 		<reset-password v-show="page === 'resetPassword'"
 				:key="page + 'resetPassword'"/>
-		<aboutUs v-show="page === 'aboutUs'"
+		<about-us v-show="page === 'aboutUs'"
 				:key="page + 'aboutUs'"/>
+		<faq v-show="page === 'faq'"
+				:key="page + 'faq'"/>
 		<experiment1 v-show="page === 'experiment1'"
 				:key="page + 'experiment1'"/>
 		<experiment2 v-show="page === 'experiment2'"
@@ -33,6 +35,7 @@
 	import resetPassword from '@/views/resetPassword'
 	import forgotPassword from '@/views/forgotPassword'
 	import aboutUs from '@/views/aboutUs'
+	import faq from '@/views/faq'
 	import experiment1 from '@/views/experiment1'
 	import experiment2 from '@/views/experiment2'
 	import f from '@/functions/functions.js'
@@ -47,6 +50,7 @@
 			resetPassword,
 			forgotPassword,
 			aboutUs,
+			faq,
 			experiment1,
 			experiment2,
 		},
