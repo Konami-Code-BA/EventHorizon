@@ -78,6 +78,15 @@
 
 				<div class="line-height"/>
 
+				<div style="width: 100%">
+					<button v-on:click.prevent="selectedTab = 0; goToPage({ page: 'faq', args: {} })"
+							class="button">
+						FAQ
+					</button>
+				</div>
+
+				<div class="line-height"/>
+
 			</div>
 		</modal>
 		<qr-code-generator v-if="showQrModal" @closeModals="showQrModal=false"/>
