@@ -6,7 +6,7 @@
 					✖
 				</button>
 			</div>
-			<div>
+			<div style="white-space: pre-line;">
 				{{ theInfo[whichInfo] }}<br>
 				For more info, go here [link]
 			</div>
@@ -27,8 +27,8 @@
 		data () {
 			return {
 				theInfo: {
-					'events': 'Events are like, bro',
-					'peopleFilters': 'you know what tho man',
+					'events': 'Upcoming events can be displayed by location, calendar, or list format. Click into an event to find more information. \n\nMap key: \n Past events \n Upcoming private events \n Upcoming public events',
+					'peopleFilters': 'All: Public events + events to which you have and have not been invited. \n \nMine: Events to which you have been invited/have confirmed attendance. \n\nPeople I follow: Feature currently under construction',
 				}
 			}
 		},
