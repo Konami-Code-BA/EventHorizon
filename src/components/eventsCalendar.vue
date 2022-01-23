@@ -24,12 +24,12 @@
 				<div class="weeks">
 					<div v-for="week in 6" style="margin-bottom: 5px;">
 						<div class="days">
-							<div v-for="day in 7">
-								<div style="width: 22px; height: 22px;" class="day-individual">
+							<div v-for="day in 7" style="width: 100%; height: 100%;">
+								<div style="width: 100%; height: 100%;" class="day-individual">
 									<button v-on:click.prevent="selectDate(
 												getDateOfCalendarLocation((week - 1) * 7 + day - 1)
-											)" class="no-border-button">
-										<div :style="dayStyling(week, day)">
+											)" class="no-border-button" style="height: 100%">
+										<div :style="dayStyling(week, day)" style="height: 100%">
 											{{ getDateOfCalendarLocation((week - 1) * 7 + day - 1).getDate() }}
 										</div>
 									</button>
