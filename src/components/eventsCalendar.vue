@@ -172,11 +172,13 @@
 				}
 			},
 			dayStyling (week, day) {
-				let style = {
+				let style = {  // changed this after mac fix. check this is still ok
 					'display': 'flex',
 					'flex-diretion': 'column',
 					'justify-content': 'center',
-					'align-items': 'center'
+					'align-items': 'center',
+					'width': '27px',
+					'height': '27px',
 				}
 				let calendarLocation = (week - 1) * 7 + day - 1
 				let date = this.getDateOfCalendarLocation(calendarLocation)
@@ -185,8 +187,6 @@
 					style['border-radius'] = '50%'
 					style['border'] = '2px solid #95c4ff'
 					style['background-color'] = 'none'
-					style['width'] = '27px'
-					style['height'] = '27px'
 				}
 				if ((
 					week == 1 && dayDate > 7
@@ -199,8 +199,6 @@
 					style['cursor'] = 'initial !important';
 				} else {
 					style['border-radius'] = '50%'
-					style['width'] = '27px'
-					style['height'] = '27px'
 					style['border'] = '2px solid #ffe07a'
 				}
 				return style		

@@ -2,7 +2,7 @@
 	<div>
 		<div class="main" style="padding-top: 5px;">
 			<div class="viewer filters" style="display: flex; flex-direction: column; align-items: center;
-					width: 100%; min-height: 100px; height: 100px;">
+					width: 100%; min-height: 105px; height: 105px;"><!--remove filters from class and check mac is ok-->
 				<div style="border-bottom: 2px solid rgba(255, 255, 255, .3); width: 100%; display: flex;
 						flex-direction: row; align-items: center; justify-content: center; padding: 5px;">
 					<div>
