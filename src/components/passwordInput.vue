@@ -5,7 +5,7 @@
 				<input :placeholder="placeholder" v-model="password"
 					:type="[showPassword ? 'text' : 'password']" style="flex-grow: 1; width: 100%"
 					:id="`password${usage}`" autocorrect="off" autocapitalize="none"/>
-				<button v-on:click.prevent="showButton()" class="button" style="width: 70px" type="button">
+				<button v-on:click.prevent="showButton()" class="button" style="width: 80px" type="button">
 					<small v-if="!showPassword">
 						{{ t('SHOW') }}
 					</small>
