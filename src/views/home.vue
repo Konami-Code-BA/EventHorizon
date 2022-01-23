@@ -4,7 +4,7 @@
 			<div class="viewer filters" style="display: flex; flex-direction: column; align-items: center;
 					width: 100%; min-height: 100px; height: 100px;">
 				<div style="border-bottom: 2px solid rgba(255, 255, 255, .3); width: 100%; display: flex;
-						justify-content: center">
+						flex-direction: row; align-items: center; justify-content: center; padding: 5px;">
 					<div>
 						{{ t('SELECT WHAT EVENTS TO DISPLAY') }}
 					</div>
@@ -17,43 +17,35 @@
 				</div>
 				<div style="display: flex; flex-direction: column; align-items: flex-start; width: 100%;
 						padding-top: 5px; padding-bottom: 5px;">
-					<div style="display: flex; flex-direction: row; width: 100%;">
-						<div>
-							<input type="checkbox" class="checkbox" v-model="filters['all']"
-									@click="filterChange('all')"/>
-						</div>
-						<button class="filter-button button" :class="{ selected : filters['all']}"
+					<div class="filters">
+						<input type="checkbox" class="checkbox" v-model="filters['all']"
+								@click="filterChange('all')"/>
+						<button class="button filter-button" :class="{ selected : filters['all']}"
 								v-on:click.prevent="filters['all']=!filters['all']; filterChange('all')">
-							<div>
-								{{ t('ALL') }}
-							</div>
+							{{ t('ALL') }}
 						</button>
 					</div>
-					<div style="display: flex; flex-direction: row; width: 100%;">
-						<div>
-							<input type="checkbox" class="checkbox" v-model="filters['mine']"
-									@click="filterChange('mine')"/>
-						</div>
-						<button class="filter-button button" :class="{ selected : filters['mine']}"
+					<div class="filters">
+						<input type="checkbox" class="checkbox" v-model="filters['mine']"
+								@click="filterChange('mine')"/>
+						<button class="button filter-button" :class="{ selected : filters['mine']}"
 								v-on:click.prevent="filters['mine']=!filters['mine']; filterChange('mine')">
-							<div>
 								{{ t('MINE') }}
-							</div>
 						</button>
 					</div>
-					<div style="display: flex; flex-direction: row; width: 100%;">
-						<div>
-							<input type="checkbox" class="checkbox" v-model="filters['allPeople']"
-									@click="filterChange('allPeople')"/>
-						</div>
-						<button class="filter-button button" :class="{ selected : filters['allPeople']}" disabled
+					<div class="filters">
+						<input type="checkbox" class="checkbox" v-model="filters['allPeople']"
+								@click="filterChange('allPeople')"/>
+						<button class="button filter-button" :class="{ selected : filters['allPeople']}" disabled
 								v-on:click.prevent="filters['allPeople']=!filters['allPeople'];
-								filterChange('allPeople')" style="display: flex; justify-content: space-between">
-							<div>
-								{{ t('PEOPLE I FOLLOW') }}
-							</div>
-							<div>
-								<small>({{ t('COMING SOON') }})</small>
+								filterChange('allPeople')">
+							<div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center; width: 100%;">
+								<div>
+									{{ t('PEOPLE I FOLLOW') }}
+								</div>
+								<div>
+									<small>({{ t('COMING SOON') }})</small>
+								</div>
 							</div>
 						</button>
 					</div>
@@ -65,8 +57,7 @@
 						<img src="@/assets/fullScreen.png" class="icon" style="width: 80%; height: 80%"/>
 					</button>
 				</div-->
-				<div style="display: flex;
-						justify-content: center">
+				<div style="display: flex; flex-direction: row; align-items: center; justify-content: center; padding: 5px;">
 					<div>
 						{{ t('EVENTS') }}
 					</div>
@@ -79,7 +70,7 @@
 				</div>
 				<tabs :num-tabs="3" :initial="selectedTab" :key="selectedTab"
 						@on-click="(arg) => { selectedTab = arg }"
-						style="border-left: none; border-right: none; border-bottom: none;">
+						style="border-left: none; border-right: none; border-bottom: none; height: auto !important;">
 					<div slot="1">
 						<img src="@/assets/mapIcon.png" class="icon"/>
 					</div>
@@ -214,9 +205,6 @@
 		border-top-left-radius: 0;
 		border-top-right-radius: 0;
 	}
-	.filters {
-		
-	}
 	.selected {
 		background-color: rgba(255, 255, 255, .2);  /*140,128,151,0.6 after combinging with #18002e*/
 		width: 100%;
@@ -228,9 +216,9 @@
 		padding: 10px;
 		padding-left: 35px;
 		display: flex;
-		flex-direction: row;
-		align-items: center;
-		justify-content: flex-start;
+		flex-direction: column;
+		align-items: flex-start;
+		justify-content: center;
 		width: 100%;
 		z-index: 2;
 	}
@@ -248,5 +236,11 @@
 		height: 15px;
 		width: 20px;
 		z-index: 1;
+	}
+	.filters {
+		display: flex;
+		flex-direction: row;
+		width: 100%;
+		align-items: center;
 	}
 </style>
