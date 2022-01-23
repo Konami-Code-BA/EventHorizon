@@ -57,7 +57,7 @@
 				</form>
 				<div style="color: grey; display: flex; flex-direction: column; align-items: center" v-else>
 					<div>({{ t('COMING SOON') }})</div>
-					<div><small>{{ t('CURRENTLY, ONLY ADMIN CAN CREATE EVENTS. BUT THIS FEATURE WILL BECOME OPEN TO THE PUBLIC SOON!') }}</small></div>
+					<div><small>{{ t('CURRENTLY, ONLY ADMINS CAN CREATE EVENTS. THIS FEATURE WILL BECOME OPEN TO THE PUBLIC SOON!') }}</small></div>
 				</div>
 			</div>
 		</div>
