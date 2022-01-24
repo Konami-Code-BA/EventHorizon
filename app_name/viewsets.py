@@ -208,39 +208,56 @@ class UserViewset(viewsets.ModelViewSet):
 		actual_guest_array = list(self.model.objects.filter(pk__in=guest_ids))
 		final_guest_array = []
 		for guest in actual_guest_array:
-			if guest.id == request.user.id:
+			# if it is me, i get more info. also if i am a host
+			if guest.id == request.user.id or request.user.id in event.hosts.all().values_list('id', flat=True):
 				final_guest_array += [OrderedDict([
 					('id', guest.id),
 					('display_name', guest.display_name),
 					('limited_user', True),
 					('plus_one', False),
 				])]
-			else:
+				if request.data['guest_type'] != 'hosts':  # hosts' plus-ones aren't added to hosts, they're added elsewhere
+					plus_one = plus_ones.filter(chaperone=guest.id)  # get plus-one for this guest
+					if len(plus_one) > 0:  # if there is a plus-one
+						final_guest_array += [OrderedDict([
+							('id', guest.id),
+							('display_name', plus_one[0].name),
+							('limited_user', True),
+							('plus_one', True),
+						])]
+			elif ((  # get some info if
+					request.user.id in event.invited.all().values_list('id', flat=True)  # im invited and
+					and request.data['guest_type'] in ['invited', 'attending', 'maybe']  # get invited/attending/maybe
+				) or (  # or im getting hosts
+					request.data['guest_type'] == 'hosts'
+				)
+			):
 				final_guest_array += [OrderedDict([
 					('display_name', guest.display_name),
 					('limited_user', True),
 					('plus_one', False),
 				])]
-			if request.data['guest_type'] != 'hosts':  # hosts' plus-ones aren't added to hosts, they're added elsewhere
-				plus_one = plus_ones.filter(chaperone=guest.id)  # get plus-one for this guest
-				if len(plus_one) > 0:  # if there is a plus-one
-					final_guest_array += [OrderedDict([
-						('display_name', plus_one[0].name),
-						('limited_user', True),
-						('plus_one', True),
-					])]
-		if (  # if im a host, i can get anyone.
-			request.user.id in event.hosts.all().values_list('id', flat=True)
-			or (  # or if im invited and
-				request.user.id in event.invited.all().values_list('id', flat=True)
-				and request.data['guest_type'] in ['invited', 'attending', 'maybe']  # getting invited/attending/maybe.
-			) or (  # meanwhile anyone can get hosts
-				request.data['guest_type'] == 'hosts'
-			)
-		):
-			return final_guest_array
-		else:
-			return len(final_guest_array)
+				if request.data['guest_type'] != 'hosts':  # hosts' plus-ones aren't added to hosts, they're added elsewhere
+					plus_one = plus_ones.filter(chaperone=guest.id)  # get plus-one for this guest
+					if len(plus_one) > 0:  # if there is a plus-one
+						final_guest_array += [OrderedDict([
+							('display_name', plus_one[0].name),
+							('limited_user', True),
+							('plus_one', True),
+						])]
+			else: # im not getting me, im not a host, im not invited getting invitees, im not getting hosts
+				final_guest_array += [OrderedDict([
+					('limited_user', True),
+					('plus_one', False),
+				])]
+				if request.data['guest_type'] != 'hosts':  # hosts' plus-ones aren't added to hosts, they're added elsewhere
+					plus_one = plus_ones.filter(chaperone=guest.id)  # get plus-one for this guest
+					if len(plus_one) > 0:  # if there is a plus-one
+						final_guest_array += [OrderedDict([
+							('limited_user', True),
+							('plus_one', True),
+						])]
+		return final_guest_array
 
 	def register_with_email(self, request):  # SECURITY: anyone is allowed to make a new user
 		if ('email' in request.data and 'password' in request.data and 'display_name' in request.data and
@@ -630,26 +647,38 @@ class EventViewset(viewsets.ViewSet):
 			event.attending.remove(user_to_change)
 			event.wait_list.remove(user_to_change)
 			event.invite_request.remove(user_to_change)
+			plus_one = event.plus_ones.filter(chaperone=request.user.id)
+			plus_one.delete()
 		elif request.data['status'] == 'invite_request':
 			if not request.user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists():
 				event.invite_request.add(user_to_change)  # only non-visitors can request an invite
-		elif request.data['status'] == 'invited':
-			if event.hosts.filter(id=request.user.id).exists():  # only host can invite user
-				event.invited.add(user_to_change)
+		#elif request.data['status'] == 'invited':
+		#	if event.hosts.filter(id=request.user.id).exists():  # only host can invite user if private
+		#		event.invited.add(user_to_change)
+		#		event.maybe.add(user_to_change)
 		elif request.data['status'] == 'wait_list':
-			if event.invited.filter(id=user_to_change).exists():  # only invited can be changed to wait_list
+			# only invited can be changed to wait_list (unless its public)
+			if event.invited.filter(id=user_to_change).exists() or not event.is_private:
 				event.attending.remove(user_to_change)
 				event.maybe.remove(user_to_change)
+				event.invited.remove(user_to_change)
+				event.invited.add(user_to_change)
 				event.wait_list.add(user_to_change)
 		elif request.data['status'] == 'maybe':
-			if event.invited.filter(id=user_to_change).exists():  # only invited can be changed to maybe
+			# only invited can be changed to maybe (unless its public)
+			if event.invited.filter(id=user_to_change).exists() or not event.is_private:
 				event.attending.remove(user_to_change)
 				event.wait_list.remove(user_to_change)
+				event.invited.remove(user_to_change)
+				event.invited.add(user_to_change)
 				event.maybe.add(user_to_change)
 		elif request.data['status'] == 'attending':
-			if event.invited.filter(id=user_to_change).exists():  # only invited can be changed to maybe
+			# only invited can be changed to maybe (unless its public)
+			if event.invited.filter(id=user_to_change).exists() or not event.is_private:
 				event.maybe.remove(user_to_change)
 				event.wait_list.remove(user_to_change)
+				event.invited.remove(user_to_change)
+				event.invited.add(user_to_change)
 				event.attending.add(user_to_change)
 		return {}  # SECURITY: returns nothing
 
@@ -849,7 +878,7 @@ def aws_get_file(key):
 		return {'error': e}
 
 
-# IMAGES VIEW SET ######################################################################################################
+# PLUS ONE VIEW SET ######################################################################################################
 class PlusOneViewset(viewsets.ViewSet):
 	serializer_class = PlusOneSerializer
 	model = serializer_class.Meta.model
@@ -867,12 +896,15 @@ class PlusOneViewset(viewsets.ViewSet):
 	def update(self, request, pk=None):  # PUT {prefix}/{lookup}/
 		pass  # SECURITY: does nothing
 
-	def partial_update(self, request, event_pk):  # PATCH {prefix}/{lookup}/
-		result = eval(f"self.{request.data['command']}(request, event_pk)")  # SECURITY: inside each command function
+	def partial_update(self, request, pk=None):  # PATCH {prefix}/{lookup}/
+		pass  # SECURITY: does nothing
+
+	def create(self, request):  # POST {prefix}/
+		result = eval(f"self.{request.data['command']}(request)")  # SECURITY: inside each command function
 		return Response(result)
 
-	def set_plus_one(self, request, event_pk):  # get is done in get_event_user_info
-		event = EventSerializer.Meta.model.objects.get(pk=event_pk)
+	def set_plus_one(self, request):  # get is done in get_event_user_info
+		event = EventSerializer.Meta.model.objects.get(pk=request.data['event_id'])
 		if event.plus_ones.filter(chaperone=request.user.id).exists():  # SECURITY: user can't add more than 1 plus-one
 			return [OrderedDict([('error', 'user can\'t add more than 1 plus-one')])]
 		if (  # SECURITY:  only someone part of this event (in any way) can add a plus-one
@@ -883,15 +915,31 @@ class PlusOneViewset(viewsets.ViewSet):
 			or event.wait_list.filter(id=request.user.id).exists()
 			or event.invite_request.filter(id=request.user.id).exists()
 		):
-			plus_one = self.model(name='(+1) ' + request.data['name'])
+			plus_one = self.model(name='(+1) ' + request.data['plus_one_name'])
 			plus_one.save()
 			plus_one.chaperone.add(request.user.id)
+			event.plus_ones.add(plus_one.id)
 			return [OrderedDict([('success', plus_one.id)])]
 		else:
 			return [OrderedDict([('error', 'you are not affiliated with this event')])]
 
-	def create(self, request):  # POST {prefix}/
-		pass  # SECURITY: does nothing
+	def delete_plus_one(self, request):
+		event = EventSerializer.Meta.model.objects.get(pk=request.data['event_id'])
+		if not event.plus_ones.filter(chaperone=request.user.id).exists():  # SECURITY: can't del +1 if doesnt exist
+			return [OrderedDict([('error', 'user can\'t add more than 1 plus-one')])]
+		if (  # SECURITY:  only someone part of this event (in any way) can delete a plus-one
+			event.hosts.filter(id=request.user.id).exists()
+			or event.invited.filter(id=request.user.id).exists()
+			or event.attending.filter(id=request.user.id).exists()
+			or event.maybe.filter(id=request.user.id).exists()
+			or event.wait_list.filter(id=request.user.id).exists()
+			or event.invite_request.filter(id=request.user.id).exists()
+		):
+			plus_one = event.plus_ones.filter(chaperone=request.user.id)
+			plus_one.delete()
+			return []
+		else:
+			return [OrderedDict([('error', 'you are not affiliated with this event')])]
 
 	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
 		pass  # SECURITY: does nothing

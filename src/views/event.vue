@@ -12,8 +12,8 @@
 			</div>
 		</div>
 		<br>
-		<div style="width: 100%; display: flex; flex-direction: column; align-items: center;">
-			<div class="dual-set" v-if="myAttendingStatus['invited']">
+		<div style="width: 100%; display: flex; flex-direction: column; align-items: center; border: 2px solid rgba(255, 255, 255, .3)">
+			<div class="dual-set" v-if="myAttendingStatus['invited']" style="border-bottom: 2px solid rgba(255, 255, 255, .3)">
 				YOU ARE INVITED
 				<input type="checkbox" class="checkbox" checked="checked" onclick="return false;"/>
 			</div>
@@ -49,7 +49,7 @@
 			</tabs>
 			<!--if public and not invited, can click maybe / attending-->
 			<tabs :num-tabs="2" :initial="0" style="width: 100%;"
-					v-if="myAttendingStatus['invited'] && !event.is_private">
+					v-if="!myAttendingStatus['invited'] && !event.is_private">
 				<div slot="1">
 					<div class="dual-set">
 						<button class="button" style="width: auto"
@@ -95,6 +95,18 @@
 					</div>
 				</div>
 			</tabs>
+			<div v-if="myAttendingStatus['invited'] || myAttendingStatus['invite_request']"
+					style="display: flex; flex-direction: column; align-items: center;">
+				<div class="dual-set" style="align-self: flex-start; padding-bottom: 2px">
+					<button class="button" style="width: 100%" v-on:click.prevent="changePlusOne()">
+						ADD A PLUS ONE
+						&nbsp;
+						<input type="checkbox" class="checkbox" v-model="plusOneStatus" :key="plusOneStatus"/>  <!--need to check if i have plus one and put in checkbox and show name instead of input-->
+					</button>
+				</div>
+				<display-name-input ref="displayNameInput" usage="PlusOne" :dontStartError="true" v-if="!plusOneStatus"/>
+				<div v-else>{{plusOneStatus}}</div>
+			</div>
 		</div>
 		<div class="flex-table">
 			<div style="align-self: center">
@@ -139,20 +151,11 @@
 				</div>
 				<!--can't see invited people if not invited-->
 				<button v-on:click.prevent="showStatus = 'invited'" class="button" style="align-self: center"
-						:disabled="!Array.isArray(people['invited'])">
-					<div v-if="Array.isArray(people['invited'])" class="flex-row"
+						:disabled="!myAttendingStatus['invited'] || people['invited'].length === 0">
+					<div class="flex-row"
 							style="align-self: center">
 						{{ people['invited'].length }}
 						<div v-if="people['invited'].length != 1">
-							&nbsp;{{ t('PEOPLE') }}
-						</div>
-						<div v-else>
-							&nbsp;{{ t('PERSON') }}
-						</div>
-					</div>
-					<div v-else class="flex-row" style="align-self: center">
-						{{ people['invited'] }}
-						<div v-if="people['invited'] != 1">
 							&nbsp;{{ t('PEOPLE') }}
 						</div>
 						<div v-else>
@@ -167,20 +170,11 @@
 				</div>
 				<!--can't see attending people if not invited-->
 				<button v-on:click.prevent="showStatus = 'attending'" class="button" style="align-self: center"
-						:disabled="!Array.isArray(people['attending'])">
-					<div v-if="Array.isArray(people['attending'])" class="flex-row"
+						:disabled="!myAttendingStatus['invited'] || people['attending'].length === 0">
+					<div class="flex-row"
 							style="align-self: center">
 						{{ people['attending'].length }}
 						<div v-if="people['attending'].length != 1">
-							&nbsp;{{ t('PEOPLE') }}
-						</div>
-						<div v-else>
-							&nbsp;{{ t('PERSON') }}
-						</div>
-					</div>
-					<div v-else class="flex-row" style="align-self: center">
-						{{ people['attending'] }}
-						<div v-if="people['attending'] != 1">
 							&nbsp;{{ t('PEOPLE') }}
 						</div>
 						<div v-else>
@@ -195,20 +189,11 @@
 				</div>
 				<!--can't see maybe people if not invited-->
 				<button v-on:click.prevent="showStatus = 'maybe'" class="button" style="align-self: center"
-						:disabled="!Array.isArray(people['maybe'])">
-					<div v-if="Array.isArray(people['maybe'])" class="flex-row"
+						:disabled="!myAttendingStatus['invited'] || people['maybe'].length === 0">
+					<div class="flex-row"
 							style="align-self: center">
 						{{ people['maybe'].length }}
 						<div v-if="people['maybe'].length != 1">
-							&nbsp;{{ t('PEOPLE') }}
-						</div>
-						<div v-else>
-							&nbsp;{{ t('PERSON') }}
-						</div>
-					</div>
-					<div v-else class="flex-row" style="align-self: center">
-						{{ people['maybe'] }}
-						<div v-if="people['maybe'] != 1">
 							&nbsp;{{ t('PEOPLE') }}
 						</div>
 						<div v-else>
@@ -223,20 +208,11 @@
 				</div>
 				<!--can't see wait_list people if not host-->
 				<button v-on:click.prevent="showStatus = 'wait_list'" class="button" style="align-self: center"
-						:disabled="!Array.isArray(people['wait_list'])">
-					<div v-if="Array.isArray(people['wait_list'])" class="flex-row"
+						:disabled="!myAttendingStatus['host'] || people['wait_list'].length === 0">
+					<div class="flex-row"
 							style="align-self: center">
 						{{ people['wait_list'].length }}
 						<div v-if="people['wait_list'].length != 1">
-							&nbsp;{{ t('PEOPLE') }}
-						</div>
-						<div v-else>
-							&nbsp;{{ t('PERSON') }}
-						</div>
-					</div>
-					<div v-else class="flex-row" style="align-self: center">
-						{{ people['wait_list'] }}
-						<div v-if="people['wait_list'] != 1">
 							&nbsp;{{ t('PEOPLE') }}
 						</div>
 						<div v-else>
@@ -251,20 +227,11 @@
 				</div>
 				<!--can't see invite_request people if not host-->
 				<button v-on:click.prevent="showStatus = 'invite_request'" class="button" style="align-self: center"
-						:disabled="!Array.isArray(people['invite_request'])">
-					<div v-if="Array.isArray(people['invite_request'])" class="flex-row"
+						:disabled="!myAttendingStatus['host'] || people['invite_request'].length === 0">
+					<div class="flex-row"
 							style="align-self: center">
 						{{ people['invite_request'].length }}
 						<div v-if="people['invite_request'].length != 1">
-							&nbsp;{{ t('PEOPLE') }}
-						</div>
-						<div v-else>
-							&nbsp;{{ t('PERSON') }}
-						</div>
-					</div>
-					<div v-else class="flex-row" style="align-self: center">
-						{{ people['invite_request'] }}
-						<div v-if="people['invite_request'] != 1">
 							&nbsp;{{ t('PEOPLE') }}
 						</div>
 						<div v-else>
@@ -306,11 +273,13 @@
 	import f from '@/functions/functions.js'
 	import tabs from '@/components/tabs.vue'
 	import modal from '@/components/modal.vue'
+	import displayNameInput from '@/components/displayNameInput.vue'
 	export default {
 		name: 'event',
 		components: {
 			tabs,
 			modal,
+			displayNameInput,
 		},
 		data () {
 			return {
@@ -340,7 +309,8 @@
 					'maybe': this.t('MAYBE'),
 					'wait_list': this.t('WAIT LIST'),
 					'invite_request': this.t('INVITE REQUESTS'),
-				}
+				},
+				plusOneStatus: null,
 			}
 		},
 		computed: {
@@ -385,6 +355,18 @@
 				this.myAttendingStatus['maybe'] = this.checkPeopleList('maybe')
 				this.myAttendingStatus['wait_list'] = this.checkPeopleList('wait_list')
 				this.myAttendingStatus['invite_request'] = this.checkPeopleList('invite_request')
+
+				this.plusOneStatus = null
+				let keys = Object.keys(this.myAttendingStatus)
+				for (let i = 0; i < keys.length; i++) {
+					if (this.myAttendingStatus[keys[i]]) {
+						for (let j = 0; j < this.people[keys[i]].length; j++) {
+							if (this.people[keys[i]][j].id === this.store.user.id && this.people[keys[i]][j].plus_one) {
+								this.plusOneStatus = this.people[keys[i]][j].display_name
+							}
+						}
+					}
+				}
 				this.store.loading = false
 			},
 			checkPeopleList (guestStatus) {
@@ -416,6 +398,29 @@
 					await this.getEventAndMyStatusAndPeople()
 					store.loading = false
 				}  // otherwise, if my status is already this status, do nothing
+			},
+			async changePlusOne () {
+				console.log(this.plusOneStatus)
+				if (this.plusOneStatus) {
+					store.loading = true
+					await api.deletePlusOne(this.event.id)
+					await f.getEvents()
+					await this.getEventAndMyStatusAndPeople()
+					store.loading = false
+				} else {
+					if (this.$refs.displayNameInput.displayName === '') {
+						this.$refs.displayNameInput.error = 'Required'
+					}
+					if (this.$refs.displayNameInput.error.length > 0) {
+						f.shakeFunction([this.$refs.displayNameInput])
+						return
+					}
+					store.loading = true
+					await api.setPlusOne(this.event.id, this.$refs.displayNameInput.displayName)
+					await f.getEvents()
+					await this.getEventAndMyStatusAndPeople()
+					store.loading = false
+				}
 			},
 			//// do not delete, this will be used soon. and it took forever to get this shit to work
 			//async getEventImage () {
@@ -452,5 +457,8 @@
 	}
 	.button {
 		min-width: 100px;
+	}
+	.tabs {
+		border: none;
 	}
 </style>

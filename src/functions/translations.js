@@ -178,6 +178,10 @@ export default {
             'EN': 'Required',
             'JP': '必須項目'
         },
+        'Plus One needs name': {
+            'EN': 'Plus One needs name',
+            'JP': 'Plus One needs name'
+        },
         'Only these symbols are allowed: . _ - @': {
             'EN': 'Only these symbols are allowed: . _ - @',
             'JP': '記号は次の中から使用可: . _ - @'
