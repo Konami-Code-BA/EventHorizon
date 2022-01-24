@@ -811,7 +811,7 @@ class ImageViewset(viewsets.ViewSet):
 	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
 		pass
 
-	def create(self, request):  # POST {prefix}/
+	def create(self, request):  # POST {prefix}/ 
 		if request.data['command'] == 'get':
 			result = []
 			for key in request.data['keys'].split(','):
