@@ -139,7 +139,7 @@
 				}
 				if (this.imageFile) {
 					let image_id = await this.saveImage()
-					data['images'] = [image_id]
+					data['images'] = image_id
 				}
 				let newEvent = await api.createEvent(data)
 				await f.getEvents()
