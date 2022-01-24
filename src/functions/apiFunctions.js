@@ -296,6 +296,7 @@ export default {
     //},
     // IMAGES //////////////////////////////////////////////////////////////////////////////////////////////////////////
     async saveImage(formData) {
+        formData.append('command', 'create')
         let result = await this.imagesApi('post', null, formData)
         return result[0]
     },

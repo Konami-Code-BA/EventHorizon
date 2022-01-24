@@ -1,280 +1,293 @@
 <template>
 	<div class="main" v-if="store.events.selected && !store.loading">
-		<div class="flex-row" style="align-items: center; justify-content: center; height: 60px;">
-			<h2 style="max-width: 80%; overflow-x: scroll;">{{event.name}}</h2>
-		</div>
-		<div class="flex-row" style="justify-content: space-between">
-			<div>
-				{{ getDate }}
+		<div style="overflow-y: scroll; overflow-x: hidden; width: 95%;">
+			<div class="flex-row" style="align-items: center; justify-content: center; height: 60px;">
+				<h2 style="max-width: 80%; overflow-x: scroll;">{{event.name}}</h2>
 			</div>
-			<div>
-				<small>{{ event.is_private ? 'PRIVATE EVENT' : 'PUBLIC EVENT' }}</small>
+			<div class="flex-row" style="justify-content: space-between">
+				<div>
+					{{ getDate }}
+				</div>
+				<div>
+					<small>{{ event.is_private ? 'PRIVATE EVENT' : 'PUBLIC EVENT' }}</small>
+				</div>
 			</div>
-		</div>
-		<br>
-		<div v-if="!isSpaceToAttend" style="color: red"> THE EVENT IS FULL </div>
-		<div style="width: 100%; display: flex; flex-direction: column; align-items: center; border: 2px solid rgba(255, 255, 255, .3)">
-			<div class="dual-set" v-if="myAttendingStatus['invited']" style="border-bottom: 2px solid rgba(255, 255, 255, .3)">
-				YOU ARE INVITED
-				<input type="checkbox" class="checkbox" checked="checked" onclick="return false;"/>
+			<br>
+			<div v-if="!isSpaceToAttend" style="color: red"> THE EVENT IS FULL </div>
+			<div style="width: 100%; display: flex; flex-direction: column; align-items: center; border: 2px solid rgba(255, 255, 255, .3)">
+				<div class="dual-set" v-if="myAttendingStatus['invited']" style="border-bottom: 2px solid rgba(255, 255, 255, .3)">
+					YOU ARE INVITED
+					<input type="checkbox" class="checkbox" checked="checked" onclick="return false;"/>
+				</div>
+				<!--if invited, can click maybe / attending / decline-->
+				<tabs :num-tabs="3" :initial="0"
+						v-if="myAttendingStatus['invited']">
+					<div slot="1">
+						<div class="dual-set">
+							<button class="button"
+									v-on:click.prevent="changeAttendingStatus('maybe')">
+								MAYBE
+								<input type="checkbox" class="checkbox" v-model="myAttendingStatus['maybe']"/>
+							</button>
+						</div>
+					</div>
+					<div slot="2" v-if="isSpaceToAttend || myAttendingStatus['attending']">
+						<div class="dual-set"><!--if limit is not surpassed, otherwise show a waitlist option-->
+							<button class="button"
+									v-on:click.prevent="changeAttendingStatus('attending')">
+								I WILL ATTEND
+								<input type="checkbox" class="checkbox" v-model="myAttendingStatus['attending']"/>
+							</button>
+						</div>
+					</div>
+					<div slot="2" v-else>
+						<div class="dual-set"><!--if limit is not surpassed, otherwise show a waitlist option-->
+							<button class="button"
+									v-on:click.prevent="changeAttendingStatus('wait_list')">
+								WAIT LIST
+								<input type="checkbox" class="checkbox" v-model="myAttendingStatus['wait_list']"/>
+							</button>
+						</div>
+					</div>
+					<div slot="3">
+						<div class="dual-set">
+							<button class="button"
+									v-on:click.prevent="changeAttendingStatus('decline')">
+								DECLINE
+							</button>
+						</div>
+					</div>
+				</tabs>
+				<!--if public and not invited, can click maybe / attending-->
+				<tabs :num-tabs="2" :initial="0" style="width: 100%;"
+						v-if="!myAttendingStatus['invited'] && !event.is_private">
+					<div slot="1">
+						<div class="dual-set">
+							<button class="button" style="width: auto"
+									v-on:click.prevent="changeAttendingStatus('maybe')">
+								MAYBE
+								<input type="checkbox" class="checkbox" v-model="myAttendingStatus['maybe']"/>
+							</button>
+						</div>
+					</div>
+					<div slot="2" v-if="isSpaceToAttend">
+						<div class="dual-set"><!--if limit is not surpassed, otherwise show a waitlist option-->
+							<button class="button" style="width: auto"
+									v-on:click.prevent="changeAttendingStatus('attending')">
+								I WILL ATTEND
+								<input type="checkbox" class="checkbox" v-model="myAttendingStatus['attending']"/>
+							</button>
+						</div>
+					</div>
+					<div slot="2" v-else>
+						<div class="dual-set"><!--if limit is not surpassed, otherwise show a waitlist option-->
+							<button class="button" style="width: auto"
+									v-on:click.prevent="changeAttendingStatus('wait_list')">
+								WAIT LIST
+								<input type="checkbox" class="checkbox" v-model="myAttendingStatus['wait_list']"/>
+							</button>
+						</div>
+					</div>
+				</tabs>
+				<!--if private and not invited and authenticated user, can click invite request-->
+				<tabs :num-tabs="1" :initial="0" style="width: 100%;"
+						v-if="!myAttendingStatus['invited'] && event.is_private && isAuthenticatedUser">
+					<div slot="1">
+						<div class="dual-set">
+							<button class="button" style="width: auto"
+									v-on:click.prevent="changeAttendingStatus('invite_request')">
+								INVITE REQUEST
+								<input type="checkbox" class="checkbox" v-model="myAttendingStatus['invite_request']"/>
+							</button>
+						</div>
+					</div>
+				</tabs>
+				<!--if private and not invited and not authenticated user, invite request goes to login-->
+				<tabs :num-tabs="1" :initial="0" style="width: 100%;"
+						v-if="!myAttendingStatus['invited'] && event.is_private && !isAuthenticatedUser ">
+					<div slot="1">
+						<div class="dual-set">
+							<button class="button" style="width: auto"
+									v-on:click.prevent="goToLogin()">
+								INVITE REQUEST
+								<input type="checkbox" class="checkbox" onclick="return false;"/>
+							</button>
+						</div>
+					</div>
+				</tabs>
+				<div v-if="(myAttendingStatus['invited'] || myAttendingStatus['invite_request']) && isSpaceToAttend"
+						style="display: flex; flex-direction: column; align-items: center;">
+					<div class="dual-set" style="align-self: flex-start; padding-bottom: 2px">
+						<button class="button" style="width: 100%" v-on:click.prevent="changePlusOne()">
+							ADD A PLUS ONE
+							&nbsp;
+							<input type="checkbox" class="checkbox" v-model="plusOneStatus" :key="plusOneStatus"/>  <!--need to check if i have plus one and put in checkbox and show name instead of input-->
+						</button>
+					</div>
+					<display-name-input ref="displayNameInput" usage="PlusOne" :dontStartError="true" v-if="!plusOneStatus"/>
+					<div v-else>{{plusOneStatus}}</div>
+				</div>
+				<button v-on:click.prevent="showHostPannel = true" v-if="myAttendingStatus['host']">
+					OPEN HOST PANEL
+				</button>
 			</div>
-			<!--if invited, can click maybe / attending / decline-->
-			<tabs :num-tabs="3" :initial="0" style="width: 100%;"
-					v-if="myAttendingStatus['invited']">
-				<div slot="1">
-					<div class="dual-set">
-						<button class="button" style="width: auto"
-								v-on:click.prevent="changeAttendingStatus('maybe')">
-							MAYBE
-							<input type="checkbox" class="checkbox" v-model="myAttendingStatus['maybe']"/>
-						</button>
+			<br>
+			<div class="flex-table">
+				<div style="align-self: center">
+					{{ event.description }}
+				</div>
+				<div v-if="(!event.is_private || myAttendingStatus['invited']) && event.venue_name" class="flex-table">
+					<br>
+					<div>
+						VENUE:
+					</div>
+					<div style="align-self: center">
+						{{ event.venue_name }}
 					</div>
 				</div>
-				<div slot="2" v-if="isSpaceToAttend || myAttendingStatus['attending']">
-					<div class="dual-set"><!--if limit is not surpassed, otherwise show a waitlist option-->
-						<button class="button" style="width: auto"
-								v-on:click.prevent="changeAttendingStatus('attending')">
-							I WILL ATTEND
-							<input type="checkbox" class="checkbox" v-model="myAttendingStatus['attending']"/>
-						</button>
-					</div>
-				</div>
-				<div slot="2" v-else>
-					<div class="dual-set"><!--if limit is not surpassed, otherwise show a waitlist option-->
-						<button class="button" style="width: auto"
-								v-on:click.prevent="changeAttendingStatus('wait_list')">
-							WAIT LIST
-							<input type="checkbox" class="checkbox" v-model="myAttendingStatus['wait_list']"/>
-						</button>
-					</div>
-				</div>
-				<div slot="3">
-					<div class="dual-set">
-						<button class="button" style="width: auto"
-								v-on:click.prevent="changeAttendingStatus('decline')">
-							DECLINE
-						</button>
-					</div>
-				</div>
-			</tabs>
-			<!--if public and not invited, can click maybe / attending-->
-			<tabs :num-tabs="2" :initial="0" style="width: 100%;"
-					v-if="!myAttendingStatus['invited'] && !event.is_private">
-				<div slot="1">
-					<div class="dual-set">
-						<button class="button" style="width: auto"
-								v-on:click.prevent="changeAttendingStatus('maybe')">
-							MAYBE
-							<input type="checkbox" class="checkbox" v-model="myAttendingStatus['maybe']"/>
-						</button>
-					</div>
-				</div>
-				<div slot="2" v-if="isSpaceToAttend">
-					<div class="dual-set"><!--if limit is not surpassed, otherwise show a waitlist option-->
-						<button class="button" style="width: auto"
-								v-on:click.prevent="changeAttendingStatus('attending')">
-							I WILL ATTEND
-							<input type="checkbox" class="checkbox" v-model="myAttendingStatus['attending']"/>
-						</button>
-					</div>
-				</div>
-				<div slot="2" v-else>
-					<div class="dual-set"><!--if limit is not surpassed, otherwise show a waitlist option-->
-						<button class="button" style="width: auto"
-								v-on:click.prevent="changeAttendingStatus('wait_list')">
-							WAIT LIST
-							<input type="checkbox" class="checkbox" v-model="myAttendingStatus['wait_list']"/>
-						</button>
-					</div>
-				</div>
-			</tabs>
-			<!--if private and not invited and authenticated user, can click invite request-->
-			<tabs :num-tabs="1" :initial="0" style="width: 100%;"
-					v-if="!myAttendingStatus['invited'] && event.is_private && isAuthenticatedUser">
-				<div slot="1">
-					<div class="dual-set">
-						<button class="button" style="width: auto"
-								v-on:click.prevent="changeAttendingStatus('invite_request')">
-							INVITE REQUEST
-							<input type="checkbox" class="checkbox" v-model="myAttendingStatus['invite_request']"/>
-						</button>
-					</div>
-				</div>
-			</tabs>
-			<!--if private and not invited and not authenticated user, invite request goes to login-->
-			<tabs :num-tabs="1" :initial="0" style="width: 100%;"
-					v-if="!myAttendingStatus['invited'] && event.is_private && !isAuthenticatedUser ">
-				<div slot="1">
-					<div class="dual-set">
-						<button class="button" style="width: auto"
-								v-on:click.prevent="goToLogin()">
-							INVITE REQUEST
-							<input type="checkbox" class="checkbox" onclick="return false;"/>
-						</button>
-					</div>
-				</div>
-			</tabs>
-			<div v-if="(myAttendingStatus['invited'] || myAttendingStatus['invite_request']) && isSpaceToAttend"
-					style="display: flex; flex-direction: column; align-items: center;">
-				<div class="dual-set" style="align-self: flex-start; padding-bottom: 2px">
-					<button class="button" style="width: 100%" v-on:click.prevent="changePlusOne()">
-						ADD A PLUS ONE
-						&nbsp;
-						<input type="checkbox" class="checkbox" v-model="plusOneStatus" :key="plusOneStatus"/>  <!--need to check if i have plus one and put in checkbox and show name instead of input-->
+				<br>
+				<div style="align-self: center">
+					<button v-on:click.prevent="$emit('goToMap')" class="button" style="align-self: center">
+						<small>{{ event.address }}</small>
 					</button>
 				</div>
-				<display-name-input ref="displayNameInput" usage="PlusOne" :dontStartError="true" v-if="!plusOneStatus"/>
-				<div v-else>{{plusOneStatus}}</div>
-			</div>
-		</div>
-		<div class="flex-table">
-			<div style="align-self: center">
-				{{ event.description }}
-			</div>
-			<div v-if="(!event.is_private || myAttendingStatus['invited']) && event.venue_name" class="flex-table">
 				<br>
-				<div>
-					VENUE:
-				</div>
-				<div style="align-self: center">
-					{{ event.venue_name }}
-				</div>
-			</div>
-			<br>
-			<div style="align-self: center">
-				<button v-on:click.prevent="$emit('goToMap')" class="button" style="align-self: center">
-					<small>{{ event.address }}</small>
-				</button>
-			</div>
-			<br>
-			<div class="flex-row" style="justify-content: space-between">
-				<div style="align-self: center">
-					{{ t('HOSTS') }}
-				</div>
-				<!--everyone can see hosts-->
-				<button v-on:click.prevent="showStatus = 'hosts'" class="button" style="align-self: center">
-					<div class="flex-row" style="align-self: center">
-						{{ people['hosts'].length }}
-						<div v-if="people['hosts'].length > 1">
-							&nbsp;{{ t('PEOPLE') }}
-						</div>
-						<div v-else>
-							&nbsp;{{ t('PERSON') }}
-						</div>
+				<div class="flex-row" style="justify-content: space-between">
+					<div style="align-self: center">
+						{{ t('HOSTS') }}
 					</div>
-				</button>
-			</div>
-			<div class="flex-row" style="justify-content: space-between">
-				<div style="align-self: center">
-					ATTENDING LIMIT
+					<!--everyone can see hosts-->
+					<button v-on:click.prevent="showStatus = 'hosts'" class="button" style="align-self: center">
+						<div class="flex-row" style="align-self: center">
+							{{ people['hosts'].length }}
+							<div v-if="people['hosts'].length > 1">
+								&nbsp;{{ t('PEOPLE') }}
+							</div>
+							<div v-else>
+								&nbsp;{{ t('PERSON') }}
+							</div>
+						</div>
+					</button>
 				</div>
-				<!--can't see invited people if not invited-->
-				<button class="button" :disabled="true" style="align-self: center; color: red; border-color: red;">
-					<div class="flex-row" style="align-self: center">
-						{{ event.attending_limit }}
-						<div v-if="event.attending_limit != 1">
-							&nbsp;{{ t('PEOPLE') }}
-						</div>
-						<div v-else>
-							&nbsp;{{ t('PERSON') }}
-						</div>
+				<div class="flex-row" style="justify-content: space-between">
+					<div style="align-self: center">
+						ATTENDING LIMIT
 					</div>
-				</button>
-			</div>
-			<div class="flex-row" style="justify-content: space-between">
-				<div style="align-self: center">
-					{{ t('TOTAL INVITED') }}
+					<!--can't see invited people if not invited-->
+					<button class="button" :disabled="true" style="align-self: center"
+							:style="[isSpaceToAttend ? {color: 'green', borderColor: 'green'}
+							: {color: 'red', borderColor: 'red'}]">
+						<div class="flex-row" style="align-self: center">
+							<div v-if="event.attending_limit != 9999999999">
+								{{ event.attending_limit }}
+								<div v-if="event.attending_limit != 1">
+									&nbsp;{{ t('PEOPLE') }}
+								</div>
+								<div v-else>
+									&nbsp;{{ t('PERSON') }}
+								</div>
+							</div>
+							<div v-else>
+								UNLIMITED
+							</div>
+						</div>
+					</button>
 				</div>
-				<!--can't see invited people if not invited-->
-				<button v-on:click.prevent="showStatus = 'invited'" class="button" style="align-self: center"
-						:disabled="!myAttendingStatus['invited'] || people['invited'].length === 0">
-					<div class="flex-row"
-							style="align-self: center">
-						{{ people['invited'].length }}
-						<div v-if="people['invited'].length != 1">
-							&nbsp;{{ t('PEOPLE') }}
-						</div>
-						<div v-else>
-							&nbsp;{{ t('PERSON') }}
-						</div>
+				<div class="flex-row" style="justify-content: space-between">
+					<div style="align-self: center">
+						{{ t('TOTAL INVITED') }}
 					</div>
-				</button>
-			</div>
-			<div class="flex-row" style="justify-content: space-between">
-				<div style="align-self: center">
-					{{ t('ATTENDING') }}
+					<!--can't see invited people if not invited-->
+					<button v-on:click.prevent="showStatus = 'invited'" class="button" style="align-self: center"
+							:disabled="!myAttendingStatus['invited'] || people['invited'].length === 0">
+						<div class="flex-row"
+								style="align-self: center">
+							{{ people['invited'].length }}
+							<div v-if="people['invited'].length != 1">
+								&nbsp;{{ t('PEOPLE') }}
+							</div>
+							<div v-else>
+								&nbsp;{{ t('PERSON') }}
+							</div>
+						</div>
+					</button>
 				</div>
-				<!--can't see attending people if not invited-->
-				<button v-on:click.prevent="showStatus = 'attending'" class="button" style="align-self: center"
-						:disabled="!myAttendingStatus['invited'] || people['attending'].length === 0">
-					<div class="flex-row"
-							style="align-self: center">
-						{{ people['attending'].length }}
-						<div v-if="people['attending'].length != 1">
-							&nbsp;{{ t('PEOPLE') }}
-						</div>
-						<div v-else>
-							&nbsp;{{ t('PERSON') }}
-						</div>
+				<div class="flex-row" style="justify-content: space-between">
+					<div style="align-self: center">
+						{{ t('ATTENDING') }}
 					</div>
-				</button>
-			</div>
-			<div class="flex-row" style="justify-content: space-between">
-				<div style="align-self: center">
-					{{ t('MAYBE') }}
+					<!--can't see attending people if not invited-->
+					<button v-on:click.prevent="showStatus = 'attending'" class="button" style="align-self: center"
+							:disabled="!myAttendingStatus['invited'] || people['attending'].length === 0">
+						<div class="flex-row"
+								style="align-self: center">
+							{{ people['attending'].length }}
+							<div v-if="people['attending'].length != 1">
+								&nbsp;{{ t('PEOPLE') }}
+							</div>
+							<div v-else>
+								&nbsp;{{ t('PERSON') }}
+							</div>
+						</div>
+					</button>
 				</div>
-				<!--can't see maybe people if not invited-->
-				<button v-on:click.prevent="showStatus = 'maybe'" class="button" style="align-self: center"
-						:disabled="!myAttendingStatus['invited'] || people['maybe'].length === 0">
-					<div class="flex-row"
-							style="align-self: center">
-						{{ people['maybe'].length }}
-						<div v-if="people['maybe'].length != 1">
-							&nbsp;{{ t('PEOPLE') }}
-						</div>
-						<div v-else>
-							&nbsp;{{ t('PERSON') }}
-						</div>
+				<div class="flex-row" style="justify-content: space-between">
+					<div style="align-self: center">
+						{{ t('MAYBE') }}
 					</div>
-				</button>
-			</div>
-			<div class="flex-row" style="justify-content: space-between">
-				<div style="align-self: center">
-					{{ t('WAIT LIST') }}
+					<!--can't see maybe people if not invited-->
+					<button v-on:click.prevent="showStatus = 'maybe'" class="button" style="align-self: center"
+							:disabled="!myAttendingStatus['invited'] || people['maybe'].length === 0">
+						<div class="flex-row"
+								style="align-self: center">
+							{{ people['maybe'].length }}
+							<div v-if="people['maybe'].length != 1">
+								&nbsp;{{ t('PEOPLE') }}
+							</div>
+							<div v-else>
+								&nbsp;{{ t('PERSON') }}
+							</div>
+						</div>
+					</button>
 				</div>
-				<!--can't see wait_list people if not host-->
-				<button v-on:click.prevent="showStatus = 'wait_list'" class="button" style="align-self: center"
-						:disabled="!myAttendingStatus['host'] || people['wait_list'].length === 0">
-					<div class="flex-row"
-							style="align-self: center">
-						{{ people['wait_list'].length }}
-						<div v-if="people['wait_list'].length != 1">
-							&nbsp;{{ t('PEOPLE') }}
-						</div>
-						<div v-else>
-							&nbsp;{{ t('PERSON') }}
-						</div>
+				<div class="flex-row" style="justify-content: space-between">
+					<div style="align-self: center">
+						{{ t('WAIT LIST') }}
 					</div>
-				</button>
-			</div>
-			<div class="flex-row" style="justify-content: space-between">
-				<div style="align-self: center">
-					{{ t('INVITE REQUESTS') }}
+					<!--can't see wait_list people if not host-->
+					<button v-on:click.prevent="showStatus = 'wait_list'" class="button" style="align-self: center"
+							:disabled="!myAttendingStatus['host'] || people['wait_list'].length === 0">
+						<div class="flex-row"
+								style="align-self: center">
+							{{ people['wait_list'].length }}
+							<div v-if="people['wait_list'].length != 1">
+								&nbsp;{{ t('PEOPLE') }}
+							</div>
+							<div v-else>
+								&nbsp;{{ t('PERSON') }}
+							</div>
+						</div>
+					</button>
 				</div>
-				<!--can't see invite_request people if not host-->
-				<button v-on:click.prevent="showStatus = 'invite_request'" class="button" style="align-self: center"
-						:disabled="!myAttendingStatus['host'] || people['invite_request'].length === 0">
-					<div class="flex-row"
-							style="align-self: center">
-						{{ people['invite_request'].length }}
-						<div v-if="people['invite_request'].length != 1">
-							&nbsp;{{ t('PEOPLE') }}
-						</div>
-						<div v-else>
-							&nbsp;{{ t('PERSON') }}
-						</div>
+				<div class="flex-row" style="justify-content: space-between">
+					<div style="align-self: center">
+						{{ t('INVITE REQUESTS') }}
 					</div>
-				</button>
+					<!--can't see invite_request people if not host-->
+					<button v-on:click.prevent="showStatus = 'invite_request'" class="button" style="align-self: center"
+							:disabled="!myAttendingStatus['host'] || people['invite_request'].length === 0">
+						<div class="flex-row"
+								style="align-self: center">
+							{{ people['invite_request'].length }}
+							<div v-if="people['invite_request'].length != 1">
+								&nbsp;{{ t('PEOPLE') }}
+							</div>
+							<div v-else>
+								&nbsp;{{ t('PERSON') }}
+							</div>
+						</div>
+					</button>
+				</div>
 			</div>
 		</div>
 		<modal v-if="showStatus" @closeModals="showStatus = null">
