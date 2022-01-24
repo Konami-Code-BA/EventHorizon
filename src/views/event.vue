@@ -12,6 +12,7 @@
 			</div>
 		</div>
 		<br>
+		<div v-if="!isSpaceToAttend" style="color: red"> THE EVENT IS FULL </div>
 		<div style="width: 100%; display: flex; flex-direction: column; align-items: center; border: 2px solid rgba(255, 255, 255, .3)">
 			<div class="dual-set" v-if="myAttendingStatus['invited']" style="border-bottom: 2px solid rgba(255, 255, 255, .3)">
 				YOU ARE INVITED
@@ -29,12 +30,21 @@
 						</button>
 					</div>
 				</div>
-				<div slot="2">
+				<div slot="2" v-if="isSpaceToAttend || myAttendingStatus['attending']">
 					<div class="dual-set"><!--if limit is not surpassed, otherwise show a waitlist option-->
 						<button class="button" style="width: auto"
 								v-on:click.prevent="changeAttendingStatus('attending')">
 							I WILL ATTEND
 							<input type="checkbox" class="checkbox" v-model="myAttendingStatus['attending']"/>
+						</button>
+					</div>
+				</div>
+				<div slot="2" v-else>
+					<div class="dual-set"><!--if limit is not surpassed, otherwise show a waitlist option-->
+						<button class="button" style="width: auto"
+								v-on:click.prevent="changeAttendingStatus('wait_list')">
+							WAIT LIST
+							<input type="checkbox" class="checkbox" v-model="myAttendingStatus['wait_list']"/>
 						</button>
 					</div>
 				</div>
@@ -59,12 +69,21 @@
 						</button>
 					</div>
 				</div>
-				<div slot="2">
+				<div slot="2" v-if="isSpaceToAttend">
 					<div class="dual-set"><!--if limit is not surpassed, otherwise show a waitlist option-->
 						<button class="button" style="width: auto"
 								v-on:click.prevent="changeAttendingStatus('attending')">
 							I WILL ATTEND
 							<input type="checkbox" class="checkbox" v-model="myAttendingStatus['attending']"/>
+						</button>
+					</div>
+				</div>
+				<div slot="2" v-else>
+					<div class="dual-set"><!--if limit is not surpassed, otherwise show a waitlist option-->
+						<button class="button" style="width: auto"
+								v-on:click.prevent="changeAttendingStatus('wait_list')">
+							WAIT LIST
+							<input type="checkbox" class="checkbox" v-model="myAttendingStatus['wait_list']"/>
 						</button>
 					</div>
 				</div>
@@ -95,7 +114,7 @@
 					</div>
 				</div>
 			</tabs>
-			<div v-if="myAttendingStatus['invited'] || myAttendingStatus['invite_request']"
+			<div v-if="(myAttendingStatus['invited'] || myAttendingStatus['invite_request']) && isSpaceToAttend"
 					style="display: flex; flex-direction: column; align-items: center;">
 				<div class="dual-set" style="align-self: flex-start; padding-bottom: 2px">
 					<button class="button" style="width: 100%" v-on:click.prevent="changePlusOne()">
@@ -137,6 +156,23 @@
 					<div class="flex-row" style="align-self: center">
 						{{ people['hosts'].length }}
 						<div v-if="people['hosts'].length > 1">
+							&nbsp;{{ t('PEOPLE') }}
+						</div>
+						<div v-else>
+							&nbsp;{{ t('PERSON') }}
+						</div>
+					</div>
+				</button>
+			</div>
+			<div class="flex-row" style="justify-content: space-between">
+				<div style="align-self: center">
+					ATTENDING LIMIT
+				</div>
+				<!--can't see invited people if not invited-->
+				<button class="button" :disabled="true" style="align-self: center; color: red; border-color: red;">
+					<div class="flex-row" style="align-self: center">
+						{{ event.attending_limit }}
+						<div v-if="event.attending_limit != 1">
 							&nbsp;{{ t('PEOPLE') }}
 						</div>
 						<div v-else>
@@ -324,6 +360,13 @@
 			},
 			isAuthenticatedUser () {
 				return f.isAuthenticatedUser
+			},
+			isSpaceToAttend () {
+				if (this.plusOneStatus) {
+					return this.people['attending'].length + 2 <= this.event.attending_limit
+				} else {
+					return this.people['attending'].length + 1 <= this.event.attending_limit
+				}
 			},
 		},
 		created () {

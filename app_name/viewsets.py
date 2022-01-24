@@ -675,11 +675,16 @@ class EventViewset(viewsets.ViewSet):
 		elif request.data['status'] == 'attending':
 			# only invited can be changed to maybe (unless its public)
 			if event.invited.filter(id=user_to_change).exists() or not event.is_private:
-				event.maybe.remove(user_to_change)
-				event.wait_list.remove(user_to_change)
-				event.invited.remove(user_to_change)
-				event.invited.add(user_to_change)
-				event.attending.add(user_to_change)
+				plus_one = event.plus_ones.filter(chaperone=request.user.id)
+				addition = 1 + len(plus_one)
+				if len(event.attending.all()) + addition <= event.attending_limit:  # can't join attending if no space
+					event.maybe.remove(user_to_change)
+					event.wait_list.remove(user_to_change)
+					event.invited.remove(user_to_change)
+					event.invited.add(user_to_change)
+					event.attending.add(user_to_change)
+				else:
+					return [OrderedDict([('error', 'full')])]
 		return {}  # SECURITY: returns nothing
 
 
@@ -731,6 +736,7 @@ def serializer_private(events):
 			'wait_list': event.wait_list.count(),
 			'invite_request': event.invite_request.count(),
 			'images': event.images.all().values_list('id', flat=True),
+			'attending_limit': event.attending_limit,
 		})]
 	return serializer_data
 
@@ -756,6 +762,7 @@ def serializer_public_invited(events):
 			'wait_list': event.wait_list.count(),
 			'invite_request': event.invite_request.count(),
 			'images': event.images.all().values_list('id', flat=True),
+			'attending_limit': event.attending_limit,
 		})]
 	return serializer_data
 
@@ -781,6 +788,7 @@ def serializer_host(events):
 			'wait_list': event.wait_list.all().values_list('id', flat=True),
 			'invite_request': event.invite_request.all().values_list('id', flat=True),
 			'images': event.images.all().values_list('id', flat=True),
+			'attending_limit': event.attending_limit,
 		})]
 	return serializer_data
 
