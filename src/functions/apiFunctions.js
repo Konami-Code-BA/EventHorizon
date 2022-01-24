@@ -1,4 +1,5 @@
 import store from '@/store.js'
+import f from '@/functions/functions.js'
 axios.defaults.withCredentials = true
 axios.defaults.xsrfHeaderName = "X-CSRFToken"
     //let csrftoken = JSON.parse('{"' + document.cookie.replaceAll('=', '": "').replaceAll('; ', '", "') + '"}')['XSRF-TOKEN']
@@ -102,6 +103,26 @@ export default {
             })
             .catch(error => {
                 console.log(`*API ERROR* - saveImageFunction:`, error)
+                return error
+            })
+    },
+    async plusOneApi(method, pk = null, data = null) {
+        let id = ''
+        if (pk) {
+            id = pk + '/'
+        }
+        return await this.axiosCall[method](this.baseUrl + '/api/plusone/' + id, data)
+            .then(response => {
+                if (!('error' in response.data[0])) {
+                    console.log(`success - plusOneApi ${data.command}`)
+                    return response.data
+                } else {
+                    console.log(`*INTERNAL ERROR* - plusOneApi ${data.command}:`, response.data[0]['error'])
+                    return response.data
+                }
+            })
+            .catch(error => {
+                console.log(`*API ERROR* - plusOneApi:`, error)
                 return error
             })
     },
@@ -240,11 +261,30 @@ export default {
         return result
     },
     async changeGuestStatus(eventId, status, userId = null) {
-        return await this.eventsApi('patch', eventId, {
-            command: 'update_guest_status',
-            status: status,
-            user_id: userId,
-        })
+        if (f.isoStringDateToDateObject(store.events.selected.date_time) > f.today) {
+            return await this.eventsApi('patch', eventId, {
+                command: 'update_guest_status',
+                status: status,
+                user_id: userId,
+            })
+        }
+    },
+    async setPlusOne(eventId, plusOneName) {
+        if (f.isoStringDateToDateObject(store.events.selected.date_time) > f.today) {
+            return await this.plusOneApi('post', null, {
+                command: 'set_plus_one',
+                plus_one_name: plusOneName,
+                event_id: eventId,
+            })
+        }
+    },
+    async deletePlusOne(eventId) {
+        if (f.isoStringDateToDateObject(store.events.selected.date_time) > f.today) {
+            return await this.plusOneApi('post', null, {
+                command: 'delete_plus_one',
+                event_id: eventId,
+            })
+        }
     },
     //async getEventWithClosestFutureDate(date_time) {
     //    let data = {
