@@ -25,9 +25,12 @@
 		},
 		props: {
 			usage: {},
+			dontStartError: { default: false },
 		},
 		mounted () {
-			this.hasErrors()
+			if (!this.dontStartError) {
+				this.hasErrors()
+			}
 		},
 		watch: {
 			'displayName' () { this.hasErrors() },
