@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='event',
             name='attending_limit',
-            field=models.IntegerField(default=9999999999),
+            field=models.IntegerField(default=999999),
         ),
         migrations.CreateModel(
             name='PlusOnes',

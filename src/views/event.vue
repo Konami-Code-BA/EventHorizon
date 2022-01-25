@@ -186,7 +186,7 @@
 								:style="[isSpaceToAttend ? {color: 'green', borderColor: 'green'}
 								: {color: 'red', borderColor: 'red'}]">
 							<div class="flex-row" style="align-self: center">
-								<div v-if="event.attending_limit != 9999999999">
+								<div v-if="event.attending_limit != 999999">
 									{{ event.attending_limit }}
 									<div v-if="event.attending_limit != 1">
 										&nbsp;{{ t('PEOPLE') }}
