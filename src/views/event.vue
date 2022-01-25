@@ -128,7 +128,7 @@
 					<display-name-input ref="displayNameInput" usage="PlusOne" :dontStartError="true" v-if="!plusOneStatus"/>
 					<div v-else>{{plusOneStatus}}</div>
 				</div>
-				<button v-on:click.prevent="showHostPannel = true" v-if="myAttendingStatus['host']">
+				<button v-on:click.prevent="showHostPanel = true" v-if="myAttendingStatus['hosts']" class="button">
 					OPEN HOST PANEL
 				</button>
 			</div>
@@ -266,7 +266,7 @@
 						</div>
 						<!--can't see wait_list people if not host-->
 						<button v-on:click.prevent="showStatus = 'wait_list'" class="button" style="align-self: center"
-								:disabled="!myAttendingStatus['host'] || people['wait_list'].length === 0">
+								:disabled="!myAttendingStatus['hosts'] || people['wait_list'].length === 0">
 							<div class="flex-row"
 									style="align-self: center">
 								{{ people['wait_list'].length }}
@@ -285,7 +285,7 @@
 						</div>
 						<!--can't see invite_request people if not host-->
 						<button v-on:click.prevent="showStatus = 'invite_request'" class="button" style="align-self: center"
-								:disabled="!myAttendingStatus['host'] || people['invite_request'].length === 0">
+								:disabled="!myAttendingStatus['hosts'] || people['invite_request'].length === 0">
 							<div class="flex-row"
 									style="align-self: center">
 								{{ people['invite_request'].length }}
@@ -317,11 +317,81 @@
 				</div>
 				<div style="width: 100%; overflow-y: scroll;">
 					<div v-for="person in people[showStatus]">
-						<div style="font-size: 24px;">
-							{{person.display_name}}
+						<div style="display: flex; flex-direction: row;
+								justify-content: space-between;">
+							<div>
+								{{person.display_name}}
+							</div>
+							<button v-on:click.prevent="messagePerson = person" v-if="myAttendingStatus['hosts']"
+									class="button">
+								MSG
+							</button>
 						</div>
 					</div>
 				</div>
+				<button v-on:click.prevent="messageAllPeople = true" v-if="myAttendingStatus['hosts']"
+						class="button">
+					MSESSAGE ALL
+				</button>
+			</div>
+		</modal>
+		<modal v-if="showHostPanel" @closeModals="showHostPanel = false">
+			<div slot="contents" class="modal" style="max-height: 50%;">
+				<div style="width: 100%; display: flex; flex-direction: row; justify-content: space-between;
+						align-content: flex-start">
+					<div/>
+					<div style="font-size: 24px;">
+						HOST PANEL
+					</div>
+					<div style="padding-bottom: 5px;">
+						<button v-on:click.prevent="showHostPanel = false" class="no-border-button x-button">
+							✖
+						</button>
+					</div>
+				</div>
+				<button v-on:click.prevent="showHostPanel = true" v-if="myAttendingStatus['hosts']" class="button">
+					MESSAGE ALL
+				</button>
+			</div>
+		</modal>
+		<modal v-if="messagePerson" @closeModals="messagePerson = null">
+			<div slot="contents" class="modal" style="max-height: 50%;">
+				<div style="width: 100%; display: flex; flex-direction: row; justify-content: space-between;
+						align-content: flex-start">
+					<div/>
+					<div style="font-size: 24px;">
+						MESSAGE
+					</div>
+					<div style="padding-bottom: 5px;">
+						<button v-on:click.prevent="messagePerson = null" class="no-border-button x-button">
+							✖
+						</button>
+					</div>
+				</div>
+				<input v-model="messageContent" class="input"/>
+				<button v-on:click.prevent="message()" class="button">
+					SEND
+				</button>
+			</div>
+		</modal>
+		<modal v-if="messageAllPeople" @closeModals="messageAllPeople = false">
+			<div slot="contents" class="modal" style="max-height: 50%;">
+				<div style="width: 100%; display: flex; flex-direction: row; justify-content: space-between;
+						align-content: flex-start">
+					<div/>
+					<div style="font-size: 24px;">
+						MESSAGE
+					</div>
+					<div style="padding-bottom: 5px;">
+						<button v-on:click.prevent="messageAllPeople = false" class="no-border-button x-button">
+							✖
+						</button>
+					</div>
+				</div>
+				<input v-model="messageContent" class="input"/>
+				<button v-on:click.prevent="messageAll(showStatus)" class="button">
+					SEND
+				</button>
 			</div>
 		</modal>
 	</div>
@@ -371,6 +441,10 @@
 					'invite_request': this.t('INVITE REQUESTS'),
 				},
 				plusOneStatus: null,
+				showHostPanel: false,
+				messagePerson: null,
+				messageContent: '',
+				messageAllPeople: false,
 			}
 		},
 		computed: {
@@ -491,6 +565,21 @@
 			},
 			openInGoogleMaps () {
 				window.open('http://maps.google.com/?q=' + this.event.address,'_blank')
+			},
+			async message () {
+				await api.messageUser(this.event.id, this.messagePerson.id, this.messageContent)
+				this.messagePerson = null
+			},
+			async messageAll (guestStatus) {
+				let ids = []
+				for (let i = 0; i < this.people[guestStatus].length; i++) {
+					if (!this.people[guestStatus][i]['plus_one']) {
+						ids.push(this.people[guestStatus][i]['id'])
+					}
+				}
+				console.log('IDS', ids)
+				await api.messageUsers(this.event.id, ids, this.messageContent)
+				this.messageAllPeople = false
 			},
 			//// do not delete, this will be used soon. and it took forever to get this shit to work
 			//async getEventImage () {

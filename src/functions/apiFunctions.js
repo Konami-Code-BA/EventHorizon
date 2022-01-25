@@ -20,10 +20,14 @@ export default {
         }
         return await this.axiosCall[method](this.baseUrl + uri, data)
             .then(response => {
-                if (data.command == 'logout') {
+                if (data.command === 'logout') {
                     console.log(`success - userApi ${data.command}`)
                     store.user = store.defaultUser
                     return store.user
+                } else if (data.command === 'login') {
+                    console.log(`success - userApi ${data.command}`)
+                    store.user = response.data[0]
+                    return response.data
                 } else if ((typeof response.data) === 'number') { // when getting a count of users
                     console.log(`success - userApi ${data.command}`)
                     return response.data
@@ -35,8 +39,7 @@ export default {
                     return response.data
                 } else if (!('error' in response.data[0])) {
                     console.log(`success - userApi ${data.command}`)
-                    store.user = response.data[0]
-                    return store.user
+                    return response.data
                 } else {
                     console.log(`*INTERNAL ERROR* - userApi ${data.command}:`, response.data[0]['error'])
                     return response.data[0]
@@ -154,6 +157,21 @@ export default {
             command: 'register_email',
             email: email,
             password: password,
+        })
+    },
+    async messageUser(eventId, user_id, message) {
+        return await this.userApi('patch', user_id, {
+            command: 'message_user',
+            event_id: eventId,
+            message: message,
+        })
+    },
+    async messageUsers(eventId, userIds, message) {
+        return await this.userApi('post', null, {
+            command: 'message_users',
+            event_id: eventId,
+            user_ids: userIds,
+            message: message,
         })
     },
     async forgotPassword(email, returnLink) {
