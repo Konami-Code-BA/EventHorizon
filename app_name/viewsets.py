@@ -8,6 +8,7 @@ from django.conf import settings
 from decouple import config
 from django.core.mail import send_mail
 from app_name.functions import verify_update_line_info, authenticate_login, new_visitor, merge_email_into_line_account
+from app_name.functions import user_in_guest_statuses
 import secrets, requests, json
 from django.contrib.auth.hashers import make_password
 from collections import namedtuple, OrderedDict
@@ -172,6 +173,39 @@ class UserViewset(viewsets.ModelViewSet):
 			user = namedtuple('user', 'error')
 			user.error = 'missing email / password info'
 			return user
+	
+	def message_user(self, request, pk):
+		try:
+			user = self.model.objects.get(pk=pk)
+		except self.model.DoesNotExist:
+			user = namedtuple('user', 'error')
+			user.error = 'a user with this id could not be found'
+			return user
+		event = EventSerializer.Meta.model.objects.get(pk=request.data['event_id'])
+		# SECURITY: i must be the host of the event id im passing, and the user must be affiliated with that event
+		# note: before we let people make events. people could make an event and invite someone just to be able to message them. this could be an issue later.
+		if user_in_guest_statuses(event, request.user.id, ['hosts']) and user_in_guest_statuses(
+				event, pk, ['hosts', 'invited', 'wait_list', 'invite_request']):
+			if user.do_get_lines:
+				data = {"to": user.line_id, "messages": [{"type": "text", "text": request.data['message']}]}
+				url = 'https://api.line.me/v2/bot/message/push'
+				headers = {
+					'Content-Type': 'application/json',
+					'Authorization': 'Bearer ' + config('MESSAGING_CHANNEL_ACCESS_TOKEN'),
+				}
+				data = json.dumps(data)
+				response = requests.post(url, headers=headers, data=data)
+			if user.do_get_emails:
+				subject = 'Event Horizon Notification'
+				message = request.data['message']
+				email_from = settings.EMAIL_HOST_USER
+				recipient_list = [user.email,]
+				send_mail(subject, message, email_from, recipient_list, fail_silently=False)
+			return request.user
+		else:
+			user = namedtuple('user', 'error')
+			user.error = 'you don\'t have permission'
+			return user
 
 	# CREATE #####################################################################
 	def create(self, request):  # POST {prefix}/
@@ -209,7 +243,7 @@ class UserViewset(viewsets.ModelViewSet):
 		final_guest_array = []
 		for guest in actual_guest_array:
 			# if it is me, i get more info. also if i am a host
-			if guest.id == request.user.id or request.user.id in event.hosts.all().values_list('id', flat=True):
+			if guest.id == request.user.id or user_in_guest_statuses(event, request.user.id, ['hosts']):
 				final_guest_array += [OrderedDict([
 					('id', guest.id),
 					('display_name', guest.display_name),
@@ -258,6 +292,40 @@ class UserViewset(viewsets.ModelViewSet):
 							('plus_one', True),
 						])]
 		return final_guest_array
+	
+	def message_users(self, request):
+		for id in request.data['user_ids']:
+			try:
+				user = self.model.objects.get(pk=id)
+			except self.model.DoesNotExist:
+				user = namedtuple('user', 'error')
+				user.error = 'a user with this id could not be found'
+				continue
+			event = EventSerializer.Meta.model.objects.get(pk=request.data['event_id'])
+			# SECURITY: i must be the host of the event id im passing, and the user must be affiliated with that event
+			# note: before we let people make events. people could make an event and invite someone just to be able to message them. this could be an issue later.
+			if user_in_guest_statuses(event, request.user.id, ['hosts']) and user_in_guest_statuses(
+					event, id, ['hosts', 'invited', 'wait_list', 'invite_request']):
+				if user.do_get_lines:
+					data = {"to": user.line_id, "messages": [{"type": "text", "text": request.data['message']}]}
+					url = 'https://api.line.me/v2/bot/message/push'
+					headers = {
+						'Content-Type': 'application/json',
+						'Authorization': 'Bearer ' + config('MESSAGING_CHANNEL_ACCESS_TOKEN'),
+					}
+					data = json.dumps(data)
+					response = requests.post(url, headers=headers, data=data)
+				if user.do_get_emails:
+					subject = 'Event Horizon Notification'
+					message = request.data['message']
+					email_from = settings.EMAIL_HOST_USER
+					recipient_list = [user.email,]
+					send_mail(subject, message, email_from, recipient_list, fail_silently=False)
+				continue
+			else:
+				user = namedtuple('user', 'error')
+				user.error = 'you don\'t have permission'
+				continue
 
 	def register_with_email(self, request):  # SECURITY: anyone is allowed to make a new user
 		if ('email' in request.data and 'password' in request.data and 'display_name' in request.data and

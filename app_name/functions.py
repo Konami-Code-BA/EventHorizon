@@ -213,3 +213,10 @@ def merge_email_into_line_account(current_user, existing_user):
 	current_user.save()
 	existing_user.delete()
 	return current_user
+
+
+def user_in_guest_statuses(event, user_id, guest_statuses):
+	for guest_status in guest_statuses:
+		if getattr(event, guest_status).filter(id=user_id).exists():
+			return True
+	return False
