@@ -139,8 +139,6 @@
 			overflow-y: hidden;
 			width: 100%;
 			height: 100%;
-			padding-left: 10px;
-			padding-right: 10px;
 			z-index: 1;
 		}
 		.footer {
@@ -149,12 +147,16 @@
 			z-index: 2;
 		}
 		.main {
+			overflow-x: hidden;
+			overflow-y: hidden;
 			display: flex;
 			flex-direction: column;
 			align-items: center;
 			width: 100%;
 			height: 100%;
 			z-index: 1;
+			padding-left: 10px;
+			padding-right: 10px;
 		}
 		/*[v-cloak] {
 			display: none;

@@ -545,16 +545,16 @@ class EventViewset(viewsets.ViewSet):
 				geocoded = gmaps.geocode(request.data['address'])
 				latitude = geocoded[0]['geometry']['location']['lat']
 				longitude = geocoded[0]['geometry']['location']['lng']
-				postal_code, rand_latitude, rand_longitude = randomize_lat_lng(request.data['address'])
+				address, area, rand_latitude, rand_longitude = randomize_lat_lng(request.data['address'])
 			else:
 				latitude = 0
 				longitude = 0
-				postal_code, rand_latitude, rand_longitude = '', 0, 0
+				address, area, rand_latitude, rand_longitude = '', '', 0, 0
 			event = self.model(
 				name=request.data['name'],
 				description=request.data['description'],
-				address=request.data['address'],
-				postal_code=postal_code,
+				address=address,
+				area=area,
 				venue_name=request.data['venue_name'],
 				latitude=latitude,
 				longitude=longitude,
@@ -691,12 +691,18 @@ class EventViewset(viewsets.ViewSet):
 def randomize_lat_lng(address):
 	gmaps = googlemaps.Client(key=config('GOOGLE_MAPS_API_KEY'))
 	geocoded = gmaps.geocode(address)
+	address = geocoded[0]['formatted_address']
+	area = ''
 	for component in geocoded[0]['address_components']:
+		if 'sublocality_level_2' in component['types']:
+			area += component['long_name']
+		if 'locality' in component['types']:
+			area += ', ' + component['long_name']
 		if 'postal_code' in component['types']:
-			postal_code = component['long_name']
+			area += ' ' + component['long_name']
 		if 'country' in component['types']:
 			country = component['long_name']
-	geocoded = gmaps.geocode(f'{postal_code} {country}')
+	geocoded = gmaps.geocode(f'{area} {country}')
 	outter = 300
 	latitude = geocoded[0]['geometry']['location']['lat']
 	rand_sign = 1 if random.random() > .5 else -1
@@ -707,10 +713,10 @@ def randomize_lat_lng(address):
 	rand_sign = 1 if random.random() > .5 else -1
 	rand_value = random.random()
 	rand_longitude = float(longitude) + rand_value / outter * rand_sign
-	return postal_code, rand_latitude, rand_longitude
+	return address, area, rand_latitude, rand_longitude
 
 # SECURITY:
-# address only shows postal_code if not invited
+# address only shows area if not invited
 # no venu_name if not invited
 # random lat and long if not invited
 # everyone can see hosts and images
@@ -722,7 +728,7 @@ def serializer_private(events):
 		serializer_data += [OrderedDict({
 			'id': event.id,
 			'name': event.name,
-			'address': event.postal_code,
+			'address': event.area,
 			'description': event.description,
 			'latitude': event.rand_latitude,
 			'longitude': event.rand_longitude,

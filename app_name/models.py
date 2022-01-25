@@ -115,7 +115,7 @@ class Event(models.Model):
 	description = models.TextField(default='', blank=True)
 	is_private = models.BooleanField(default=True)
 	address = models.CharField(max_length=120, default='', blank=True)
-	postal_code = models.CharField(max_length=120, default='', blank=True)
+	area = models.CharField(max_length=120, default='', blank=True)
 	venue_name = models.CharField(max_length=120, default='', blank=True)
 	latitude = models.DecimalField(max_digits=23, decimal_places=20, default=0)
 	longitude = models.DecimalField(max_digits=23, decimal_places=20, default=0)
@@ -141,7 +141,7 @@ class EventAdmin(admin.ModelAdmin):
 	readonly_fields = ('id',)
 	list_display = ('name', 'id', 'date_time')
 	fields = (
-		'id', 'name', 'description', 'is_private', 'address', 'postal_code', 'venue_name', 'latitude', 'longitude',
+		'id', 'name', 'description', 'is_private', 'address', 'area', 'venue_name', 'latitude', 'longitude',
 		'rand_latitude', 'rand_longitude', 'date_time', 'include_time', 'hosts', 'invited', 'attending', 'maybe',
 		'wait_list', 'invite_request', 'images', 'attending_limit', 'plus_ones'
 	)
