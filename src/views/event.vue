@@ -1,6 +1,6 @@
 <template>
-	<div class="main" v-if="store.events.selected && !store.loading">
-		<div style="overflow-y: scroll; overflow-x: hidden; width: 95%;">
+	<div class="main" v-if="store.events.selected && !store.loading" style="padding-right: 0 !important; overflow-y: scroll;">
+		<div style="width: 98%">
 			<div class="flex-row" style="align-items: center; justify-content: center; height: 60px;">
 				<h2 style="max-width: 80%; overflow-x: scroll;">{{event.name}}</h2>
 			</div>
@@ -14,7 +14,8 @@
 			</div>
 			<br>
 			<div v-if="!isSpaceToAttend" style="color: red"> THE EVENT IS FULL </div>
-			<div style="width: 100%; display: flex; flex-direction: column; align-items: center; border: 2px solid rgba(255, 255, 255, .3)">
+			<div style="width: 100%; display: flex; flex-direction: column; align-items: center;
+					border: 2px solid rgba(255, 255, 255, .3); border-radius: 7px;">
 				<div class="dual-set" v-if="myAttendingStatus['invited']" style="border-bottom: 2px solid rgba(255, 255, 255, .3)">
 					YOU ARE INVITED
 					<input type="checkbox" class="checkbox" checked="checked" onclick="return false;"/>
@@ -136,157 +137,167 @@
 				<div style="align-self: center">
 					{{ event.description }}
 				</div>
-				<div v-if="(!event.is_private || myAttendingStatus['invited']) && event.venue_name" class="flex-table">
-					<br>
+				<br v-if="(!event.is_private || myAttendingStatus['invited']) && event.venue_name"/>
+				<div v-if="(!event.is_private || myAttendingStatus['invited']) && event.venue_name" class="flex-row"
+						style="justify-content: space-between;">
 					<div>
-						VENUE:
+						VENUE
 					</div>
-					<div style="align-self: center">
+					<div>
 						{{ event.venue_name }}
 					</div>
 				</div>
 				<br>
-				<div style="align-self: center">
-					<button v-on:click.prevent="$emit('goToMap')" class="button" style="align-self: center">
+				<div style="align-self: center;">
+					<button v-on:click.prevent="openInGoogleMaps()" class="button"
+							style="align-self: center; white-space: pre-line; height: auto;">
 						<small>{{ event.address }}</small>
 					</button>
 				</div>
 				<br>
-				<div class="flex-row" style="justify-content: space-between">
-					<div style="align-self: center">
-						{{ t('HOSTS') }}
-					</div>
-					<!--everyone can see hosts-->
-					<button v-on:click.prevent="showStatus = 'hosts'" class="button" style="align-self: center">
-						<div class="flex-row" style="align-self: center">
-							{{ people['hosts'].length }}
-							<div v-if="people['hosts'].length > 1">
-								&nbsp;{{ t('PEOPLE') }}
-							</div>
-							<div v-else>
-								&nbsp;{{ t('PERSON') }}
-							</div>
+				<div style="border: 2px solid rgba(255, 255, 255, .3); margin-bottom: 3px; border-radius: 7px;
+						padding: 5px;">
+					<div class="flex-row" style="justify-content: space-between">
+						<div style="align-self: center">
+							{{ t('HOSTS') }}
 						</div>
-					</button>
-				</div>
-				<div class="flex-row" style="justify-content: space-between">
-					<div style="align-self: center">
-						ATTENDING LIMIT
-					</div>
-					<!--can't see invited people if not invited-->
-					<button class="button" :disabled="true" style="align-self: center"
-							:style="[isSpaceToAttend ? {color: 'green', borderColor: 'green'}
-							: {color: 'red', borderColor: 'red'}]">
-						<div class="flex-row" style="align-self: center">
-							<div v-if="event.attending_limit != 9999999999">
-								{{ event.attending_limit }}
-								<div v-if="event.attending_limit != 1">
+						<!--everyone can see hosts-->
+						<button v-on:click.prevent="showStatus = 'hosts'" class="button" style="align-self: center">
+							<div class="flex-row" style="align-self: center">
+								{{ people['hosts'].length }}
+								<div v-if="people['hosts'].length > 1">
 									&nbsp;{{ t('PEOPLE') }}
 								</div>
 								<div v-else>
 									&nbsp;{{ t('PERSON') }}
 								</div>
 							</div>
-							<div v-else>
-								UNLIMITED
-							</div>
-						</div>
-					</button>
-				</div>
-				<div class="flex-row" style="justify-content: space-between">
-					<div style="align-self: center">
-						{{ t('TOTAL INVITED') }}
+						</button>
 					</div>
-					<!--can't see invited people if not invited-->
-					<button v-on:click.prevent="showStatus = 'invited'" class="button" style="align-self: center"
-							:disabled="!myAttendingStatus['invited'] || people['invited'].length === 0">
-						<div class="flex-row"
-								style="align-self: center">
-							{{ people['invited'].length }}
-							<div v-if="people['invited'].length != 1">
-								&nbsp;{{ t('PEOPLE') }}
-							</div>
-							<div v-else>
-								&nbsp;{{ t('PERSON') }}
-							</div>
-						</div>
-					</button>
 				</div>
-				<div class="flex-row" style="justify-content: space-between">
-					<div style="align-self: center">
-						{{ t('ATTENDING') }}
-					</div>
-					<!--can't see attending people if not invited-->
-					<button v-on:click.prevent="showStatus = 'attending'" class="button" style="align-self: center"
-							:disabled="!myAttendingStatus['invited'] || people['attending'].length === 0">
-						<div class="flex-row"
-								style="align-self: center">
-							{{ people['attending'].length }}
-							<div v-if="people['attending'].length != 1">
-								&nbsp;{{ t('PEOPLE') }}
-							</div>
-							<div v-else>
-								&nbsp;{{ t('PERSON') }}
-							</div>
+				<div style="border: 2px solid rgba(255, 255, 255, .3); margin-bottom: 3px; border-radius: 7px;
+						padding: 5px;">
+					<div class="flex-row" style="justify-content: space-between">
+						<div style="align-self: center">
+							ATTENDING LIMIT
 						</div>
-					</button>
+						<!--can't see invited people if not invited-->
+						<button class="button" :disabled="true" style="align-self: center"
+								:style="[isSpaceToAttend ? {color: 'green', borderColor: 'green'}
+								: {color: 'red', borderColor: 'red'}]">
+							<div class="flex-row" style="align-self: center">
+								<div v-if="event.attending_limit != 9999999999">
+									{{ event.attending_limit }}
+									<div v-if="event.attending_limit != 1">
+										&nbsp;{{ t('PEOPLE') }}
+									</div>
+									<div v-else>
+										&nbsp;{{ t('PERSON') }}
+									</div>
+								</div>
+								<div v-else>
+									UNLIMITED
+								</div>
+							</div>
+						</button>
+					</div>
+					<div class="flex-row" style="justify-content: space-between">
+						<div style="align-self: center">
+							{{ t('TOTAL INVITED') }}
+						</div>
+						<!--can't see invited people if not invited-->
+						<button v-on:click.prevent="showStatus = 'invited'" class="button" style="align-self: center"
+								:disabled="!myAttendingStatus['invited'] || people['invited'].length === 0">
+							<div class="flex-row"
+									style="align-self: center">
+								{{ people['invited'].length }}
+								<div v-if="people['invited'].length != 1">
+									&nbsp;{{ t('PEOPLE') }}
+								</div>
+								<div v-else>
+									&nbsp;{{ t('PERSON') }}
+								</div>
+							</div>
+						</button>
+					</div>
 				</div>
-				<div class="flex-row" style="justify-content: space-between">
-					<div style="align-self: center">
-						{{ t('MAYBE') }}
-					</div>
-					<!--can't see maybe people if not invited-->
-					<button v-on:click.prevent="showStatus = 'maybe'" class="button" style="align-self: center"
-							:disabled="!myAttendingStatus['invited'] || people['maybe'].length === 0">
-						<div class="flex-row"
-								style="align-self: center">
-							{{ people['maybe'].length }}
-							<div v-if="people['maybe'].length != 1">
-								&nbsp;{{ t('PEOPLE') }}
-							</div>
-							<div v-else>
-								&nbsp;{{ t('PERSON') }}
-							</div>
+				<div style="border: 2px solid rgba(255, 255, 255, .3); border-radius: 7px; padding: 5px;">
+					<div class="flex-row" style="justify-content: space-between">
+						<div style="align-self: center">
+							{{ t('ATTENDING') }}
 						</div>
-					</button>
-				</div>
-				<div class="flex-row" style="justify-content: space-between">
-					<div style="align-self: center">
-						{{ t('WAIT LIST') }}
+						<!--can't see attending people if not invited-->
+						<button v-on:click.prevent="showStatus = 'attending'" class="button" style="align-self: center"
+								:disabled="!myAttendingStatus['invited'] || people['attending'].length === 0">
+							<div class="flex-row"
+									style="align-self: center">
+								{{ people['attending'].length }}
+								<div v-if="people['attending'].length != 1">
+									&nbsp;{{ t('PEOPLE') }}
+								</div>
+								<div v-else>
+									&nbsp;{{ t('PERSON') }}
+								</div>
+							</div>
+						</button>
 					</div>
-					<!--can't see wait_list people if not host-->
-					<button v-on:click.prevent="showStatus = 'wait_list'" class="button" style="align-self: center"
-							:disabled="!myAttendingStatus['host'] || people['wait_list'].length === 0">
-						<div class="flex-row"
-								style="align-self: center">
-							{{ people['wait_list'].length }}
-							<div v-if="people['wait_list'].length != 1">
-								&nbsp;{{ t('PEOPLE') }}
-							</div>
-							<div v-else>
-								&nbsp;{{ t('PERSON') }}
-							</div>
+					<div class="flex-row" style="justify-content: space-between">
+						<div style="align-self: center">
+							{{ t('MAYBE') }}
 						</div>
-					</button>
-				</div>
-				<div class="flex-row" style="justify-content: space-between">
-					<div style="align-self: center">
-						{{ t('INVITE REQUESTS') }}
+						<!--can't see maybe people if not invited-->
+						<button v-on:click.prevent="showStatus = 'maybe'" class="button" style="align-self: center"
+								:disabled="!myAttendingStatus['invited'] || people['maybe'].length === 0">
+							<div class="flex-row"
+									style="align-self: center">
+								{{ people['maybe'].length }}
+								<div v-if="people['maybe'].length != 1">
+									&nbsp;{{ t('PEOPLE') }}
+								</div>
+								<div v-else>
+									&nbsp;{{ t('PERSON') }}
+								</div>
+							</div>
+						</button>
 					</div>
-					<!--can't see invite_request people if not host-->
-					<button v-on:click.prevent="showStatus = 'invite_request'" class="button" style="align-self: center"
-							:disabled="!myAttendingStatus['host'] || people['invite_request'].length === 0">
-						<div class="flex-row"
-								style="align-self: center">
-							{{ people['invite_request'].length }}
-							<div v-if="people['invite_request'].length != 1">
-								&nbsp;{{ t('PEOPLE') }}
-							</div>
-							<div v-else>
-								&nbsp;{{ t('PERSON') }}
-							</div>
+					<div class="flex-row" style="justify-content: space-between">
+						<div style="align-self: center">
+							{{ t('WAIT LIST') }}
 						</div>
-					</button>
+						<!--can't see wait_list people if not host-->
+						<button v-on:click.prevent="showStatus = 'wait_list'" class="button" style="align-self: center"
+								:disabled="!myAttendingStatus['host'] || people['wait_list'].length === 0">
+							<div class="flex-row"
+									style="align-self: center">
+								{{ people['wait_list'].length }}
+								<div v-if="people['wait_list'].length != 1">
+									&nbsp;{{ t('PEOPLE') }}
+								</div>
+								<div v-else>
+									&nbsp;{{ t('PERSON') }}
+								</div>
+							</div>
+						</button>
+					</div>
+					<div class="flex-row" style="justify-content: space-between">
+						<div style="align-self: center">
+							{{ t('INVITE REQUESTS') }}
+						</div>
+						<!--can't see invite_request people if not host-->
+						<button v-on:click.prevent="showStatus = 'invite_request'" class="button" style="align-self: center"
+								:disabled="!myAttendingStatus['host'] || people['invite_request'].length === 0">
+							<div class="flex-row"
+									style="align-self: center">
+								{{ people['invite_request'].length }}
+								<div v-if="people['invite_request'].length != 1">
+									&nbsp;{{ t('PEOPLE') }}
+								</div>
+								<div v-else>
+									&nbsp;{{ t('PERSON') }}
+								</div>
+							</div>
+						</button>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -477,6 +488,9 @@
 					await this.getEventAndMyStatusAndPeople()
 					store.loading = false
 				}
+			},
+			openInGoogleMaps () {
+				window.open('http://maps.google.com/?q=' + this.event.address,'_blank')
 			},
 			//// do not delete, this will be used soon. and it took forever to get this shit to work
 			//async getEventImage () {
