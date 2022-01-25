@@ -7,7 +7,7 @@
 				</button>
 			</div>
 
-<!--START INFO-->
+			<!--START INFO-->
 
 			<!--peopleFilters-->
 			<div v-if="whichInfo === 'peopleFilters'">
@@ -27,12 +27,12 @@
 							</div>
 							<div style="display: flex; flex-direction: row; justify-content: space-between;
 									align-items: center;">
-								<img src="@/../dist/static/myMapIcon.png" style="width: 25px; height: 25px;"/>
+								<img src="@/assets/myMapIcon.png" style="width: 25px; height: 25px;"/>
 								UPCOMING
 							</div>
 							<div style="display: flex; flex-direction: row; justify-content: space-between;
 									align-items: center; width: 100%">
-								<img src="@/../dist/static/myPastMapIcon.png" style="width: 25px; height: 25px;"/>
+								<img src="@/assets/myPastMapIcon.png" style="width: 25px; height: 25px;"/>
 								PAST
 							</div>
 						</div>
@@ -43,12 +43,12 @@
 							</div>
 							<div style="display: flex; flex-direction: row; justify-content: space-between;
 									align-items: center;">
-								<img src="@/../dist/static/publicMapIcon.png" style="width: 25px; height: 25px;"/>
+								<img src="@/assets/publicMapIcon.png" style="width: 25px; height: 25px;"/>
 								UPCOMING
 							</div>
 							<div style="display: flex; flex-direction: row; justify-content: space-between;
 									align-items: center; width: 100%">
-								<img src="@/../dist/static/publicPastMapIcon.png" style="width: 25px; height: 25px;"/>
+								<img src="@/assets/publicPastMapIcon.png" style="width: 25px; height: 25px;"/>
 								PAST
 							</div>
 						</div>
@@ -59,12 +59,12 @@
 							</div>
 							<div style="display: flex; flex-direction: row; justify-content: space-between;
 									align-items: center;">
-								<img src="@/../dist/static/privateMapIcon.png" style="width: 25px; height: 25px;"/>
+								<img src="@/assets/privateMapIcon.png" style="width: 25px; height: 25px;"/>
 								UPCOMING
 							</div>
 							<div style="display: flex; flex-direction: row; justify-content: space-between;
 									align-items: center; width: 100%">
-								<img src="@/../dist/static/privatePastMapIcon.png" style="width: 25px; height: 25px;"/>
+								<img src="@/assets/privatePastMapIcon.png" style="width: 25px; height: 25px;"/>
 								PAST
 							</div>
 						</div>
@@ -75,7 +75,7 @@
 				</div>
 			</div>
 
-<!--FINISH INFO-->
+			<!--FINISH INFO-->
 
 			<div class="line-height"/>
 			
