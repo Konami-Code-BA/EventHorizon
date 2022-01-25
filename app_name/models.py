@@ -131,7 +131,7 @@ class Event(models.Model):
 	invite_request = models.ManyToManyField(User, blank=True, related_name='invite_request')
 	plus_ones = models.ManyToManyField(PlusOne, blank=True, related_name='plus_ones')
 	images = models.ManyToManyField(Image, blank=True, related_name='images')
-	attending_limit = models.IntegerField(default=9999999999, blank=False)
+	attending_limit = models.IntegerField(default=999999, blank=False)
 
 	def __str__(self):
 		return self.name
