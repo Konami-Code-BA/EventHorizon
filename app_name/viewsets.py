@@ -408,43 +408,25 @@ class UserViewset(viewsets.ModelViewSet):
 	def login(self, request):  # SECURITY: anyone is allowed to login
 		#return authenticate_login(request)  # FOR EMERGENCY LOGIN (also in backends)
 		visitor = False
-		print('START***************************************************')
 		try:
 			user = self.model.objects.get(pk=request.user.pk)  # get current user that made this request
 			# if visitor made this request, remember that
 			if user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists():
 				visitor = request.user
-			print('1***************************************************')
 		except self.model.DoesNotExist:  # if there is no currently existing user or visitor, make a new visitor
 			user = new_visitor(request)
 			request.user = user
-			print('2***************************************************')
 		user = authenticate_login(request)  # it will try to login with email or line before loggin in by session
-		print('3***************************************************')
 		if not hasattr(user, 'error'):  # if logged into a user
-			print('4***************************************************')
 			user.visit_count += 1  # add to the visit count
-			print('4b***************************************************')
 			user.save()
-			print('4c***************************************************')
 			# if not visitor, but a visitor made the request
-			print('1', Group.objects.get(name='Temp Visitor'))
-			print('2', Group.objects.get(name='Temp Visitor').id)
-			print('3', user)
-			print('4', user.groups)
-			print('5', user.groups.filter(id=Group.objects.get(name='Temp Visitor').id))
-			print('6', user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists())
 			if not user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists() and visitor:
-				print('5***************************************************')
 				user.visit_count += visitor.visit_count
 				user.save()
 				visitor.delete()  # delete the visitor account that made the request
-			print('6***************************************************')
-			print(user)
 			return user  # done
 		else:  # if couldn't login to anything, probably got an error, so return user anyway
-			print('7***************************************************')
-			print(user)
 			return user
 
 	def logout(self, request):  # SECURITY: anyone is allowed to logout

@@ -117,14 +117,9 @@ def remove_line_friend(line_id):
 
 def authenticate_login(request):
 	user = auth.authenticate(request)
-	print('B1***************************************************')
 	if not hasattr(user, 'error'):
-		print('B2***************************************************')
 		user.save()
-		print('B3***************************************************')
 		auth.login(request, user)
-		print('B4***************************************************')
-	print(user)
 	return user
 
 
