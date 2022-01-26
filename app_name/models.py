@@ -94,12 +94,28 @@ class Image(models.Model):
 		return str(self.id)
 
 
+class PlusOne(models.Model):
+	name = models.CharField(max_length=40, default='', blank=True)
+	chaperone = models.ManyToManyField(User, blank=True, related_name='chaperone')
+
+	def __str__(self):
+		return self.name
+
+
+class PlusOneAdmin(admin.ModelAdmin):
+	readonly_fields = ('id',)
+	list_display = ('name', 'id')
+	fields = (
+		'id', 'name', 'chaperone',
+	)
+
+
 class Event(models.Model):
 	name = models.CharField(max_length=40, default='', blank=True)
 	description = models.TextField(default='', blank=True)
 	is_private = models.BooleanField(default=True)
 	address = models.CharField(max_length=120, default='', blank=True)
-	postal_code = models.CharField(max_length=120, default='', blank=True)
+	area = models.CharField(max_length=120, default='', blank=True)
 	venue_name = models.CharField(max_length=120, default='', blank=True)
 	latitude = models.DecimalField(max_digits=23, decimal_places=20, default=0)
 	longitude = models.DecimalField(max_digits=23, decimal_places=20, default=0)
@@ -109,9 +125,13 @@ class Event(models.Model):
 	include_time = models.BooleanField(default=False)
 	hosts = models.ManyToManyField(User, blank=True, related_name='hosts')
 	invited = models.ManyToManyField(User, blank=True, related_name='invited')
-	confirmed_guests = models.ManyToManyField(User, blank=True, related_name='confirmed_guests')
-	interested = models.ManyToManyField(User, blank=True, related_name='interested')
+	attending = models.ManyToManyField(User, blank=True, related_name='attending')
+	maybe = models.ManyToManyField(User, blank=True, related_name='maybe')
+	wait_list = models.ManyToManyField(User, blank=True, related_name='wait_list')
+	invite_request = models.ManyToManyField(User, blank=True, related_name='invite_request')
+	plus_ones = models.ManyToManyField(PlusOne, blank=True, related_name='plus_ones')
 	images = models.ManyToManyField(Image, blank=True, related_name='images')
+	attending_limit = models.IntegerField(default=999999, blank=False)
 
 	def __str__(self):
 		return self.name
@@ -119,9 +139,9 @@ class Event(models.Model):
 
 class EventAdmin(admin.ModelAdmin):
 	readonly_fields = ('id',)
-	list_display = ('name', 'id')
+	list_display = ('name', 'id', 'date_time')
 	fields = (
-		'id', 'name', 'description', 'is_private', 'address', 'postal_code', 'venue_name', 'latitude', 'longitude',
-		'rand_latitude', 'rand_longitude', 'date_time', 'include_time', 'hosts', 'invited', 'confirmed_guests',
-		'interested', 'images'
+		'id', 'name', 'description', 'is_private', 'address', 'area', 'venue_name', 'latitude', 'longitude',
+		'rand_latitude', 'rand_longitude', 'date_time', 'include_time', 'hosts', 'invited', 'attending', 'maybe',
+		'wait_list', 'invite_request', 'images', 'attending_limit', 'plus_ones'
 	)

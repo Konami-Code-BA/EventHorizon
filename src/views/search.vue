@@ -1,7 +1,9 @@
 <template>
 	<div class="main">
 		<div style="font-size: 36px">{{ t('SEARCH') }}</div>
-		<div class="line-height"></div>
+
+		<div class="line-height"/>
+
 		<div style="color: grey">({{ t('COMING SOON') }})</div>
 	</div>
 </template>
@@ -19,7 +21,6 @@
 			}
 		},
 		async mounted () {
-			this.$emit('endLoading')
 		},
 		methods: {
 			t (w) { return translations.t(w) },

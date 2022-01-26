@@ -1,52 +1,95 @@
 <template>
 	<div id="app">
-		<div v-show="!loading" class="app">
-			<app-header @startLoading="headerLoading=true" @endLoading="headerLoading=false"/>
-			<router-view @startLoading="routerLoading=true" @endLoading="routerLoading=false" :key="$route.fullPath"
-					class="router"/>
-			<app-footer @startLoading="footerLoading=true" @endLoading="footerLoading=false"/>
+		<div v-show="!store.loading" class="app" v-if="initialLoadCompleted">
+			<app-header/>
+			<router-view
+					:key="$route.fullPath"
+					class="router"
+					v-show="page === 'home'"/>
+			<modal-view
+					class="router"
+					v-show="page != 'home'"
+					:key="page"/>
+			<app-footer/>
 		</div>
-		<div class="loading" v-show="loading"></div>
+		<div class="loading" v-if="store.loading"/>
+		<opening-logo class="opening" :class="fadeOutClass" v-if="opening"/>
 	</div>
 </template>
 
 <script>
 	import store from '@/store'
 	import appHeader from '@/components/appHeader.vue'
+	import modalView from '@/views/modalView.vue'
 	import appFooter from '@/components/appFooter.vue'
+	import openingLogo from '@/views/openingLogo.vue'
+	import translations from '@/functions/translations.js'
+	import api from '@/functions/apiFunctions.js'
+	import f from '@/functions/functions.js'
 	export default {
 		name: 'App',
 		components: {
 			appHeader,
+			modalView,
 			appFooter,
+			openingLogo,
 		},
 		data () {
 			return {
-				headerLoading: true,
-				routerLoading: true,
-				footerLoading: true,
-				loading: true,
+				store: store,
+				opening: true,
+				fadeOutClass: null,
+				page: null,
+				initialLoadCompleted: false,
 			}
 		},
+		async created () {
+			// back button setup
+			window.addEventListener('popstate', () => { f.goBack() })
+			
+			// user auto-login from cookies
+			if (store.user.groups[0] === 100) { // if never logged in, not even to visitor account, login
+				console.log(process.env.PYTHON_ENV)
+				await api.login({})
+				if (store.user.groups.includes(3)) {
+					console.log('visitor')
+				} else {
+					console.log('existing user')
+				}
+			}
+
+			// get events
+			await f.getEvents()
+
+			// google maps
+			if (!document.getElementById('mapscrip')) {
+				let scrip = document.createElement('script')
+				scrip.id = 'mapscrip'
+				scrip.type = 'text/javascript'
+				let apiKey = await api.secretsApi('google-maps-api-key')
+				scrip.src = `https://maps.googleapis.com/maps/api/js?v=weekly&key=${apiKey}&callback=initMap`
+				document.head.appendChild(scrip)
+			}
+
+			this.initialLoadCompleted = true
+			store.loading = false
+		},
+		async mounted () {
+			// openingLogo
+			await new Promise(r => setTimeout(r, 2000))
+			this.fadeOutClass = 'fade-out'
+			await new Promise(r => setTimeout(r, 1000))
+			this.opening = false
+			this.fadeOutClass = null
+		},
 		watch: {
-			'headerLoading' () {
-				this.checkLoading()
-			},
-			'routerLoading' () {
-				this.checkLoading()
-			},
-			'footerLoading' () {
-				this.checkLoading()
+			'store.pages' () {
+				this.page = f.currentPage.page
+				window.history.pushState({ path: f.currentUrl }, '', f.currentUrl)
 			},
 		},
 		methods: {
-			checkLoading () {
-				if (this.headerLoading || this.routerLoading || this.footerLoading) {
-					this.loading = true
-				} else if (!this.headerLoading && !this.routerLoading && !this.footerLoading) {
-					this.loading = false
-				}
-			},
+			t (w) { return translations.t(w) },
 		},
 	}
 </script>
@@ -96,8 +139,6 @@
 			overflow-y: hidden;
 			width: 100%;
 			height: 100%;
-			padding-left: 10px;
-			padding-right: 10px;
 			z-index: 1;
 		}
 		.footer {
@@ -106,12 +147,16 @@
 			z-index: 2;
 		}
 		.main {
+			overflow-x: hidden;
+			overflow-y: hidden;
 			display: flex;
 			flex-direction: column;
 			align-items: center;
 			width: 100%;
 			height: 100%;
 			z-index: 1;
+			padding-left: 10px;
+			padding-right: 10px;
 		}
 		/*[v-cloak] {
 			display: none;
@@ -166,6 +211,19 @@
 			align-items: center;
 			justify-content: center;
 			white-space: nowrap;
+		}
+		.link-button {
+			background: none;
+			color: #ffe07a;
+			border: none;
+			outline: none;
+			width: auto;
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			justify-content: center;
+			white-space: nowrap;
+  			text-decoration: underline;
 		}
 		input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus,
 		input:-webkit-autofill:active, input[type=text], input[type=email], input[type=password],
@@ -235,6 +293,8 @@
 			border: 2px solid rgba(255, 255, 255, .3);
 			border-bottom-left-radius: 7px;
 			border-bottom-right-radius: 7px;
+			border-top-left-radius: 7px;
+			border-top-right-radius: 7px;
 			overflow-x: hidden;
 			overflow-y: hidden;
 		}
@@ -279,6 +339,19 @@
 			border-radius: 4px;
 			background-color: rgba(0, 0, 0, .5);
 			border: 2px solid rgba(255, 255, 255, .3);
+		}
+		.opening {
+			position: fixed;
+			z-index: 100000;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: #18002e;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
 		}
 
 		/* LOADING SPINNER */

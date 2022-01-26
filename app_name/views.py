@@ -16,9 +16,9 @@ def index(request, arg=None):
 def line_webhook(request):  # https://developers.line.biz/en/reference/messaging-api/#message-event
 	line_body = json.loads(request.body.decode('utf-8'))
 	send_to, reply = line_bot(line_body)
-	response = "Don't need to send a reply"
+	response = "noReply"
 	if send_to and reply:
-		uri = 'reply' if send_to['type'] == 'reply_token' else 'push'
+		uri = 'reply' if send_to['type'] == 'replyToken' else 'push'
 		url = 'https://api.line.me/v2/bot/message/' + uri
 		headers = {
 			'Content-Type': 'application/json',
@@ -36,6 +36,5 @@ def line_webhook(request):  # https://developers.line.biz/en/reference/messaging
 			data['messages'][0]['originalContentUrl'] = reply['image']
 			data['messages'][0]['previewImageUrl'] = reply['image']
 		data = json.dumps(data)
-		print('DATA', data)
 		response = requests.post(url, headers=headers, data=data)
 	return HttpResponse(response)
