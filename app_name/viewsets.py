@@ -424,7 +424,9 @@ class UserViewset(viewsets.ModelViewSet):
 		if not hasattr(user, 'error'):  # if logged into a user
 			print('4***************************************************')
 			user.visit_count += 1  # add to the visit count
+			print('4b***************************************************')
 			user.save()
+			print('4c***************************************************')
 			# if not visitor, but a visitor made the request
 			if not user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists() and visitor:
 				print('5***************************************************')

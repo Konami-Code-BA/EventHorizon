@@ -1,0 +1,6 @@
+heroku pg:backups:capture --app=event-horizon-jp
+heroku pg:backups:download --app=event-horizon-jp
+
+take the dump file and upload it to aws s3. then share with presigned url
+
+heroku pg:backups:restore "VERY LONG PRESIGNED URL" HEROKU_POSTGRESQL_CRIMSON_URL --app=event-horizon-test
