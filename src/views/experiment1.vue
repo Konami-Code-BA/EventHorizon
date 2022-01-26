@@ -10,12 +10,14 @@
 			<input v-model="getimgid" placeholder="id#"/>
 			<button v-on:click.prevent="getImage()">getImage</button>
 			<img style="width: 100px; height: 100px;" :src="imagetwo"/>
+			<button v-on:click.prevent="sendEmail()">sendEmail</button>
 			<!--button v-on:click.prevent="makeImage()">makeImage</button-->    <!--for makeImage()-->
 			<!--img :src="imageone"/-->    <!--for makeImage()-->
 		</div>
 	</div>
 </template>
 <script>
+	import store from '@/store.js'
 	import api from '@/functions/apiFunctions.js'
 	export default {
 		name: 'experiment1',
@@ -23,6 +25,7 @@
 		},
 		data () {
 			return {
+				store: store,
 				imageone: null,
 				imagetwo: null,
 				canvas: null,
@@ -33,7 +36,6 @@
 			}
 		},
 		async mounted () {
-			this.$emit('endLoading')
 		},
 		methods: {
 			t (w) { return translations.t(w) },
@@ -90,7 +92,10 @@
 				formData.append('event_pk', 87)  // this.event.id
 				let result = await api.getImage(this.getimgid, formData)
 				this.imagetwo = "data:image/jpg;base64," + result
-			}
+			},
+			async sendEmail() {
+				await api.sendEmail()
+			},
 		} // methods
 	} // export
 </script>

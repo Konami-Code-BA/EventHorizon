@@ -1,19 +1,19 @@
 import store from '@/store'
+import api from '@/functions/apiFunctions.js'
 export default {
-    get domain() {
-        return (window.location.protocol + '//' + window.location.host).replace('8080', '8000')
+    get currentPage() {
+        return store.pages[store.pages.length - 1]
     },
-    focusCursor(documentt, id) {
-        setTimeout(() => { documentt.getElementById(id).focus() }, 200)
+    get previousPage() {
+        return store.pages[store.pages.length - 2]
     },
-    setBackButtonToCloseModal(thiss, windoww, closeFunc) {
-        thiss.$router.allowBack = false
-        windoww.addEventListener('popstate', () => {
-            closeFunc()
-        })
-    },
-    freeUpBackButton(thiss) {
-        thiss.$router.allowBack = true
+    get currentUrl() {
+        let result = window.origin + '/?page=' + this.currentPage.page
+        let argKeys = Object.keys(this.currentPage.args)
+        for (let i = 0; i < argKeys.length; i++) {
+            result += '&' + argKeys[i] + '=' + this.currentPage.args[argKeys[i]]
+        }
+        return result
     },
     get isAuthenticatedUser() {
         return [1, 2].includes(store.user.groups[0])
@@ -21,19 +21,41 @@ export default {
     get isAdmin() {
         return [1].includes(store.user.groups[0])
     },
-    isInvitedGuest(event) {
-        if (Array.isArray(event.invited)) {
-            return event.invited.includes(store.user.id)
+    get today() {
+        return new Date()
+    },
+    get queryFromUrl() {
+        let urlSearchParams = new URLSearchParams(window.location.search)
+        return Object.fromEntries(urlSearchParams.entries())
+    },
+    goToPage(pageDict) {
+        store.pages.push(pageDict)
+        if (!['loginRegister', 'registerWithEmail', 'forgotPassword', 'resetPassword'].includes(pageDict.page)) {
+            store.lastNonLoginRegisterPage = pageDict
+        }
+    },
+    goBack() {
+        if (store.pages.length === 1) {
+            window.history.go(-2)
+        } else {
+            store.pages.pop() // remove the current page
+        }
+    },
+    focusCursor(documentt, id) {
+        setTimeout(() => { documentt.getElementById(id).focus() }, 200)
+    },
+    isGuestStatus(event, guestStatus) {
+        if (Array.isArray(event[guestStatus])) {
+            return event[guestStatus].includes(store.user.id)
         } else {
             return false
         }
     },
-    isHost(event) {
-        if (Array.isArray(event.hosts)) {
-            return event.hosts.includes(store.user.id)
-        } else {
-            return false
-        }
+    async getEvents() {
+        let events = await api.getAllEvents()
+        store.events.all = this.sortEventsByDate(events)
+        store.events.mine = this.filterEvents(store.events.all, store.user.id, ['invited'], false)
+        store.events.display = store.events.all
     },
     sortEventsByDate(events) {
         let sorted_events = []
@@ -87,5 +109,97 @@ export default {
             return event[0]
         }
         return event
+    },
+    hasIllegalSymbols(value) {
+        let symbols = '`~!#$%^&*()=[{]}\\|;:\'",<>/?'
+        for (let i = 0; i < symbols.length; i++) {
+            if (value.includes(symbols[i])) {
+                return true
+            }
+        }
+        return false
+    },
+    createEncodedURL() {
+        let url = 'https%3A%2F%2Fwww.eventhorizon.vip'
+        if (process.env.PYTHON_ENV == 'development') {
+            url = 'http%3A%2F%2F127.0.0.1%3A8080'
+        } else if (process.env.PYTHON_ENV == '"test"') {
+            url = 'https%3A%2F%2Fevent-horizon-test.herokuapp.com'
+        }
+        return url
+    },
+    createUriForReturnFromLogin(currentPageDict, returnToPageDict, encode) {
+        let e = {
+            '/': '%2F',
+            '?': '%3F',
+            '=': '%3D',
+            '&': '%26',
+        }
+        let uri = null
+        let argKeys = Object.keys(returnToPageDict.args)
+        if (encode) {
+            uri = `${e['/']}${e['?']}page${e['=']}${currentPageDict.page}${e['&']}next`
+            uri += `${e['=']}${returnToPageDict.page}`
+        } else {
+            uri = `/?page=${currentPageDict.page}&next=${returnToPageDict.page}`
+        }
+        if (argKeys.length > 0) {
+            for (let i = 0; i < argKeys.length; i++) {
+                if (['code', 'friendship_status_changed', 'state'].includes(argKeys[i])) {
+                    continue
+                }
+                if (encode) {
+                    uri += `${e['&']}${argKeys[i]}${e['=']}${returnToPageDict.args[argKeys[i]]}`
+                } else {
+                    uri += `&${argKeys[i]}=${returnToPageDict.args[argKeys[i]]}`
+                }
+            }
+        }
+        return uri
+    },
+    createNextPageFromCurrentPage() {
+        let nextArgKeys = Object.keys(this.currentPage.args)
+        let nextPage = this.currentPage.args.next
+        let nextArgs = {}
+        if (nextArgKeys.length > 0) {
+            for (let i = 0; i < nextArgKeys.length; i++) {
+                if (['next', 'code', 'friendship_status_changed', 'state'].includes(nextArgKeys[i])) {
+                    continue
+                } else {
+                    nextArgs[nextArgKeys[i]] = this.currentPage.args[nextArgKeys[i]]
+                }
+            }
+        }
+        return { page: nextPage, args: nextArgs }
+    },
+    createUrlForPasswordChange(email) {
+        let nextArgKeys = Object.keys(store.lastNonLoginRegisterPage.args)
+        let returnUrl = `${window.origin}/?page=resetPassword&next=${store.lastNonLoginRegisterPage.page}`
+        returnUrl += `&email=${encodeURIComponent(email)}`
+        if (nextArgKeys.length > 0) {
+            for (let i = 0; i < nextArgKeys.length; i++) {
+                returnUrl += `&${nextArgKeys[i]}=${store.lastNonLoginRegisterPage.args[nextArgKeys[i]]}`
+            }
+        }
+        return returnUrl
+    },
+    shakeFunction(thiss) {
+        if (Array.isArray(thiss)) {
+            for (let i = 0; i < thiss.length; i++) {
+                thiss[i].shakeIt = true
+                setTimeout(() => { thiss[i].shakeIt = false; }, 1000)
+            }
+        } else {
+            thiss.shakeIt = true
+            setTimeout(() => { thiss.shakeIt = false; }, 1000)
+        }
+    },
+    async flashModal(thiss, time = 700) { // .7 seconds
+        thiss.showFlashModal = true
+        await new Promise(r => setTimeout(r, time))
+        thiss.flashModalClass = 'fade-out'
+        await new Promise(r => setTimeout(r, 1000)) // 1 seconds
+        thiss.showFlashModal = false
+        thiss.flashModalClass = null
     },
 }

@@ -1,30 +1,30 @@
 <template>
 	<div>
 		<div class="header" style="width: 100%;">
-			<tabs :num-tabs="3" :initial="0" @on-click="(arg) => { selectedTab = arg }"
+			<tabs :num-tabs="5" :initial="0" @on-click="tab => { selectATab(tab) }"
 					style="background-color: rgba(0, 0, 0, .5);">
-				<div slot="1" style="vertical-align: bottom;">
-					A/あ
+				<div slot="1">
+					<img src="@/assets/backIcon.png" style="height: 22px; margin-top: 4px;">
 				</div>
 				<div slot="2">
-					<button class="no-border-button" style="display: flex; flex-direction: row; align-items: center;"
-							v-on:click.prevent="goToEvents()">
-						<div>EVENT</div>
-						<div v-if="this.$route.name != 'events'">
-							<img src="@/assets/eventhorizonTopIcon.png" style="height: 20px; vertical-align: middle;">
-						</div>
-						<div v-else>
-							&nbsp;
-						</div>
-						<div>HORIZON</div>
-					</button>
+					<img src="@/assets/languageIcon.png" style="height: 24px; margin-top: 4px;">
 				</div>
 				<div slot="3">
-					<img src="@/assets/threeBarsIcon.png" class="icon" style="height: 16px; margin-bottom: 3px;"/>
+					<div class="no-border-button" style="display: flex; flex-direction: row; align-items: center;">
+						<div>EVENT</div>
+						<div>
+							<img src="@/assets/eventhorizonTopIcon.png" style="height: 20px; vertical-align: middle;">
+						</div>
+						<div>HORIZON</div>
+					</div>
 				</div>
+				<div slot="4">
+					<img src="@/assets/threeBarsIcon.png" class="icon" style="height: 21px; margin-bottom: 2px;"/>
+				</div>
+				<div slot="5"/>
 			</tabs>
 		</div>
-		<modal v-if="selectedTab === 1" @closeModals="selectedTab = 0">
+		<modal v-if="selectedTab === 2" @closeModals="selectedTab = 0">
 			<div slot="contents" class="modal">
 				<div style="align-self: flex-end; padding-bottom: 5px;">
 					<button v-on:click.prevent="selectedTab = 0" class="no-border-button x-button">
@@ -36,16 +36,20 @@
 						ENGLISH
 					</button>
 				</div>
-				<div class="line-height"></div>
+
+				<div class="line-height"/>
+
 				<div style="width: 100%">
 					<button v-on:click.prevent="japanese()" class="button">
 						日本語
 					</button>
 				</div>
-				<div class="line-height"></div>
+
+				<div class="line-height"/>
+
 			</div>
 		</modal>
-		<modal v-if="selectedTab === 3" @closeModals="selectedTab = 0">
+		<modal v-if="selectedTab === 4" @closeModals="selectedTab = 0">
 			<div slot="contents" class="modal">
 				<div style="align-self: flex-end; padding-bottom: 5px;">
 					<button v-on:click.prevent="selectedTab = 0" class="no-border-button x-button">
@@ -62,13 +66,27 @@
 						{{ t('LOGOUT') }}
 					</button>
 				</div>
-				<div class="line-height"></div>
+
+				<div class="line-height"/>
+
 				<div style="width: 100%">
-					<button v-on:click.prevent="selectedTab = 0; showQrModal = true" class="button">
-						{{t('GET QR CODES')}}
+					<button v-on:click.prevent="selectedTab = 0; goToPage({ page: 'aboutUs', args: {} })"
+							class="button">
+						ABOUT US
 					</button>
 				</div>
-				<div class="line-height"></div>
+
+				<div class="line-height"/>
+
+				<div style="width: 100%">
+					<button v-on:click.prevent="selectedTab = 0; goToPage({ page: 'faq', args: {} })"
+							class="button">
+						FAQ
+					</button>
+				</div>
+
+				<div class="line-height"/>
+
 			</div>
 		</modal>
 		<qr-code-generator v-if="showQrModal" @closeModals="showQrModal=false"/>
@@ -96,29 +114,28 @@
 			tabs,
 			qrCodeGenerator,
 		},
-		props: {
-		},
 		computed: {
 			isAuthenticatedUser () {
 				return f.isAuthenticatedUser
 			},
 		},
 		watch: {
-			'selectedTab' () {
-				if (this.selectedTab != 0) {  // opens a modal
-					f.setBackButtonToCloseModal(this, window, this.closeModal)
-				} else if (this.selectedTab === 0 && !this.showQrModal) {  // closes a modal
-					f.freeUpBackButton(this)
-				} else if (this.selectedTab === 2) {
-					this.goToEvents()
-				}
-			},
 		},
 		async mounted () {
-			this.$emit('endLoading')
 		},
 		methods: {
 			t (w) { return translations.t(w) },
+			goToPage (pageDict) {
+				f.goToPage(pageDict)
+			},
+			selectATab (tab) {
+				this.selectedTab = tab
+				if (tab === 3) {
+					window.location.replace(window.origin)
+				} else if (tab === 1) {
+					f.goBack()
+				}
+			},
 			async english () {
 				let lang = 'EN'
 				store.user.language = lang
@@ -131,31 +148,18 @@
 				this.selectedTab = 0
 				await api.updateUserLanguage()
 			},
-			async goToEvents () {
-				this.$emit('startLoading')
-				if (this.$route.name !== 'events') {
-					await this.$router.push({ name: 'events' })
-					this.$emit('endLoading')
-				} else {
-					await location.reload()
-				}
-			},
 			goToLoginRegister () {
-				this.$emit('startLoading')
-				if (this.$route.name !== 'loginRegister') {
-					this.$router.push({ name: 'loginRegister' })
-				}
+				f.goToPage({ page: 'loginRegister', args: {} })
 				this.selectedTab = 0
-				this.$emit('endLoading')
 			},
 			async logout () {
-				this.$emit('startLoading')
+				this.store.loading = true
+				f.goToPage({ page: 'home', args: {} })
 				await api.logout()
-				this.selectedTab = 0
-				this.goToEvents()
+				location.reload()
 			},
 			closeModal () {
-				f.freeUpBackButton(this)
+				f.freeUpBackButton(this)  // this should change
 				this.selectedTab = 0
 				this.showQrModal = false
 			},

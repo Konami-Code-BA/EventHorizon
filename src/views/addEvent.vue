@@ -2,9 +2,11 @@
 	<div>
 		<div class="main">
 			<div style="font-size: 36px;">{{ t('ADD EVENT') }}</div>
-			<div class="line-height"></div>
+
+			<div class="line-height"/>
+
 			<div style="display: flex; flex-direction: column; align-items: center; width: 80%;">
-				<form v-on:keyup.enter="login()">
+				<form v-on:keyup.enter="login()" v-if="isAdmin">
 					<div style="padding-bottom: 5px;">
 						<input :placeholder="t('EVENT NAME')" v-model="name" type="text"
 								autocapitalize="words"/>
@@ -48,12 +50,15 @@
 						<input type="file" accept="image/*" @change="(e) => {imageFile = e.target.files[0]}"/>
 					</div>
 					<div style="padding-top: 5px;">
-						<button class="button" v-on:click.prevent="createEvent()" :disabled="!isAdmin">
+						<button class="button" v-on:click.prevent="createEvent()">
 							<div style="font-size: 18px;">{{ t('ADD') }}</div>
 						</button>
 					</div>
 				</form>
-				<div style="color: grey" v-if="!isAdmin"><small>({{ t('COMING SOON') }})</small></div>
+				<div style="color: grey; display: flex; flex-direction: column; align-items: center" v-else>
+					<div>({{ t('COMING SOON') }})</div>
+					<div><small>{{ t('CURRENTLY, ONLY ADMINS CAN CREATE EVENTS. THIS FEATURE WILL BECOME OPEN TO THE PUBLIC SOON!') }}</small></div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -119,7 +124,6 @@
 			}
 			this.date = year + '-' + month + '-' + day
 			this.time = hour + ':' + minute
-			this.$emit('endLoading')
 		},
 		methods: {
 			t (w) { return translations.t(w) },
@@ -135,9 +139,11 @@
 				}
 				if (this.imageFile) {
 					let image_id = await this.saveImage()
-					data['images'] = [image_id]
+					data['images'] = image_id
 				}
-				await api.createEvent(data)
+				let newEvent = await api.createEvent(data)
+				await f.getEvents()
+				f.goToPage({ page: 'event', args: { id: newEvent.id}})
 			},
 			async saveImage () {
 				let formData = new FormData()
@@ -183,6 +189,6 @@
 		position: fixed;
 		height: 20px;
 		width: 20px;
-		transform: translate(80px, 0)
+		transform: translate(110px, 0)
 	}
 </style>

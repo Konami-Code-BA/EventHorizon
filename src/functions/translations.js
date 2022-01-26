@@ -6,9 +6,9 @@ export default {
             'EN': 'REACH OUT TO NEW HORIZONS',
             'JP': '新たな地平線を求めて'
         },
-        'LOGIN': {
-            'EN': 'LOGIN',
-            'JP': 'ログイン'
+        'LOGIN WITH EMAIL': {
+            'EN': 'LOGIN WITH EMAIL',
+            'JP': 'Eメールでログイン'
         },
         'REGISTER': {
             'EN': 'REGISTER',
@@ -18,9 +18,21 @@ export default {
             'EN': 'LOGIN / REGISTER',
             'JP': 'ログイン・登録'
         },
-        'NEW USER REGISTRATION': {
-            'EN': 'NEW USER REGISTRATION',
-            'JP': '新規登録'
+        'REGISTER EMAIL': {
+            'EN': 'REGISTER EMAIL',
+            'JP': 'Eメールで新規登録'
+        },
+        'RESET PASSWORD': {
+            'EN': 'RESET PASSWORD',
+            'JP': 'パスワードをリセット'
+        },
+        'LINE LOGIN / REGISTER': {
+            'EN': 'LINE LOGIN / REGISTER',
+            'JP': 'LINEでログイン/新規登録'
+        },
+        'ADD LINE': {
+            'EN': 'ADD LINE',
+            'JP': 'LINE登録'
         },
         'MENU': {
             'EN': 'MENU',
@@ -74,6 +86,10 @@ export default {
             'EN': 'GET EMAILS',
             'JP': 'メール送信'
         },
+        'GET LINE MESSAGES': {
+            'EN': 'GET LINE MESSAGES',
+            'JP': 'LINEのメール送信'
+        },
         'UPCOMING EVENTS': {
             'EN': 'UPCOMING EVENTS',
             'JP': '今後のイベント'
@@ -110,6 +126,30 @@ export default {
             'EN': 'ADD EMAIL ADDRESS',
             'JP': 'メールアドレスを追加する'
         },
+        'SEND CHANGE PASSWORD EMAIL': {
+            'EN': 'SEND CHANGE PASSWORD EMAIL',
+            'JP': 'パスワード変更メールを送る'
+        },
+        'CURRENT PASSWORD IS INCORRECT': {
+            'EN': 'CURRENT PASSWORD IS INCORRECT',
+            'JP': '現在のパスワードが間違っている'
+        },
+        'MAYBE': {
+            'EN': 'MAYBE',
+            'JP': '未決定'
+        },
+        'PASSWORD-CHANGE EMAIL SENT!': {
+            'EN': 'PASSWORD-CHANGE EMAIL SENT!',
+            'JP': 'パスワード変更メールを送りました！'
+        },
+        'PASSWORD CHANGED!': {
+            'EN': 'PASSWORD CHANGED!',
+            'JP': 'パスワード変更しました！'
+        },
+        'CHANGE PASSWORD': {
+            'EN': 'CHANGE PASSWORD',
+            'JP': 'パスワード変更する'
+        },
         'Password can\'t be empty': {
             'EN': 'Password can\'t be empty',
             'JP': 'メールアドレスを追加する'
@@ -137,6 +177,10 @@ export default {
         'Required': {
             'EN': 'Required',
             'JP': '必須項目'
+        },
+        'Plus One needs name': {
+            'EN': 'Plus One needs name',
+            'JP': 'Plus One needs name'
         },
         'Only these symbols are allowed: . _ - @': {
             'EN': 'Only these symbols are allowed: . _ - @',
@@ -184,6 +228,10 @@ export default {
         },
         'PEOPLE': {
             'EN': 'PEOPLE',
+            'JP': '人'
+        },
+        'PERSON': {
+            'EN': 'PERSON',
             'JP': '人'
         },
         'SEARCH': {
@@ -278,13 +326,41 @@ export default {
             'EN': 'TODAY',
             'JP': '今日'
         },
-        'GET QR CODES': {
-            'EN': 'GET QR CODES',
-            'JP': 'QRコード出す'
+        'SHARE QR CODE': {
+            'EN': 'SHARE QR CODE',
+            'JP': 'QRコード共有'
+        },
+        'SHARE URL': {
+            'EN': 'SHARE URL',
+            'JP': 'URL共有'
+        },
+        'SHARE IMAGE': {
+            'EN': 'SHARE IMAGE',
+            'JP': '画像共有'
         },
         'EVENT NAME': {
             'EN': 'EVENT NAME',
             'JP': 'イベント名'
+        },
+        'SELECT WHAT EVENTS TO DISPLAY': {
+            'EN': 'SELECT WHAT EVENTS TO DISPLAY',
+            'JP': 'どんなイベントを表示しよう'
+        },
+        'ALL': {
+            'EN': 'ALL',
+            'JP': 'すべて'
+        },
+        'MINE': {
+            'EN': 'MINE',
+            'JP': '僕の'
+        },
+        'PEOPLE I FOLLOW': {
+            'EN': 'PEOPLE I FOLLOW',
+            'JP': 'フォローしている人'
+        },
+        '\'S': {
+            'EN': '\'S',
+            'JP': 'の'
         },
         'DESCRIPTION': {
             'EN': 'DESCRIPTION',
@@ -310,9 +386,41 @@ export default {
             'EN': 'IMAGE',
             'JP': '画像'
         },
+        'HOSTS': {
+            'EN': 'HOSTS',
+            'JP': 'HOSTS'
+        },
+        'ATTENDING': {
+            'EN': 'ATTENDING',
+            'JP': 'ATTENDING'
+        },
+        'MAYBE': {
+            'EN': 'MAYBE',
+            'JP': 'MAYBE'
+        },
+        'WAIT LIST': {
+            'EN': 'WAIT LIST',
+            'JP': 'WAIT LIST'
+        },
+        'INVITE REQUESTS': {
+            'EN': 'INVITE REQUESTS',
+            'JP': 'INVITE REQUESTS'
+        },
+        'TOTAL INVITED': {
+            'EN': 'TOTAL INVITED',
+            'JP': 'TOTAL INVITED'
+        },
         'ALL EVENTS': {
             'EN': 'ALL EVENTS',
             'JP': 'オール　イベント'
+        },
+        'CURRENTLY, ONLY ADMINS CAN CREATE EVENTS. THIS FEATURE WILL BECOME OPEN TO THE PUBLIC SOON!': {
+            'EN': 'CURRENTLY, ONLY ADMINS CAN CREATE EVENTS. THIS FEATURE WILL BECOME OPEN TO THE PUBLIC SOON!',
+            'JP': '現在、イベントを作成できるのは管理者のみです。 しかし、この機能はまもなく公開されます！'
+        },
+        'COPIED!': {
+            'EN': 'COPIED!',
+            'JP': 'コピーされた！'
         },
     },
 
