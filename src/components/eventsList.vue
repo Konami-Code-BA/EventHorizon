@@ -32,13 +32,7 @@
 				listEvents: null,
 				selectedEvent: null,
 				search: '',
-				observer: new MutationObserver((mutations, obs) => {
-					let el = document.getElementById(`item${this.selectedEvent.id}`)
-					if (el) {
-						this.scrollIt(el)
-						return
-					}
-				}),
+				observer: null,
 			}
 		},
 		watch: {
@@ -56,6 +50,13 @@
 			} else {
 				this.selectedEvent = this.store.events.selected
 			}
+			this.observer = new MutationObserver((mutations, obs) => {
+				let el = document.getElementById(`item${this.selectedEvent.id}`)
+				if (el) {
+					this.scrollIt(el)
+					return
+				}
+			})
 		},
 		mounted () {
 			this.observer.observe(document, {childList: true, subtree: true})
