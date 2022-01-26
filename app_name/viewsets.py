@@ -428,6 +428,12 @@ class UserViewset(viewsets.ModelViewSet):
 			user.save()
 			print('4c***************************************************')
 			# if not visitor, but a visitor made the request
+			print('1', Group.objects.get(name='Temp Visitor'))
+			print('2', Group.objects.get(name='Temp Visitor').id)
+			print('3', user)
+			print('4', user.groups)
+			print('5', user.groups.filter(id=Group.objects.get(name='Temp Visitor').id))
+			print('6', user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists())
 			if not user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists() and visitor:
 				print('5***************************************************')
 				user.visit_count += visitor.visit_count
