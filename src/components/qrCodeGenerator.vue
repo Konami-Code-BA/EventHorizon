@@ -8,23 +8,30 @@
 					</button>
 				</div>
 				<div style="width: 100%">
-					<button v-on:click.prevent="closeModal=true; getQr(url)" class="button">
+					<button v-on:click.prevent="closeModal=true; selectedQr = url; getQr()" class="button">
 						This Page QR
 					</button>
 				</div>
-				<div class="line-height"></div>
+
+				<div class="line-height"/>
+
 				<div style="width: 100%">
-					<button v-on:click.prevent="closeModal=true; getQr(instagram)" class="button">
+					<button v-on:click.prevent="closeModal=true; selectedQr = instagram; getQr()"
+							class="button">
 						Instagram QR
 					</button>
 				</div>
-				<div class="line-height"></div>
+
+				<div class="line-height"/>
+
 				<div style="width: 100%">
-					<button v-on:click.prevent="closeModal=true; getQr(line)" class="button">
+					<button v-on:click.prevent="closeModal=true; selectedQr = line; getQr()" class="button">
 						Line QR
 					</button>
 				</div>
-				<div class="line-height"></div>
+
+				<div class="line-height"/>
+
 			</div>
 		</modal>
 		<modal v-if="image_name!=null" @closeModals="$emit('closeModals')">
@@ -43,14 +50,20 @@
 						<img class="qr-img" :src="image_file"/>
 					</a>
 				</div>
-				<div style="height: 40px; width: 100%; display: flex; flex-direction: column; align-items: center">
+				<div style="height: 40px; width: 100%; display: flex; flex-direction: row; align-items: center; justify-content: center; margin-top: -5px;">
 					<div style="height: 40px; width: 100%; z-index: 103; position: fixed"
 							v-on:click.prevent="$emit('closeModals')"/>
-					<a :href="image_file" :download="image_name">
-						<div class="qr-button" style="text-decoration: underline; position: fixed; transform: translate(-50%,-12%)">
+					<a :href="image_file" :download="image_name" style="z-index: 105;">
+						<!--div class="qr-button" style="text-decoration: underline; position: fixed; transform: translate(-50%,-12%)">
+							⇩
+						</div-->
+						<div class="qr-button" style="text-decoration: underline;">
 							⇩
 						</div>
 					</a>
+					<button v-on:click.prevent="share()" class="qr-button">
+						<img src="@/assets/blackShareIcon.png" class="icon"/>
+					</button>
 				</div>
 			</div>
 		</modal>
@@ -72,7 +85,7 @@
 				line: 'EventHorizonLineAccountQrCode.png',
 				image_name: null,
 				image_file: null,
-				url: null,
+				selectedQr: null,
 			}
 		},
 		components: {
@@ -81,25 +94,39 @@
 		props: {
 		},
 		computed: {
+			url () {
+				return f.currentUrl
+			},
 		},
 		watch: {
 		},
 		mounted () {
-			this.url = f.domain + this.store.path
-			console.log(this.url)
 		},
 		methods: {
 			t (w) { return translations.t(w) },
-			async getQr (inp) { // when this isnt async, it works, but when its async, it outputs promise instead of what i want
-				this.image_name = inp
-				console.log(this.image_name)
-				if (inp != this.url) {
+			async getQr () { // when this isnt async, it works, but when its async, it outputs promise instead of what i want
+				this.image_name = this.selectedQr
+				if (this.selectedQr != this.url) {
 					this.image_file = require('@/assets/' + this.image_name)
 				} else {
-					var QRCode = require('qrcode')
+					let QRCode = require('qrcode')
 					this.image_file = await QRCode.toDataURL(this.url)
-					this.image_name = `EventHorizonQrCode${this.store.path.replace('/', '_')}.jpg`
+					this.image_name = `EventHorizonQrCode${f.currentPage.page.replace('/', '_')}.jpg`
 				}
+			},
+			async share () {
+				this.image_name = this.selectedQr
+				if (this.selectedQr != this.url) {
+					this.image_file = require('@/assets/' + this.image_name)
+				} else {
+					let QRCode = require('qrcode')
+					this.image_file = await QRCode.toDataURL(this.url)
+					this.image_name = `EventHorizonQrCode${f.currentPage.page.replace('/', '_')}.jpg`
+				}
+				let image = await fetch(this.image_file)
+				let blob = await image.blob()
+				let file = new File([blob], this.image_name, { type: 'image/jpeg' })
+				navigator.share({ files: [file] })
 			},
 		}
 	}

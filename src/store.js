@@ -1,13 +1,20 @@
 export default {
-    defaultUser: {
+    defaultUser: { // still need this?
         language: 'EN',
         groups: [100],
-        alerts: [],
     },
     user: {
-        language: 'EN',
+        language: 'EN', // still need these internal things?
         groups: [100],
-        alerts: [],
     },
-    path: '',
+    pages: [],
+    lastNonLoginRegisterPage: null,
+    events: {
+        selected: null,
+        none: [],
+        display: [],
+        all: [],
+        mine: [],
+    },
+    loading: true,
 }

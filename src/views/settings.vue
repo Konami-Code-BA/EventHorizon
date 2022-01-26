@@ -2,124 +2,195 @@
 	<div>
 		<div class="main">
 			<div style="font-size: 36px;">{{ t('SETTINGS') }}</div>
-			<div class="line-height"></div>
-			<button class="button" v-if="store.user.email === ''" v-on:click.prevent="openAddEmailModal()">
+
+			<div class="line-height"/>
+
+			<div style="font-size: 24px;">{{ store.user.display_name }}</div>
+
+			<div class="line-height"/>
+
+			<button class="button" v-if="store.user.email === ''" v-on:click.prevent="showAddEmailModal = true">
 				{{ t('ADD EMAIL ADDRESS') }}
 			</button>
 			<div v-else class="dual-set">
-				<button class="button" style="width: 100%" v-on:click.prevent="do_get_emails=!do_get_emails">
+				<button class="button" style="width: 100%"
+						v-on:click.prevent="updateUserDoGetEmails()">
 					{{ t('GET EMAILS') }}&nbsp;
 				</button>
-				<input type="checkbox" class="checkbox" v-model="do_get_emails"/>
+				<input type="checkbox" class="checkbox" v-model="store.user.do_get_emails"
+						:key="store.user.do_get_emails"/>
 			</div>
-			<div class="line-height"></div>
-			<button v-on:click.prevent="loginByLine()" class="button line-coloring">
-				<div class="line-button">
-					<div class="line-alignment">
-						<div>
-							<img src="@/assets/line.png" class="line-img">
-						</div>
-						<div>
-							ADD LINE
-						</div>
-					</div>
-				</div>
+
+			<div class="line-height"/>
+
+			<line-button :pageToReturnTo="currentPage" :wording="t('ADD LINE')" v-if="store.user.line_id === ''"
+					ref="lineButton"/>
+			<div v-else class="dual-set">
+				<button class="button" style="width: 100%"
+						v-on:click.prevent="updateUserDoGetLines()">
+					{{ t('GET LINE MESSAGES') }}&nbsp;
+				</button>
+				<input type="checkbox" class="checkbox" v-model="store.user.do_get_lines"
+						:key="store.user.do_get_lines"/>
+			</div>
+
+			<div class="line-height"/>
+
+			<button class="button" v-if="store.user.password != ''" v-on:click.prevent="showChangePasswordModal = true">
+				{{ t('CHANGE PASSWORD') }}
 			</button>
-			<!--div>
-				<h2>{{ t('CHANGE PASSWORD') }}</h2>
-			</div-->
-			<!--a href="https://lin.ee/UeSvNxR" class="line-coloring">
-				<div class="line-button">
-					<div class="line-alignment">
-						<div>
-							<img src="@/assets/line.png" class="line-img">
-						</div>
-						<div style="white-space: nowrap">
-							ADD FRIEND
-						</div>
-					</div>
-				</div>
-			</a-->
 		</div>
-		<modal v-show="showAddEmailModal" @closeModals="closeAddEmailModal()">
+
+		<modal v-show="showAddEmailModal" @closeModals="showAddEmailModal = false">
 			<div slot="contents" class="modal">
 				<div style="align-self: flex-end">
-					<button v-on:click.prevent="closeAddEmailModal()" class="no-border-button x-button">
+					<button v-on:click.prevent="showAddEmailModal = false" class="no-border-button x-button">
 						✖
 					</button>
 				</div>
-				<register-with-email-internal @startLoading="$emit('startLoading')" @endLoading="$emit('endLoading')"
-					:includeDisplayName="false" @closeModals="closeAddEmailModal()"/>
+				<form v-on:keyup.enter="addEmail()" style="width: 80%;">
+					<email-input ref="emailInput" usage="AddEmail"/>
+					<password-input ref="passwordInput" :doublePassword="true" usage="AddEmail"/>
+				</form>
+				<button v-on:click.prevent="addEmail()" class="button">
+					{{ t('ADD EMAIL ADDRESS') }}
+				</button>
 			</div>
 		</modal>
+		<modal v-show="showChangePasswordModal" @closeModals="showChangePasswordModal = false">
+			<div slot="contents" class="modal">
+				<div style="align-self: flex-end">
+					<button v-on:click.prevent="showChangePasswordModal = false" class="no-border-button x-button">
+						✖
+					</button>
+				</div>
+				<form v-on:keyup.enter="changePassword()" style="width: 100%;">
+					<password-input ref="passwordInput1" :doublePassword="false" usage="ChangePassword1"
+							customPlaceholder="CURRENT PASSWORD"/>
+					<password-input ref="passwordInput2" :doublePassword="true" usage="ChangePassword2"
+							customPlaceholder="NEW PASSWORD"/>
+				</form>
+				<button v-on:click.prevent="changePassword()" class="button" style="width: 100%">
+					{{ t('CHANGE PASSWORD') }}
+				</button>
+			</div>
+		</modal>
+		<div v-if="showFlashModal" :class="flashModalClass" class="success-modal">
+			{{ t('PASSWORD CHANGED!') }}
+		</div>
 	</div>
 </template>
 <script>
 	import store from '@/store.js'
-	import registerWithEmailInternal from '@/components/registerWithEmailInternal.vue'
-	import modal from '@/components/modal.vue'
 	import translations from '@/functions/translations.js'
-	import api from '@/functions/apiFunctions.js'
 	import f from '@/functions/functions.js'
+	import api from '@/functions/apiFunctions.js'
+	import emailInput from '@/components/emailInput.vue'
+	import passwordInput from '@/components/passwordInput.vue'
+	import lineButton from '@/components/lineButton.vue'
+	import modal from '@/components/modal.vue'
 	export default {
 		name: 'settings',
 		components: {
 			modal,
-			registerWithEmailInternal,
+			lineButton,
+			emailInput,
+			passwordInput,
 		},
 		data () {
 			return {
 				store: store,
 				showAddEmailModal: false,
-				do_get_emails: store.user.do_get_emails,
-				showAddEmailModal: false,
-				stateCookie: JSON.parse('{"' + this.replaceAll(this.replaceAll(document.cookie, '=', '": "'), '; ', '", "') + '"}')['state'],
+				showChangePasswordModal: false,
+				showFlashModal: false,
+				flashModalClass: null,
 			}
 		},
-		watch: {
-			async 'do_get_emails' () {  // if do_get_emails changes, update it in the DB
-				this.store.user.do_get_emails = this.do_get_emails
-				await api.updateUserDoGetEmails()  // update it in the DB
-			},
+		props: {
+			tryLine: { default: false },
+		},
+		computed: {
+			currentPage () {
+				return f.currentPage
+			}
 		},
 		async mounted () {
-			await this.tryLineNewDevice()
-			this.$emit('endLoading')
+			if (this.$refs.lineButton && this.tryLine) {
+				await this.$refs.lineButton.tryLineNewDevice()
+			}
+			f.focusCursor(document, 'emailAddEmail')
 		},
 		methods: {
 			t (w) { return translations.t(w) },
-			openAddEmailModal () {
-				f.setBackButtonToCloseModal(this, window, this.closeAddEmailModal)
-				this.showAddEmailModal = true
+			async updateUserDoGetEmails () {
+				store.user.do_get_emails = !store.user.do_get_emails
+				await api.updateUserDoGetEmails()
 			},
-			closeAddEmailModal () {
-				f.freeUpBackButton(this)
-				this.do_get_emails = this.store.user.do_get_emails
-				this.showAddEmailModal = false
+			async updateUserDoGetLines () {
+				store.user.do_get_lines = !store.user.do_get_lines
+				await api.updateUserDoGetLines()
 			},
-			replaceAll (str, match, replace) {
-				return str.replace(new RegExp(match, 'g'), () => replace);
-			},
-			async loginByLine () {
-				this.$emit('startLoading')
-				let loginChannelId = await api.secretsApi('login-channel-id')
-				let state = await api.secretsApi('new-random-secret')
-				document.cookie = `state=${state}; path=/`
-				let lineLoginRedirectUrl = 'https%3A%2F%2Fwww.eventhorizon.vip%2Fsettings'
-				if (process.env.PYTHON_ENV == 'development') {
-					lineLoginRedirectUrl = 'http%3A%2F%2F127.0.0.1%3A8080%2Fsettings'
-				} else if (process.env.PYTHON_ENV == '"test"') {
-					lineLoginRedirectUrl = 'https%3A%2F%2Fevent-horizon-test.herokuapp.com%2Fsettings'
+			async addEmail () {
+				if (
+					this.$refs.passwordInput.error.length > 0
+					|| this.$refs.passwordInput.error2.length > 0
+					|| this.$refs.emailInput.error.length > 0
+				) {
+					f.shakeFunction([this.$refs.passwordInput, this.$refs.emailInput])
+					return
 				}
-				window.location.replace(`https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=${loginChannelId}&redirect_uri=${lineLoginRedirectUrl}&state=${state}&prompt=consent&bot_prompt=aggressive&scope=profile%20openid`)
-			},
-			async tryLineNewDevice () {
-				if (this.$route.query.code && this.stateCookie === this.$route.query.state) {
-					this.$emit('startLoading')
-					await api.lineNewDevice(this.$route.query.code, 'settings')
-					this.$emit('endLoading')
+				this.$refs.passwordInput.showPassword = false
+				this.$refs.passwordInput.showPassword2 = false
+				this.store.loading = true
+
+				let user = await api.addAnEmail(
+					this.$refs.emailInput.email,
+					this.$refs.passwordInput.password,
+				)
+				if (!user.error) {
+					f.goToPage(this.store.lastNonLoginRegisterPage)
+					window.initMap()
+					this.showAddEmailModal = false
+					this.store.loading = false
+					return
 				}
-			}
+				if (user.error == 'Incorrect password for this email') {
+					this.$refs.passwordInput.error = user.error
+				}
+				this.store.loading = false
+				f.shakeFunction([this.$refs.passwordInput, this.$refs.emailInput])
+			},
+			async changePassword () {
+				if (
+					this.$refs.passwordInput1.error.length > 0
+					|| this.$refs.passwordInput2.error2.length > 0
+				) {
+					f.shakeFunction([this.$refs.passwordInput1, this.$refs.passwordInput2])
+					return
+				}
+				this.$refs.passwordInput1.showPassword = false
+				this.$refs.passwordInput2.showPassword = false
+				this.$refs.passwordInput2.showPassword2 = false
+				this.store.loading = true
+
+				let user = await api.changePassword(
+					this.store.user.email,
+					this.$refs.passwordInput2.password,
+					null,
+					this.$refs.passwordInput1.password,
+				)
+				if (!user.error) {
+					this.showChangePasswordModal = false
+					this.store.loading = false
+					await f.flashModal(this, 1000)  // flash password changed modal
+					return
+				}
+				if (user.error == 'wrong code or password') {
+					this.$refs.passwordInput1.error = 'CURRENT PASSWORD IS INCORRECT'
+				}
+				this.store.loading = false
+				f.shakeFunction([this.$refs.passwordInput1, this.$refs.passwordInput2])
+			},
 		} // methods
 	} // export
 </script>
@@ -137,7 +208,8 @@
 		position: fixed;
 		height: 20px;
 		width: 20px;
-		transform: translate(60px, 0)
+		transform: translate(110px, 0);
+		z-index: 1;
 	}
 	.line-coloring {
 		background-color: #00b300;
@@ -159,5 +231,18 @@
 	}
 	.button {
 		width: 80%;
+		z-index:2;
+	}
+	.success-modal {
+		position: fixed;
+		color: white;
+		font-size: 24px;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -50%);
+		background-color: rgba(0, 0, 0, .8);
+		z-index: 1000;
+		width: 90%;
+		text-align: center;
 	}
 </style>

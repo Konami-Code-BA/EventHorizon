@@ -57,7 +57,6 @@ def line_bot(line_body):
 	replyToken, reply, received = None, None, None
 	if len(line_body['events']) > 0:
 		events = line_body['events'][0]
-		print('INSIDE LINE BOT - INCOMING', events)
 	else: 
 		return replyToken, reply
 	if events['type'] == 'follow':
@@ -67,35 +66,30 @@ def line_bot(line_body):
 		remove_line_friend(events['source']['userId'])
 	elif events['type'] == 'message':  # its a message (not a follow etc)
 		if events['message']['type'] == 'text':  # its a text message (not an image etc)
-			if events['message']['text'][:2] == '. ':  # it has a bot trigger
-				received = events['message']['text'][2:]  # save the text minus the bot trigger
+			if events['message']['text'][0] == '.':  # it has a bot trigger
+				received = events['message']['text'][1:]  # save the text minus the bot trigger
 			elif events['source']['type'] == 'user':  # it doesn't have a bot trigger but it is a 1-user private room
 				received = events['message']['text']  # private room doesn't need bot trigger, so save all the text
 	if 'replyToken' in events:
 		send_to = {'type': 'replyToken', 'to': events['replyToken']}
 	if 'to' in events:
 		send_to = {'type': 'to', 'to': events['to']}
-	if received in ['Status', 'status']:
-		reply = {'type': 'text', 'text': events['reply']}
-	elif received in ['Image', 'image']:
-		reply = {'type': 'image', 'image': events['reply']}
-	print('INSIDE LINE BOT - SEND TO', send_to)
-	print('INSIDE LINE BOT - REPLY', reply)
+	if received and ('status' in received or 'Status' in received):
+		reply = {'type': 'text', 'text': 'Here is your status brah'}
+	elif received and ('image' in received or 'Image' in received):
+		reply = {'type': 'image', 'image': 'Here is your image brah'}  # need to send an image file not text here.
 	return send_to, reply
 
 
 def add_line_friend(line_id):
 	from app_name.viewsets import UserViewset
-	print('start')
 	try:  # if user with this line id exists
-		print(line_id)
 		user = UserViewset.model.objects.get(line_id=line_id)
 		user.is_line_friend = True
 		user.do_get_lines = True
 		user.save()
 		print('CHANGED is_line_friend AND do_get_lines FOR EXISTING LINE FRIEND')
 	except UserViewset.model.DoesNotExist:  # if no user with this line id exists
-		print('in here')
 		# this wasn't done on the site, it was done in line so there is no visitor, and can't make session
 		user = UserViewset.model.objects.create_user(  # create temporary line friend user
 			line_id = line_id,
@@ -105,10 +99,9 @@ def add_line_friend(line_id):
 			do_get_line_display_name = True,
 			random_secret = secrets.token_urlsafe(16)
 		)
-		user.groups.add(5)  # temp line friend
+		user.groups.add(Group.objects.get(name='Temp Line Friend').id)  # temp line friend
 		user.save()
 		print('ADDED NEW TEMP LINE FRIEND')
-	print('out here')
 
 
 def remove_line_friend(line_id):
@@ -132,7 +125,8 @@ def authenticate_login(request):
 
 def verify_update_line_info(request, user):  # for exisitng user with line id, access token already gotten
 	visitor = None
-	if request.user.groups.filter(id=3).exists():  # if visitor made this request to login by line
+	# if visitor made this request to login by line
+	if request.user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists():
 		visitor = type(user).objects.get(pk=request.user.pk)  # get visitor account making the request
 	url = 'https://api.line.me/oauth2/v2.1/token'  # no matter if access token expired or not, refresh access token 1st
 	headers = {'Content-Type': 'application/x-www-form-urlencoded'}
@@ -167,7 +161,8 @@ def verify_update_line_info(request, user):  # for exisitng user with line id, a
 		request.data['line_id'] = user.line_id
 		user = authenticate_login(request)  # login again just in case, and to get new location info
 		if not hasattr(user, 'error'):  # logged into a user
-			if not user.groups.filter(id=3).exists() and visitor:  # if not visitor, but request made by visitor
+			# if not visitor, but request made by visitor
+			if not user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists() and visitor:
 				user.visit_count += visitor.visit_count
 				user.save()
 				visitor.delete()  # delete the visitor account that made the request
@@ -218,3 +213,10 @@ def merge_email_into_line_account(current_user, existing_user):
 	current_user.save()
 	existing_user.delete()
 	return current_user
+
+
+def user_in_guest_statuses(event, user_id, guest_statuses):
+	for guest_status in guest_statuses:
+		if getattr(event, guest_status).filter(id=user_id).exists():
+			return True
+	return False

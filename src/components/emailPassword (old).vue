@@ -1,24 +1,29 @@
 <template>
 	<div style="min-width: 235px">
-		<form v-on:keyup.enter="registerWithEmail()">
-			<div v-if="includeDisplayName">
-				<input :placeholder="t('DISPLAY NAME')" v-model="displayNameInput" type="text" id="displayName"
-						autocorrect="off" autocapitalize="none" style="width: 100%"/>
+		<form v-on:keyup.enter="emailPassword()">
+			<div v-if="action === 'registerWithEmail'">
+				<input :placeholder="t('DISPLAY NAME')" v-model="displayNameInput" type="text"
+						:id="`displayName+${action}`" autocorrect="off" autocapitalize="none"
+						style="width: 100%"/>
+
 				<div class="line-height error-text" :class="{'shake' : shakeIt}">
 					{{t(displayNameError)}}
 				</div>
+
 			</div>
 			<div>
 				<input :placeholder="t('EMAIL')" v-model="emailInput" type="email" autocorrect="off"
-						autocapitalize="none" id="email" style="width: 100%"/>
+						autocapitalize="none" :id="`email+${action}`" style="width: 100%"/>
 			</div>
+
 			<div class="line-height error-text" :class="{'shake' : shakeIt}" style="color: red">
 				<small>{{t(emailError)}}</small>
 			</div>
+
 			<div style="display: flex">
 				<input :placeholder="t('PASSWORD')" v-model="passwordInput" :type="[showPassword ? 'text' : 'password']"
-						style="flex-grow: 1" id="password" autocorrect="off" autocapitalize="none"/>
-				<button v-on:click.prevent="showButton()" class="button" style="width: 70px; font-weight: 400" id="show"
+						style="flex-grow: 1" :id="`password+${action}`" autocorrect="off" autocapitalize="none"/>
+				<button v-on:click.prevent="showButton()" class="button" style="width: 70px; font-weight: 400"
 						type="button">
 					<small v-if="!showPassword">
 						{{ t('SHOW') }}
@@ -28,15 +33,17 @@
 					</small>
 				</button>
 			</div>
+
 			<div class="line-height error-text" :class="{'shake' : shakeIt}" style="color: red">
 				{{t(passwordError)}}
 			</div>
+
 			<div style="display: flex">
 				<input :placeholder="t('PASSWORD (AGAIN)')" v-model="password2Input"
-						:type="[showPassword2 ? 'text' : 'password']" style="flex-grow: 1" id="password2"
+						:type="[showPassword2 ? 'text' : 'password']" style="flex-grow: 1" :id="`password2+${action}`"
 						autocorrect="off" autocapitalize="none"/>
 				<button v-on:click.prevent="showButton2()" class="button" style="width: 70px; font-weight: 400"
-						id="show" type="button">
+						type="button">
 					<small v-if="!showPassword2">
 						{{ t('SHOW') }}
 					</small>
@@ -45,12 +52,15 @@
 					</small>
 				</button>
 			</div>
+
 			<div class="line-height error-text" :class="{'shake' : shakeIt}" style="color: red">
 				{{t(password2Error)}}
 			</div>
+
 		</form>
-		<button v-on:click.prevent="registerWithEmail()" class="button">
-			{{ t('REGISTER') }}
+		<button v-on:click.prevent="emailPassword()" class="button">
+			{{ action === 'registerWithEmail' ? t('REGISTER') :
+					action === 'addAnEmail' ? t('ADD EMAIL') : t('RESET PASSWORD')}}
 		</button>
 	</div>
 </template>
@@ -60,7 +70,7 @@
 	import api from '@/functions/apiFunctions.js'
 	import f from '@/functions/functions.js'
 	export default {
-		name: 'registerWithEmailInternal',
+		name: 'emailPassword',
 		components: {
 		},
 		data () {
@@ -81,19 +91,18 @@
 			}
 		},
 		props: {
-			includeDisplayName: { default: true },
-			next: { default: null },
+			action: {},
 		},
 		async mounted () {
-			if (this.includeDisplayName) {
-				f.focusCursor(document, 'displayName')
+			if (this.action === 'registerWithEmail') {
+				f.focusCursor(document, `displayName+${this.action}`)
 			} else {
-				f.focusCursor(document, 'email')
+				f.focusCursor(document, `email+${this.action}`)
 			}
 			this.passwordHasErrors()
 			this.password2HasErrors()
 			this.emailHasErrors()
-			if (this.includeDisplayName) {
+			if (this.action === 'registerWithEmail') {
 				this.displayNameHasErrors()
 			}
 		},
@@ -105,7 +114,7 @@
 		},
 		methods: {
 			t (w) { return translations.t(w) },
-			async registerWithEmail () {
+			async emailPassword () {
 				if (this.passwordError.length > 0 || this.password2Error.length > 0 || this.emailError.length > 0
 						|| this.displayNameError.length > 0) {
 					this.shakeFunction()
@@ -113,40 +122,32 @@
 				}
 				this.showPassword = false
 				this.showPassword2 = false
-				this.$emit('startLoading')
-				if (this.includeDisplayName) {
-					let user = await api.registerWithEmail(this.emailInput, this.passwordInput,
-							this.displayNameInput)
-				} else {
-					let user = await api.registerWithEmail(this.emailInput, this.passwordInput)
+				let user = null
+				if (this.action === 'registerWithEmail') {
+					user = await api.registerWithEmail(this.emailInput, this.passwordInput, this.displayNameInput)
+				} else if (this.action === 'addAnEmail') {
+					user = await api.addAnEmail(this.emailInput, this.passwordInput)
+				} else if (this.action === 'changePassword') {
+					user = await api.changePassword(this.emailInput, this.passwordInput)
 				}
 				if (!user.error) {
-					if (this.next) {
-						this.$router.push({ name: this.next })
-						this.$emit('endLoading')
-						return
-					} else {
-						this.$emit('closeModals')
-						this.$emit('endLoading')
-						return
-					}
+					f.goToPage(this.store.lastNonLoginRegisterPage)
 				} else if (user.error == 'Incorrect password for this email') {
 					this.passwordError = user.error
 					this.showError = true
-					this.shakeFunction()
+					f.shakeFunction(this)
 				} else if (user.error == "This email is already registered") {
 					this.emailError = user.error
 					this.showError = true
-					this.shakeFunction()
+					f.shakeFunction(this)
 				}
-				this.$emit('endLoading')
 			},
 			showButton () {
-				f.focusCursor(document, 'password')
+				f.focusCursor(document, `password+${this.action}`)
 				this.showPassword = !this.showPassword
 			},
 			showButton2 () {
-				f.focusCursor(document, 'password2')
+				f.focusCursor(document, `password2+${this.action}`)
 				this.showPassword2 = !this.showPassword2
 			},
 			passwordHasErrors() {
@@ -177,14 +178,13 @@
 				}
 			},
 			emailHasErrors() {
-				if (this.passwordError
-						=== 'Incorrect password for this email') {
+				if (this.passwordError === 'Incorrect password for this email') {
 					this.passwordError = ''
 				}
 				if (this.emailInput.length < 1) {
 					this.emailError = 'Required'
 					return true
-				} else if (this.hasInvalidEmailStructure() || this.hasIllegalSymbols(this.emailInput)) {
+				} else if (f.hasInvalidEmailStructure(this.emailInput) || f.hasIllegalSymbols(this.emailInput)) {
 					this.emailError = 'This is an impossible email'
 					return true
 				} else if (this.emailInput.length > 75) {
@@ -199,7 +199,7 @@
 				if (this.displayNameInput.length < 1) {
 					this.displayNameError = 'Required'
 					return true
-				} else if (this.hasIllegalSymbols(this.displayNameInput)) {
+				} else if (f.hasIllegalSymbols(this.displayNameInput)) {
 					this.displayNameError = 'Only these symbols are allowed: . _ - @'
 					return true
 				} else if (this.displayNameInput.length > 40) {
@@ -209,35 +209,6 @@
 					this.displayNameError = ''
 					return false
 				}
-			},
-			hasIllegalSymbols (value) {
-				let symbols = '`~!#$%^&*()=[{]}\\|;:\'",<>/?'
-				for (let i = 0; i < symbols.length; i++) {
-					if (value.includes(symbols[i])) {
-						return true
-					}
-				}
-				return false
-			},
-			hasInvalidEmailStructure () {
-				let atSplit = this.emailInput.split('@')
-				if (atSplit.length != 2) {
-					return true
-				}
-				let [mailPrefix, mailDomain] = atSplit
-				let periodSplit = mailDomain.split('.')
-				if (periodSplit.length != 2) {
-					return true
-				}
-				let [domainPrefix, domainSuffix] = periodSplit
-				if (mailPrefix.length < 1 || domainPrefix.length < 1 || domainSuffix.length < 2) {
-					return true
-				}
-				return false
-			},
-			shakeFunction () {
-				this.shakeIt = true
-				setTimeout(() => { this.shakeIt = false; }, 1000);
 			},
 		} // methods
 	} // export
