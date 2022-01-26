@@ -43,32 +43,25 @@ class UserBackend(BaseAuthentication):
 				user.error = 'this line_id is not registered'
 				return user
 		elif 'random_secret' in request.data and request.data['random_secret'] != '':  # random_secret
-			print('C1***************************************************')
 			try:
 				user = self.UserModel.objects.get(random_secret=request.data['random_secret'])
-				print('C2***************************************************')
 				if user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists():
-					print('C3***************************************************')
 					return user  # confirmed visitor, so return user and login
 				else:
-					print('C4***************************************************')
 					user = namedtuple('user', 'error')
 					user.error = 'only visitors can log in using random secret'
 					return user
 			except self.UserModel.DoesNotExist:
-				print('C5***************************************************')
 				user = namedtuple('user', 'error')
 				user.error = 'this random_secret is not registered'
 				return user
 		elif request.session.session_key:  # when loggin in from session
-			print('C6***************************************************')
 			session = Session.objects.get(pk=request.session.session_key)
 			user_id = session.get_decoded()['_auth_user_id']
 			try:
 				user = self.UserModel.objects.get(pk=int(user_id))
 				if user.line_id != '':  # if user has a line id, verify and refresh it
 					user = verify_update_line_info(request, user)  # if refresh fails it won't login by session
-				print('C7***************************************************')
 				return user
 			except self.UserModel.DoesNotExist:
 				user = namedtuple('user', 'error')
