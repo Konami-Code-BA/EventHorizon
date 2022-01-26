@@ -50,16 +50,20 @@
 			} else {
 				this.selectedEvent = this.store.events.selected
 			}
-			this.observer = new MutationObserver((mutations, obs) => {
-				let el = document.getElementById(`item${this.selectedEvent.id}`)
-				if (el) {
-					this.scrollIt(el)
-					return
-				}
-			})
+			if (this.selectedEvent) {
+				this.observer = new MutationObserver((mutations, obs) => {
+					let el = document.getElementById(`item${this.selectedEvent.id}`)
+					if (el) {
+						this.scrollIt(el)
+						return
+					}
+				})
+			}
 		},
 		mounted () {
-			this.observer.observe(document, {childList: true, subtree: true})
+			if (this.observer) {
+				this.observer.observe(document, {childList: true, subtree: true})
+			}
 		},
 		methods: {
 			t (w) { return translations.t(w) },
