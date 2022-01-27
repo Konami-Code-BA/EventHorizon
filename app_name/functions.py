@@ -251,11 +251,12 @@ def impossibly_over_attending_limit(event, changing_user_id, change_is_plus_one=
 		attending_count = event.attending.count()
 		filled_space = 1  # changing_user or plus_one is entering attending, so automatically 1 filled space
 		for plus_one in event.plus_ones.all():  # add attending plus_ones to attending count
-			if event.attending.filter(id=plus_one.chaperone.id).exists():  # if plus_one's chaperone is attending
+			chaperone_id = plus_one.chaperone.all().values_list('id', flat=True)[0]
+			if event.attending.filter(id=chaperone_id).exists():  # if plus_one's chaperone is attending
 				attending_count += 1
 			# note: if change_is_plus_one, we haven't added the plus one yet. and since user can only have 1 plus_one,
 			# it's impossible for this to add 2nd plus_one in the case of change_is_plus_one
-			if plus_one.chaperone.id == changing_user_id:  # if changing_user has plus_one, he's joining too
+			if chaperone_id == changing_user_id:  # if changing_user has plus_one, he's joining too
 				filled_space += 1
 		space = event.attending_limit - (attending_count + filled_space)  # eg. 20 - (19 + 2) = 20 - 21 = -1
 		return space < 0  # space 0 is ok, but space -1 is impossible
@@ -274,9 +275,10 @@ def notify_waiting_users_if_necessary(event, changing_user_id, selected_status=N
 		attending_count = event.attending.count()
 		opened_space = 1  # changing_user or his plus_one is leaving attending, so automatically 1 opened space
 		for plus_one in event.plus_ones.all():  # add attending plus_ones to attending count
-			if event.attending.filter(id=plus_one.chaperone.id).exists():  # if plus_one's chaperone is attending
+			chaperone_id = plus_one.chaperone.all().values_list('id', flat=True)[0]
+			if event.attending.filter(id=chaperone_id).exists():  # if plus_one's chaperone is attending
 				attending_count += 1
-			if plus_one.chaperone.id == changing_user_id:  # if changing_user has plus_one, he's leaving with him
+			if chaperone_id == changing_user_id:  # if changing_user has plus_one, he's leaving with him
 				opened_space += 1 + change_is_plus_one  # but if its his plus_one that's leaving, we already counted him
 		space = event.attending_limit - (attending_count - opened_space)  # eg. 20 - (21 - 2) = 20 - 19 = 1
 		# if space is 1 or more, it's possible a waiting_user could enter; notify them if so.
@@ -286,7 +288,7 @@ def notify_waiting_users_if_necessary(event, changing_user_id, selected_status=N
 				# or if attending_count was impossible to enter without a plus_one but now there is 1 space.
 				# and don't notify the user who is entering attending
 				if (
-						(
+						((
 							attending_count >= event.attending_limit - 1
 							and event.plus_ones.filter(chaperone=waiting_user.id).exists()
 							and space >= 2
@@ -294,7 +296,7 @@ def notify_waiting_users_if_necessary(event, changing_user_id, selected_status=N
 							attending_count >= event.attending_limit
 							and (not event.plus_ones.filter(chaperone=waiting_user.id).exists())
 							and space >= 1
-						) and waiting_user.id != changing_user_id
+						)) and waiting_user.id != changing_user_id
 				):
 					notify_user(waiting_user, f'Space has opened up to attend the event "{event.name}"!')
 	# if changing_user is not in attending and he is entering, or he is in attending and he's adding a plus_one
@@ -303,9 +305,10 @@ def notify_waiting_users_if_necessary(event, changing_user_id, selected_status=N
 		attending_count = event.attending.count()
 		filled_space = 1  # changing_user or his plus_one is entering attending, so automatically 1 filled space
 		for plus_one in event.plus_ones.all():  # add attending plus_ones to attending count
-			if event.attending.filter(id=plus_one.chaperone.id).exists():  # if plus_one's chaperone is attending
+			chaperone_id = plus_one.chaperone.all().values_list('id', flat=True)[0]
+			if event.attending.filter(id=chaperone_id).exists():  # if plus_one's chaperone is attending
 				attending_count += 1
-			if plus_one.chaperone.id == changing_user_id:  # if changing_user has plus_one, he's joining with him
+			if chaperone_id == changing_user_id:  # if changing_user has plus_one, he's joining with him
 				filled_space += 1  # but if change_is_plus_one, no problem, +1 doesnt exist yet so this won't happen
 		space = event.attending_limit - (attending_count + filled_space)  # eg. 20 - (19 + 2) = 20 - 21 = -1
 		# if space is 1 or less, it's possible a waiting_user with a plus_one can't enter anymore; notify them if so.
@@ -315,7 +318,7 @@ def notify_waiting_users_if_necessary(event, changing_user_id, selected_status=N
 				# or if attending_count was possible to enter without a plus_one but now there are 0 spaces.
 				# and don't notify the user who is entering attending
 				if (
-						(
+						((
 							attending_count <= event.attending_limit - 2
 							and event.plus_ones.filter(chaperone=waiting_user.id).exists()
 							and space <= 1
@@ -323,14 +326,15 @@ def notify_waiting_users_if_necessary(event, changing_user_id, selected_status=N
 							attending_count <= event.attending_limit - 1
 							and (not event.plus_ones.filter(chaperone=waiting_user.id).exists())
 							and space <= 0
-						) and waiting_user.id != changing_user_id
+						)) and waiting_user.id != changing_user_id
 				):
 					notify_user(waiting_user, f'There is no more space to attend the event "{event.name}" :(')
 	# if changing_user isn't altering attending
 	else:
 		attending_count = event.attending.count()
 		for plus_one in event.plus_ones.all():  # add attending plus_ones to attending count
-			if event.attending.filter(id=plus_one.chaperone.id).exists():  # if plus_one's chaperone is attending
+			chaperone_id = plus_one.chaperone.all().values_list('id', flat=True)[0]
+			if event.attending.filter(id=chaperone_id).exists():  # if plus_one's chaperone is attending
 				attending_count += 1
 		space = event.attending_limit - attending_count
 	return space <= 0  # space of 0 or less means it is_over_attending_limit after this change.
