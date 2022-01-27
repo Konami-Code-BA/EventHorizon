@@ -24,7 +24,7 @@ export default {
                     console.log(`success - userApi ${data.command}`)
                     store.user = store.defaultUser
                     return store.user
-                } else if (data.command === 'login') {
+                } else if (data.command === 'login' && !('error' in response.data[0])) {
                     console.log(`success - userApi ${data.command}`)
                     store.user = response.data[0]
                     return response.data

@@ -185,8 +185,8 @@
 						<button class="button" :disabled="true" style="align-self: center"
 								:style="[isSpaceToAttend ? {color: 'green', borderColor: 'green'}
 								: {color: 'red', borderColor: 'red'}]">
-							<div class="flex-row" style="align-self: center">
-								<div v-if="event.attending_limit != 999999">
+							<div>
+								<div v-if="event.attending_limit != 999999" class="flex-row" style="align-self: center">
 									{{ event.attending_limit }}
 									<div v-if="event.attending_limit != 1">
 										&nbsp;{{ t('PEOPLE') }}
