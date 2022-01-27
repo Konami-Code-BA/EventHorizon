@@ -185,7 +185,19 @@ class UserViewset(viewsets.ModelViewSet):
 		# note: before we let people make events. people could make an event and invite someone just to be able to message them. this could be an issue later.
 		if f.user_in_guest_statuses(event, request.user.id, ['hosts']) and f.user_in_guest_statuses(
 				event, pk, ['hosts', 'invited', 'wait_list', 'invite_request']):
-			f.notify_user(user, request.data['message'])
+			f.notify_user(
+				user,
+				f"""Event: {event.name}
+
+Direct Message From Host:
+{request.data['message']}
+
+
+To view this event, go here: {f.create_url(f'/?page=event&id={event.id}')}
+
+*Note: You can't turn off direct messages from hosts""",
+				notification_type='DM',
+				)
 			return request.user
 		else:
 			user = namedtuple('user', 'error')
@@ -291,7 +303,19 @@ class UserViewset(viewsets.ModelViewSet):
 			# note: before we let people make events. people could make an event and invite someone just to be able to message them. this could be an issue later.
 			if f.user_in_guest_statuses(event, request.user.id, ['hosts']) and f.user_in_guest_statuses(
 					event, id, ['hosts', 'invited', 'wait_list', 'invite_request']):
-				f.notify_user(user, request.data['message'])
+				f.notify_user(
+					user,
+					f"""Event: {event.name}
+
+Direct Message From Host:
+{request.data['message']}
+
+
+To view this event, go here: {f.create_url(f'/?page=event&id={event.id}')}
+
+*Note: You can't turn off direct messages from hosts""",
+					notification_type='DM',
+				)
 				continue
 			else:
 				user = namedtuple('user', 'error')
@@ -325,12 +349,7 @@ class UserViewset(viewsets.ModelViewSet):
 			return user
 
 	def line_new_device(self, request):  # SECURITY: anyone is allowed to make a new line device
-		if config('PYTHON_ENV', default='\'"production"\'') == 'development':  # get url depending on dev, test, or prod
-			uri = 'http://127.0.0.1:8080' + request.data['path']
-		elif config('PYTHON_ENV', default='\'"production"\'') == '\'"test"\'':
-			uri = 'https://event-horizon-test.herokuapp.com' + request.data['path']
-		else:
-			uri = 'https://www.eventhorizon.vip' + request.data['path']
+		uri = f.create_url(request.data['path'])
 		url = 'https://api.line.me/oauth2/v2.1/token'  # use code to get access token
 		data = {
 			'grant_type': 'authorization_code',
