@@ -28,6 +28,14 @@ export default {
         let urlSearchParams = new URLSearchParams(window.location.search)
         return Object.fromEntries(urlSearchParams.entries())
     },
+    createUrl(pageDict) {
+        let result = window.origin + '/?page=' + pageDict.page
+        let argKeys = Object.keys(pageDict.args)
+        for (let i = 0; i < argKeys.length; i++) {
+            result += '&' + argKeys[i] + '=' + pageDict.args[argKeys[i]]
+        }
+        return result
+    },
     goToPage(pageDict) {
         store.pages.push(pageDict)
         if (!['loginRegister', 'registerWithEmail', 'forgotPassword', 'resetPassword'].includes(pageDict.page)) {

@@ -223,8 +223,10 @@ def user_in_guest_statuses(event, user_id, guest_statuses):
 	return False
 
 
-def notify_user(user, message):
-	if user.do_get_lines:
+def notify_user(user, message, notification_type='other'):
+	# only send line if user.do_get_lines (of course)
+	# or its a DM and, you have a line and don't have an email at all
+	if user.do_get_lines or (notification_type == 'DM' and user.line_id and (not user.email)):
 		data = {"to": user.line_id, "messages": [{"type": "text", "text": message}]}
 		url = 'https://api.line.me/v2/bot/message/push'
 		headers = {
@@ -233,7 +235,13 @@ def notify_user(user, message):
 		}
 		data = json.dumps(data)
 		requests.post(url, headers=headers, data=data)
-	if user.do_get_emails:
+	# only send email if user.do_get_emails (of course)
+	# or its a DM and, you have an amil and (don't want / can't receive lines)
+	# Note: this way...
+	# if has line and doesn't have email, it'll send line
+	# if has email and doesn't have line, it'll send email
+	# if has line and email but both marked off, it'll not send line, it will send email
+	if user.do_get_emails or (notification_type == 'DM' and user.email and (not user.do_get_lines)):
 		subject = 'Event Horizon Notification'
 		message = message
 		email_from = settings.EMAIL_HOST_USER
@@ -262,8 +270,6 @@ def impossibly_over_attending_limit(event, changing_user_id, change_is_plus_one=
 		return space < 0  # space 0 is ok, but space -1 is impossible
 	else:  # no affect on attending
 		return False  # so won't go impossibly_over_attending_limit
-
-
 
 
 def notify_waiting_users_if_necessary(event, changing_user_id, selected_status=None, change_is_plus_one=0):
@@ -298,7 +304,18 @@ def notify_waiting_users_if_necessary(event, changing_user_id, selected_status=N
 							and space >= 1
 						)) and waiting_user.id != changing_user_id
 				):
-					notify_user(waiting_user, f'Space has opened up to attend the event "{event.name}"!')
+					notify_user(
+						waiting_user,
+						f"""Event: {event.name}
+
+Notification:
+Space has opened up to attend the event!
+
+
+To view this event, go here: {create_url(f'/?page=event&id={event.id}')}
+
+To turn off notifications, go here: {create_url('/?page=settings')}""",
+					)
 	# if changing_user is not in attending and he is entering, or he is in attending and he's adding a plus_one
 	elif (((not event.attending.filter(id=changing_user_id).exists()) and selected_status == 'attending')
 			or (event.attending.filter(id=changing_user_id).exists() and change_is_plus_one == 1)):
@@ -328,7 +345,18 @@ def notify_waiting_users_if_necessary(event, changing_user_id, selected_status=N
 							and space <= 0
 						)) and waiting_user.id != changing_user_id
 				):
-					notify_user(waiting_user, f'There is no more space to attend the event "{event.name}" :(')
+					notify_user(
+						waiting_user,
+						f"""Event: {event.name}
+
+Notification:
+There is no more space to attend the event :(
+
+
+To view this event, go here: {create_url(f'/?page=event&id={event.id}')}
+
+To turn off notifications, go here: {create_url('/?page=settings')}""",
+					)
 	# if changing_user isn't altering attending
 	else:
 		attending_count = event.attending.count()
@@ -338,3 +366,13 @@ def notify_waiting_users_if_necessary(event, changing_user_id, selected_status=N
 				attending_count += 1
 		space = event.attending_limit - attending_count
 	return space <= 0  # space of 0 or less means it is_over_attending_limit after this change.
+
+
+def create_url(path):
+	if config('PYTHON_ENV', default='\'"production"\'') == 'development':
+		url = 'http://127.0.0.1:8080' + path
+	elif config('PYTHON_ENV', default='\'"production"\'') == '\'"test"\'':
+		url = 'https://event-horizon-test.herokuapp.com' + path
+	else:
+		url = 'https://www.eventhorizon.vip' + path
+	return url
