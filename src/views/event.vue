@@ -116,7 +116,7 @@
 						</div>
 					</div>
 				</tabs>
-				<div v-if="(myAttendingStatus['invited'] || myAttendingStatus['invite_request']) && isSpaceToAttend"
+				<div v-if="(myAttendingStatus['invited'] || myAttendingStatus['invite_request'])"
 						style="display: flex; flex-direction: column; align-items: center;">
 					<div class="dual-set" style="align-self: flex-start; padding-bottom: 2px">
 						<button class="button" style="width: 100%" v-on:click.prevent="changePlusOne()">
@@ -128,9 +128,9 @@
 					<display-name-input ref="displayNameInput" usage="PlusOne" :dontStartError="true" v-if="!plusOneStatus"/>
 					<div v-else>{{plusOneStatus}}</div>
 				</div>
-				<button v-on:click.prevent="showHostPanel = true" v-if="myAttendingStatus['hosts']" class="button">
+				<!--button v-on:click.prevent="showHostPanel = true" v-if="myAttendingStatus['hosts']" class="button">
 					OPEN HOST PANEL
-				</button>
+				</button-->
 			</div>
 			<br>
 			<div class="flex-table">
@@ -174,33 +174,6 @@
 							</div>
 						</button>
 					</div>
-				</div>
-				<div style="border: 2px solid rgba(255, 255, 255, .3); margin-bottom: 3px; border-radius: 7px;
-						padding: 5px;">
-					<div class="flex-row" style="justify-content: space-between">
-						<div style="align-self: center">
-							ATTENDING LIMIT
-						</div>
-						<!--can't see invited people if not invited-->
-						<button class="button" :disabled="true" style="align-self: center"
-								:style="[isSpaceToAttend ? {color: 'green', borderColor: 'green'}
-								: {color: 'red', borderColor: 'red'}]">
-							<div>
-								<div v-if="event.attending_limit != 999999" class="flex-row" style="align-self: center">
-									{{ event.attending_limit }}
-									<div v-if="event.attending_limit != 1">
-										&nbsp;{{ t('PEOPLE') }}
-									</div>
-									<div v-else>
-										&nbsp;{{ t('PERSON') }}
-									</div>
-								</div>
-								<div v-else>
-									UNLIMITED
-								</div>
-							</div>
-						</button>
-					</div>
 					<div class="flex-row" style="justify-content: space-between">
 						<div style="align-self: center">
 							{{ t('TOTAL INVITED') }}
@@ -237,6 +210,30 @@
 								</div>
 								<div v-else>
 									&nbsp;{{ t('PERSON') }}
+								</div>
+							</div>
+						</button>
+					</div>
+					<div class="flex-row" style="justify-content: space-between">
+						<div style="align-self: center">
+							ATTENDING LIMIT
+						</div>
+						<!--can't see invited people if not invited-->
+						<button class="button" :disabled="true" style="align-self: center"
+								:style="[isSpaceToAttend ? {color: 'green', borderColor: 'green'}
+								: {color: 'red', borderColor: 'red'}]">
+							<div>
+								<div v-if="event.attending_limit != 999999" class="flex-row" style="align-self: center">
+									{{ event.attending_limit }}
+									<div v-if="event.attending_limit != 1">
+										&nbsp;{{ t('PEOPLE') }}
+									</div>
+									<div v-else>
+										&nbsp;{{ t('PERSON') }}
+									</div>
+								</div>
+								<div v-else>
+									UNLIMITED
 								</div>
 							</div>
 						</button>
