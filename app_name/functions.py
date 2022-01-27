@@ -1,10 +1,11 @@
-from rest_framework.response import Response
 import requests, json, secrets
 from decouple import config
-from collections import namedtuple, OrderedDict
+from collections import namedtuple
 from django.contrib.auth.models import Group
 from django.contrib import auth
 from .models import Alert
+from django.core.mail import send_mail
+from django.conf import settings
 
 
 def is_admin(request):  # is staff and is in the Admin group
@@ -162,7 +163,7 @@ def verify_update_line_info(request, user):  # for exisitng user with line id, a
 		user = authenticate_login(request)  # login again just in case, and to get new location info
 		if not hasattr(user, 'error'):  # logged into a user
 			# if not visitor, but request made by visitor
-			if not user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists() and visitor:
+			if (not user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists()) and visitor:
 				user.visit_count += visitor.visit_count
 				user.save()
 				visitor.delete()  # delete the visitor account that made the request
@@ -220,3 +221,116 @@ def user_in_guest_statuses(event, user_id, guest_statuses):
 		if getattr(event, guest_status).filter(id=user_id).exists():
 			return True
 	return False
+
+
+def notify_user(user, message):
+	if user.do_get_lines:
+		data = {"to": user.line_id, "messages": [{"type": "text", "text": message}]}
+		url = 'https://api.line.me/v2/bot/message/push'
+		headers = {
+			'Content-Type': 'application/json',
+			'Authorization': 'Bearer ' + config('MESSAGING_CHANNEL_ACCESS_TOKEN'),
+		}
+		data = json.dumps(data)
+		requests.post(url, headers=headers, data=data)
+	if user.do_get_emails:
+		subject = 'Event Horizon Notification'
+		message = message
+		email_from = settings.EMAIL_HOST_USER
+		recipient_list = [user.email,]
+		send_mail(subject, message, email_from, recipient_list, fail_silently=False)
+
+
+def impossibly_over_attending_limit(event, changing_user_id, change_is_plus_one=False):
+	# affecting attending if change is plus one and changing user is attending
+	# note: assume if not change_is_plus_one, we are adding changing_user to attending. otherwise we wouldn't be
+	# calling this function
+	if (
+		change_is_plus_one and event.attending.filter(id=changing_user_id).exists()
+	):
+		attending_count = event.attending.count()
+		filled_space = 1  # changing_user or plus_one is entering attending, so automatically 1 filled space
+		for plus_one in event.plus_ones.all():  # add attending plus_ones to attending count
+			if event.attending.filter(id=plus_one.chaperone.id).exists():  # if plus_one's chaperone is attending
+				attending_count += 1
+			# note: if change_is_plus_one, we haven't added the plus one yet. and since user can only have 1 plus_one,
+			# it's impossible for this to add 2nd plus_one in the case of change_is_plus_one
+			if plus_one.chaperone.id == changing_user_id:  # if changing_user has plus_one, he's joining too
+				filled_space += 1
+		space = event.attending_limit - (attending_count + filled_space)  # eg. 20 - (19 + 2) = 20 - 21 = -1
+		return space < 0  # space 0 is ok, but space -1 is impossible
+	else:  # no affect on attending
+		return False  # so won't go impossibly_over_attending_limit
+
+
+
+
+def notify_waiting_users_if_necessary(event, changing_user_id, selected_status=None, change_is_plus_one=0):
+	# note: this doesn't prevent going over attending limit, that is checked elsewhere
+	# note: this is run before changes are made to attending counts, so that we know whether we've gone over/under limit
+	# if changing_user is in attending and, his plus_one is leaving or he is
+	if (event.attending.filter(id=changing_user_id).exists()
+			and (change_is_plus_one == -1 or (change_is_plus_one == 0 and selected_status != 'attending'))):
+		attending_count = event.attending.count()
+		opened_space = 1  # changing_user or his plus_one is leaving attending, so automatically 1 opened space
+		for plus_one in event.plus_ones.all():  # add attending plus_ones to attending count
+			if event.attending.filter(id=plus_one.chaperone.id).exists():  # if plus_one's chaperone is attending
+				attending_count += 1
+			if plus_one.chaperone.id == changing_user_id:  # if changing_user has plus_one, he's leaving with him
+				opened_space += 1 + change_is_plus_one  # but if its his plus_one that's leaving, we already counted him
+		space = event.attending_limit - (attending_count - opened_space)  # eg. 20 - (21 - 2) = 20 - 19 = 1
+		# if space is 1 or more, it's possible a waiting_user could enter; notify them if so.
+		if (space >= 1):
+			for waiting_user in event.wait_list.all():
+				# notify if attending_count was impossible to enter with a plus_one and now there are 2 spaces or more.
+				# or if attending_count was impossible to enter without a plus_one but now there is 1 space.
+				# and don't notify the user who is entering attending
+				if (
+						(
+							attending_count >= event.attending_limit - 1
+							and event.plus_ones.filter(chaperone=waiting_user.id).exists()
+							and space >= 2
+						) or (
+							attending_count >= event.attending_limit
+							and (not event.plus_ones.filter(chaperone=waiting_user.id).exists())
+							and space >= 1
+						) and waiting_user.id != changing_user_id
+				):
+					notify_user(waiting_user, f'Space has opened up to attend the event "{event.name}"!')
+	# if changing_user is not in attending and he is entering, or he is in attending and he's adding a plus_one
+	elif (((not event.attending.filter(id=changing_user_id).exists()) and selected_status == 'attending')
+			or (event.attending.filter(id=changing_user_id).exists() and change_is_plus_one == 1)):
+		attending_count = event.attending.count()
+		filled_space = 1  # changing_user or his plus_one is entering attending, so automatically 1 filled space
+		for plus_one in event.plus_ones.all():  # add attending plus_ones to attending count
+			if event.attending.filter(id=plus_one.chaperone.id).exists():  # if plus_one's chaperone is attending
+				attending_count += 1
+			if plus_one.chaperone.id == changing_user_id:  # if changing_user has plus_one, he's joining with him
+				filled_space += 1  # but if change_is_plus_one, no problem, +1 doesnt exist yet so this won't happen
+		space = event.attending_limit - (attending_count + filled_space)  # eg. 20 - (19 + 2) = 20 - 21 = -1
+		# if space is 1 or less, it's possible a waiting_user with a plus_one can't enter anymore; notify them if so.
+		if (space <= 1):
+			for waiting_user in event.wait_list.all():
+				# notify if attending_count was possible to enter with a plus_one and now there's only 1 space or less.
+				# or if attending_count was possible to enter without a plus_one but now there are 0 spaces.
+				# and don't notify the user who is entering attending
+				if (
+						(
+							attending_count <= event.attending_limit - 2
+							and event.plus_ones.filter(chaperone=waiting_user.id).exists()
+							and space <= 1
+						) or (
+							attending_count <= event.attending_limit - 1
+							and (not event.plus_ones.filter(chaperone=waiting_user.id).exists())
+							and space <= 0
+						) and waiting_user.id != changing_user_id
+				):
+					notify_user(waiting_user, f'There is no more space to attend the event "{event.name}" :(')
+	# if changing_user isn't altering attending
+	else:
+		attending_count = event.attending.count()
+		for plus_one in event.plus_ones.all():  # add attending plus_ones to attending count
+			if event.attending.filter(id=plus_one.chaperone.id).exists():  # if plus_one's chaperone is attending
+				attending_count += 1
+		space = event.attending_limit - attending_count
+	return space <= 0  # space of 0 or less means it is_over_attending_limit after this change.
