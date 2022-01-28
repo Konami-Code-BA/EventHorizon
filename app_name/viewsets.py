@@ -172,37 +172,6 @@ class UserViewset(viewsets.ModelViewSet):
 			user = namedtuple('user', 'error')
 			user.error = 'missing email / password info'
 			return user
-	
-	def message_user(self, request, pk):
-		try:
-			user = self.model.objects.get(pk=pk)
-		except self.model.DoesNotExist:
-			user = namedtuple('user', 'error')
-			user.error = 'a user with this id could not be found'
-			return user
-		event = EventSerializer.Meta.model.objects.get(pk=request.data['event_id'])
-		# SECURITY: i must be the host of the event id im passing, and the user must be affiliated with that event
-		# note: before we let people make events. people could make an event and invite someone just to be able to message them. this could be an issue later.
-		if f.user_in_guest_statuses(event, request.user.id, ['hosts']) and f.user_in_guest_statuses(
-				event, pk, ['hosts', 'invited', 'wait_list', 'invite_request']):
-			f.notify_user(
-				user,
-				f"""Event: {event.name}
-
-Direct Message From Host:
-{request.data['message']}
-
-
-To view this event, go here: {f.create_url(f'/?page=event&id={event.id}')}
-
-*Note: You can't turn off direct messages from hosts""",
-				notification_type='DM',
-				)
-			return request.user
-		else:
-			user = namedtuple('user', 'error')
-			user.error = 'you don\'t have permission'
-			return user
 
 	# CREATE #####################################################################
 	def create(self, request):  # POST {prefix}/
@@ -240,7 +209,8 @@ To view this event, go here: {f.create_url(f'/?page=event&id={event.id}')}
 		final_guest_array = []
 		for guest in actual_guest_array:
 			# if it is me, i get more info. also if i am a host
-			if guest.id == request.user.id or f.user_in_guest_statuses(event, request.user.id, ['hosts']):
+			if (guest.id == request.user.id or f.user_in_guest_statuses(event, request.user.id, ['hosts'])
+					or f.user_in_guest_statuses(event, guest.id, ['hosts'])):
 				final_guest_array += [OrderedDict([
 					('id', guest.id),
 					('display_name', guest.display_name),
@@ -289,6 +259,54 @@ To view this event, go here: {f.create_url(f'/?page=event&id={event.id}')}
 							('plus_one', True),
 						])]
 		return final_guest_array
+	
+	def message_user(self, request):
+		try:
+			user = self.model.objects.get(pk=request.data['user_id'])
+		except self.model.DoesNotExist:
+			user = namedtuple('user', 'error')
+			user.error = 'a user with this id could not be found'
+			return user
+		event = EventSerializer.Meta.model.objects.get(pk=request.data['event_id'])
+		# SECURITY: i must be the host of the event id im passing, and the user must be affiliated with that event
+		# note: before we let people make events. people could make an event and invite someone just to be able to message them. this could be an issue later.
+		if (
+				(
+					# send from
+					f.user_in_guest_statuses(event, request.user.id, ['hosts'])
+					# send to
+					and f.user_in_guest_statuses(
+						event, user.id, ['hosts', 'invited', 'wait_list', 'invite_request']
+					)
+				) or (
+					# send from
+					f.user_in_guest_statuses(
+						event, request.user.id, ['hosts', 'invited', 'wait_list', 'invite_request']
+					)
+					# send to
+					and f.user_in_guest_statuses(event, user.id, ['hosts'])
+				)
+		):
+			f.notify_user(
+				user,
+				f"""Event: {event.name}
+
+Direct Message From {
+	'Host' if f.user_in_guest_statuses(event, request.user.id, ['hosts']) else 'Guest'} {request.user.display_name
+}:
+{request.data['message']}
+
+
+To view this event, go here: {f.create_url(f'/?page=event&id={event.id}')}
+To message back...
+*Note: You can't turn off direct messages from hosts""",
+				notification_type='DM',
+				)
+			return
+		else:
+			user = namedtuple('user', 'error')
+			user.error = 'you don\'t have permission'
+			return
 	
 	def message_users(self, request):
 		for id in request.data['user_ids']:
@@ -591,6 +609,42 @@ class EventViewset(viewsets.ViewSet):
 	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
 		pass
 
+	def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
+		my_hosting = self.model.objects.filter(hosts=request.user.id)
+		my_invited = self.model.objects.filter(Q(invited=request.user.id) & ~Q(hosts=request.user.id))
+		event = self.model.objects.get(pk=pk)
+		if event in my_hosting:
+			serializer_data = serializer_host([event])  # SECURITY: see serializers
+		elif event in my_invited or (not event.is_private):
+			serializer_data = serializer_public_invited([event])
+		else:
+			serializer_data = serializer_private([event])
+		return Response(serializer_data)
+
+	def list(self, request):  # GET {prefix}/
+		my_hosting = self.model.objects.filter(
+			hosts=request.user.id
+		)
+		serializer_data_my_hosting = serializer_host(my_hosting)  # SECURITY: see serializers
+		my_invited = self.model.objects.filter(
+			Q(invited=request.user.id) & ~Q(hosts=request.user.id)
+		)
+		serializer_data_my_invited = serializer_public_invited(my_invited)
+		public_events = self.model.objects.filter(
+			Q(is_private=False) & ~Q(invited=request.user.id) & ~Q(hosts=request.user.id)
+		)
+		serializer_data_public_events = serializer_public_invited(public_events)
+		private_events = self.model.objects.filter(
+			Q(is_private=True) & ~Q(invited=request.user.id) & ~Q(hosts=request.user.id)
+		)
+		serializer_data_private_events = serializer_private(private_events)
+		return Response(
+			serializer_data_my_hosting
+			+ serializer_data_my_invited
+			+ serializer_data_public_events
+			+ serializer_data_private_events
+		)
+
 	# CREATE #####################################################################
 	def create(self, request):  # POST {prefix}/
 		response = eval(f"self.{request.data['command']}(request)")  # SECURITY: inside each command function
@@ -644,47 +698,32 @@ class EventViewset(viewsets.ViewSet):
 		my_invite_requests = self.model.objects.filter(Q(is_private=True) & Q(invite_request=request.user.id))
 		serializer_data_my_invite_requests = serializer_private(my_invite_requests)
 		return serializer_data_my_hosting + serializer_data_my_invited + serializer_data_my_invite_requests
+	
+	def check_user_status(self, request):
+		user = request.user
+		event = EventSerializer.Meta.model.objects.get(pk=request.data['event_id'])
+		if f.user_in_guest_statuses(event, user.id, ['hosts']):
+			result = [OrderedDict([('status', 'hosts')])]
+			return result
+		if f.user_in_guest_statuses(event, user.id, ['attending']):
+			result = [OrderedDict([('status', 'attending')])]
+			return result
+		if f.user_in_guest_statuses(event, user.id, ['maybe']):
+			result = [OrderedDict([('status', 'maybe')])]
+			return result
+		if f.user_in_guest_statuses(event, user.id, ['wait_list']):
+			result = [OrderedDict([('status', 'wait_list')])]
+			return result
+		if f.user_in_guest_statuses(event, user.id, ['invite_request']):
+			result = [OrderedDict([('status', 'invite_request')])]
+			return result
+		result = [OrderedDict([('status', '')])]
+		return result
 
 	#def closest_future_date(self, request):
 	#	date_time = request.data['date_time']
 	#	invited_events = self.model.objects.filter(invited=request.user.id)
 	#	print(date_time, type(date_time))
-
-	def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
-		my_hosting = self.model.objects.filter(hosts=request.user.id)
-		my_invited = self.model.objects.filter(Q(invited=request.user.id) & ~Q(hosts=request.user.id))
-		event = self.model.objects.get(pk=pk)
-		if event in my_hosting:
-			serializer_data = serializer_host([event])  # SECURITY: see serializers
-		elif event in my_invited or (not event.is_private):
-			serializer_data = serializer_public_invited([event])
-		else:
-			serializer_data = serializer_private([event])
-		return Response(serializer_data)
-
-	def list(self, request):  # GET {prefix}/
-		my_hosting = self.model.objects.filter(
-			hosts=request.user.id
-		)
-		serializer_data_my_hosting = serializer_host(my_hosting)  # SECURITY: see serializers
-		my_invited = self.model.objects.filter(
-			Q(invited=request.user.id) & ~Q(hosts=request.user.id)
-		)
-		serializer_data_my_invited = serializer_public_invited(my_invited)
-		public_events = self.model.objects.filter(
-			Q(is_private=False) & ~Q(invited=request.user.id) & ~Q(hosts=request.user.id)
-		)
-		serializer_data_public_events = serializer_public_invited(public_events)
-		private_events = self.model.objects.filter(
-			Q(is_private=True) & ~Q(invited=request.user.id) & ~Q(hosts=request.user.id)
-		)
-		serializer_data_private_events = serializer_private(private_events)
-		return Response(
-			serializer_data_my_hosting
-			+ serializer_data_my_invited
-			+ serializer_data_public_events
-			+ serializer_data_private_events
-		)
 
 	# PARTIAL_UPDATE #############################################################
 	def partial_update(self, request, pk):  # PATCH {prefix}/{lookup}/
