@@ -292,13 +292,15 @@ class UserViewset(viewsets.ModelViewSet):
 				f"""Event: {event.name}
 
 Direct Message From {
-	'Host' if f.user_in_guest_statuses(event, request.user.id, ['hosts']) else 'Guest'} {request.user.display_name
-}:
+	'Host' if f.user_in_guest_statuses(event, request.user.id, ['hosts']) else 'Guest'
+} {request.user.display_name}:
 {request.data['message']}
 
 
 To view this event, go here: {f.create_url(f'/?page=event&id={event.id}')}
-To message back...
+To message back: go to the event (above link) ⇨ Show People ⇨ {
+	'Hosts' if f.user_in_guest_statuses(event, request.user.id, ['hosts']) else 'Total Invited'
+}
 *Note: You can't turn off direct messages from hosts""",
 				notification_type='DM',
 				)
@@ -330,7 +332,7 @@ Direct Message From Host:
 
 
 To view this event, go here: {f.create_url(f'/?page=event&id={event.id}')}
-
+To message the host: go to the event (above link) ⇨ Show People ⇨ Hosts
 *Note: You can't turn off direct messages from hosts""",
 					notification_type='DM',
 				)
