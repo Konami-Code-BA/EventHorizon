@@ -84,11 +84,11 @@ export default {
         }
         return await this.axiosCall[method](this.baseUrl + '/api/events/' + id, data)
             .then(response => {
-                console.log(`success - eventsApi`)
+                console.log(`success - eventsApi ${data.command}`)
                 return response.data
             })
             .catch(error => {
-                console.log(`*API ERROR* - eventsApi:`, error)
+                console.log(`*API ERROR* - eventsApi ${data.command}:`, error)
                 return error
             })
     },
@@ -159,10 +159,11 @@ export default {
             password: password,
         })
     },
-    async messageUser(eventId, user_id, message) {
-        return await this.userApi('patch', user_id, {
+    async messageUser(eventId, userId, message) {
+        return await this.userApi('post', null, {
             command: 'message_user',
             event_id: eventId,
+            user_id: userId,
             message: message,
         })
     },
@@ -262,11 +263,11 @@ export default {
     },
     // EVENTS //////////////////////////////////////////////////////////////////////////////////////////////////////////
     async getAllEvents() {
-        let result = await this.eventsApi('get', null, null)
+        let result = await this.eventsApi('get', null, { command: 'getAllEvents' })
         return result
     },
     async getEvent(eventId) {
-        let result = await this.eventsApi('get', eventId, null)
+        let result = await this.eventsApi('get', eventId, { command: 'getEvent' })
         return result[0]
     },
     async createEvent(data) {
@@ -278,8 +279,14 @@ export default {
         let result = await this.eventsApi('post', null, { command: 'my_events' })
         return result
     },
+    async checkUserStatus(eventId) {
+        return await this.eventsApi('post', null, {
+            command: 'check_user_status',
+            event_id: eventId,
+        })
+    },
     async changeGuestStatus(eventId, status, userId = null) {
-        if (f.isoStringDateToDateObject(store.events.selected.date_time) > f.today) {
+        if (f.isoStringDateToDateObject(store.events.selected.date_time) > f.today) { // this protection isnt in api yet
             return await this.eventsApi('patch', eventId, {
                 command: 'update_guest_status',
                 status: status,
@@ -288,7 +295,7 @@ export default {
         }
     },
     async setPlusOne(eventId, plusOneName) {
-        if (f.isoStringDateToDateObject(store.events.selected.date_time) > f.today) {
+        if (f.isoStringDateToDateObject(store.events.selected.date_time) > f.today) { // this protection isnt in api yet
             return await this.plusOneApi('post', null, {
                 command: 'set_plus_one',
                 plus_one_name: plusOneName,
@@ -297,7 +304,7 @@ export default {
         }
     },
     async deletePlusOne(eventId) {
-        if (f.isoStringDateToDateObject(store.events.selected.date_time) > f.today) {
+        if (f.isoStringDateToDateObject(store.events.selected.date_time) > f.today) { // this protection isnt in api yet
             return await this.plusOneApi('post', null, {
                 command: 'delete_plus_one',
                 event_id: eventId,

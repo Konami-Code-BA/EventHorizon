@@ -332,7 +332,7 @@
 				</div>
 			</div>
 		</modal>
-		<modal v-if="showStatus" @closeModals="showPeople = true; showStatus = null">
+		<modal v-if="showStatus" @closeModals="showStatus = null">
 			<div slot="contents" class="modal" style="height: 55%;">
 				<div style="width: 100%; display: flex; flex-direction: row; justify-content: space-between;
 						align-content: flex-start">
@@ -354,7 +354,7 @@
 								●　{{person.display_name}}
 							</div>
 							<button v-on:click.prevent="messagePerson = person" class="button" style="width: 50px;"
-									v-if="myAttendingStatus['hosts'] && !person.plus_one">
+									v-if="(myAttendingStatus['hosts'] || showStatus === 'hosts') && !person.plus_one">
 								MSG
 							</button>
 						</div>
