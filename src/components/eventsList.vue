@@ -5,13 +5,13 @@
 					style="width: 100%"/>
 		</div>
 		<div style="width: 100%; overflow-y: scroll; overflow-x: hidden; display: flex; flex-direction: column;
-				align-items: center" id="scroller">
+				align-items: center; padding-left: 10px; height: 100%;" id="scroller">
 			<div style="width: 90%;">
 				<div class="list">
-					<div v-for="event in listEvents">
+					<div v-for="event in listEvents" style="width: 100%; height: 50px;">
 						<button v-on:click.prevent="openEventModal(event.id)" class="no-border-button"
-								style="text-align: left; white-space: nowrap" :id="`item${event.id}`">
-							{{ event.date_time.split('T')[0] }}: {{ event.name }}
+								style="width: 100%;" :id="`item${event.id}`">
+							<event-block :event="event"/>
 						</button>
 					</div>
 				</div>
@@ -24,8 +24,12 @@
 	import translations from '@/functions/translations.js'
 	import f from '@/functions/functions.js'
 	import api from '@/functions/apiFunctions.js'
+	import eventBlock from '@/components/eventBlock.vue'
 	export default {
 		name: 'eventsList',
+		components: {
+			eventBlock,
+		},
 		data () {
 			return {
 				store: store,
@@ -81,10 +85,15 @@
 </script>
 <style scoped>
 	.list {
+		position: relative;
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
+		justify-content: flex-start;
 		overflow-x: hidden;
 		overflow-y: visible;
+		width: 100%;
+		height: 100%;
+		padding-top: 10px;
 	}
 </style>
