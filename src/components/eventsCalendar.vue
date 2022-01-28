@@ -81,19 +81,22 @@
 					{{'⇨'}}
 				</button>
 			</div>
-			<div style="height: 87%">
-				<ul v-if="getEventsFromDate(selectedDate).length > 0" style="list-style-type: none">
-					<li v-for="event in getEventsFromDate(selectedDate)">
-						<button v-on:click.prevent="openEventModal(event.id)" class="no-border-button">
-							{{ event.name }}
-						</button>
-					</li>
-				</ul>
-				<ul v-else style="list-style-type: none">
-					<li>
-						{{t('NO EVENTS')}}
-					</li>
-				</ul>
+			<div style="height: 90%">
+				<div style="width: 100%; overflow-y: scroll; overflow-x: hidden; display: flex; flex-direction: column;
+						align-items: center; padding-left: 10px; height: 100%;" id="scroller">
+					<div style="width: 90%;">
+						<div class="list" v-if="getEventsFromDate(selectedDate).length > 0">
+							<div v-for="event in getEventsFromDate(selectedDate)" style="width: 100%; height: 50px;">
+								<button v-on:click.prevent="openEventModal(event.id)" class="no-border-button">
+									<event-block :event="event"/>
+								</button>
+							</div>
+						</div>
+						<div v-else style="list-style-type: none;">
+							{{t('NO EVENTS')}}
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -102,8 +105,12 @@
 	import store from '@/store.js'
 	import translations from '@/functions/translations.js'
 	import f from '@/functions/functions.js'
+	import eventBlock from '@/components/eventBlock.vue'
 	export default {
 		name: 'eventsCalendar',
+		components: {
+			eventBlock,
+		},
 		data () {
 			return {
 				store: store,
@@ -247,5 +254,17 @@
 		color: white;
 		font-size: 32px;
 		background-color: rgba(0, 0, 0, .5);
+	}
+	.list {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		justify-content: flex-start;
+		overflow-x: hidden;
+		overflow-y: visible;
+		width: 100%;
+		height: 100%;
+		padding-top: 10px;
 	}
 </style>

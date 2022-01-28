@@ -7,8 +7,7 @@ from django.contrib import auth
 from django.conf import settings
 from decouple import config
 from django.core.mail import send_mail
-from app_name.functions import verify_update_line_info, authenticate_login, new_visitor, merge_email_into_line_account
-from app_name.functions import user_in_guest_statuses
+import app_name.functions as f
 import secrets, requests, json
 from django.contrib.auth.hashers import make_password
 from collections import namedtuple, OrderedDict
@@ -157,7 +156,7 @@ class UserViewset(viewsets.ModelViewSet):
 				existing_user = self.model.objects.get(email=request.data['email'])
 				# if existing user with this email does exist, check their password, and if its good too, merge accounts
 				if existing_user.check_password(request.data['password']):  # if password matches too
-					current_user = merge_email_into_line_account(current_user, existing_user)  # merge accounts
+					current_user = f.merge_email_into_line_account(current_user, existing_user)  # merge accounts
 					return current_user
 				else:  # if password doesn't match
 					user = namedtuple('user', 'error')
@@ -172,39 +171,6 @@ class UserViewset(viewsets.ModelViewSet):
 		else:  # missing email / password info
 			user = namedtuple('user', 'error')
 			user.error = 'missing email / password info'
-			return user
-	
-	def message_user(self, request, pk):
-		try:
-			user = self.model.objects.get(pk=pk)
-		except self.model.DoesNotExist:
-			user = namedtuple('user', 'error')
-			user.error = 'a user with this id could not be found'
-			return user
-		event = EventSerializer.Meta.model.objects.get(pk=request.data['event_id'])
-		# SECURITY: i must be the host of the event id im passing, and the user must be affiliated with that event
-		# note: before we let people make events. people could make an event and invite someone just to be able to message them. this could be an issue later.
-		if user_in_guest_statuses(event, request.user.id, ['hosts']) and user_in_guest_statuses(
-				event, pk, ['hosts', 'invited', 'wait_list', 'invite_request']):
-			if user.do_get_lines:
-				data = {"to": user.line_id, "messages": [{"type": "text", "text": request.data['message']}]}
-				url = 'https://api.line.me/v2/bot/message/push'
-				headers = {
-					'Content-Type': 'application/json',
-					'Authorization': 'Bearer ' + config('MESSAGING_CHANNEL_ACCESS_TOKEN'),
-				}
-				data = json.dumps(data)
-				response = requests.post(url, headers=headers, data=data)
-			if user.do_get_emails:
-				subject = 'Event Horizon Notification'
-				message = request.data['message']
-				email_from = settings.EMAIL_HOST_USER
-				recipient_list = [user.email,]
-				send_mail(subject, message, email_from, recipient_list, fail_silently=False)
-			return request.user
-		else:
-			user = namedtuple('user', 'error')
-			user.error = 'you don\'t have permission'
 			return user
 
 	# CREATE #####################################################################
@@ -243,7 +209,8 @@ class UserViewset(viewsets.ModelViewSet):
 		final_guest_array = []
 		for guest in actual_guest_array:
 			# if it is me, i get more info. also if i am a host
-			if guest.id == request.user.id or user_in_guest_statuses(event, request.user.id, ['hosts']):
+			if (guest.id == request.user.id or f.user_in_guest_statuses(event, request.user.id, ['hosts'])
+					or f.user_in_guest_statuses(event, guest.id, ['hosts'])):
 				final_guest_array += [OrderedDict([
 					('id', guest.id),
 					('display_name', guest.display_name),
@@ -293,6 +260,56 @@ class UserViewset(viewsets.ModelViewSet):
 						])]
 		return final_guest_array
 	
+	def message_user(self, request):
+		try:
+			user = self.model.objects.get(pk=request.data['user_id'])
+		except self.model.DoesNotExist:
+			user = namedtuple('user', 'error')
+			user.error = 'a user with this id could not be found'
+			return user
+		event = EventSerializer.Meta.model.objects.get(pk=request.data['event_id'])
+		# SECURITY: i must be the host of the event id im passing, and the user must be affiliated with that event
+		# note: before we let people make events. people could make an event and invite someone just to be able to message them. this could be an issue later.
+		if (
+				(
+					# send from
+					f.user_in_guest_statuses(event, request.user.id, ['hosts'])
+					# send to
+					and f.user_in_guest_statuses(
+						event, user.id, ['hosts', 'invited', 'wait_list', 'invite_request']
+					)
+				) or (
+					# send from
+					f.user_in_guest_statuses(
+						event, request.user.id, ['hosts', 'invited', 'wait_list', 'invite_request']
+					)
+					# send to
+					and f.user_in_guest_statuses(event, user.id, ['hosts'])
+				)
+		):
+			f.notify_user(
+				user,
+				f"""Event: {event.name}
+
+Direct Message From {
+	'Host' if f.user_in_guest_statuses(event, request.user.id, ['hosts']) else 'Guest'
+} {request.user.display_name}:
+{request.data['message']}
+
+
+To view this event, go here: {f.create_url(f'/?page=event&id={event.id}')}
+To message back: go to the event (above link) ⇨ Show People ⇨ {
+	'Hosts' if f.user_in_guest_statuses(event, request.user.id, ['hosts']) else 'Total Invited'
+}
+*Note: You can't turn off direct messages from hosts""",
+				notification_type='DM',
+				)
+			return
+		else:
+			user = namedtuple('user', 'error')
+			user.error = 'you don\'t have permission'
+			return
+	
 	def message_users(self, request):
 		for id in request.data['user_ids']:
 			try:
@@ -304,23 +321,21 @@ class UserViewset(viewsets.ModelViewSet):
 			event = EventSerializer.Meta.model.objects.get(pk=request.data['event_id'])
 			# SECURITY: i must be the host of the event id im passing, and the user must be affiliated with that event
 			# note: before we let people make events. people could make an event and invite someone just to be able to message them. this could be an issue later.
-			if user_in_guest_statuses(event, request.user.id, ['hosts']) and user_in_guest_statuses(
+			if f.user_in_guest_statuses(event, request.user.id, ['hosts']) and f.user_in_guest_statuses(
 					event, id, ['hosts', 'invited', 'wait_list', 'invite_request']):
-				if user.do_get_lines:
-					data = {"to": user.line_id, "messages": [{"type": "text", "text": request.data['message']}]}
-					url = 'https://api.line.me/v2/bot/message/push'
-					headers = {
-						'Content-Type': 'application/json',
-						'Authorization': 'Bearer ' + config('MESSAGING_CHANNEL_ACCESS_TOKEN'),
-					}
-					data = json.dumps(data)
-					response = requests.post(url, headers=headers, data=data)
-				if user.do_get_emails:
-					subject = 'Event Horizon Notification'
-					message = request.data['message']
-					email_from = settings.EMAIL_HOST_USER
-					recipient_list = [user.email,]
-					send_mail(subject, message, email_from, recipient_list, fail_silently=False)
+				f.notify_user(
+					user,
+					f"""Event: {event.name}
+
+Direct Message From Host:
+{request.data['message']}
+
+
+To view this event, go here: {f.create_url(f'/?page=event&id={event.id}')}
+To message the host: go to the event (above link) ⇨ Show People ⇨ Hosts
+*Note: You can't turn off direct messages from hosts""",
+					notification_type='DM',
+				)
 				continue
 			else:
 				user = namedtuple('user', 'error')
@@ -346,7 +361,7 @@ class UserViewset(viewsets.ModelViewSet):
 				user.is_superuser = False
 				user.is_staff = False
 				user.save()
-				user = authenticate_login(request)  # login user
+				user = f.authenticate_login(request)  # login user
 			return user
 		else:
 			user = namedtuple('user', 'error')
@@ -354,12 +369,7 @@ class UserViewset(viewsets.ModelViewSet):
 			return user
 
 	def line_new_device(self, request):  # SECURITY: anyone is allowed to make a new line device
-		if config('PYTHON_ENV', default='\'"production"\'') == 'development':  # get url depending on dev, test, or prod
-			uri = 'http://127.0.0.1:8080' + request.data['path']
-		elif config('PYTHON_ENV', default='\'"production"\'') == '\'"test"\'':
-			uri = 'https://event-horizon-test.herokuapp.com' + request.data['path']
-		else:
-			uri = 'https://www.eventhorizon.vip' + request.data['path']
+		uri = f.create_url(request.data['path'])
 		url = 'https://api.line.me/oauth2/v2.1/token'  # use code to get access token
 		data = {
 			'grant_type': 'authorization_code',
@@ -387,7 +397,7 @@ class UserViewset(viewsets.ModelViewSet):
 				user.groups.clear()  # clear temp line friend group
 				user.groups.add(Group.objects.get(name='User').id)  # change to user
 			print('CHANGING TEMP LINE FRIEND TO USER')
-			user = verify_update_line_info(request, user)  # verify validity of current line data and put new data
+			user = f.verify_update_line_info(request, user)  # verify validity of current line data and put new data
 		except self.model.DoesNotExist:  # if there was no user with this id, add line info to existing account
 			user = self.model.objects.get(pk=request.user.pk)  # get account (already logged in)
 			if user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists():  # if visitor
@@ -401,12 +411,12 @@ class UserViewset(viewsets.ModelViewSet):
 			user.do_get_lines = True
 			user.save()
 			print('SAVED USER')
-			user = authenticate_login(request)  # login user
+			user = f.authenticate_login(request)  # login user
 			print('LOGGED IN')
 		return user
 
 	def login(self, request):  # SECURITY: anyone is allowed to login
-		#return authenticate_login(request)  # FOR EMERGENCY LOGIN (also in backends)
+		#return f.authenticate_login(request)  # FOR EMERGENCY LOGIN (also in backends)
 		visitor = False
 		try:
 			user = self.model.objects.get(pk=request.user.pk)  # get current user that made this request
@@ -414,14 +424,14 @@ class UserViewset(viewsets.ModelViewSet):
 			if user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists():
 				visitor = request.user
 		except self.model.DoesNotExist:  # if there is no currently existing user or visitor, make a new visitor
-			user = new_visitor(request)
+			user = f.new_visitor(request)
 			request.user = user
-		user = authenticate_login(request)  # it will try to login with email or line before loggin in by session
+		user = f.authenticate_login(request)  # it will try to login with email or line before loggin in by session
 		if not hasattr(user, 'error'):  # if logged into a user
 			user.visit_count += 1  # add to the visit count
 			user.save()
 			# if not visitor, but a visitor made the request
-			if not user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists() and visitor:
+			if (not user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists()) and visitor:
 				user.visit_count += visitor.visit_count
 				user.save()
 				visitor.delete()  # delete the visitor account that made the request
@@ -439,12 +449,13 @@ class UserViewset(viewsets.ModelViewSet):
 		return user
 	
 	def send_email(self, request):
-		subject = 'Test sending email from site from mikey'
-		message = 'Was I able to send it?'
-		email_from = settings.EMAIL_HOST_USER
-		recipient_list = ['mdsimeone@gmail.com',]
-		send_mail(subject, message, email_from, recipient_list, fail_silently=False)
-		return self.model.objects.get(pk=request.user.pk)
+		if request.user.is_superuser:
+			subject = 'Test sending email from site from mikey'
+			message = 'Was I able to send it?'
+			email_from = settings.EMAIL_HOST_USER
+			recipient_list = ['mdsimeone@gmail.com',]
+			send_mail(subject, message, email_from, recipient_list, fail_silently=False)
+		return request.user
 	
 	def forgot_password(self, request):
 		try:
@@ -456,7 +467,7 @@ class UserViewset(viewsets.ModelViewSet):
 			message += request.data['return_link'] + '&code=' + user.random_secret
 			email_from = settings.EMAIL_HOST_USER
 			recipient_list = [request.data['email'],]
-			result = send_mail(subject, message, email_from, recipient_list, fail_silently=False)
+			send_mail(subject, message, email_from, recipient_list, fail_silently=False)
 			user = self.model.objects.get(pk=request.user.pk)
 		except self.model.DoesNotExist:
 			user = namedtuple('user', 'error')
@@ -476,7 +487,7 @@ class UserViewset(viewsets.ModelViewSet):
 			user.save()
 			if current_user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists():
 				current_user.delete()
-			user = authenticate_login(request)  # login user
+			user = f.authenticate_login(request)  # login user
 		else:
 			user = namedtuple('user', 'error')
 			user.error = 'wrong code or password'
@@ -600,6 +611,42 @@ class EventViewset(viewsets.ViewSet):
 	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
 		pass
 
+	def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
+		my_hosting = self.model.objects.filter(hosts=request.user.id)
+		my_invited = self.model.objects.filter(Q(invited=request.user.id) & ~Q(hosts=request.user.id))
+		event = self.model.objects.get(pk=pk)
+		if event in my_hosting:
+			serializer_data = serializer_host([event])  # SECURITY: see serializers
+		elif event in my_invited or (not event.is_private):
+			serializer_data = serializer_public_invited([event])
+		else:
+			serializer_data = serializer_private([event])
+		return Response(serializer_data)
+
+	def list(self, request):  # GET {prefix}/
+		my_hosting = self.model.objects.filter(
+			hosts=request.user.id
+		)
+		serializer_data_my_hosting = serializer_host(my_hosting)  # SECURITY: see serializers
+		my_invited = self.model.objects.filter(
+			Q(invited=request.user.id) & ~Q(hosts=request.user.id)
+		)
+		serializer_data_my_invited = serializer_public_invited(my_invited)
+		public_events = self.model.objects.filter(
+			Q(is_private=False) & ~Q(invited=request.user.id) & ~Q(hosts=request.user.id)
+		)
+		serializer_data_public_events = serializer_public_invited(public_events)
+		private_events = self.model.objects.filter(
+			Q(is_private=True) & ~Q(invited=request.user.id) & ~Q(hosts=request.user.id)
+		)
+		serializer_data_private_events = serializer_private(private_events)
+		return Response(
+			serializer_data_my_hosting
+			+ serializer_data_my_invited
+			+ serializer_data_public_events
+			+ serializer_data_private_events
+		)
+
 	# CREATE #####################################################################
 	def create(self, request):  # POST {prefix}/
 		response = eval(f"self.{request.data['command']}(request)")  # SECURITY: inside each command function
@@ -653,47 +700,32 @@ class EventViewset(viewsets.ViewSet):
 		my_invite_requests = self.model.objects.filter(Q(is_private=True) & Q(invite_request=request.user.id))
 		serializer_data_my_invite_requests = serializer_private(my_invite_requests)
 		return serializer_data_my_hosting + serializer_data_my_invited + serializer_data_my_invite_requests
+	
+	def check_user_status(self, request):
+		user = request.user
+		event = EventSerializer.Meta.model.objects.get(pk=request.data['event_id'])
+		if f.user_in_guest_statuses(event, user.id, ['hosts']):
+			result = [OrderedDict([('status', 'hosts')])]
+			return result
+		if f.user_in_guest_statuses(event, user.id, ['attending']):
+			result = [OrderedDict([('status', 'attending')])]
+			return result
+		if f.user_in_guest_statuses(event, user.id, ['maybe']):
+			result = [OrderedDict([('status', 'maybe')])]
+			return result
+		if f.user_in_guest_statuses(event, user.id, ['wait_list']):
+			result = [OrderedDict([('status', 'wait_list')])]
+			return result
+		if f.user_in_guest_statuses(event, user.id, ['invite_request']):
+			result = [OrderedDict([('status', 'invite_request')])]
+			return result
+		result = [OrderedDict([('status', '')])]
+		return result
 
 	#def closest_future_date(self, request):
 	#	date_time = request.data['date_time']
 	#	invited_events = self.model.objects.filter(invited=request.user.id)
 	#	print(date_time, type(date_time))
-
-	def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
-		my_hosting = self.model.objects.filter(hosts=request.user.id)
-		my_invited = self.model.objects.filter(Q(invited=request.user.id) & ~Q(hosts=request.user.id))
-		event = self.model.objects.get(pk=pk)
-		if event in my_hosting:
-			serializer_data = serializer_host([event])  # SECURITY: see serializers
-		elif event in my_invited or not event.is_private:
-			serializer_data = serializer_public_invited([event])
-		else:
-			serializer_data = serializer_private([event])
-		return Response(serializer_data)
-
-	def list(self, request):  # GET {prefix}/
-		my_hosting = self.model.objects.filter(
-			hosts=request.user.id
-		)
-		serializer_data_my_hosting = serializer_host(my_hosting)  # SECURITY: see serializers
-		my_invited = self.model.objects.filter(
-			Q(invited=request.user.id) & ~Q(hosts=request.user.id)
-		)
-		serializer_data_my_invited = serializer_public_invited(my_invited)
-		public_events = self.model.objects.filter(
-			Q(is_private=False) & ~Q(invited=request.user.id) & ~Q(hosts=request.user.id)
-		)
-		serializer_data_public_events = serializer_public_invited(public_events)
-		private_events = self.model.objects.filter(
-			Q(is_private=True) & ~Q(invited=request.user.id) & ~Q(hosts=request.user.id)
-		)
-		serializer_data_private_events = serializer_private(private_events)
-		return Response(
-			serializer_data_my_hosting
-			+ serializer_data_my_invited
-			+ serializer_data_public_events
-			+ serializer_data_private_events
-		)
 
 	# PARTIAL_UPDATE #############################################################
 	def partial_update(self, request, pk):  # PATCH {prefix}/{lookup}/
@@ -710,13 +742,15 @@ class EventViewset(viewsets.ViewSet):
 		else:  # non host can only change his own status
 			user_to_change = request.user.id
 		if request.data['status'] == 'decline':  # anyone can decline
+			f.notify_waiting_users_if_necessary(event, user_to_change, selected_status='decline')
 			event.invited.remove(user_to_change)
 			event.maybe.remove(user_to_change)
 			event.attending.remove(user_to_change)
 			event.wait_list.remove(user_to_change)
 			event.invite_request.remove(user_to_change)
 			plus_one = event.plus_ones.filter(chaperone=request.user.id)
-			plus_one.delete()
+			if plus_one:
+				plus_one.delete()
 		elif request.data['status'] == 'invite_request':
 			if not request.user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists():
 				event.invite_request.add(user_to_change)  # only non-visitors can request an invite
@@ -726,30 +760,29 @@ class EventViewset(viewsets.ViewSet):
 		#		event.maybe.add(user_to_change)
 		elif request.data['status'] == 'wait_list':
 			# only invited can be changed to wait_list (unless its public)
-			if event.invited.filter(id=user_to_change).exists() or not event.is_private:
-				event.attending.remove(user_to_change)
+			if event.invited.filter(id=user_to_change).exists() or (not event.is_private):
 				event.maybe.remove(user_to_change)
-				event.invited.remove(user_to_change)
-				event.invited.add(user_to_change)
+				event.invited.remove(user_to_change)  # incase they were invited
+				event.invited.add(user_to_change)  # in case they weren't invited (public)
 				event.wait_list.add(user_to_change)
 		elif request.data['status'] == 'maybe':
 			# only invited can be changed to maybe (unless its public)
-			if event.invited.filter(id=user_to_change).exists() or not event.is_private:
+			if event.invited.filter(id=user_to_change).exists() or (not event.is_private):
+				f.notify_waiting_users_if_necessary(event, user_to_change, selected_status='maybe')
 				event.attending.remove(user_to_change)
 				event.wait_list.remove(user_to_change)
-				event.invited.remove(user_to_change)
-				event.invited.add(user_to_change)
+				event.invited.remove(user_to_change)  # incase they were invited
+				event.invited.add(user_to_change)  # in case they weren't invited (public)
 				event.maybe.add(user_to_change)
 		elif request.data['status'] == 'attending':
 			# only invited can be changed to maybe (unless its public)
-			if event.invited.filter(id=user_to_change).exists() or not event.is_private:
-				plus_one = event.plus_ones.filter(chaperone=request.user.id)
-				addition = 1 + len(plus_one)
-				if len(event.attending.all()) + addition <= event.attending_limit:  # can't join attending if no space
+			if event.invited.filter(id=user_to_change).exists() or (not event.is_private):
+				if not f.impossibly_over_attending_limit(event, user_to_change):  # can't if no space
+					f.notify_waiting_users_if_necessary(event, user_to_change, selected_status='attending')
 					event.maybe.remove(user_to_change)
 					event.wait_list.remove(user_to_change)
-					event.invited.remove(user_to_change)
-					event.invited.add(user_to_change)
+					event.invited.remove(user_to_change)  # incase they were invited
+					event.invited.add(user_to_change)  # in case they weren't invited (public)
 					event.attending.add(user_to_change)
 				else:
 					return [OrderedDict([('error', 'full')])]
@@ -989,7 +1022,9 @@ class PlusOneViewset(viewsets.ViewSet):
 		event = EventSerializer.Meta.model.objects.get(pk=request.data['event_id'])
 		if event.plus_ones.filter(chaperone=request.user.id).exists():  # SECURITY: user can't add more than 1 plus-one
 			return [OrderedDict([('error', 'user can\'t add more than 1 plus-one')])]
-		if (  # SECURITY:  only someone part of this event (in any way) can add a plus-one
+		elif f.impossibly_over_attending_limit(event, request.user.id, change_is_plus_one=True):  # can't if no space
+			return [OrderedDict([('error', 'no space in attending to add a plus one')])]
+		elif (  # SECURITY:  only someone part of this event (in any way) can add a plus-one
 			event.hosts.filter(id=request.user.id).exists()
 			or event.invited.filter(id=request.user.id).exists()
 			or event.attending.filter(id=request.user.id).exists()
@@ -997,6 +1032,7 @@ class PlusOneViewset(viewsets.ViewSet):
 			or event.wait_list.filter(id=request.user.id).exists()
 			or event.invite_request.filter(id=request.user.id).exists()
 		):
+			f.notify_waiting_users_if_necessary(event, request.user.id, change_is_plus_one=1)
 			plus_one = self.model(name='(+1) ' + request.data['plus_one_name'])
 			plus_one.save()
 			plus_one.chaperone.add(request.user.id)
@@ -1008,7 +1044,7 @@ class PlusOneViewset(viewsets.ViewSet):
 	def delete_plus_one(self, request):
 		event = EventSerializer.Meta.model.objects.get(pk=request.data['event_id'])
 		if not event.plus_ones.filter(chaperone=request.user.id).exists():  # SECURITY: can't del +1 if doesnt exist
-			return [OrderedDict([('error', 'user can\'t add more than 1 plus-one')])]
+			return [OrderedDict([('error', 'user has no plus one to delete')])]
 		if (  # SECURITY:  only someone part of this event (in any way) can delete a plus-one
 			event.hosts.filter(id=request.user.id).exists()
 			or event.invited.filter(id=request.user.id).exists()
@@ -1017,6 +1053,7 @@ class PlusOneViewset(viewsets.ViewSet):
 			or event.wait_list.filter(id=request.user.id).exists()
 			or event.invite_request.filter(id=request.user.id).exists()
 		):
+			f.notify_waiting_users_if_necessary(event, request.user.id, change_is_plus_one=-1)
 			plus_one = event.plus_ones.filter(chaperone=request.user.id)
 			plus_one.delete()
 			return []

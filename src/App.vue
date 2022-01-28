@@ -282,7 +282,7 @@
 			align-items: center;
 			justify-content: center;
 		}
-		.x-button {
+		.x-button, .x-button:hover, .x-button:active, .x-button.pointer {
 			/*color: red;*/
 			font-size: 24px;
 		}

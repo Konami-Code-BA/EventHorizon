@@ -21,7 +21,9 @@
 				<div slot="4">
 					<img src="@/assets/threeBarsIcon.png" class="icon" style="height: 21px; margin-bottom: 2px;"/>
 				</div>
-				<div slot="5"/>
+				<div slot="5">
+					<!--img src="@/assets/bellIcon.png" class="icon" style="height: 21px; margin-bottom: 2px;"/-->
+				</div>
 			</tabs>
 		</div>
 		<modal v-if="selectedTab === 2" @closeModals="selectedTab = 0">
@@ -89,6 +91,25 @@
 
 			</div>
 		</modal>
+		<!--modal v-if="selectedTab === 5" @closeModals="selectedTab = 0">
+			<div slot="contents" class="modal">
+				<div style="width: 100%; display: flex; flex-direction: row; justify-content: space-between;
+						align-content: flex-start">
+					<div/>
+					<div style="font-size: 24px;">
+						NOTIFICATIONS
+					</div>
+					<div style="padding-bottom: 5px;">
+						<button v-on:click.prevent="selectedTab = 0" class="no-border-button x-button">
+							✖
+						</button>
+					</div>
+				</div>
+				<div>
+
+				</div>
+			</div>
+		</modal-->
 		<qr-code-generator v-if="showQrModal" @closeModals="showQrModal=false"/>
 	</div>
 </template>
