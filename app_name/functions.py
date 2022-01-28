@@ -314,7 +314,8 @@ Space has opened up to attend the event!
 
 To view this event, go here: {create_url(f'/?page=event&id={event.id}')}
 
-To turn off notifications, go here: {create_url('/?page=settings')}""",
+To turn off notifications, go here: {create_url('/?page=settings')}
+To message the host: go to the event (above link) ⇨ Show People ⇨ Hosts""",
 					)
 	# if changing_user is not in attending and he is entering, or he is in attending and he's adding a plus_one
 	elif (((not event.attending.filter(id=changing_user_id).exists()) and selected_status == 'attending')
@@ -355,7 +356,8 @@ There is no more space to attend the event :(
 
 To view this event, go here: {create_url(f'/?page=event&id={event.id}')}
 
-To turn off notifications, go here: {create_url('/?page=settings')}""",
+To turn off notifications, go here: {create_url('/?page=settings')}
+To message the host: go to the event (above link) ⇨ Show People ⇨ Hosts""",
 					)
 	# if changing_user isn't altering attending
 	else:

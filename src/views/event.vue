@@ -399,7 +399,7 @@
 						</button>
 					</div>
 				</div>
-				<input v-model="messageContent" class="input"/>
+				<input v-model="messageContent" type="text"/>
 				<button v-on:click.prevent="message()" class="button">
 					SEND
 				</button>
@@ -419,7 +419,7 @@
 						</button>
 					</div>
 				</div>
-				<input v-model="messageContent" class="input"/>
+				<input v-model="messageContent" type="text"/>
 				<button v-on:click.prevent="messageAll(showStatus)" class="button">
 					SEND
 				</button>
