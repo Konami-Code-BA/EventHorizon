@@ -39,6 +39,7 @@
 				let lineUrl = `https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=${loginChannelId}`
 				lineUrl += `&redirect_uri=${lineLoginRedirectUrl}&state=${state}&prompt=consent&bot_prompt=aggressive`
 				lineUrl += '&scope=profile%20openid'
+				this.store.loading = false
 				window.location.replace(lineUrl)
 			},
 			replaceAll(str, match, replace) {
