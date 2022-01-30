@@ -147,16 +147,17 @@
 					</div>
 				</tabs>
 				<div v-if="(myAttendingStatus['invited'] || myAttendingStatus['invite_request'])"
-						style="display: flex; flex-direction: column; align-items: center; width: 100%;">
-					<div class="dual-set" style="align-self: center; padding-bottom: 2px; width: 95%;">
+						style="display: flex; flex-direction: row; align-items: flex-start; width: 100%;">
+					<display-name-input ref="displayNameInput" usage="PlusOne" :dontStartError="true"
+					v-if="!plusOneStatus" style="width: 50%;"/>
+					<div v-else style="width: 50%;">Plus One: {{plusOneStatus.slice(5)}}</div>
+					<div class="dual-set" style="padding-bottom: 2px; width: auto; align-self: flex-start">
 						<button class="button" v-on:click.prevent="changePlusOne()">
 							ADD A PLUS ONE
 							&nbsp;
 							<input type="checkbox" class="checkbox" v-model="plusOneStatus" :key="plusOneStatus"/>  <!--need to check if i have plus one and put in checkbox and show name instead of input-->
 						</button>
 					</div>
-					<display-name-input ref="displayNameInput" usage="PlusOne" :dontStartError="true" v-if="!plusOneStatus"/>
-					<div v-else>{{plusOneStatus}}</div>
 				</div>
 				<!--button v-on:click.prevent="showHostPanel = true" v-if="myAttendingStatus['hosts']" class="button">
 					OPEN HOST PANEL

@@ -181,6 +181,9 @@
 				)
 				if (!user.error) {
 					this.showChangePasswordModal = false
+					this.$refs.passwordInput1.password = ''
+					this.$refs.passwordInput2.password = ''
+					this.$refs.passwordInput2.password2 = ''
 					this.store.loading = false
 					await f.flashModal(this, 1000)  // flash password changed modal
 					return

@@ -46,12 +46,21 @@
 		async created () {
 			// back button setup
 			window.addEventListener('popstate', () => { f.goBack() })
+
+			// get groups
+			store.groups = await api.getGroups()
 			
 			// user auto-login from cookies
 			if (store.user.groups[0] === 100) { // if never logged in, not even to visitor account, login
 				console.log(process.env.PYTHON_ENV)
 				await api.login({})
-				if (store.user.groups.includes(3)) {
+				if (store.user.groups.includes(store.groups.filter(group => {
+					if (group.name === 'Temp Visitor') {
+						return true
+					} else {
+						return false
+					}
+				})[0])) {
 					console.log('visitor')
 				} else {
 					console.log('existing user')
