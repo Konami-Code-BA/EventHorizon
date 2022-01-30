@@ -3,7 +3,7 @@ from decouple import config
 from collections import namedtuple
 from django.contrib.auth.models import Group
 from django.contrib import auth
-from .models import Alert
+from .models import Alert, Event, PlusOne
 from django.core.mail import send_mail
 from django.conf import settings
 
@@ -119,16 +119,12 @@ def remove_line_friend(line_id):
 def authenticate_login(request):
 	user = auth.authenticate(request)
 	if not hasattr(user, 'error'):
-		user.save()
 		auth.login(request, user)
 	return user
 
 
-def verify_update_line_info(request, user):  # for exisitng user with line id, access token already gotten
-	visitor = None
-	# if visitor made this request to login by line
-	if request.user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists():
-		visitor = type(user).objects.get(pk=request.user.pk)  # get visitor account making the request
+def verify_update_line_info(request, user):  # user: existing user with line id & access token already gotten
+	print('VERIFYING AND UPDATING LINE INFO')
 	url = 'https://api.line.me/oauth2/v2.1/token'  # no matter if access token expired or not, refresh access token 1st
 	headers = {'Content-Type': 'application/x-www-form-urlencoded'}
 	data = {
@@ -144,34 +140,19 @@ def verify_update_line_info(request, user):  # for exisitng user with line id, a
 		user = namedtuple('user', 'error')
 		user.error = refreshAccessToken_response['error_description']
 		return user
-	user.line_access_token = refreshAccessToken_response['access_token']  # save new access token to user data
+	# otherwise
+	user.line_access_token = refreshAccessToken_response['access_token']  # save new refreshed access token to user data
 	user.line_refresh_token = refreshAccessToken_response['refresh_token']  # also refresh token
+	user.save()
 	url = 'https://api.line.me/oauth2/v2.1/verify?access_token=' + user.line_access_token  # first verify access token
 	verify_response = json.loads(requests.get(url).content)
 	if verify_response['client_id'] != config('LOGIN_CHANNEL_ID'):  # make sure verification not intercepted
 		user = namedtuple('user', 'error')
 		user.error = 'could not verify client id when trying to verify access token'
 		return user  # client id can't be confirmed
-	url = 'https://api.line.me/v2/profile'  # get line profile info
-	headers = {'Authorization': 'Bearer ' + user.line_access_token}
-	profile_response = json.loads(requests.get(url, headers=headers).content)
-	if user.do_get_line_display_name:  # update display name with line profile name unless user set not to
-		user.display_name = profile_response['displayName']
-	if profile_response['userId'] == user.line_id:  # double check line id is correct and this wasnt somehow faked
-		user.save()
-		request.data['line_id'] = user.line_id
-		user = authenticate_login(request)  # login again just in case, and to get new location info
-		if not hasattr(user, 'error'):  # logged into a user
-			# if not visitor, but request made by visitor
-			if (not user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists()) and visitor:
-				user.visit_count += visitor.visit_count
-				user.save()
-				visitor.delete()  # delete the visitor account that made the request
-		return user
-	else:  # line id can't be confirmed
-		user = namedtuple('user', 'error')
-		user.error = 'could not verify line id after getting line profile info'
-		return user
+	#request.data['line_id'] = user.line_id
+	#user = authenticate_login(request)  # login again just in case, and to get new location info
+	return user
 
 
 def new_visitor(request):
@@ -198,22 +179,51 @@ def new_visitor(request):
 	return user
 
 
-def merge_email_into_line_account(current_user, existing_user):
-	current_user.password = existing_user.password
-	# last_login remains current_user's
-	current_user.email = existing_user.email
-	# is_active remains current_user's (true)
-	if existing_user.date_joined < current_user.date_joined:
-		current_user.date_joined = existing_user.date_joined
-	# display_name remains current_user's
-	# language remains current_user's
-	current_user.do_get_emails = True
-	# all line things remain current user's
-	# random_secret remains current_user's
-	current_user.visit_count += existing_user.visit_count
-	current_user.save()
-	existing_user.delete()
-	return current_user
+def merge_users(top_user, bottom_user):
+	print('MERGING USERS')
+	# merge user field info
+	if bottom_user.email:
+		top_user.email = bottom_user.email
+		top_user.password = bottom_user.password
+		top_user.do_get_emails = bottom_user.do_get_emails
+	if bottom_user.line_id:
+		top_user.line_id = bottom_user.line_id
+		top_user.line_access_token = bottom_user.line_access_token
+		top_user.line_refresh_token = bottom_user.line_refresh_token
+		top_user.do_get_line_display_name = bottom_user.do_get_line_display_name
+		top_user.is_line_friend = bottom_user.is_line_friend
+		top_user.do_get_lines = bottom_user.do_get_lines
+	if bottom_user.date_joined < top_user.date_joined:
+		top_user.date_joined = bottom_user.date_joined
+	top_user.visit_count += bottom_user.visit_count
+	top_user.save()
+	# merge events
+	events = Event.objects.filter(invited=bottom_user.id)
+	for event in events:
+		event.invited.remove(bottom_user.id)
+		event.invited.add(top_user.id)
+		if event.hosts.filter(id=bottom_user.id).exists():
+			event.hosts.remove(bottom_user.id)
+			event.hosts.add(top_user.id)
+		if event.maybe.filter(id=bottom_user.id).exists():
+			event.maybe.remove(bottom_user.id)
+			event.maybe.add(top_user.id)
+		if event.attending.filter(id=bottom_user.id).exists():
+			event.attending.remove(bottom_user.id)
+			event.attending.add(top_user.id)
+		if event.wait_list.filter(id=bottom_user.id).exists():
+			event.wait_list.remove(bottom_user.id)
+			event.wait_list.add(top_user.id)
+		if event.invite_request.filter(id=bottom_user.id).exists():
+			event.invite_request.remove(bottom_user.id)
+			event.invite_request.add(top_user.id)
+	# merge plus_ones
+	plus_ones = PlusOne.objects.filter(chaperone=bottom_user.id)
+	for plus_one in plus_ones:
+		plus_one.chaperone.remove(bottom_user.id)
+		plus_one.chaperone.add(top_user.id)
+	bottom_user.delete()
+	return top_user
 
 
 def user_in_guest_statuses(event, user_id, guest_statuses):

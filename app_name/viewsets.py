@@ -156,7 +156,7 @@ class UserViewset(viewsets.ModelViewSet):
 				existing_user = self.model.objects.get(email=request.data['email'])
 				# if existing user with this email does exist, check their password, and if its good too, merge accounts
 				if existing_user.check_password(request.data['password']):  # if password matches too
-					current_user = f.merge_email_into_line_account(current_user, existing_user)  # merge accounts
+					current_user = f.merge_users(current_user, existing_user)  # merge users
 					return current_user
 				else:  # if password doesn't match
 					user = namedtuple('user', 'error')
@@ -370,7 +370,7 @@ To message the host: go to the event (above link) ⇨ Show People ⇨ Hosts
 
 	def line_new_device(self, request):  # SECURITY: anyone is allowed to make a new line device
 		uri = f.create_url(request.data['path'])
-		url = 'https://api.line.me/oauth2/v2.1/token'  # use code to get access token
+		url = 'https://api.line.me/oauth2/v2.1/token'
 		data = {
 			'grant_type': 'authorization_code',
 			'code': request.data['code'],
@@ -379,25 +379,33 @@ To message the host: go to the event (above link) ⇨ Show People ⇨ Hosts
 			'client_secret': config('LOGIN_CHANNEL_SECRET'),
 		}
 		headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+		# get access token
 		getAccessToken_response = json.loads(requests.post(url, headers=headers, data=data).content)
 		if 'error' in getAccessToken_response:
 			user = namedtuple('user', 'error')
 			user.error = getAccessToken_response['error_description']
 			return user
-		url = 'https://api.line.me/v2/profile'  # use access token to get profile info
+		url = 'https://api.line.me/v2/profile'
 		headers = {'Authorization': 'Bearer ' + getAccessToken_response['access_token']}
+		# use access token to get profile info
 		profile_response = json.loads(requests.get(url, headers=headers).content)
 		try:  # try to get a user with this line id, if there is one then set all the new data to their account
 			user = self.model.objects.get(line_id=profile_response['userId'])
 			user.line_access_token = getAccessToken_response['access_token']
 			user.line_refresh_token = getAccessToken_response['refresh_token']
 			user.do_get_lines = True
+			if user.do_get_line_display_name:  # update display name with line profile name unless user set not to
+				user.display_name = profile_response['displayName']
+			user.save()
 			# if this user is a temp line friend
 			if user.groups.filter(id=Group.objects.get(name='Temp Line Friend').id).exists():
 				user.groups.clear()  # clear temp line friend group
 				user.groups.add(Group.objects.get(name='User').id)  # change to user
-			print('CHANGING TEMP LINE FRIEND TO USER')
+				print('CHANGING TEMP LINE FRIEND TO USER')
 			user = f.verify_update_line_info(request, user)  # verify validity of current line data and put new data
+			if user.id != request.user.id:  # merge users
+				user = f.merge_users(request.user, user)
+			user = f.authenticate_login(request)  # login user
 		except self.model.DoesNotExist:  # if there was no user with this id, add line info to existing account
 			user = self.model.objects.get(pk=request.user.pk)  # get account (already logged in)
 			if user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists():  # if visitor
@@ -410,7 +418,7 @@ To message the host: go to the event (above link) ⇨ Show People ⇨ Hosts
 			user.do_get_line_display_name = True
 			user.do_get_lines = True
 			user.save()
-			print('SAVED USER')
+			print('SAVED NEW LINE USER')
 			user = f.authenticate_login(request)  # login user
 			print('LOGGED IN')
 		return user
@@ -487,6 +495,8 @@ To message the host: go to the event (above link) ⇨ Show People ⇨ Hosts
 			user.save()
 			if current_user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists():
 				current_user.delete()
+			request.user = user
+			request.data['password'] = request.data['new_password']
 			user = f.authenticate_login(request)  # login user
 		else:
 			user = namedtuple('user', 'error')
@@ -654,23 +664,17 @@ class EventViewset(viewsets.ViewSet):
 
 	def add_event(self, request):
 		event = None
-		print('1*************************************************************')
 		if request.user.is_superuser:  # SECURITY: only superuser can add event
-			print('2*************************************************************')
 			if request.data['address']:
-				print('3*************************************************************')
 				gmaps = googlemaps.Client(key=config('GOOGLE_MAPS_API_KEY'))
 				geocoded = gmaps.geocode(request.data['address'])
 				latitude = geocoded[0]['geometry']['location']['lat']
 				longitude = geocoded[0]['geometry']['location']['lng']
 				address, area, rand_latitude, rand_longitude = randomize_lat_lng(request.data['address'])
-				print('4*************************************************************')
 			else:
-				print('5*************************************************************')
 				latitude = 0
 				longitude = 0
 				address, area, rand_latitude, rand_longitude = '', '', 0, 0
-				print('6*************************************************************')
 			event = self.model(
 				name=request.data['name'],
 				description=request.data['description'],
@@ -685,24 +689,15 @@ class EventViewset(viewsets.ViewSet):
 				include_time=request.data['include_time'],
 				is_private=request.data['is_private'],
 			)
-			print('7*************************************************************')
 			event.save()
-			print('8*************************************************************')
 			event.hosts.add(request.user.id)
-			print('9*************************************************************')
 			event.invited.add(request.user.id)
-			print('10*************************************************************')
 			event.maybe.add(request.user.id)
-			print('11*************************************************************')
 			if 'images' in request.data:
-				print('12*************************************************************')
 				event.images.add(request.data['images'])
-				print('13*************************************************************')
 		try:
-			print('14*************************************************************')
 			serializer_data = self.serializer_class([event], many=True).data
 		except Exception as e:
-			print('15*************************************************************')
 			print('ERROR IN ADD_EVENT API:', e)
 			serializer_data = self.serializer_class([], many=True).data
 		return serializer_data
@@ -1008,7 +1003,7 @@ def aws_get_file(key):
 		return {'error': e}
 
 
-# PLUS ONE VIEW SET ######################################################################################################
+# PLUS ONE VIEW SET ####################################################################################################
 class PlusOneViewset(viewsets.ViewSet):
 	serializer_class = PlusOneSerializer
 	model = serializer_class.Meta.model
@@ -1077,3 +1072,31 @@ class PlusOneViewset(viewsets.ViewSet):
 
 	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
 		pass  # SECURITY: does nothing
+
+
+# GROUP VIEW SET #######################################################################################################
+class GroupViewset(viewsets.ViewSet):
+	model = Group
+	queryset = []
+
+	def list(self, request):  # GET {prefix}/
+		groups = self.model.objects.all()
+		result = []
+		for group in groups:
+			result += [OrderedDict([('name', group.name), ('id', group.id)])]
+		return Response(result)
+
+	def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
+		pass
+
+	def update(self, request, pk=None):  # PUT {prefix}/{lookup}/
+		pass
+
+	def partial_update(self, request, pk):  # PATCH {prefix}/{lookup}/
+		pass
+
+	def create(self, request):  # POST {prefix}/
+		pass
+
+	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
+		pass

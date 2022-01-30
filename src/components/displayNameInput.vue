@@ -1,8 +1,8 @@
 <template>
 	<div>
 		<div>
-			<input :placeholder="t('DISPLAY NAME')" v-model="displayName" type="text"  :id="`displayName${usage}`" autocorrect="off"
-					autocapitalize="words" style="width: 100%"/>
+			<input :placeholder="placeholder" v-model="displayName" type="text"  :id="`displayName${usage}`"
+					autocorrect="off" autocapitalize="words" style="width: 100%"/>
 		</div>
 		<div class="line-height" :class="{'shake' : shakeIt}" style="color: red">
 			<small>{{t(error)}}</small>
@@ -21,6 +21,7 @@
 				displayName: '',
 				error: '',
 				shakeIt: false,
+				placeholder: '',
 			}
 		},
 		props: {
@@ -30,6 +31,11 @@
 		mounted () {
 			if (!this.dontStartError) {
 				this.hasErrors()
+			}
+			if (this.usage === 'PlusOne') {
+				this.placeholder = 'PLUS ONE'
+			} else {
+				this.placeholder = this.t('DISPLAY NAME')
 			}
 		},
 		watch: {

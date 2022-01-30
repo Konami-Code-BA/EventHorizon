@@ -17,4 +17,5 @@ export default {
         mine: [],
     },
     loading: true,
+    groups: null,
 }

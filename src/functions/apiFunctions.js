@@ -24,7 +24,11 @@ export default {
                     console.log(`success - userApi ${data.command}`)
                     store.user = store.defaultUser
                     return store.user
-                } else if (data.command === 'login' && !('error' in response.data[0])) {
+                } else if ([
+                        'login', 'register_with_email', 'register_email', 'update_user_do_get_lines',
+                        'update_user_do_get_emails', 'update_user_language', 'line_new_device', 'forgot_password',
+                        'change_password',
+                    ].includes(data.command) && !('error' in response.data[0])) {
                     console.log(`success - userApi ${data.command}`)
                     store.user = response.data[0]
                     return response.data
@@ -126,6 +130,26 @@ export default {
             })
             .catch(error => {
                 console.log(`*API ERROR* - plusOneApi:`, error)
+                return error
+            })
+    },
+    async groupApi(method, pk = null, data = null) {
+        let id = ''
+        if (pk) {
+            id = pk + '/'
+        }
+        return await this.axiosCall[method](this.baseUrl + '/api/group/' + id, data)
+            .then(response => {
+                if (!('error' in response.data[0])) {
+                    console.log(`success - groupApi ${data.command}`)
+                    return response.data
+                } else {
+                    console.log(`*INTERNAL ERROR* - groupApi ${data.command}:`, response.data[0]['error'])
+                    return response.data
+                }
+            })
+            .catch(error => {
+                console.log(`*API ERROR* - groupApi:`, error)
                 return error
             })
     },
@@ -337,6 +361,11 @@ export default {
         formData.append('keys', keys)
         formData.append('command', 'get')
         let result = await this.imagesApi('post', null, formData)
+        return result
+    },
+    // GROUPS //////////////////////////////////////////////////////////////////////////////////////////////////////////
+    async getGroups() {
+        let result = await this.groupApi('get', null, { 'command': 'get' })
         return result
     },
 }

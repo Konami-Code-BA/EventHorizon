@@ -128,6 +128,7 @@
 		methods: {
 			t (w) { return translations.t(w) },
 			async createEvent () {
+				this.store.loading = true
 				let data = {
 					name: this.name,
 					description: this.description,
@@ -144,6 +145,7 @@
 				let newEvent = await api.createEvent(data)
 				await f.getEvents()
 				f.goToPage({ page: 'event', args: { id: newEvent.id}})
+				this.store.loading = false
 			},
 			async saveImage () {
 				let formData = new FormData()
