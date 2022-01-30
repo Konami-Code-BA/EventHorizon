@@ -16,10 +16,12 @@ export default {
         return result
     },
     get isAuthenticatedUser() {
-        return [1, 2].includes(store.user.groups[0])
+        let result = this.inGroups(['User', 'Admin'])
+        return result
     },
     get isAdmin() {
-        return [1].includes(store.user.groups[0])
+        let result = this.inGroups(['Admin'])
+        return result
     },
     get today() {
         return new Date()
@@ -27,6 +29,20 @@ export default {
     get queryFromUrl() {
         let urlSearchParams = new URLSearchParams(window.location.search)
         return Object.fromEntries(urlSearchParams.entries())
+    },
+    inGroups(groupNames) {
+        let groupIds = []
+        for (let i = 0; i < groupNames.length; i++) {
+            groupIds.push(store.groups.filter(group => {
+                if (group.name === groupNames[i]) {
+                    return true
+                } else {
+                    return false
+                }
+            })[0].id)
+        }
+        let result = groupIds.includes(store.user.groups[0])
+        return result
     },
     createUrl(pageDict) {
         let result = window.origin + '/?page=' + pageDict.page
