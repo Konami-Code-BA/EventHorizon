@@ -402,9 +402,11 @@ To message the host: go to the event (above link) ⇨ Show People ⇨ Hosts
 				user.groups.clear()  # clear temp line friend group
 				user.groups.add(Group.objects.get(name='User').id)  # change to user
 				print('CHANGING TEMP LINE FRIEND TO USER')
+			if request.user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists():
+				request.user.groups.clear()  # clear temp line friend group
+				request.user.groups.add(Group.objects.get(name='User').id)  # change to user
 			user = f.verify_update_line_info(request, user)  # verify validity of current line data and put new data
-			if user.id != request.user.id:  # merge users
-				user = f.merge_users(request.user, user)
+			user = f.merge_users(request.user, user)
 			user = f.authenticate_login(request)  # login user
 		except self.model.DoesNotExist:  # if there was no user with this id, add line info to existing account
 			user = self.model.objects.get(pk=request.user.pk)  # get account (already logged in)
