@@ -1,8 +1,12 @@
 <template>
 	<div style="display: flex; flex-direction: column; align-items: center; padding-top: 5px;">
-		<div>
+		<div style="display: flex; flex-direction: row; justify-content: center; align-items: center;">
 			<input :placeholder="t('SEARCH')" v-model="search" type="text" autocorrect="off" autocapitalize="none"
 					style="width: 100%" v-on:keyup.enter="removeFocus()" id="search"/>
+			<div style="width: 10px;"/>
+			<button v-on:click.prevent="search = ''" class="no-border-button x-button">
+				✖
+			</button>
 		</div>
 		<div style="width: 100%; overflow-y: scroll; overflow-x: hidden; display: flex; flex-direction: column;
 				align-items: center; padding-left: 10px; height: 100%;" id="scroller">
