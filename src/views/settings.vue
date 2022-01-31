@@ -49,8 +49,10 @@
 					</button>
 				</div>
 				<form v-on:keyup.enter="addEmail()" style="width: 80%;">
-					<email-input ref="emailInput" usage="AddEmail"/>
-					<password-input ref="passwordInput" :doublePassword="true" usage="AddEmail"/>
+					<email-input ref="emailInput" usage="AddEmail"
+							:key="store.user.language+'emailInputAddEmail'"/>
+					<password-input ref="passwordInput" :doublePassword="true" usage="AddEmail"
+							:key="store.user.language+'passwordInputAddEmail'"/>
 				</form>
 				<button v-on:click.prevent="addEmail()" class="button">
 					{{ t('ADD EMAIL ADDRESS') }}
