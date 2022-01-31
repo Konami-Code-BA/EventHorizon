@@ -1,9 +1,12 @@
 <template>
 	<div class="main" style="display: flex; flex-direction: column; justify-content: center; overflow-y: scroll;">
 		<form v-on:keyup.enter="registerWithEmail()" style="width: 80%;">
-			<display-name-input ref="displayNameInput" usage="Registration"/>
-			<email-input ref="emailInput" usage="Registration"/>
-			<password-input ref="passwordInput" :doublePassword="true" usage="Registration"/>
+			<display-name-input ref="displayNameInput" usage="Registration"
+					:key="store.user.language+'displayNameInputRegistration'"/>
+			<email-input ref="emailInput" usage="Registration"
+					:key="store.user.language+'emailInputRegistration'"/>
+			<password-input ref="passwordInput" :doublePassword="true" usage="Registration"
+					:key="store.user.language+'passwordInputRegistration'"/>
 		</form>
 		<button v-on:click.prevent="registerWithEmail()" class="button">
 			{{ t('REGISTER') }}
