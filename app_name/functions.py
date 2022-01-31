@@ -184,10 +184,6 @@ def merge_users(current_user, merge_user):
 	# merge user field info
 	if current_user.display_name == 'Temp Visitor':
 		current_user.display_name = merge_user.display_name
-	if merge_user.email:
-		current_user.email = merge_user.email
-		current_user.password = merge_user.password
-		current_user.do_get_emails = merge_user.do_get_emails
 	if merge_user.line_id:
 		current_user.line_id = merge_user.line_id
 		current_user.line_access_token = merge_user.line_access_token
@@ -195,6 +191,10 @@ def merge_users(current_user, merge_user):
 		current_user.do_get_line_display_name = merge_user.do_get_line_display_name
 		current_user.is_line_friend = merge_user.is_line_friend
 		current_user.do_get_lines = merge_user.do_get_lines
+	elif merge_user.email:
+		current_user.email = merge_user.email
+		current_user.password = merge_user.password
+		current_user.do_get_emails = merge_user.do_get_emails
 	if merge_user.date_joined < current_user.date_joined:
 		current_user.date_joined = merge_user.date_joined
 	current_user.visit_count += merge_user.visit_count
