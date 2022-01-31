@@ -13,12 +13,11 @@
 		<div class="line-height"/>
 
 		<div style="font-size: 20px;">
-			{{ t('REACH OUT TO NEW HORIZONS') }}
+			REACH OUT TO NEW HORIZONS
 		</div>
 	</div>
 </template>
 <script>
-	import translations from '@/functions/translations.js'
 	export default {
 		name: 'openingLogo',
 		components: {
@@ -32,7 +31,6 @@
 		async mounted () {
 		},
 		methods: {
-			t (w) { return translations.t(w) },
 		} // methods
 	} // export
 </script>
