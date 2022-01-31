@@ -2,7 +2,10 @@
 	<div class="main" v-if="store.events.selected && !store.loading">
 		<div style="width: 98%;">
 			<div class="flex-row" style="align-items: center; justify-content: center; height: 60px;">
-				<h2 style="max-width: 80%; overflow-x: scroll;">{{event.name}}</h2>
+				<h2 style="max-width: 80%; overflow-x: scroll; max-height: 100%; overflow-y: hidden;
+						white-space: nowrap">
+					{{event.name}}
+				</h2>
 			</div>
 			<div class="flex-row" style="justify-content: space-between;">
 				<div>
