@@ -39,13 +39,14 @@
 				let lineUrl = `https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=${loginChannelId}`
 				lineUrl += `&redirect_uri=${lineLoginRedirectUrl}&state=${state}&prompt=consent&bot_prompt=aggressive`
 				lineUrl += '&scope=profile%20openid'
-				this.store.loading = false
 				window.location.replace(lineUrl)
+				this.store.loading = false
 			},
 			replaceAll(str, match, replace) {
 				return str.replace(new RegExp(match, 'g'), () => replace);
 			},
 			async tryLineNewDevice() {
+				this.store.loading = true
 				let allCookies = '{"' + this.replaceAll(this.replaceAll(document.cookie, '=', '": "'), '; ', '", "') + '"}'
 				let stateCookie = JSON.parse(allCookies)['state']
 				if (f.currentPage && f.currentPage.args.code && stateCookie === f.currentPage.args.state) {
@@ -54,6 +55,7 @@
 					await api.lineNewDevice(f.currentPage.args.code, uri)
 					f.goToPage(nextPage)
 				}
+				this.store.loading = false
 			},
 		}
 	}
