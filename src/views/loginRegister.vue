@@ -3,8 +3,10 @@
 		<div style="width: 80%">
 			<div style="font-size: 24px; align-self: flex-start">{{ t('LOGIN WITH EMAIL') }}</div>
 			<form v-on:keyup.enter="login()">
-				<email-input ref="emailInput" usage="Login"/>
-				<password-input ref="passwordInput" usage="Login"/>
+				<email-input ref="emailInput" usage="Login"
+					:key="store.user.language+'emailInputLogin'"/>
+				<password-input ref="passwordInput" usage="Login"
+					:key="store.user.language+'passwordInputLogin'"/>
 			</form>
 			<button v-on:click.prevent="login()" class="button">
 				{{ t('LOGIN WITH EMAIL') }}
