@@ -156,7 +156,7 @@
 									this.store.events.display[i].longitude
 								)
 								let image = new google.maps.MarkerImage(
-									icon, null, null, null, new google.maps.Size(25, 25)
+									icon, null, null, null, new google.maps.Size(35, 35)
 								)
 								let marker = new google.maps.Marker({
 									position: position,
