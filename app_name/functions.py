@@ -167,7 +167,7 @@ def new_visitor(request):
 			break
 	user = UserViewset.model.objects.create_user(
 		random_secret = random_secret,
-		display_name = 'Visitor',
+		display_name = 'Temp Visitor',
 	)
 	user.save()
 	group = Group.objects.get(id=3)
@@ -179,51 +179,53 @@ def new_visitor(request):
 	return user
 
 
-def merge_users(top_user, bottom_user):
+def merge_users(current_user, merge_user):
 	print('MERGING USERS')
 	# merge user field info
-	if bottom_user.email:
-		top_user.email = bottom_user.email
-		top_user.password = bottom_user.password
-		top_user.do_get_emails = bottom_user.do_get_emails
-	if bottom_user.line_id:
-		top_user.line_id = bottom_user.line_id
-		top_user.line_access_token = bottom_user.line_access_token
-		top_user.line_refresh_token = bottom_user.line_refresh_token
-		top_user.do_get_line_display_name = bottom_user.do_get_line_display_name
-		top_user.is_line_friend = bottom_user.is_line_friend
-		top_user.do_get_lines = bottom_user.do_get_lines
-	if bottom_user.date_joined < top_user.date_joined:
-		top_user.date_joined = bottom_user.date_joined
-	top_user.visit_count += bottom_user.visit_count
-	top_user.save()
+	if current_user.display_name == 'Temp Visitor':
+		current_user.display_name = merge_user.display_name
+	if merge_user.email:
+		current_user.email = merge_user.email
+		current_user.password = merge_user.password
+		current_user.do_get_emails = merge_user.do_get_emails
+	if merge_user.line_id:
+		current_user.line_id = merge_user.line_id
+		current_user.line_access_token = merge_user.line_access_token
+		current_user.line_refresh_token = merge_user.line_refresh_token
+		current_user.do_get_line_display_name = merge_user.do_get_line_display_name
+		current_user.is_line_friend = merge_user.is_line_friend
+		current_user.do_get_lines = merge_user.do_get_lines
+	if merge_user.date_joined < current_user.date_joined:
+		current_user.date_joined = merge_user.date_joined
+	current_user.visit_count += merge_user.visit_count
+	current_user.save()
 	# merge events
-	events = Event.objects.filter(invited=bottom_user.id)
+	events = Event.objects.filter(invited=merge_user.id)
 	for event in events:
-		event.invited.remove(bottom_user.id)
-		event.invited.add(top_user.id)
-		if event.hosts.filter(id=bottom_user.id).exists():
-			event.hosts.remove(bottom_user.id)
-			event.hosts.add(top_user.id)
-		if event.maybe.filter(id=bottom_user.id).exists():
-			event.maybe.remove(bottom_user.id)
-			event.maybe.add(top_user.id)
-		if event.attending.filter(id=bottom_user.id).exists():
-			event.attending.remove(bottom_user.id)
-			event.attending.add(top_user.id)
-		if event.wait_list.filter(id=bottom_user.id).exists():
-			event.wait_list.remove(bottom_user.id)
-			event.wait_list.add(top_user.id)
-		if event.invite_request.filter(id=bottom_user.id).exists():
-			event.invite_request.remove(bottom_user.id)
-			event.invite_request.add(top_user.id)
+		event.invited.remove(merge_user.id)
+		event.invited.add(current_user.id)
+		if event.hosts.filter(id=merge_user.id).exists():
+			event.hosts.remove(merge_user.id)
+			event.hosts.add(current_user.id)
+		if event.maybe.filter(id=merge_user.id).exists():
+			event.maybe.remove(merge_user.id)
+			event.maybe.add(current_user.id)
+		if event.attending.filter(id=merge_user.id).exists():
+			event.attending.remove(merge_user.id)
+			event.attending.add(current_user.id)
+		if event.wait_list.filter(id=merge_user.id).exists():
+			event.wait_list.remove(merge_user.id)
+			event.wait_list.add(current_user.id)
+		if event.invite_request.filter(id=merge_user.id).exists():
+			event.invite_request.remove(merge_user.id)
+			event.invite_request.add(current_user.id)
 	# merge plus_ones
-	plus_ones = PlusOne.objects.filter(chaperone=bottom_user.id)
+	plus_ones = PlusOne.objects.filter(chaperone=merge_user.id)
 	for plus_one in plus_ones:
-		plus_one.chaperone.remove(bottom_user.id)
-		plus_one.chaperone.add(top_user.id)
-	bottom_user.delete()
-	return top_user
+		plus_one.chaperone.remove(merge_user.id)
+		plus_one.chaperone.add(current_user.id)
+	merge_user.delete()
+	return current_user
 
 
 def user_in_guest_statuses(event, user_id, guest_statuses):

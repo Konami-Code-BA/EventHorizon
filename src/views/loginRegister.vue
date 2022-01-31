@@ -1,5 +1,5 @@
 <template>
-	<div class="main" style="justify-content: center;">
+	<div class="main" style="justify-content: center; overflow-y: scroll;">
 		<div style="width: 80%">
 			<div style="font-size: 24px; align-self: flex-start">{{ t('LOGIN WITH EMAIL') }}</div>
 			<form v-on:keyup.enter="login()">

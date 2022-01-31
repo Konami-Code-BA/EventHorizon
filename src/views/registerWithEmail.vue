@@ -1,5 +1,5 @@
 <template>
-	<div class="main" style="display: flex; flex-direction: column; justify-content: center">
+	<div class="main" style="display: flex; flex-direction: column; justify-content: center; overflow-y: scroll;">
 		<form v-on:keyup.enter="registerWithEmail()" style="width: 80%;">
 			<display-name-input ref="displayNameInput" usage="Registration"/>
 			<email-input ref="emailInput" usage="Registration"/>
