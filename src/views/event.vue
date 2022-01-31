@@ -120,9 +120,9 @@
 						</div>
 					</div>
 				</tabs>
-				<!--if private and not invited and authenticated user, can click invite request-->
+				<!--if private and not invited, can click invite request-->
 				<tabs :num-tabs="1" :initial="0" style="width: 100%;"
-						v-if="!myAttendingStatus['invited'] && event.is_private && isAuthenticatedUser">
+						v-if="!myAttendingStatus['invited'] && event.is_private">
 					<div slot="1">
 						<div class="dual-set">
 							<button class="button" style="width: auto"
@@ -133,19 +133,7 @@
 						</div>
 					</div>
 				</tabs>
-				<!--if private and not invited and not authenticated user, invite request goes to login-->
-				<tabs :num-tabs="1" :initial="0" style="width: 100%;"
-						v-if="!myAttendingStatus['invited'] && event.is_private && !isAuthenticatedUser ">
-					<div slot="1">
-						<div class="dual-set">
-							<button class="button" style="width: auto"
-									v-on:click.prevent="goToLogin()">
-								INVITE REQUEST
-								<input type="checkbox" class="checkbox" onclick="return false;"/>
-							</button>
-						</div>
-					</div>
-				</tabs>
+				<div class="line-height" v-if="(myAttendingStatus['invited'] || myAttendingStatus['invite_request'])"/>
 				<div v-if="(myAttendingStatus['invited'] || myAttendingStatus['invite_request'])"
 						style="display: flex; flex-direction: row; align-items: flex-start; width: 100%;">
 					<display-name-input ref="displayNameInput" usage="PlusOne" :dontStartError="true"
@@ -558,6 +546,10 @@
 				return false
 			},
 			async changeAttendingStatus (status) {
+				if (!this.isAuthenticatedUser) {
+					this.goToLogin()
+					return
+				}
 				if (status === 'decline' || !this.myAttendingStatus[status]) {
 					store.loading = true
 					await api.changeGuestStatus(this.event.id, status, null)
