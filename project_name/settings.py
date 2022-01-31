@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
-import django_heroku
+# import django_heroku
 from decouple import config
 import os
 
@@ -25,10 +25,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEBUG = config('PYTHON_ENV', default='production') == 'development'  # need to make sure this works
 SECRET_KEY = config('SECRET_KEY')
 ALLOWED_HOSTS = [
-	'event-horizon-jp.herokuapp.com/',
-	'event-horizon-test.herokuapp.com/',
-	'localhost',
-	'eventhorizon.vip/'
+    'event-horizon-jp.herokuapp.com/',
+    'event-horizon-test.herokuapp.com/',
+    'eventhorizon.vip/',
+    'localhost',
+    'localhost/',
+    '127.0.0.1',
+    '127.0.0.1/'
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -36,20 +39,20 @@ CSRF_COOKIE_NAME = 'XSRF-TOKEN'
 
 #CORS_ALLOW_ALL_ORIGINS = True  # dangerous, want to restrict origins that can make cross-origin requests
 CORS_ALLOWED_ORIGINS = (
-	'http://127.0.0.1:8080',
-	'http://127.0.0.1:8000',
-	'https://event-horizon-jp.herokuapp.com',
-	'https://event-horizon-test.herokuapp.com',
-	'http://eventhorizon.vip',
-	'https://eventhorizon.vip',
+ 'http://127.0.0.1:8080',
+ 'http://127.0.0.1:8000',
+ 'https://event-horizon-jp.herokuapp.com',
+ 'https://event-horizon-test.herokuapp.com',
+ 'http://eventhorizon.vip',
+ 'https://eventhorizon.vip',
 )
 CSRF_TRUSTED_ORIGINS = (
-	'http://127.0.0.1:8080',
-	'http://127.0.0.1:8000',
-	'https://event-horizon-jp.herokuapp.com',
-	'https://event-horizon-test.herokuapp.com',
-	'http://eventhorizon.vip',
-	'https://eventhorizon.vip',
+ 'http://127.0.0.1:8080',
+ 'http://127.0.0.1:8000',
+ 'https://event-horizon-jp.herokuapp.com',
+ 'https://event-horizon-test.herokuapp.com',
+ 'http://eventhorizon.vip',
+ 'https://eventhorizon.vip',
 )
 
 # 'Strict': prevents the cookie from being sent by the browser to the target site in all cross-site browsing context, even when following a regular link
@@ -86,13 +89,13 @@ INSTALLED_APPS = [
 AUTH_USER_MODEL = 'app_name.User'
 
 AUTHENTICATION_BACKENDS = [
-	#'django.contrib.auth.backends.ModelBackend',
-	'app_name.backends.UserBackend',
+ #'django.contrib.auth.backends.ModelBackend',
+ 'app_name.backends.UserBackend',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-	'whitenoise.middleware.WhiteNoiseMiddleware',
+ 'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -190,4 +193,4 @@ TEMPLATES[0]['DIRS'] += [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Activate Django-Heroku.
-django_heroku.settings(locals())
+# django_heroku.settings(locals())
