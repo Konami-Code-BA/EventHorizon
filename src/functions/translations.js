@@ -54,9 +54,25 @@ export default {
             'EN': 'PASSWORD',
             'JP': 'パスワード'
         },
-        'PASSWORD (AGAIN)': {
-            'EN': 'PASSWORD (AGAIN)',
+        'CONFIRM PASSWORD': {
+            'EN': 'CONFIRM PASSWORD',
             'JP': 'パスワード確認'
+        },
+        'NEW PASSWORD': {
+            'EN': 'NEW PASSWORD',
+            'JP': '新たなパスワード'
+        },
+        'CONFIRM NEW PASSWORD': {
+            'EN': 'CONFIRM NEW PASSWORD',
+            'JP': '新たなパスワードの確認'
+        },
+        'CONFIRM CURRENT PASSWORD': {
+            'EN': 'CONFIRM CURRENT PASSWORD',
+            'JP': '現在のパスワードの確認'
+        },
+        'CURRENT PASSWORD': {
+            'EN': 'CURRENT PASSWORD',
+            'JP': '現在のパスワード'
         },
         "FORGOT PASSWORD": {
             'EN': "FORGOT PASSWORD",
