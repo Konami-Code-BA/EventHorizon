@@ -192,7 +192,7 @@
 				let dayDate = date.getDate()
 				if (date.toString().split(' ').slice(0, 4).toString() === f.today.toString().split(' ').slice(0, 4).toString()) {
 					style['border-radius'] = '50%'
-					style['border'] = '2px solid #95c4ff'
+					style['border'] = '2px solid #cae2ff'
 					style['background-color'] = 'none'
 				}
 				if ((
@@ -202,7 +202,7 @@
 				)) {
 					style['color'] = 'grey !important'
 				} else if (this.getEventsFromDate(date).length == 0) {
-					style['color'] = '#95c4ff !important'
+					style['color'] = '#cae2ff !important'
 					style['cursor'] = 'initial !important';
 				} else {
 					style['border-radius'] = '50%'
