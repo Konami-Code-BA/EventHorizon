@@ -2,7 +2,7 @@
 	<div>
 		<div>
 			<input :placeholder="placeholder" v-model="displayName" type="text"  :id="`displayName${usage}`"
-					autocorrect="off" autocapitalize="words" style="width: 100%"/>
+					autocorrect="off" autocapitalize="words" style="width: 100%" v-on:keyup.enter="enter()"/>
 		</div>
 		<div class="line-height" :class="{'shake' : shakeIt}" style="color: red">
 			<small>{{t(error)}}</small>
@@ -27,6 +27,7 @@
 		props: {
 			usage: {},
 			dontStartError: { default: false },
+			enter: { type: Function, default: () => {} },
 		},
 		mounted () {
 			if (!this.dontStartError) {
