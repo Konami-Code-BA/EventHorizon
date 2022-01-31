@@ -121,7 +121,7 @@
 		}
 		body {
 			font-family: Futura; /*Segoe UI*/
-			color: #95c4ff; /*b4d5ff*/
+			color: #cae2ff; /*b4d5ff, 95c4ff*/
 			font-weight: 600; /*400=normal, 700=bold*/
 			font-size: 16px;
 			-webkit-font-smoothing: antialiased;
