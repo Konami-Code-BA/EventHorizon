@@ -38,9 +38,7 @@
 						</div>
 					</div>
 				</div>
-				<div v-show="showFlashModal" :class="flashModalClass" class="success-modal">
-					{{ t('NO EVENTS') }}
-				</div>
+				<flash-modal :text="t('NO EVENTS')" ref="flashNoEvents"/>
 			</div>
 		</div>
 		<!--day view-->
@@ -92,9 +90,7 @@
 								</button>
 							</div>
 						</div>
-						<div v-else style="list-style-type: none;">
-							{{t('NO EVENTS')}}
-						</div>
+						<flash-modal :text="t('NO EVENTS')" ref="flashNoEvents"/>
 					</div>
 				</div>
 			</div>
@@ -106,10 +102,12 @@
 	import translations from '@/functions/translations.js'
 	import f from '@/functions/functions.js'
 	import eventBlock from '@/components/eventBlock.vue'
+	import flashModal from '@/components/flashModal.vue'
 	export default {
 		name: 'eventsCalendar',
 		components: {
 			eventBlock,
+			flashModal,
 		},
 		data () {
 			return {
@@ -119,8 +117,6 @@
 				selectedDate: 0,
 				eventDates: {},
 				loaded: false,
-				showFlashModal: false,
-				flashModalClass: null,
 			}
 		},
 		created () {
@@ -214,7 +210,7 @@
 				if (this.getEventsFromDate(date).length > 0) {
 					this.selectedDate = date
 				} else {
-					await f.flashModal(this)  // flash no events modal
+					await this.$refs.flashNoEvents.flashModal()
 				}
 			},
 			goToToday () {

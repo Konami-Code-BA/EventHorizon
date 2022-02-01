@@ -218,12 +218,4 @@ export default {
             setTimeout(() => { thiss.shakeIt = false; }, 1000)
         }
     },
-    async flashModal(thiss, time = 700) { // .7 seconds
-        thiss.showFlashModal = true
-        await new Promise(r => setTimeout(r, time))
-        thiss.flashModalClass = 'fade-out'
-        await new Promise(r => setTimeout(r, 1000)) // 1 seconds
-        thiss.showFlashModal = false
-        thiss.flashModalClass = null
-    },
 }

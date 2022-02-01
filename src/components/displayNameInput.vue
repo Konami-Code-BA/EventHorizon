@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div>
-			<input :placeholder="placeholder" v-model="displayName" type="text"  :id="`displayName${usage}`"
+			<input :placeholder="placeholder" v-model="displayName" type="text" :id="`displayName${usage}`"
 					autocorrect="off" autocapitalize="words" style="width: 100%" v-on:keyup.enter="enter()"/>
 		</div>
 		<div class="line-height" :class="{'shake' : shakeIt}" style="color: red">
