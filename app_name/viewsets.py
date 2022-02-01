@@ -301,7 +301,8 @@ To view this event, go here: {f.create_url(f'/?page=event&id={event.id}')}
 To message back: go to the event (above link) ⇨ Show People ⇨ {
 	'Hosts' if f.user_in_guest_statuses(event, request.user.id, ['hosts']) else 'Total Invited'
 }
-*Note: You can't turn off direct messages from hosts""",
+*Note: You can't turn off direct messages from hosts
+*Note: you can't reply to this message here""",
 				notification_type='DM',
 				)
 			return
@@ -333,7 +334,8 @@ Direct Message From Host:
 
 To view this event, go here: {f.create_url(f'/?page=event&id={event.id}')}
 To message the host: go to the event (above link) ⇨ Show People ⇨ Hosts
-*Note: You can't turn off direct messages from hosts""",
+*Note: You can't turn off direct messages from hosts
+*Note: you can't reply to this message here""",
 					notification_type='DM',
 				)
 				continue
