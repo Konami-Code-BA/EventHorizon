@@ -73,7 +73,7 @@
 		height: 100%;
 	}
 	.selected {
-		background-color: rgba(255, 255, 255, .2);  /*140,128,151,0.6 after combinging with #18002e*/
+		background-color: rgba(255, 255, 255, .3);  /*140,128,151,0.6 after combinging with #18002e*/
 		width: 100%;
 		height: 100%;
 	}
