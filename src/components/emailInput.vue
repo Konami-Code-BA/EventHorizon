@@ -2,7 +2,7 @@
 	<div>
 		<div>
 			<input :placeholder="t('EMAIL')" v-model="email" type="text" :id="`email${usage}`" autocorrect="off"
-					autocapitalize="none" style="width: 100%"/>
+					autocapitalize="none" style="width: 100%" v-on:keyup.enter="enter()"/>
 		</div>
 		<div class="line-height" :class="{'shake' : shakeIt}" style="color: red">
 			<small>{{t(error)}}</small>
@@ -25,6 +25,7 @@
 		},
 		props: {
 			usage: {},
+			enter: { type: Function, default: () => {} },
 		},
 		mounted () {
 			this.hasErrors()

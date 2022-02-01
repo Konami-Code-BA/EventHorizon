@@ -1,14 +1,11 @@
 <template>
 	<div class="main" style="display: flex; flex-direction: column; justify-content: center">
-		<form v-on:keyup.enter="changePassword()" style="width: 80%;">
-			<password-input ref="passwordInput" :doublePassword="true" usage="ResetPassword"/>
-		</form>
+		<password-input ref="passwordInput" :doublePassword="true" usage="ResetPassword" :enter="changePassword"
+				style="width: 80%;"/>
 		<button v-on:click.prevent="changePassword()" class="button">
 			{{ t('CHANGE PASSWORD') }}
 		</button>
-		<div v-if="showFlashModal" :class="flashModalClass" class="success-modal">
-			{{ t('PASSWORD CHANGED!') }}
-		</div>
+		<flash-modal :text="t('PASSWORD CHANGED!')" ref="flashPasswordChangedForgot" :time="1000"/>
 	</div>
 </template>
 <script>
@@ -17,16 +14,16 @@
 	import translations from '@/functions/translations.js'
 	import api from '@/functions/apiFunctions.js'
 	import f from '@/functions/functions.js'
+	import flashModal from '@/components/flashModal.vue'
 	export default {
 		name: 'resetPassword',
 		components: {
 			passwordInput,
+			flashModal,
 		},
 		data () {
 			return {
 				store: store,
-				showFlashModal: false,
-				flashModalClass: null,
 			}
 		},
 		async mounted () {
@@ -53,7 +50,7 @@
 				)
 				if (!user.error) {
 					this.store.loading = false
-					await f.flashModal(this, 1000)  // flash password changed modal
+					await this.$refs.flashPasswordChangedForgot.flashModal()
 					window.initMap()
 					let nextPage = f.createNextPageFromCurrentPage()
 					f.goToPage(nextPage)
@@ -69,16 +66,4 @@
 	} // export
 </script>
 <style scoped>
-	.success-modal {
-		position: fixed;
-		color: white;
-		font-size: 24px;
-		left: 50%;
-		top: 50%;
-		transform: translate(-50%, -50%);
-		background-color: rgba(0, 0, 0, .8);
-		z-index: 1000;
-		width: 90%;
-		text-align: center;
-	}
 </style>

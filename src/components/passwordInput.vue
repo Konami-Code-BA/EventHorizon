@@ -4,8 +4,9 @@
 			<div style="display: flex; flex-direction: row">
 				<input :placeholder="placeholder1" v-model="password"
 					:type="[showPassword ? 'text' : 'password']" style="flex-grow: 1; width: 100%"
-					:id="`password${usage}`" autocorrect="off" autocapitalize="none"/>
-				<button v-on:click.prevent="showButton()" class="button" style="width: 80px" type="button">
+					:id="`password${usage}`" autocorrect="off" autocapitalize="none" v-on:keyup.enter="enter()"/>
+				<button v-on:click.prevent="showButton()" class="button" style="width: 45px; font-size: 12px;"
+						type="button">
 					<small v-if="!showPassword">
 						{{ t('SHOW') }}
 					</small>
@@ -22,8 +23,9 @@
 			<div style="display: flex; flex-direction: row">
 				<input :placeholder="placeholder2" v-model="password2"
 					:type="[showPassword2 ? 'text' : 'password']" style="flex-grow: 1; width: 100%"
-					:id="`password2${usage}`" autocorrect="off" autocapitalize="none"/>
-				<button v-on:click.prevent="showButton2()" class="button" style="width: 80px" type="button">
+					:id="`password2${usage}`" autocorrect="off" autocapitalize="none" v-on:keyup.enter="enter()"/>
+				<button v-on:click.prevent="showButton2()" class="button" style="width: 45px; font-size: 12px;"
+						type="button">
 					<small v-if="!showPassword2">
 						{{ t('SHOW') }}
 					</small>
@@ -62,6 +64,7 @@
 			doublePassword: { default: false },
 			usage: {},
 			customPlaceholder: { default: '' },
+			enter: { type: Function, default: () => {} },
 		},
 		created () {
 			if (this.customPlaceholder) {
