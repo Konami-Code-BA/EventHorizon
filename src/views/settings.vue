@@ -77,9 +77,7 @@
 				</button>
 			</div>
 		</modal>
-		<div v-if="showFlashModal" :class="flashModalClass" class="success-modal">
-			{{ t('PASSWORD CHANGED!') }}
-		</div>
+		<flash-modal :text="t('PASSWORD CHANGED!')" ref="flashPasswordChangedSettings" :time="1000"/>
 	</div>
 </template>
 <script>
@@ -91,6 +89,7 @@
 	import passwordInput from '@/components/passwordInput.vue'
 	import lineButton from '@/components/lineButton.vue'
 	import modal from '@/components/modal.vue'
+	import flashModal from '@/components/flashModal.vue'
 	export default {
 		name: 'settings',
 		components: {
@@ -98,14 +97,13 @@
 			lineButton,
 			emailInput,
 			passwordInput,
+			flashModal,
 		},
 		data () {
 			return {
 				store: store,
 				showAddEmailModal: false,
 				showChangePasswordModal: false,
-				showFlashModal: false,
-				flashModalClass: null,
 			}
 		},
 		props: {
@@ -187,7 +185,7 @@
 					this.$refs.passwordInput2.password = ''
 					this.$refs.passwordInput2.password2 = ''
 					this.store.loading = false
-					await f.flashModal(this, 1000)  // flash password changed modal
+					await this.$refs.flashPasswordChangedSettings.flashModal()
 					return
 				}
 				if (user.error == 'wrong code or password') {
@@ -213,7 +211,7 @@
 		position: fixed;
 		height: 20px;
 		width: 20px;
-		transform: translate(110px, 0);
+		transform: translate(90px, 0);
 		z-index: 1;
 	}
 	.line-coloring {
@@ -237,17 +235,5 @@
 	.button {
 		width: 80%;
 		z-index:2;
-	}
-	.success-modal {
-		position: fixed;
-		color: white;
-		font-size: 24px;
-		left: 50%;
-		top: 50%;
-		transform: translate(-50%, -50%);
-		background-color: rgba(0, 0, 0, .8);
-		z-index: 1000;
-		width: 90%;
-		text-align: center;
 	}
 </style>
