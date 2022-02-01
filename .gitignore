@@ -3,6 +3,3 @@
 \frontend\node_modules
 \backup\frontend\node_modules
 \node_modules
-\project_name\__pycache__
-\app_name\__pycache__
-db.sqlite3
