@@ -1,5 +1,5 @@
 <template>
-	<div class="main" v-if="store.events.selected && !store.loading">
+	<div class="main" v-if="store.events.selected && !store.loading" style="overflow-y: scroll">
 		<div style="width: 98%;">
 			<div class="flex-row" style="align-items: center; justify-content: center; height: 60px;">
 				<h2 style="max-width: 80%; overflow-x: scroll; max-height: 100%; overflow-y: hidden;
@@ -140,7 +140,7 @@
 				<div v-if="(myAttendingStatus['invited'] || myAttendingStatus['invite_request'])"
 						style="display: flex; flex-direction: row; align-items: flex-start; width: 100%;">
 					<display-name-input ref="displayNameInput" usage="PlusOne" :dontStartError="true"
-					v-if="!plusOneStatus" style="width: 50%;"/>
+							v-if="!plusOneStatus" style="width: 50%;" :enter="changePlusOne"/>
 					<div v-else style="width: 50%;">Plus One: {{plusOneStatus.slice(5)}}</div>
 					<div class="dual-set" style="padding-bottom: 2px; width: auto; align-self: flex-start">
 						<button class="button" v-on:click.prevent="changePlusOne()">
@@ -569,7 +569,6 @@
 				}  // otherwise, if my status is already this status, do nothing
 			},
 			async changePlusOne () {
-				console.log(this.plusOneStatus)
 				if (this.plusOneStatus) {
 					store.loading = true
 					await api.deletePlusOne(this.event.id)
@@ -605,7 +604,6 @@
 						ids.push(this.people[guestStatus][i]['id'])
 					}
 				}
-				console.log('IDS', ids)
 				await api.messageUsers(this.event.id, ids, this.messageContent)
 				this.messageAllPeople = false
 			},

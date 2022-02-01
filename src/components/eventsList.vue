@@ -1,8 +1,12 @@
 <template>
 	<div style="display: flex; flex-direction: column; align-items: center; padding-top: 5px;">
-		<div>
-			<input :placeholder="t('SEARCH')" v-model="search" type="text" autocorrect="off" autocapitalize="none"
-					style="width: 100%"/>
+		<div style="display: flex; flex-direction: row; justify-content: center; align-items: center;">
+			<input :placeholder="t('SEARCH')" :value="search" @input="setSearch" type="text" autocorrect="off"
+					autocapitalize="none" style="width: 100%" v-on:keyup.enter="removeFocus()" id="search"/>
+			<div style="width: 10px;"/>
+			<button v-on:click.prevent="search = ''" class="no-border-button x-button">
+				✖
+			</button>
 		</div>
 		<div style="width: 100%; overflow-y: scroll; overflow-x: hidden; display: flex; flex-direction: column;
 				align-items: center; padding-left: 10px; height: 100%;" id="scroller">
@@ -71,6 +75,9 @@
 		},
 		methods: {
 			t (w) { return translations.t(w) },
+			removeFocus() {
+				document.getElementById('search').blur()
+			},
 			scrollIt () {
 				let el = document.getElementById(`item${this.selectedEvent.id}`)
 				let scroller = document.getElementById('scroller')
@@ -79,7 +86,10 @@
 			},
 			openEventModal (id) {
 				f.goToPage({ page: 'event', args: { id: id } })
-			}
+			},
+			setSearch (evt) {
+				this.search = evt.target.value
+			},
 		}
 	}
 </script>
