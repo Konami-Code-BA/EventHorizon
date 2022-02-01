@@ -1,14 +1,10 @@
 <template>
 	<div class="main" style="display: flex; flex-direction: column; justify-content: center">
-		<form v-on:keyup.enter="forgotPassword()" style="width: 80%;">
-			<email-input ref="emailInput" usage="ForgotPassword"/>
-		</form>
+		<email-input ref="emailInput" usage="ForgotPassword" :enter="forgotPassword" style="width: 80%;"/>
 		<button v-on:click.prevent="forgotPassword()" class="button">
-			{{ t('SEND CHANGE PASSWORD EMAIL') }}
+			{{ t('SEND EMAIL') }}
 		</button>
-		<div v-if="showFlashModal" :class="flashModalClass" class="success-modal">
-			{{ t('PASSWORD-CHANGE EMAIL SENT!') }}
-		</div>
+		<flash-modal :text="t('PASSWORD-CHANGE EMAIL SENT!')" ref="flashPasswordEmailSent" :time="2000"/>
 	</div>
 </template>
 <script>
@@ -17,16 +13,16 @@
 	import api from '@/functions/apiFunctions.js'
 	import f from '@/functions/functions.js'
 	import emailInput from '@/components/emailInput.vue'
+	import flashModal from '@/components/flashModal.vue'
 	export default {
 		name: 'forgotPassword',
 		components: {
 			emailInput,
+			flashModal,
 		},
 		data () {
 			return {
 				store: store,
-				showFlashModal: false,
-				flashModalClass: null,
 			}
 		},
 		mounted () {
@@ -40,7 +36,7 @@
 				let user = await api.forgotPassword(this.$refs.emailInput.email, returnUrl)
 				if (!user.error) {
 					this.store.loading = false
-					await f.flashModal(this, 2000)  // flash email sent modal
+					await this.$refs.flashPasswordEmailSent.flashModal()
 				}
 				if (user.error == "This email is not registered") {
 					this.$refs.emailInput.error = user.error
@@ -54,17 +50,5 @@
 <style scoped>
 	.button {
 		width: 80%;
-	}
-	.success-modal {
-		position: fixed;
-		color: white;
-		font-size: 24px;
-		left: 50%;
-		top: 50%;
-		transform: translate(-50%, -50%);
-		background-color: rgba(0, 0, 0, .8);
-		z-index: 1000;
-		width: 90%;
-		text-align: center;
 	}
 </style>
