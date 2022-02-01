@@ -11,7 +11,7 @@
 					<button v-on:click.prevent="copyToClipboard()" class="button" style="border: none;">
 						<img src="@/assets/copyIcon.png" class="icon"/>
 					</button>
-						{{url}}
+					<div style="width: 90%; overflow-wrap: break-word;">{{url}}</div>
 				</div>
 
 				<div class="line-height"/>
@@ -21,9 +21,7 @@
 				</button>
 			</div>
 		</modal>
-		<div v-if="showFlashModal" :class="flashModalClass" class="success-modal">
-			{{ t('COPIED!') }}
-		</div>
+		<flash-modal :text="t('COPIED!')" ref="flashCoppied"/>
 	</div>
 </template>
 <script>
@@ -31,16 +29,16 @@
 	import translations from '@/functions/translations.js'
 	import modal from '@/components/modal'
 	import f from '@/functions/functions.js'
+	import flashModal from '@/components/flashModal.vue'
 	export default {
 		name: 'urlDisplay',
 		components: {
 			modal,
+			flashModal,
 		},
 		data () {
 			return {
 				store: store,
-				showFlashModal: false,
-				flashModalClass: null,
 			}
 		},
 		computed: {
@@ -62,7 +60,7 @@
 				//textArea.select()
 				//document.execCommand('copy')
 
-				await f.flashModal(this)  // flash copied! modal
+				await this.$refs.flashCoppied.flashModal()
 			},
 			share () {
 				navigator.share({url: this.url})
@@ -71,14 +69,4 @@
 	} // export
 </script>
 <style scoped>
-	.success-modal {
-		position: fixed;
-		color: white;
-		font-size: 32px;
-		left: 50%;
-		top: 50%;
-		transform: translate(-50%, -50%);
-		background-color: rgba(0, 0, 0, .5);
-		z-index: 1000;
-	}
 </style>
