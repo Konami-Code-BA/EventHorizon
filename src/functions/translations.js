@@ -142,9 +142,9 @@ export default {
             'EN': 'ADD EMAIL ADDRESS',
             'JP': 'メールアドレスを追加する'
         },
-        'SEND CHANGE PASSWORD EMAIL': {
-            'EN': 'SEND CHANGE PASSWORD EMAIL',
-            'JP': 'パスワード変更メールを送る'
+        'SEND EMAIL': {
+            'EN': 'SEND EMAIL',
+            'JP': 'メールを送る'
         },
         'CURRENT PASSWORD IS INCORRECT': {
             'EN': 'CURRENT PASSWORD IS INCORRECT',
