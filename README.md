@@ -7,7 +7,7 @@
 1. Clone the repository
     ```shell script
     cd documents/programming
-    git clone h
+    git clone https://github.com/TecKno3/EventHorizon
     ```
     - *Note* You will need to input your username and personal access token in order to clone
 1. Setup python virtual environment and install python packages
