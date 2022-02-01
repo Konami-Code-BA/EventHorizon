@@ -280,11 +280,18 @@
 			border: 2px solid #ffe07a;
 			border-radius: 15px;
 			padding: 20px;
+			padding-right: 10px;
 			width: 80%;
 			max-height: 80%;
 			max-width: 300px;
 			z-index: 101;
 			pointer-events: auto;
+			overflow-y: scroll;
+			overflow-x: scroll;
+		}
+		::-webkit-scrollbar-corner {
+			background-color: #18002e;
+			visibility: hidden;
 		}
 		.no-border-button, .no-border-button:hover, .no-border-button:active, .no-border-button.pointer {
 			border: none;
