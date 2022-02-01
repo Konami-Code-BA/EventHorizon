@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
-import django_heroku
+# import django_heroku
 from decouple import config
 import os
 
@@ -31,13 +31,13 @@ ALLOWED_HOSTS = [
     'localhost',
     'localhost/',
     '127.0.0.1',
-    '127.0.0.1/'
+    '127.0.0.1/',
 ]
 
 CORS_ALLOW_CREDENTIALS = True
 CSRF_COOKIE_NAME = 'XSRF-TOKEN'
 
-#CORS_ALLOW_ALL_ORIGINS = True  # dangerous, want to restrict origins that can make cross-origin requests
+# CORS_ALLOW_ALL_ORIGINS = True  # dangerous, want to restrict origins that can make cross-origin requests
 CORS_ALLOWED_ORIGINS = (
  'http://127.0.0.1:8080',
  'http://127.0.0.1:8000',
@@ -192,5 +192,5 @@ TEMPLATES[0]['DIRS'] += [
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-Activate Django-Heroku.
-django_heroku.settings(locals())
+# Activate Django-Heroku.
+# django_heroku.settings(locals())
