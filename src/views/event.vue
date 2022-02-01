@@ -146,7 +146,8 @@
 						<button class="button" v-on:click.prevent="changePlusOne()">
 							ADD A PLUS ONE
 							&nbsp;
-							<input type="checkbox" class="checkbox" v-model="plusOneStatus" :key="plusOneStatus"/>  <!--need to check if i have plus one and put in checkbox and show name instead of input-->
+							<input type="checkbox" class="checkbox" v-model="plusOneStatus" :key="plusOneStatus"/>
+							<!--need to check if i have plus one and put in checkbox and show name instead of input-->
 						</button>
 					</div>
 				</div>
