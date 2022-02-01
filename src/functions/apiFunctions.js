@@ -311,28 +311,37 @@ export default {
     },
     async changeGuestStatus(eventId, status, userId = null) {
         if (f.isoStringDateToDateObject(store.events.selected.date_time) > f.today) { // this protection isnt in api yet
-            return await this.eventsApi('patch', eventId, {
+            await this.eventsApi('patch', eventId, {
                 command: 'update_guest_status',
                 status: status,
                 user_id: userId,
             })
+            return 'done'
+        } else {
+            return 'failed'
         }
     },
     async setPlusOne(eventId, plusOneName) {
         if (f.isoStringDateToDateObject(store.events.selected.date_time) > f.today) { // this protection isnt in api yet
-            return await this.plusOneApi('post', null, {
+            await this.plusOneApi('post', null, {
                 command: 'set_plus_one',
                 plus_one_name: plusOneName,
                 event_id: eventId,
             })
+            return 'done'
+        } else {
+            return 'failed'
         }
     },
     async deletePlusOne(eventId) {
         if (f.isoStringDateToDateObject(store.events.selected.date_time) > f.today) { // this protection isnt in api yet
-            return await this.plusOneApi('post', null, {
+            await this.plusOneApi('post', null, {
                 command: 'delete_plus_one',
                 event_id: eventId,
             })
+            return 'done'
+        } else {
+            return 'failed'
         }
     },
     //async getEventWithClosestFutureDate(date_time) {
