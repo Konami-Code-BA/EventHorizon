@@ -1,5 +1,5 @@
 <template>
-	<div class="main" v-if="store.events.selected && !store.loading" style="overflow-y: scroll">
+	<div class="main" v-if="store.events.selected && event" style="overflow-y: scroll">
 		<div style="width: 98%;">
 			<div class="flex-row" style="align-items: center; justify-content: center; height: 60px;">
 				<h2 style="max-width: 80%; overflow-x: scroll; max-height: 100%; overflow-y: hidden;
@@ -417,6 +417,8 @@
 				</button>
 			</div>
 		</modal>
+		<flash-modal :text="'DONE!'" ref="flashDone" :time="1500"/>
+		<flash-modal :text="'CAN\'T CHANGE PAST EVENTS'" ref="flashCantChangePastEvents" :time="1500"/>
 	</div>
 </template>
 <script>
@@ -427,12 +429,14 @@
 	import tabs from '@/components/tabs.vue'
 	import modal from '@/components/modal.vue'
 	import displayNameInput from '@/components/displayNameInput.vue'
+	import flashModal from '@/components/flashModal.vue'
 	export default {
 		name: 'event',
 		components: {
 			tabs,
 			modal,
 			displayNameInput,
+			flashModal,
 		},
 		data () {
 			return {
@@ -555,26 +559,47 @@
 				}
 				if (status === 'decline' || !this.myAttendingStatus[status]) {
 					store.loading = true
-					await api.changeGuestStatus(this.event.id, status, null)
+					let result = await api.changeGuestStatus(this.event.id, status, null)
+					if (result === 'failed') {
+						store.loading = false
+						await this.$refs.flashCantChangePastEvents.flashModal()
+						return
+					}
 					await f.getEvents()
 					await this.getEventAndMyStatusAndPeople()
 					store.loading = false
+					await this.$refs.flashDone.flashModal()
+					return
 				} else if (status === 'invite_request') {
 					// if my status is already this status, only change it if im changing invite_request
 					store.loading = true
-					await api.changeGuestStatus(this.event.id, 'decline', null)
+					let result = await api.changeGuestStatus(this.event.id, 'decline', null)
+					if (result === 'failed') {
+						store.loading = false
+						await this.$refs.flashCantChangePastEvents.flashModal()
+						return
+					}
 					await f.getEvents()
 					await this.getEventAndMyStatusAndPeople()
 					store.loading = false
+					await this.$refs.flashDone.flashModal()
+					return
 				}  // otherwise, if my status is already this status, do nothing
 			},
 			async changePlusOne () {
 				if (this.plusOneStatus) {
 					store.loading = true
-					await api.deletePlusOne(this.event.id)
+					let result = await api.deletePlusOne(this.event.id)
+					if (result === 'failed') {
+						store.loading = false
+						await this.$refs.flashCantChangePastEvents.flashModal()
+						return
+					}
 					await f.getEvents()
 					await this.getEventAndMyStatusAndPeople()
 					store.loading = false
+					await this.$refs.flashDone.flashModal()
+					return
 				} else {
 					if (this.$refs.displayNameInput.displayName === '') {
 						this.$refs.displayNameInput.error = 'Required'
@@ -584,10 +609,17 @@
 						return
 					}
 					store.loading = true
-					await api.setPlusOne(this.event.id, this.$refs.displayNameInput.displayName)
+					let result = await api.setPlusOne(this.event.id, this.$refs.displayNameInput.displayName)
+					if (result === 'failed') {
+						store.loading = false
+						await this.$refs.flashCantChangePastEvents.flashModal()
+						return
+					}
 					await f.getEvents()
 					await this.getEventAndMyStatusAndPeople()
 					store.loading = false
+					await this.$refs.flashDone.flashModal()
+					return
 				}
 			},
 			openInGoogleMaps () {
