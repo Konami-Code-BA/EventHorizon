@@ -31,6 +31,9 @@
 		async mounted () {
 			let result = await api.checkUserStatus(this.event.id)
 			this.userStatus = result[0].status
+			if (this.event.image_data) {
+				this.image = this.event.image_data
+			}
 		},
 		methods: {
 			t (w) { return translations.t(w) },

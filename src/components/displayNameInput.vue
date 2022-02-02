@@ -2,7 +2,8 @@
 	<div>
 		<div>
 			<input :placeholder="placeholder" v-model="displayName" type="text" :id="`displayName${usage}`"
-					autocorrect="off" autocapitalize="words" style="width: 100%" v-on:keyup.enter="enter()"/>
+					autocorrect="off" autocapitalize="words" style="width: 100%" v-on:keyup.enter="enter()"
+					autocomplete="off"/>
 		</div>
 		<div class="line-height" :class="{'shake' : shakeIt}" style="color: red">
 			<small>{{t(error)}}</small>
