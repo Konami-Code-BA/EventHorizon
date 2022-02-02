@@ -84,9 +84,9 @@
 						align-items: center; padding-left: 10px; height: 100%;" id="scroller">
 					<div style="width: 90%;">
 						<div class="list" v-if="getEventsFromDate(selectedDate).length > 0">
-							<div v-for="event in getEventsFromDate(selectedDate)" style="width: 100%; height: 50px;">
-								<button v-on:click.prevent="openEventModal(event.id)" class="no-border-button">
-									<event-block :event="event"/>
+							<div v-for="event in getEventsFromDate(selectedDate)"  class="event-card-item">
+								<button v-on:click.prevent="openEventModal(event.id)" class="no-border-button" style="width: 100%; margin-top: 2px;">
+									<event-block :event="event" style="width: 100%"/>
 								</button>
 							</div>
 						</div>
@@ -262,5 +262,10 @@
 		width: 100%;
 		height: 100%;
 		padding-top: 10px;
+	}
+	.event-card-item {
+		width:100%;
+		height: 50px;
+		margin: 4px auto;
 	}
 </style>
