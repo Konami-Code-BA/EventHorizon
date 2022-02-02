@@ -12,7 +12,7 @@
 				align-items: center; padding-left: 10px; height: 100%;" id="scroller">
 			<div style="width: 90%;">
 				<div class="list">
-					<div v-for="event in listEvents" style="width: 100%; height: 50px;">
+					<div v-for="event in listEvents" class="event-card-item" style="">
 						<button v-on:click.prevent="openEventModal(event.id)" class="no-border-button"
 								style="width: 100%;" :id="`item${event.id}`">
 							<event-block :event="event"/>
@@ -106,4 +106,10 @@
 		height: 100%;
 		padding-top: 10px;
 	}
+
+  .event-card-item {
+    width:100%;
+    height: 50px;
+    margin: 4px auto;
+  }
 </style>
