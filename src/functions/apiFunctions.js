@@ -354,21 +354,22 @@ export default {
     //},
     // IMAGES //////////////////////////////////////////////////////////////////////////////////////////////////////////
     async saveImage(formData) {
-        formData.append('command', 'create')
+        formData.append('command', 'upload_image')
         let result = await this.imagesApi('post', null, formData)
         return result[0]
     },
-    async getEventImage(pk, eventId) {
+    async getEventImage(imageId, eventId) {
         let formData = new FormData()
         formData.append('event_pk', eventId)
-        formData.append('command', 'get')
-        let result = await this.imagesApi('patch', pk, formData)
+        formData.append('command', 'get_event_image')
+        formData.append('image_id', imageId)
+        let result = await this.imagesApi('post', null, formData)
         return result[0]
     },
-    async getImage(keys) {
+    async getImage(keys) { // for getting images in general
         let formData = new FormData()
         formData.append('keys', keys)
-        formData.append('command', 'get')
+        formData.append('command', 'get_image')
         let result = await this.imagesApi('post', null, formData)
         return result
     },
