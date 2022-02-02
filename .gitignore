@@ -3,4 +3,5 @@
 \frontend\node_modules
 \backup\frontend\node_modules
 \node_modules
-__pycache__
+*/__pycache__/*
+db.sqlite3
