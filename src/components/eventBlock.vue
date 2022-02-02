@@ -45,8 +45,8 @@
 		flex-direction: row;
 		justify-content: space-between;
 		align-items: center;
-    background-color: rgba(248, 248, 242, 0.9);
-    color: black;
+    background-color: rgba(255, 255, 255, .1);
+    color: #cae2ff;
     padding: 8px;
     border-radius: 4px;
 	}
