@@ -9,7 +9,7 @@
 				<form v-on:keyup.enter="login()" v-if="isAdmin">
 					<div style="padding-bottom: 5px;">
 						<input :placeholder="t('EVENT NAME')" v-model="name" type="text"
-								autocapitalize="words"/>
+								autocapitalize="words" autocomplete="off"/>
 					</div>
 					<div class="dual-set" style="padding-bottom: 5px;">
 						<button class="button" style="width: 100%" v-on:click.prevent="is_private=!is_private">
@@ -19,22 +19,24 @@
 					</div>
 					<div>
 						<textarea :placeholder="t('DESCRIPTION')" v-model="description" type="text"
-								autocapitalize="sentences" style="height: 60px"/>
+								autocapitalize="sentences" style="height: 60px" autocomplete="off"/>
 					</div>
 					<div style="padding-bottom: 5px;">
 						<input :placeholder="t('ADDRESS')" v-model="address" type="text" autocorrect="none"
-								autocapitalize="words"/>
+								autocapitalize="words" autocomplete="off"/>
 					</div>
 					<div style="padding-bottom: 5px;">
 						<input :placeholder="t('VENUE NAME')" v-model="venue_name" type="text" autocorrect="none"
-								autocapitalize="words"/>
+								autocapitalize="words" autocomplete="off"/>
 					</div>
 					<div style="padding-bottom: 5px; width: 100%; display: flex; flex-direction: row;">
 						<div :style="[include_time ? {width: '50%'} : {width: '100%'}]">
-							<input v-model="date" type="date" style="width: 100%; height: 30px; font: inherit; font-size: 11px;"/>
+							<input v-model="date" type="date" autocomplete="off"
+									style="width: 100%; height: 30px; font: inherit; font-size: 11px;"/>
 						</div>
 						<div v-if="include_time" style="width: 50%">
-							<input v-model="time" type="time" style="width: 100%; height: 30px; font: inherit; font-size: 11px;">
+							<input v-model="time" type="time" autocomplete="off" 
+									style="width: 100%; height: 30px; font: inherit; font-size: 11px;">
 						</div>
 					</div>
 					<div class="dual-set" style="padding-bottom: 5px;">
@@ -47,7 +49,8 @@
 						<div>
 							{{ t('IMAGE') }}
 						</div>
-						<input type="file" accept="image/*" @change="(e) => {imageFile = e.target.files[0]}"/>
+						<input type="file" accept="image/*" @change="(e) => {imageFile = e.target.files[0]}"
+								autocomplete="off"/>
 					</div>
 					<div style="padding-top: 5px;">
 						<button class="button" v-on:click.prevent="createEvent()">
