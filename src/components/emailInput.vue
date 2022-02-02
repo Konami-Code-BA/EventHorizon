@@ -2,7 +2,7 @@
 	<div>
 		<div>
 			<input :placeholder="t('EMAIL')" v-model="email" type="text" :id="`email${usage}`" autocorrect="off"
-					autocapitalize="none" style="width: 100%" v-on:keyup.enter="enter()"/>
+					autocapitalize="none" style="width: 100%" v-on:keyup.enter="enter()" autocomplete="off"/>
 		</div>
 		<div class="line-height" :class="{'shake' : shakeIt}" style="color: red">
 			<small>{{t(error)}}</small>
