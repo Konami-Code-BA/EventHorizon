@@ -2,10 +2,10 @@
 	<div class="event-box">
 		<img :src="image" style="height: 40px; width: 40px; object-fit: cover; border-radius: 50%; flex-shrink: 0;">
 		<div style="display: flex; flex-direction: column; align-items: flex-start; width: 100%; min-width: 0">
-			<div style="overflow-x: clip; white-space: nowrap; width: 100%; text-align: left;">
+			<div class="text-area">
 				{{ event.name }}
 			</div>
-			<div style="font-size: 12px; display: flex; flex-direction: row; justify-content: space-between; width: 100%;">
+			<div class="date-area" style="">
 				<div style="font-weight: 100;">{{ event.date_time.split('T')[0] }}</div>
 				<div style="color: green">{{ userStatus }}</div>
 			</div>
@@ -45,5 +45,26 @@
 		flex-direction: row;
 		justify-content: space-between;
 		align-items: center;
+    background-color: rgba(248, 248, 242, 0.9);
+    color: black;
+    padding: 8px;
+    border-radius: 4px;
 	}
+
+  .text-area {
+ overflow-x: clip;
+ white-space: nowrap;
+ width: 100%;
+ text-align: left;
+ margin-left: 8px;
+  }
+
+  .date-area {
+    font-size: 12px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    margin-left: 6px;
+  }
 </style>
