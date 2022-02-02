@@ -77,6 +77,14 @@ export default {
     },
     async getEvents() {
         let events = await api.getAllEvents()
+        for (let i = 0; i < events.length; i++) {
+            let result = await api.getEventImage(events[i].images[0], events[i].id)
+            console.log('HERE', result)
+                //if ('image_data' in result) {
+                //    let image = "data:image/jpg;base64," + result['image_data']
+                //}
+        }
+
         store.events.all = this.sortEventsByDate(events)
         store.events.mine = this.filterEvents(store.events.all, store.user.id, ['invited'], false)
         store.events.display = store.events.all
