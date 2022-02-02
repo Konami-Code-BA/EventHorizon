@@ -180,14 +180,14 @@
 					'flex-diretion': 'column',
 					'justify-content': 'center',
 					'align-items': 'center',
-					'width': '27px',
-					'height': '27px',
+          'height':'34px',
+          'width':'34px'
 				}
 				let calendarLocation = (week - 1) * 7 + day - 1
 				let date = this.getDateOfCalendarLocation(calendarLocation)
 				let dayDate = date.getDate()
 				if (date.toString().split(' ').slice(0, 4).toString() === f.today.toString().split(' ').slice(0, 4).toString()) {
-					style['border-radius'] = '50%'
+					style['border-radius'] = '4px'
 					style['border'] = '2px solid #cae2ff'
 					style['background-color'] = 'none'
 				}
@@ -201,10 +201,10 @@
 					style['color'] = '#cae2ff !important'
 					style['cursor'] = 'initial !important';
 				} else {
-					style['border-radius'] = '50%'
+					style['border-radius'] = '4px'
 					style['border'] = '2px solid #ffe07a'
 				}
-				return style		
+				return style
 			},
 			async selectDate (date) {
 				if (this.getEventsFromDate(date).length > 0) {
