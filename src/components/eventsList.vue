@@ -2,7 +2,7 @@
 	<div style="display: flex; flex-direction: column; align-items: center; padding-top: 5px;">
 		<div style="display: flex; flex-direction: row; justify-content: center; align-items: center;">
 			<input :placeholder="t('SEARCH')" :value="search" @input="setSearch" type="text" autocorrect="off"
-					autocapitalize="none" style="width: 100%" v-on:keyup.enter="removeFocus()" id="search"/>
+					autocapitalize="none" style="width: 100% padding-bottom: 2px" v-on:keyup.enter="removeFocus()" id="search"/>
 			<div style="width: 10px;"/>
 			<button v-on:click.prevent="search = ''" class="no-border-button x-button">
 				✖
@@ -12,7 +12,7 @@
 				align-items: center; padding-left: 10px; height: 100%;" id="scroller">
 			<div style="width: 90%;">
 				<div class="list">
-					<div v-for="event in listEvents" style="width: 100%; height: 50px;">
+					<div v-for="event in listEvents" class="event-card-item" style="">
 						<button v-on:click.prevent="openEventModal(event.id)" class="no-border-button"
 								style="width: 100%;" :id="`item${event.id}`">
 							<event-block :event="event"/>
@@ -106,4 +106,10 @@
 		height: 100%;
 		padding-top: 10px;
 	}
+
+  .event-card-item {
+    width:100%;
+    height: 50px;
+    margin: 4px auto;
+  }
 </style>
