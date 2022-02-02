@@ -932,46 +932,46 @@ class ImageViewset(viewsets.ViewSet):
 	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
 		pass
 
-	def create(self, request):  # POST {prefix}/ 
-		if request.data['command'] == 'get':
-			result = []
-			for key in request.data['keys'].split(','):
-				if 'MapIcon' in key:
-					result += aws_get_file(key)
-				else: 
-					result += {'error': 'Not authorized'}
+	def create(self, request):  # POST {prefix}/
+		response = eval(f"self.{request.data['command']}(request)")  # SECURITY: inside each command function
+		return response
+
+	def upload_image(self,request):
+		file = request.data['file']
+		result = aws_upload_file(file)
+		if 'error' in result:
+			serializer_data = self.serializer_class([result], many=True).data
+		else:
+			image = self.model(key=result['key'])
+			image.save()
+			serializer_data = self.serializer_class([image], many=True).data
+		return Response(serializer_data)
+
+	def get_image(self, request):
+		result = []
+		for key in request.data['keys'].split(','):
+			if 'MapIcon' in key:
+				result += aws_get_file(key)
+			else: 
+				result += {'error': 'Not authorized'}
+		response = HttpResponse(result)
+		response['Content-Type'] = "image/png"
+		response['Cache-Control'] = "max-age=0"
+		return response
+
+	def get_event_image(self, request):
+		my_events = EventSerializer.Meta.model.objects.filter(invited=request.user.id)
+		event = EventSerializer.Meta.model.objects.get(pk=request.data['event_pk'])
+		image = self.model.objects.get(pk=pk)
+		if image in event.images.all() and event in my_events:
+			result = aws_get_file(image.key)
 			response = HttpResponse(result)
-			response['Content-Type'] = "image/png"
+			response['Content-Type'] = "image/jpg"
 			response['Cache-Control'] = "max-age=0"
 			return response
-		else:  # create
-			file = request.data['file']
-			result = aws_upload_file(file)
-			if 'error' in result:
-				serializer_data = self.serializer_class([result], many=True).data
-			else:
-				image = self.model(key=result['key'])
-				image.save()
-				serializer_data = self.serializer_class([image], many=True).data
-			return Response(serializer_data)
-
-	def partial_update(self, request, pk):  # PATCH {prefix}/{lookup}/
-		if request.data['command'] == 'get':
-			my_events = EventSerializer.Meta.model.objects.filter(invited=request.user.id)
-			event = EventSerializer.Meta.model.objects.get(pk=request.data['event_pk'])
-			image = self.model.objects.get(pk=pk)
-			if image in event.images.all() and event in my_events:
-				result = aws_get_file(image.key)
-				response = HttpResponse(result)
-				response['Content-Type'] = "image/jpg"
-				response['Cache-Control'] = "max-age=0"
-				return response
-			else:
-				serializer_data = self.serializer_class([{'error': 'Not authorized'}], many=True).data
-			return Response(serializer_data)
 		else:
-			serializer_data = self.serializer_class([{'error': 'Not get command'}], many=True).data
-			return Response(serializer_data)
+			serializer_data = self.serializer_class([{'error': 'Not authorized'}], many=True).data
+		return Response(serializer_data)
 
 def aws_upload_file(file):
 	s3_client = boto3.client(
