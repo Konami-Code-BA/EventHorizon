@@ -961,8 +961,8 @@ class ImageViewset(viewsets.ViewSet):
 
 	def get_event_image(self, request):
 		my_events = EventSerializer.Meta.model.objects.filter(invited=request.user.id)
-		event = EventSerializer.Meta.model.objects.get(pk=request.data['event_pk'])
-		image = self.model.objects.get(pk=pk)
+		event = EventSerializer.Meta.model.objects.get(pk=request.data['event_id'])
+		image = self.model.objects.get(pk=request.data['image_id'])
 		if image in event.images.all() and event in my_events:
 			result = aws_get_file(image.key)
 			response = HttpResponse(result)

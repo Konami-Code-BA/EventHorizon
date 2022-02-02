@@ -360,11 +360,15 @@ export default {
     },
     async getEventImage(imageId, eventId) {
         let formData = new FormData()
-        formData.append('event_pk', eventId)
+        formData.append('event_id', eventId)
         formData.append('command', 'get_event_image')
         formData.append('image_id', imageId)
         let result = await this.imagesApi('post', null, formData)
-        return result[0]
+        if (typeof result == 'string') {
+            return result
+        } else {
+            return 'fail'
+        }
     },
     async getImage(keys) { // for getting images in general
         let formData = new FormData()
