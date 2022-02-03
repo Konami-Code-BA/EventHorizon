@@ -15,60 +15,51 @@
 					<small>{{ event.is_private ? 'PRIVATE EVENT' : 'PUBLIC EVENT' }}</small>
 				</div>
 			</div>
-			<img :src="image" style="height: 100px; width: auto; margin-top: 5px; margin-bottom: 5px;"/>
+			<img :src="image" style="height: 160px; width: auto; margin-top: 16px; margin-bottom: 10px;"/>
 			<div class="flex-table">
-				<br v-if="(!event.is_private || myAttendingStatus['invited']) && event.venue_name"/>
+				<!-- <br v-if="(!event.is_private || myAttendingStatus['invited']) && event.venue_name"/> -->
 				<div v-if="(!event.is_private || myAttendingStatus['invited']) && event.venue_name" class="flex-row"
-						style="justify-content: space-between;">
-					<div>
-						VENUE :
-					</div>
-					<div>
-						{{ event.venue_name }}
-					</div>
+						style="justify-content: space-between; flex-direction: column">
+					<p class="event-attr">
+						<strong>Venue</strong>
+					</p>
+					<p class="address-value" style="margin-bottom: 1em;"> {{ event.venue_name }}
+					</p>
 				</div>
-				<br>
+						<small class="event-attr">Address</small> <small class="address-value">{{ event.address }}</small>
 				<div style="align-self: center; width: 100%;">
-					<button v-on:click.prevent="openInGoogleMaps()" class="button"
-							style="align-self: center; white-space: pre-line; height: auto; min-height: 30px;">
-						<small>{{ event.address }}</small>
+					<button v-on:click.prevent="openInGoogleMaps()" class="button event-page-button google-maps-button">
+            Open in Google Maps
 					</button>
 				</div>
-				<br>
-				<button v-on:click.prevent="showDescription=!showDescription" class="button"
-						style="align-self: center; white-space: pre-line; height: auto; min-height: 30px;">
-					<div v-if="!showDescription" style="display: flex; flex-direction: row; align-items: center;
-						justify-content: space-between; width: 100%;">
+				<button v-on:click.prevent="showDescription=!showDescription" class="button event-page-button">
+					<div v-if="!showDescription" class="drop-down-button">
 						<div style="width: 10px;"/>
 						<div>SHOW DESCRIPTION</div>
 						<div style="width: 10px;">⇩</div>
 					</div>
-					<div v-else style="display: flex; flex-direction: row; align-items: center;
-						justify-content: space-between; width: 100%;">
+					<div v-else class="drop-down-button">
 						<div style="width: 10px;"/>
 						<div>HIDE DESCRIPTION</div>
 						<div style="width: 10px;">⇧</div>
 					</div>
 				</button>
-				<div style="align-self: center; overflow-y: scroll; max-height: 100px; height: auto;" v-show="showDescription">
+				<div style="align-self: center; overflow-y: scroll; max-height: 100px; height: auto; margin-bottom: 0.7em" v-show="showDescription">
 					{{ event.description }}
 				</div>
-				<br>
-				<button v-on:click.prevent="showPeople=!showPeople" class="button" style="align-self: center">
-					<div v-if="!showPeople" style="display: flex; flex-direction: row; align-items: center;
-						justify-content: space-between; width: 100%;">
+				<button v-on:click.prevent="showPeople=!showPeople" class="button event-page-button" style="align-self: center">
+					<div v-if="!showPeople" class="drop-down-button">
 						<div style="width: 10px;"/>
 						<div>SHOW PEOPLE</div>
 						<div style="width: 10px;">⇩</div>
 					</div>
-					<div v-else style="display: flex; flex-direction: row; align-items: center;
-						justify-content: space-between; width: 100%;">
+					<div v-else class="drop-down-button">
 						<div style="width: 10px;"/>
 						<div>HIDE PEOPLE</div>
 						<div style="width: 10px;">⇧</div>
 					</div>
 				</button>
-				<div v-show="showPeople">
+				<div v-show="showPeople" style="margin-bottom: 1em">
 					<div>
 						<div style="border: 2px solid rgba(255, 255, 255, .3); margin-bottom: 3px; border-radius: 7px;
 								padding: 5px; width: 100%;">
@@ -226,16 +217,14 @@
 					</div>
 				</div>
 			</div>
-			<br>
+			<!-- <br> -->
 			<button v-on:click.prevent="showEventStatus=!showEventStatus" class="button" style="align-self: center">
-					<div v-if="!showEventStatus" style="display: flex; flex-direction: row; align-items: center;
-						justify-content: space-between; width: 100%;">
+					<div v-if="!showEventStatus" class="drop-down-button">
 						<div style="width: 10px;"/>
 						<div>SHOW EVENT STATUS</div>
 						<div style="width: 10px;">⇩</div>
 					</div>
-					<div v-else style="display: flex; flex-direction: row; align-items: center;
-						justify-content: space-between; width: 100%;">
+					<div v-else class="drop-down-button">
 						<div style="width: 10px;"/>
 						<div>HIDE EVENT STATUS</div>
 						<div style="width: 10px;">⇧</div>
@@ -244,7 +233,7 @@
 			<div v-show="!isSpaceToAttend && showEventStatus" style="color: red; width: 100%; text-align: center;">
 				THE EVENT IS FULL
 			</div>
-			<div style="width: 100%; display: flex; flex-direction: column; align-items: center;
+			<div style="margin-top: 0.7em; width: 100%; display: flex; flex-direction: column; align-items: center;
 					border: 2px solid rgba(255, 255, 255, .3); border-radius: 7px;" v-show="showEventStatus">
 				<div class="dual-set" v-if="myAttendingStatus['invited']" style="border-bottom: 2px solid rgba(255, 255, 255, .3)">
 					YOU ARE INVITED
@@ -712,4 +701,41 @@
 	.tabs {
 		border: none;
 	}
+
+  .event-page-button{
+    align-self: center;
+    /* white-space: pre-line; */
+    height: auto;
+    min-height: 30px;
+    margin-bottom: 1em;
+  }
+
+  .drop-down-button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .google-maps-button {
+    align-self: center;
+    height: auto;
+    min-height: 30px;
+    margin-bottom: 1em;
+    background-color:#ffe07a;
+    color: black;
+  }
+
+  .address-value {
+    margin: 0 auto;
+  }
+
+  .event-attr {
+    border-bottom: solid 1px;
+    width: 70%;
+    margin-bottom: 2px;
+    text-align: center;
+    margin: 0 auto;
+  }
 </style>
