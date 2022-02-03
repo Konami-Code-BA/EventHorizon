@@ -265,7 +265,7 @@
 	}
 	.event-card-item {
 		width:100%;
-		height: 50px;
-		margin: 4px auto;
+		margin: 6px auto;
+    min-height: 50px;
 	}
 </style>
