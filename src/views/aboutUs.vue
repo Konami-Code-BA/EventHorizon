@@ -1,7 +1,9 @@
 <template>
 	<div class="main">
+		<br>
 		ABOUT US
 		<div style="width: 80%">
+			<br>
 	Event Horizon was started with the vision to bring people together, 
 	to get involved with events that are fulfilling for hosts and attendees alike, 
 	and to create a community of people who are always down for a good time. 
