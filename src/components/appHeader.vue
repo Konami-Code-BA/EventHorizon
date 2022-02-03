@@ -22,6 +22,8 @@
 					<img src="@/assets/threeBarsIcon.png" class="icon" style="height: 21px; margin-bottom: 2px;"/>
 				</div>
 				<div slot="5">
+          <!-- <p >louisyash</p> -->
+          <div class="current-user"><p>{{ store.user.display_name }}</p></div>
 					<!--img src="@/assets/bellIcon.png" class="icon" style="height: 21px; margin-bottom: 2px;"/-->
 				</div>
 			</tabs>
@@ -199,4 +201,7 @@
 	.button {
 		width: 100%;
 	}
+  .current-user {
+    color: #cae2ff;
+  }
 </style>
