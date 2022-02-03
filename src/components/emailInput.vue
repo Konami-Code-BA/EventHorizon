@@ -26,9 +26,12 @@
 		props: {
 			usage: {},
 			enter: { type: Function, default: () => {} },
+			dontStartError: { default: true },
 		},
 		mounted () {
-			this.hasErrors()
+			if(!this.dontStartError) {
+				this.hasErrors()
+			}
 		},
 		watch: {
 			'email' () { this.hasErrors() },
