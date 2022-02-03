@@ -1,5 +1,18 @@
 <template>
 	<div class="main">
+		<br><br>
+		<div style="display: flex; flex-direction: row; justify-content: center; align-items: center;">
+			<br>
+			<input :placeholder="t('SEARCH')" :value="search" @input="setSearch" type="text" autocorrect="off"
+					autocapitalize="none" style="width: 100% padding-bottom: 2px" v-on:keyup.enter="removeFocus()"
+					id="search" autocomplete="off"/>
+			<div style="width: 10px;"/>
+			<button v-on:click.prevent="search = ''" class="no-border-button x-button">
+				✖
+			</button>
+		</div>
+		
+		<br>
 		FAQ
 		<div style="width:80%; overflow-y: scroll; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start;">
 			<button class="no-border-button" v-on:click.prevent="display[1]=!display[1]"
@@ -73,6 +86,7 @@
 		name: 'faq',
 		data () {
 			return {
+				search: '',
 				display: {1: false, 2: false, 3: false, 4: false, 5: false,},
 			}
 		},
@@ -80,6 +94,11 @@
 		},
 		methods: {
 			t (w) { return translations.t(w) },
+			setSearch (evt) {},
+
+			removeFocus() {
+				document.getElementById('search').blur()
+			},
 		} // methods
 	} // export
 </script>
