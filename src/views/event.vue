@@ -599,7 +599,7 @@
 						await this.$refs.flashCantChangePastEvents.flashModal()
 						return
 					}
-					await f.getEvents()
+					await f.getEvent(this.event)
 					await this.getEventAndMyStatusAndPeople()
 					store.loading = false
 					await this.$refs.flashDone.flashModal()
@@ -613,7 +613,7 @@
 						await this.$refs.flashCantChangePastEvents.flashModal()
 						return
 					}
-					await f.getEvents()
+					await f.getEvent(this.event)
 					await this.getEventAndMyStatusAndPeople()
 					store.loading = false
 					await this.$refs.flashDone.flashModal()
@@ -629,7 +629,7 @@
 						await this.$refs.flashCantChangePastEvents.flashModal()
 						return
 					}
-					await f.getEvents()
+					await f.getEvent(this.event)
 					await this.getEventAndMyStatusAndPeople()
 					store.loading = false
 					await this.$refs.flashDone.flashModal()
@@ -649,7 +649,7 @@
 						await this.$refs.flashCantChangePastEvents.flashModal()
 						return
 					}
-					await f.getEvents()
+					await f.getEvent(this.event)
 					await this.getEventAndMyStatusAndPeople()
 					store.loading = false
 					await this.$refs.flashDone.flashModal()
