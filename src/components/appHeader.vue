@@ -204,6 +204,10 @@
   .current-user {
     color: #cae2ff;
     font-size: 10px;
-    margin-right: 4px;
+    width: 44px;
+}
+  .current-user > p {
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 </style>
