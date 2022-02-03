@@ -15,15 +15,15 @@
 					<small>{{ event.is_private ? 'PRIVATE EVENT' : 'PUBLIC EVENT' }}</small>
 				</div>
 			</div>
-			<img :src="image" style="height: 160px; width: auto; margin-top: 16px; margin-bottom: 8px;"/>
+			<img :src="image" style="height: 160px; width: auto; margin-top: 16px; margin-bottom: 10px;"/>
 			<div class="flex-table">
 				<!-- <br v-if="(!event.is_private || myAttendingStatus['invited']) && event.venue_name"/> -->
 				<div v-if="(!event.is_private || myAttendingStatus['invited']) && event.venue_name" class="flex-row"
-						style="justify-content: space-between;">
-					<p>
-						VENUE :
+						style="justify-content: space-between; flex-direction: column">
+					<p class="event-attr">
+						<strong>Venue</strong>
 					</p>
-					<p> {{ event.venue_name }}
+					<p class="address-value" style="margin-bottom: 1em;"> {{ event.venue_name }}
 					</p>
 				</div>
 						<small class="event-attr">Address</small> <small class="address-value">{{ event.address }}</small>
@@ -32,7 +32,6 @@
             Open in Google Maps
 					</button>
 				</div>
-				<!-- <br> -->
 				<button v-on:click.prevent="showDescription=!showDescription" class="button event-page-button">
 					<div v-if="!showDescription" class="drop-down-button">
 						<div style="width: 10px;"/>
@@ -729,19 +728,14 @@
   }
 
   .address-value {
-    margin-bottom: 1em;
+    margin: 0 auto;
   }
 
   .event-attr {
-    border: solid 1px;
-    width: 25%;
-    align-content: center;
-    text-align: center;
-    border-radius: 4px;
-    background-color: #cae2ff;
-    color: black;
+    border-bottom: solid 1px;
+    width: 70%;
     margin-bottom: 2px;
-    box-shadow: 0,0 rgba(255,255,255, 0.3);
-    box-shadow: 1px 1px 10px 1px rgba(255,255,255,0.2);
+    text-align: center;
+    margin: 0 auto;
   }
 </style>
