@@ -31,6 +31,13 @@
 		methods: {
 			t (w) { return translations.t(w) },
 			async forgotPassword () {
+				this.$refs.emailInput.hasErrors()
+				if (
+					this.$refs.emailInput.error.length > 0
+				) {
+					f.shakeFunction(this.$refs.emailInput)
+					return
+				}
 				this.store.loading = true
 				let returnUrl = f.createUrlForPasswordChange(this.$refs.emailInput.email)
 				let user = await api.forgotPassword(this.$refs.emailInput.email, returnUrl)

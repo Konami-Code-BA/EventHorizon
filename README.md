@@ -16,7 +16,7 @@
     pip install virtualenv
     virtualenv venv
     source venv/bin/activate
-    sudo pip install --default-timeout=100 -r requirements.txt
+    sudo pip3 install --default-timeout=100 -r requirements.txt
     ```
 1. Install npm packages
     ```shell script
