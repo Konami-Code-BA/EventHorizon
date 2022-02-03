@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
-import django_heroku
+# import django_heroku
 from decouple import config
 import os
 
@@ -29,6 +29,10 @@ ALLOWED_HOSTS = [
 	'event-horizon-test.herokuapp.com/',
 	'localhost',
 	'eventhorizon.vip/'
+    'localhost',
+    'localhost/',
+    '127.0.0.1',
+    '127.0.0.1/',
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -190,4 +194,4 @@ TEMPLATES[0]['DIRS'] += [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Activate Django-Heroku.
-django_heroku.settings(locals())
+# django_heroku.settings(locals())
