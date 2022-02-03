@@ -67,6 +67,7 @@
 			usage: {},
 			customPlaceholder: { default: '' },
 			enter: { type: Function, default: () => {} },
+			dontStartError: { default: true },
 		},
 		created () {
 			if (this.customPlaceholder) {
@@ -79,8 +80,10 @@
 			
 		},
 		mounted () {
-			this.hasErrors()
-			this.hasErrors2()
+			if (!this.dontStartError) {
+				this.hasErrors()
+				this.hasErrors2()
+			}
 		},
 		watch: {
 			'password' () { this.hasErrors(); this.hasErrors2() },

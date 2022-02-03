@@ -160,6 +160,8 @@
 				let keys = Object.keys(this.filters)
 				for (let i = 0; i < keys.length; i++) {
 					if (this.filters[keys[i]]) {  // if this filter is true
+						console.log('HERE2', keys[i], this.filters[keys[i]])
+						console.log(this.store.events[keys[i]])
 						this.store.events.display = this.store.events.display.concat(this.store.events[keys[i]])
 					}
 				}
@@ -188,6 +190,7 @@
 						} // otherwise do nothing special, the changed filter has already been changed
 					}
 				}
+				console.log('HERE1', this.filters)
 				this.doFiltering()
 			},
 		} // methods

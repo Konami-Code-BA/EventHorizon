@@ -22,8 +22,12 @@
 					<img src="@/assets/threeBarsIcon.png" class="icon" style="height: 21px; margin-bottom: 2px;"/>
 				</div>
 				<div slot="5">
-          <div class="current-user" v-if="store.user.display_name !== 'Temp Visitor'"><p>{{ store.user.display_name }}</p></div>
-					<!--img src="@/assets/bellIcon.png" class="icon" style="height: 21px; margin-bottom: 2px;"/-->
+          			<div class="current-user" v-if="isAuthenticatedUser">
+						<p>{{ store.user.display_name }}</p>
+					</div>
+          			<button class="no-border-button" v-else v-on:click.prevent="goToLoginRegister()">
+						<p>LOGIN</p>
+					</button>
 				</div>
 			</tabs>
 		</div>
