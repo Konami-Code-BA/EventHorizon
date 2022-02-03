@@ -131,6 +131,9 @@
 				await api.updateUserDoGetLines()
 			},
 			async addEmail () {
+				this.$refs.passwordInput.hasErrors()
+				this.$refs.passwordInput.hasErrors2()
+				this.$refs.emailInput.hasErrors()
 				if (
 					this.$refs.passwordInput.error.length > 0
 					|| this.$refs.passwordInput.error2.length > 0
@@ -161,6 +164,9 @@
 				f.shakeFunction([this.$refs.passwordInput, this.$refs.emailInput])
 			},
 			async changePassword () {
+				this.$refs.passwordInput.hasErrors()
+				this.$refs.passwordInput.hasErrors2()
+				this.$refs.passwordInput2.hasErrors()
 				if (
 					this.$refs.passwordInput1.error.length > 0
 					|| this.$refs.passwordInput2.error2.length > 0

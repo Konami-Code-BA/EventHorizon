@@ -71,6 +71,8 @@
 				f.goToPage(pageDict)
 			},
 			async login () {
+				this.$refs.passwordInput.hasErrors()
+				this.$refs.emailInput.hasErrors()
 				if (this.$refs.passwordInput.error.length > 0 || this.$refs.emailInput.error.length > 0) {
 					f.shakeFunction([this.$refs.passwordInput, this.$refs.emailInput])
 					return

@@ -335,9 +335,6 @@
 				</tabs>
 				<div v-if="(myAttendingStatus['invited'] || myAttendingStatus['invite_request'])"
 						style="display: flex; flex-direction: row; align-items: flex-start; width: 100%;">
-					<display-name-input ref="displayNameInput" usage="PlusOne" :dontStartError="true"
-							v-if="!plusOneStatus" style="width: 50%;" :enter="changePlusOne"/>
-					<div v-else style="width: 50%;">Plus One: {{plusOneStatus.slice(5)}}</div>
 					<div class="dual-set" style="padding-bottom: 2px; width: auto; align-self: flex-start">
 						<button class="button" v-on:click.prevent="changePlusOne()">
 							ADD A PLUS ONE
@@ -346,6 +343,9 @@
 							<!--need to check if i have plus one and put in checkbox and show name instead of input-->
 						</button>
 					</div>
+					<display-name-input ref="displayNameInput" usage="PlusOne"
+							v-if="!plusOneStatus" style="width: 50%;" :enter="changePlusOne"/>
+					<div v-else style="width: 50%; align-self: center">&nbsp;Plus One: {{plusOneStatus.slice(5)}}</div>
 				</div>
 				<!--button v-on:click.prevent="showHostPanel = true" v-if="myAttendingStatus['hosts']" class="button">
 					OPEN HOST PANEL
@@ -439,7 +439,8 @@
 						</button>
 					</div>
 				</div>
-				<input v-model="messageContent" type="text"/>
+				<textarea placeholder="MESSAGE" v-model="messageContent" type="text"
+						autocapitalize="sentences" style="height: 60px" autocomplete="off"/>
 				<button v-on:click.prevent="messageAll(showStatus)" class="button">
 					SEND
 				</button>
@@ -447,6 +448,7 @@
 		</modal>
 		<flash-modal :text="'DONE!'" ref="flashDone" :time="1500"/>
 		<flash-modal :text="'CAN\'T CHANGE PAST EVENTS'" ref="flashCantChangePastEvents" :time="1500"/>
+		<flash-modal :text="'SENT!'" ref="flashSent" :time="1500"/>
 	</div>
 </template>
 <script>
@@ -622,7 +624,7 @@
 			},
 			async changePlusOne () {
 				if (this.plusOneStatus) {
-					store.loading = true
+					this.store.loading = true
 					let result = await api.deletePlusOne(this.event.id)
 					if (result === 'failed') {
 						store.loading = false
@@ -631,18 +633,16 @@
 					}
 					await f.getEvent(this.event)
 					await this.getEventAndMyStatusAndPeople()
-					store.loading = false
+					this.store.loading = false
 					await this.$refs.flashDone.flashModal()
 					return
 				} else {
-					if (this.$refs.displayNameInput.displayName === '') {
-						this.$refs.displayNameInput.error = 'Required'
-					}
+					this.$refs.displayNameInput.hasErrors()
 					if (this.$refs.displayNameInput.error.length > 0) {
 						f.shakeFunction([this.$refs.displayNameInput])
 						return
 					}
-					store.loading = true
+					this.store.loading = true
 					let result = await api.setPlusOne(this.event.id, this.$refs.displayNameInput.displayName)
 					if (result === 'failed') {
 						store.loading = false
@@ -651,7 +651,7 @@
 					}
 					await f.getEvent(this.event)
 					await this.getEventAndMyStatusAndPeople()
-					store.loading = false
+					this.store.loading = false
 					await this.$refs.flashDone.flashModal()
 					return
 				}
@@ -660,10 +660,15 @@
 				window.open('http://maps.google.com/?q=' + this.event.address,'_blank')
 			},
 			async message () {
+				this.store.loading = true
 				await api.messageUser(this.event.id, this.messagePerson.id, this.messageContent)
 				this.messagePerson = null
+				this.messageContent = ''
+				this.store.loading = false
+				await this.$refs.flashSent.flashModal()
 			},
 			async messageAll (guestStatus) {
+				this.store.loading = true
 				let ids = []
 				for (let i = 0; i < this.people[guestStatus].length; i++) {
 					if (!this.people[guestStatus][i]['plus_one']) {
@@ -672,6 +677,9 @@
 				}
 				await api.messageUsers(this.event.id, ids, this.messageContent)
 				this.messageAllPeople = false
+				this.messageContent = ''
+				this.store.loading = false
+				await this.$refs.flashSent.flashModal()
 			},
 			//// do not delete, this will be used soon. and it took forever to get this shit to work
 			//async getEventImage () {
