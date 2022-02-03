@@ -41,6 +41,10 @@
 		methods: {
 			t (w) { return translations.t(w) },
 			async registerWithEmail () {
+				this.$refs.passwordInput.hasErrors()
+				this.$refs.passwordInput.hasErrors2()
+				this.$refs.emailInput.hasErrors()
+				this.$refs.displayNameInput.hasErrors()
 				if (
 					this.$refs.passwordInput.error.length > 0
 					|| this.$refs.passwordInput.error2.length > 0
