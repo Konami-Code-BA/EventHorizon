@@ -78,7 +78,7 @@ export default {
     async getEvents() {
         let events = await api.getAllEvents()
         for (let i = 0; i < events.length; i++) {
-            if (events[i].images.length > 0) {
+            if (events[i].images.length > 0 && (store.events.all.length === 0 || (store.events.all.length > 0 && !('image_data' in store.events.all[i])))) {
                 let result = await api.getEventImage(events[i].images[0], events[i].id)
                 if (result != 'fail') {
                     events[i].image_data = "data:image/jpg;base64," + result
@@ -86,6 +86,20 @@ export default {
             }
         }
         store.events.all = this.sortEventsByDate(events)
+        store.events.mine = this.filterEvents(store.events.all, store.user.id, ['invited'], false)
+        store.events.display = store.events.all
+    },
+    async getEvent(thisEvent) {
+        let event = await api.getEvent(thisEvent.id)
+        if (event.images.length > 0 && !('image_data' in thisEvent)) {
+            let result = await api.getEventImage(event.images[0], event.id)
+            if (result != 'fail') {
+                event.image_data = "data:image/jpg;base64," + result
+            }
+        }
+        store.events.selected = event
+        let ind = store.events.all.find(ev => { ev.id === event.id })
+        store.events.all[ind] = event
         store.events.mine = this.filterEvents(store.events.all, store.user.id, ['invited'], false)
         store.events.display = store.events.all
     },

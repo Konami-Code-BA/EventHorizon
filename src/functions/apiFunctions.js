@@ -105,11 +105,11 @@ export default {
                 headers: { "content-type": "multipart/form-data" }
             })
             .then(response => {
-                console.log(`success - saveImageFunction`)
+                console.log(`success - imagesApi ${data.get('command')}`)
                 return response.data
             })
             .catch(error => {
-                console.log(`*API ERROR* - saveImageFunction:`, error)
+                console.log(`*API ERROR* - imagesApi: ${data.get('command')}`, error)
                 return error
             })
     },
