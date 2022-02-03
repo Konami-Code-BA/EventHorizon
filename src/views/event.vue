@@ -15,19 +15,18 @@
 					<small>{{ event.is_private ? 'PRIVATE EVENT' : 'PUBLIC EVENT' }}</small>
 				</div>
 			</div>
-			<img :src="image" style="height: 160px; width: auto; margin-top: 16px; margin-bottom: 16px;"/>
+			<img :src="image" style="height: 160px; width: auto; margin-top: 16px; margin-bottom: 8px;"/>
 			<div class="flex-table">
 				<!-- <br v-if="(!event.is_private || myAttendingStatus['invited']) && event.venue_name"/> -->
 				<div v-if="(!event.is_private || myAttendingStatus['invited']) && event.venue_name" class="flex-row"
 						style="justify-content: space-between;">
-					<div>
+					<p>
 						VENUE :
-					</div>
-					<div>
-						{{ event.venue_name }}
-					</div>
+					</p>
+					<p> {{ event.venue_name }}
+					</p>
 				</div>
-						<small>{{ event.address }}</small>
+						<small class="event-attr">Address</small> <small class="address-value">{{ event.address }}</small>
 				<div style="align-self: center; width: 100%;">
 					<button v-on:click.prevent="openInGoogleMaps()" class="button event-page-button google-maps-button">
             Open in Google Maps
@@ -46,7 +45,7 @@
 						<div style="width: 10px;">⇧</div>
 					</div>
 				</button>
-				<div style="align-self: center; overflow-y: scroll; max-height: 100px; height: auto;" v-show="showDescription">
+				<div style="align-self: center; overflow-y: scroll; max-height: 100px; height: auto; margin-bottom: 0.7em" v-show="showDescription">
 					{{ event.description }}
 				</div>
 				<button v-on:click.prevent="showPeople=!showPeople" class="button event-page-button" style="align-self: center">
@@ -727,5 +726,22 @@
     margin-bottom: 1em;
     background-color:#ffe07a;
     color: black;
+  }
+
+  .address-value {
+    margin-bottom: 1em;
+  }
+
+  .event-attr {
+    border: solid 1px;
+    width: 25%;
+    align-content: center;
+    text-align: center;
+    border-radius: 4px;
+    background-color: #cae2ff;
+    color: black;
+    margin-bottom: 2px;
+    box-shadow: 0,0 rgba(255,255,255, 0.3);
+    box-shadow: 1px 1px 10px 1px rgba(255,255,255,0.2);
   }
 </style>
