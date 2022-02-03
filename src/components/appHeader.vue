@@ -23,7 +23,7 @@
 				</div>
 				<div slot="5">
           <!-- <p >louisyash</p> -->
-          <div class="current-user"><p>{{ store.user.display_name }}</p></div>
+          <div class="current-user" v-if="store.user.display_name !== 'Temp Visitor'"><p>{{ store.user.display_name }}</p></div>
 					<!--img src="@/assets/bellIcon.png" class="icon" style="height: 21px; margin-bottom: 2px;"/-->
 				</div>
 			</tabs>
@@ -203,5 +203,7 @@
 	}
   .current-user {
     color: #cae2ff;
+    font-size: 10px;
+    margin-right: 4px;
   }
 </style>
