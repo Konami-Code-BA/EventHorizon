@@ -90,7 +90,7 @@
 								</button>
 							</div>
 						</div>
-						<flash-modal :text="t('NO EVENTS')" ref="flashNoEvents"/>
+						<div v-else style="font-size: 24px; text-align: center;">{{t('NO EVENTS')}}</div>
 					</div>
 				</div>
 			</div>

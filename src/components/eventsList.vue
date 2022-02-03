@@ -5,11 +5,11 @@
 					autocapitalize="none" style="width: 100% padding-bottom: 2px" v-on:keyup.enter="removeFocus()"
 					id="search" autocomplete="off"/>
 			<div style="width: 10px;"/>
-			<button v-on:click.prevent="search = ''" class="no-border-button x-button">
+			<button v-on:click.prevent="setSearch({target: {value: ''}})" class="no-border-button x-button">
 				✖
 			</button>
 		</div>
-		<div style="width: 100%; overflow-y: scroll; overflow-x: hidden; display: flex; flex-direction: column;
+		<div v-if="!noEvents" style="width: 100%; overflow-y: scroll; overflow-x: hidden; display: flex; flex-direction: column;
 				align-items: center; padding-left: 10px; height: 100%;" id="scroller">
 			<div style="width: 90%;">
 				<div class="list">
@@ -22,6 +22,7 @@
 				</div>
 			</div>
 		</div>
+		<div v-else style="font-size: 24px;">NO EVENTS</div>
 	</div>
 </template>
 <script defer>
@@ -42,14 +43,16 @@
 				selectedEvent: null,
 				search: '',
 				observer: null,
+				noEvents: false,
 			}
 		},
 		watch: {
-			'search' () {
-				this.listEvents = f.filterEvents(
-					this.store.events.display,
-					this.search,
-					['name', 'description', 'address', 'venue_name'])
+			'listEvents' () {
+				if (this.listEvents.length === 0) {
+					this.noEvents = true
+				} else {
+					this.noEvents = false
+				}
 			},
 		},
 		created () {
@@ -76,9 +79,6 @@
 		},
 		methods: {
 			t (w) { return translations.t(w) },
-			removeFocus() {
-				document.getElementById('search').blur()
-			},
 			scrollIt () {
 				let el = document.getElementById(`item${this.selectedEvent.id}`)
 				let scroller = document.getElementById('scroller')
@@ -88,8 +88,15 @@
 			openEventModal (id) {
 				f.goToPage({ page: 'event', args: { id: id } })
 			},
+			removeFocus() {
+				document.getElementById('search').blur()
+			},
 			setSearch (evt) {
 				this.search = evt.target.value
+				this.listEvents = f.filterEvents(
+					this.store.events.display,
+					this.search,
+					['name', 'description', 'address', 'venue_name'])
 			},
 		}
 	}
