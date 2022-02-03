@@ -27,8 +27,13 @@
 					</p>
 				</div>
 						<small class="event-attr">Address</small> <small class="address-value">{{ event.address }}</small>
-				<div style="align-self: center; width: 100%;">
-					<button v-on:click.prevent="openInGoogleMaps()" class="button event-page-button google-maps-button">
+				<div class="flex-row" style="justify-content: space-between;">
+          <button style="align-self: center; width: 28%;" v-on:click.prevent="copyToClipboard()" class="button event-page-button">
+            <small> Copy Address </small>
+
+					</button>
+
+					<button style="align-self: center; width: 70%;" v-on:click.prevent="openInGoogleMaps()" class="button google-maps-button">
             Open in Google Maps
 					</button>
 				</div>
@@ -662,6 +667,18 @@
 				await api.messageUsers(this.event.id, ids, this.messageContent)
 				this.messageAllPeople = false
 			},
+      	async copyToClipboard () {
+				navigator.clipboard.writeText(this.event.address)
+				//// if the above fails on some browser, this is supposed to work. maybe use both if the first fails
+				//let textArea = document.createElement("textarea")
+				//textArea.value = this.url
+				//textArea.hidden = true  // not sure about this line or not
+				//document.body.appendChild(textArea)
+				//textArea.select()
+				//document.execCommand('copy')
+
+				await this.$refs.flashCoppied.flashModal()
+			}
 			//// do not delete, this will be used soon. and it took forever to get this shit to work
 			//async getEventImage () {
 			//	let result = await api.getEventImage(this.getimgid, eventId) // this.event.id
