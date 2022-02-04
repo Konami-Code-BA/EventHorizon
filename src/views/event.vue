@@ -440,7 +440,7 @@
 		</modal>
 		<flash-modal :text="'DONE!'" ref="flashDone" :time="1500"/>
 		<flash-modal :text="'CAN\'T CHANGE PAST EVENTS'" ref="flashCantChangePastEvents" :time="1500"/>
-    <flash-modal :text="'Copied to clipboard'" ref="flashCoppied" :time="1500"/>
+    <flash-modal :text="'Copied!'" ref="flashCoppied" :time="1500"/>
 		<flash-modal :text="'SENT!'" ref="flashSent" :time="1500"/>
 	</div>
 </template>
