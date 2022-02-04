@@ -107,7 +107,6 @@
 						],
 					})
 					let bounds = new google.maps.LatLngBounds()
-					let infowindow = new google.maps.InfoWindow({ map: map })
 					let markers = {}
 					let infowindowContents = []
 					let noEvents = true
@@ -164,14 +163,17 @@
 									icon: image,
 								})
 								markers[this.store.events.display[i].id] = marker
+								
+								let infowindow = new google.maps.InfoWindow({ map: map })
 								google.maps.event.addListener(marker, 'click', function() {
-									infowindow.close()
+									//infowindow.close()
 									infowindow.setContent(infowindowContents[i])
 									infowindow.open(map, this)
 								})
-								google.maps.event.addListener(map, "click", function() {
-									infowindow.close()
-								})
+								google.maps.event.trigger(marker, 'click')
+								//google.maps.event.addListener(map, "click", function() {
+								//	infowindow.close()
+								//})
 								bounds.extend(position)
 								await map.fitBounds(bounds)
 								map.setZoom(12)
