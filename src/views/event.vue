@@ -15,7 +15,7 @@
 					<small>{{ event.is_private ? 'PRIVATE EVENT' : 'PUBLIC EVENT' }}</small>
 				</div>
 			</div>
-			<img :src="image" style="height: 160px; width: auto; margin-top: 16px; margin-bottom: 10px;"/>
+			<img :src="image" style="height: 160px; width: auto; margin-top: 16px; margin-bottom: 10px; border-radius: 2px;"/>
 			<div class="flex-table">
 				<!-- <br v-if="(!event.is_private || myAttendingStatus['invited']) && event.venue_name"/> -->
 				<div v-if="(!event.is_private || myAttendingStatus['invited']) && event.venue_name" class="flex-row"
@@ -27,8 +27,11 @@
 					</p>
 				</div>
 						<small class="event-attr">Address</small> <small class="address-value">{{ event.address }}</small>
-				<div style="align-self: center; width: 100%;">
-					<button v-on:click.prevent="openInGoogleMaps()" class="button event-page-button google-maps-button">
+				<div class="flex-row" style="justify-content: space-between;">
+          <button style="align-self: center; width: 28%;" v-on:click.prevent="copyToClipboard()" class="button event-page-button">
+            <small> Copy Address </small>
+					</button>
+					<button style="align-self: center; width: 70%;" v-on:click.prevent="openInGoogleMaps()" class="button google-maps-button">
             Open in Google Maps
 					</button>
 				</div>
@@ -438,6 +441,7 @@
 		</modal>
 		<flash-modal :text="'DONE!'" ref="flashDone" :time="1500"/>
 		<flash-modal :text="'CAN\'T CHANGE PAST EVENTS'" ref="flashCantChangePastEvents" :time="1500"/>
+    <flash-modal :text="'Copied!'" ref="flashCoppied" :time="1500"/>
 		<flash-modal :text="'SENT!'" ref="flashSent" :time="1500"/>
 	</div>
 </template>
@@ -647,6 +651,18 @@
 				this.store.loading = false
 				await this.$refs.flashSent.flashModal()
 			},
+      	async copyToClipboard () {
+				navigator.clipboard.writeText(this.event.address)
+				//// if the above fails on some browser, this is supposed to work. maybe use both if the first fails
+				//let textArea = document.createElement("textarea")
+				//textArea.value = this.url
+				//textArea.hidden = true  // not sure about this line or not
+				//document.body.appendChild(textArea)
+				//textArea.select()
+				//document.execCommand('copy')
+
+				await this.$refs.flashCoppied.flashModal()
+			}
 			//// do not delete, this will be used soon. and it took forever to get this shit to work
 			//async getEventImage () {
 			//	let result = await api.getEventImage(this.getimgid, eventId) // this.event.id
