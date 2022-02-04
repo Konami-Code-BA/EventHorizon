@@ -27,7 +27,7 @@
 		},
 		props: {
 			usage: {},
-			dontStartError: { default: false },
+			dontStartError: { default: true },
 			enter: { type: Function, default: () => {} },
 		},
 		mounted () {
@@ -35,7 +35,7 @@
 				this.hasErrors()
 			}
 			if (this.usage === 'PlusOne') {
-				this.placeholder = 'PLUS ONE'
+				this.placeholder = '+1 Name'
 			} else {
 				this.placeholder = this.t('DISPLAY NAME')
 			}
