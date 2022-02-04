@@ -217,6 +217,29 @@
 								</button>
 							</div>
 						</div>
+						<div style="border: 2px solid rgba(255, 255, 255, .3); margin-bottom: 3px; border-radius: 7px;
+								padding: 5px; width: 100%;" v-if="myAttendingStatus['hosts']">
+							<div class="flex-row" style="justify-content: space-between">
+								<div style="align-self: center">
+									TOTAL UNINVITED FOLLOWERS
+								</div>
+								<!--can't see invite_request people if not host-->
+								<button v-on:click.prevent="showStatus = 'invite_request'" class="button"
+										style="align-self: center; width: 100px;"
+										:disabled="!myAttendingStatus['hosts'] || people['invite_request'].length === 0">
+									<div class="flex-row"
+											style="align-self: center">
+										{{ people['invite_request'].length }}
+										<div v-if="people['invite_request'].length != 1">
+											&nbsp;{{ t('PEOPLE') }}
+										</div>
+										<div v-else>
+											&nbsp;{{ t('PERSON') }}
+										</div>
+									</div>
+								</button>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
