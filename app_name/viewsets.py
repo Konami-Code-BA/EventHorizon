@@ -185,18 +185,21 @@ class UserViewset(viewsets.ModelViewSet):
 			serializer_data = self.serializer_class(self.queryset, many=True).data
 		return Response(serializer_data)
 
-	#def get_user_limited_info(self, request):  # SECURITY: retrieve only returns id/pk and name of user
-	#	user_array = self.model.objects.filter(pk__in=request.data['ids'])
-	#	serializer_data = []
-	#	for all_user_info_dont_send_me in user_array:
-	#		serializer_data += [OrderedDict([
-	#			('id', all_user_info_dont_send_me.id),
-	#			('pk', all_user_info_dont_send_me.pk),
-	#			('display_name', all_user_info_dont_send_me.display_name),
-	#			('limited_user', True),
-	#			('plus_ones', []),
-	#		])]
-	#	return serializer_data
+	def get_user_limited_info(self, request):  # SECURITY: retrieve only returns limited user info
+		#user_array = self.model.objects.filter(pk__in=request.data['ids'])  # normally it would be my followers. but for now it will be null and we will get everyone
+		if request.user.is_superuser:  # for now only superuser. later we will get followers of any person
+			user_array = self.model.objects.all()
+			serializer_data = []
+			for user in user_array:
+				serializer_data += [OrderedDict([
+					('id', user.id),
+					('display_name', user.display_name),
+					('limited_user', True),
+					('plus_one', False),
+				])]
+			return serializer_data
+		else:
+			return [OrderedDict([])]
 
 	def get_event_user_info(self, request):  # SECURITY: retrieve only returns display_name of user
 		# everyone can see hosts
@@ -487,7 +490,7 @@ To message the host: go to the event (above link) ⇨ Show People ⇨ Hosts
 			user.error = 'This email is not registered'
 		return user
 		
-	def change_password(self, request):
+	def change_password(self, request):  # could this be in patch with the other change stuff?
 		current_user = self.model.objects.get(pk=request.user.pk)
 		user = self.model.objects.get(email=request.data['email'])
 		if ((
@@ -1009,10 +1012,10 @@ class ImageViewset(viewsets.ViewSet):
 		return response
 
 	def get_event_image(self, request):
-		my_events = EventSerializer.Meta.model.objects.filter(invited=request.user.id)
+		#my_events = EventSerializer.Meta.model.objects.filter(invited=request.user.id)
 		event = EventSerializer.Meta.model.objects.get(pk=request.data['event_id'])
 		image = self.model.objects.get(pk=request.data['image_id'])
-		if image in event.images.all() and event in my_events:
+		if image in event.images.all():  # and event in my_events:  # used to only get images if its your event.
 			result = aws_get_file(image.key)
 			response = HttpResponse(result)
 			response['Content-Type'] = "image/jpg"
