@@ -86,10 +86,7 @@ export default {
             }
         }
         store.events.all = this.sortEventsByDate(events)
-        store.events.mine = this.filterEvents(
-            store.events.all,
-            store.user.id, ['hosts', 'invited', 'maybe', 'attending', 'wait_list', 'invite_request'],
-            false)
+        store.events.mine = await this.filterEventsByMyStatus()
         store.events.display = store.events.all
     },
     async getEvent(thisEvent) {
@@ -103,8 +100,30 @@ export default {
         store.events.selected = event
         let ind = store.events.all.find(ev => { ev.id === event.id })
         store.events.all[ind] = event
-        store.events.mine = this.filterEvents(store.events.all, store.user.id, ['invited'], false)
+        store.events.mine = await this.filterEventsByMyStatus()
         store.events.display = store.events.all
+    },
+    async asyncFilter(arr, callback) { // how to use: await this.asyncFilter(events, async event => {})
+        const fail = Symbol()
+        return (await Promise.all(arr.map(async item => (await callback(item)) ? item : fail))).filter(i => i !== fail)
+    },
+    async filterEventsByMyStatus() {
+        let filteredEvents = []
+        for (let i = 0; i < store.events.all.length; i++) {
+            let result = await api.checkUserStatus(store.events.all[i].id)
+            store.events.all[i].myStatus = result[0].status
+            if (
+                store.events.all[i].myStatus === 'hosts' ||
+                store.events.all[i].myStatus === 'invited' ||
+                store.events.all[i].myStatus === 'attending' ||
+                store.events.all[i].myStatus === 'maybe' ||
+                store.events.all[i].myStatus === 'wait_list' ||
+                store.events.all[i].myStatus === 'invite_request'
+            ) {
+                filteredEvents.push(store.events.all[i])
+            }
+        }
+        return filteredEvents
     },
     sortEventsByDate(events) {
         let sorted_events = []
@@ -243,4 +262,51 @@ export default {
             setTimeout(() => { thiss.shakeIt = false; }, 1000)
         }
     },
+    checkPeopleList(people, guestStatus) {
+        let me = {
+            id: store.user.id,
+            display_name: store.user.display_name,
+            limited_user: true,
+            plus_one: false,
+        }
+        for (let i = 0; i < people[guestStatus].length; i++) {
+            if (JSON.stringify(people[guestStatus][i]) === JSON.stringify(me)) {
+                return true
+            }
+        }
+        return false
+    },
+    async getEventUserInfoCheckPeopleList(eventId) {
+        let myAttendingStatus = {
+            'hosts': false,
+            'invited': false,
+            'attending': false,
+            'maybe': false,
+            'wait_list': false,
+            'invite_request': false,
+        }
+        let people = {
+            'hosts': [],
+            'invited': [],
+            'attending': [],
+            'maybe': [],
+            'wait_list': [],
+            'invite_request': [],
+        }
+        people['hosts'] = await api.getEventUserInfo(eventId, 'hosts')
+        people['invited'] = await api.getEventUserInfo(eventId, 'invited')
+        people['maybe'] = await api.getEventUserInfo(eventId, 'maybe')
+        people['attending'] = await api.getEventUserInfo(eventId, 'attending')
+        people['wait_list'] = await api.getEventUserInfo(eventId, 'wait_list')
+        people['invite_request'] = await api.getEventUserInfo(eventId, 'invite_request')
+
+        myAttendingStatus['hosts'] = this.checkPeopleList(people, 'hosts')
+        myAttendingStatus['invited'] = this.checkPeopleList(people, 'invited')
+        myAttendingStatus['attending'] = this.checkPeopleList(people, 'attending')
+        myAttendingStatus['maybe'] = this.checkPeopleList(people, 'maybe')
+        myAttendingStatus['wait_list'] = this.checkPeopleList(people, 'wait_list')
+        myAttendingStatus['invite_request'] = this.checkPeopleList(people, 'invite_request')
+
+        return { people: people, myAttendingStatus: myAttendingStatus }
+    }
 }

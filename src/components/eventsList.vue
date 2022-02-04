@@ -16,7 +16,7 @@
 					<div v-for="event in listEvents" class="event-card-item" style="">
 						<button v-on:click.prevent="openEventModal(event.id)" class="no-border-button"
 								style="width: 100%;" :id="`item${event.id}`">
-							<event-block :event="event"/>
+							<event-block :event="event" :key="JSON.stringify(event)"/>
 						</button>
 					</div>
 				</div>

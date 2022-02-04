@@ -5,12 +5,12 @@
 			<router-view
 					:key="$route.fullPath"
 					class="router"
-					v-show="page === 'home'"/>
+					v-show="page === 'home'" ref="homepage"/>
 			<modal-view
 					class="router"
 					v-show="page != 'home'"
 					:key="page"/>
-			<app-footer/>
+			<app-footer @homePage="$refs.homepage.selectedTab = 1;"/>
 		</div>
 		<div class="loading" v-if="store.loading"/>
 		<opening-logo class="opening" :class="fadeOutClass" v-if="opening"/>
@@ -46,6 +46,7 @@
 		async created () {
 			// back button setup
 			window.addEventListener('popstate', () => { f.goBack() })
+			window.addEventListener('pushstate', () => { })  // the history has been lost so do nothing on forward
 
 			// get groups
 			store.groups = await api.getGroups()

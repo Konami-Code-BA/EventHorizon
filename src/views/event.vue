@@ -224,12 +224,13 @@
 			<button v-on:click.prevent="showEventStatus=!showEventStatus" class="button" style="align-self: center">
 					<div v-if="!showEventStatus" class="drop-down-button">
 						<div style="width: 10px;"/>
-						<div>SHOW EVENT STATUS</div>
+						<div v-if="myAttendingStatus['invited']">SHOW ATTENDING STATUS</div>
+						<div v-else>CLICK TO JOIN</div>
 						<div style="width: 10px;">⇩</div>
 					</div>
 					<div v-else class="drop-down-button">
 						<div style="width: 10px;"/>
-						<div>HIDE EVENT STATUS</div>
+						<div>HIDE ATTENDING STATUS</div>
 						<div style="width: 10px;">⇧</div>
 					</div>
 			</button>
@@ -359,15 +360,14 @@
 					</div>
 				</div>
 				<div style="width: 100%; overflow-y: scroll;">
-					<div v-for="person in people[showStatus]">
-						<div style="display: flex; flex-direction: row;
-								justify-content: space-between;">
+					<div v-for="person in people[showStatus]" style="width: 100%;">
+						<div style="display: flex; flex-direction: row; justify-content: space-between; width: 100%;">
 							<div style="height: 30px; display: flex; flex-direction: column; justify-content: center;">
 								●　{{person.display_name}}
 							</div>
-							<button v-on:click.prevent="messagePerson = person" class="button" style="width: 50px;"
+							<button v-on:click.prevent="messagePerson = person" class="button" style="width: auto;"
 									v-if="(myAttendingStatus['hosts'] || showStatus === 'hosts') && !person.plus_one">
-								MSG
+								MESSAGE
 							</button>
 						</div>
 					</div>
@@ -398,41 +398,42 @@
 			</div>
 		</modal-->
 		<modal v-if="messagePerson" @closeModals="messagePerson = null">
-			<div slot="contents" class="modal" style="max-height: 50%;">
+			<div slot="contents" class="modal" style="height: 55%;">
 				<div style="width: 100%; display: flex; flex-direction: row; justify-content: space-between;
 						align-content: flex-start">
-					<div/>
-					<div style="font-size: 24px;">
-						MESSAGE
+					<div style="width: 20px;"/>
+					<div style="font-size: 24px; text-align: center;">
+						MESSAGE<br>{{messagePerson.display_name}}
 					</div>
-					<div style="padding-bottom: 5px;">
+					<div style="padding-bottom: 5px; width: 20px;">
 						<button v-on:click.prevent="messagePerson = null" class="no-border-button x-button">
 							✖
 						</button>
 					</div>
 				</div>
-				<input v-model="messageContent" type="text"/>
+				<textarea placeholder="MESSAGE" v-model="messageContent" type="text"
+						autocapitalize="sentences" style="height: 90px;" autocomplete="off"/>
 				<button v-on:click.prevent="message()" class="button">
 					SEND
 				</button>
 			</div>
 		</modal>
 		<modal v-if="messageAllPeople" @closeModals="messageAllPeople = false">
-			<div slot="contents" class="modal" style="max-height: 50%;">
+			<div slot="contents" class="modal" style="height: 55%;">
 				<div style="width: 100%; display: flex; flex-direction: row; justify-content: space-between;
 						align-content: flex-start">
-					<div/>
+					<div style="width: 20px;"/>
 					<div style="font-size: 24px;">
-						MESSAGE
+						MESSAGE ALL
 					</div>
-					<div style="padding-bottom: 5px;">
+					<div style="padding-bottom: 5px; width: 20px;">
 						<button v-on:click.prevent="messageAllPeople = false" class="no-border-button x-button">
 							✖
 						</button>
 					</div>
 				</div>
 				<textarea placeholder="MESSAGE" v-model="messageContent" type="text"
-						autocapitalize="sentences" style="height: 60px" autocomplete="off"/>
+						autocapitalize="sentences" style="height: 90px;" autocomplete="off"/>
 				<button v-on:click.prevent="messageAll(showStatus)" class="button">
 					SEND
 				</button>
@@ -540,19 +541,9 @@
 				this.event = f.filterEvents(this.store.events.all, f.currentPage.args.id, ['id'], true)[0]
 				this.store.events.selected = this.event
 
-				this.people['hosts'] = await api.getEventUserInfo(this.event.id, 'hosts')
-				this.people['invited'] = await api.getEventUserInfo(this.event.id, 'invited')
-				this.people['maybe'] = await api.getEventUserInfo(this.event.id, 'maybe')
-				this.people['attending'] = await api.getEventUserInfo(this.event.id, 'attending')
-				this.people['wait_list'] = await api.getEventUserInfo(this.event.id, 'wait_list')
-				this.people['invite_request'] = await api.getEventUserInfo(this.event.id, 'invite_request')
-
-				this.myAttendingStatus['hosts'] = this.checkPeopleList('hosts')
-				this.myAttendingStatus['invited'] = this.checkPeopleList('invited')
-				this.myAttendingStatus['attending'] = this.checkPeopleList('attending')
-				this.myAttendingStatus['maybe'] = this.checkPeopleList('maybe')
-				this.myAttendingStatus['wait_list'] = this.checkPeopleList('wait_list')
-				this.myAttendingStatus['invite_request'] = this.checkPeopleList('invite_request')
+				let result = await f.getEventUserInfoCheckPeopleList(this.event.id)
+				this.myAttendingStatus = result.myAttendingStatus
+				this.people = result.people
 
 				this.plusOneStatus = null
 				let keys = Object.keys(this.myAttendingStatus)
@@ -566,20 +557,6 @@
 					}
 				}
 				this.store.loading = false
-			},
-			checkPeopleList (guestStatus) {
-				let me = {
-					id: this.store.user.id,
-					display_name: this.store.user.display_name,
-					limited_user: true,
-					plus_one: false,
-				}
-				for (let i = 0; i < this.people[guestStatus].length; i++ ) {
-					if (JSON.stringify(this.people[guestStatus][i]) === JSON.stringify(me)) {
-						return true
-					}
-				}
-				return false
 			},
 			async changeAttendingStatus (status) {
 				if (!this.isAuthenticatedUser) {
@@ -753,6 +730,7 @@
 
   .address-value {
     margin: 0 auto;
+	text-align: center;
   }
 
   .event-attr {
