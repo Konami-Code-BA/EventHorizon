@@ -97,6 +97,7 @@
 				this.actions[selectedTab-1]()
 			},
 			home () {
+				this.$emit('homePage')
 				f.goToPage({ page: 'home', args: {} })
 			},
 			addEvent () {

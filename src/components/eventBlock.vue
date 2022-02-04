@@ -29,8 +29,7 @@
 		computed: {
 		},
 		async mounted () {
-			let result = await api.checkUserStatus(this.event.id)
-			this.userStatus = result[0].status
+			this.userStatus = this.event.myStatus
 			if (this.event.image_data) {
 				this.image = this.event.image_data
 			}
