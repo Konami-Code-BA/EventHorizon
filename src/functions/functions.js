@@ -86,7 +86,7 @@ export default {
             }
         }
         store.events.all = this.sortEventsByDate(events)
-        store.events.mine = await this.filterEventsByMyStatus(store.events.all)
+        store.events.mine = await this.filterEventsByMyStatus()
         store.events.display = store.events.all
     },
     async getEvent(thisEvent) {
@@ -100,25 +100,29 @@ export default {
         store.events.selected = event
         let ind = store.events.all.find(ev => { ev.id === event.id })
         store.events.all[ind] = event
-        store.events.mine = await this.filterEventsByMyStatus(store.events.all)
+        store.events.mine = await this.filterEventsByMyStatus()
         store.events.display = store.events.all
     },
-    async asyncFilter(arr, callback) {
+    async asyncFilter(arr, callback) { // how to use: await this.asyncFilter(events, async event => {})
         const fail = Symbol()
         return (await Promise.all(arr.map(async item => (await callback(item)) ? item : fail))).filter(i => i !== fail)
     },
-    async filterEventsByMyStatus(events) {
-        let filteredEvents = await this.asyncFilter(events, async event => {
-            let result = await this.getEventUserInfoCheckPeopleList(event.id)
-            let myAttendingStatus = result.myAttendingStatus
-            return (
-                myAttendingStatus['hosts'] ||
-                myAttendingStatus['invited'] ||
-                myAttendingStatus['attending'] ||
-                myAttendingStatus['maybe'] ||
-                myAttendingStatus['wait_list'] ||
-                myAttendingStatus['invite_request'])
-        })
+    async filterEventsByMyStatus() {
+        let filteredEvents = []
+        for (let i = 0; i < store.events.all.length; i++) {
+            let result = await api.checkUserStatus(store.events.all[i].id)
+            store.events.all[i].myStatus = result[0].status
+            if (
+                store.events.all[i].myStatus === 'hosts' ||
+                store.events.all[i].myStatus === 'invited' ||
+                store.events.all[i].myStatus === 'attending' ||
+                store.events.all[i].myStatus === 'maybe' ||
+                store.events.all[i].myStatus === 'wait_list' ||
+                store.events.all[i].myStatus === 'invite_request'
+            ) {
+                filteredEvents.push(store.events.all[i])
+            }
+        }
         return filteredEvents
     },
     sortEventsByDate(events) {
