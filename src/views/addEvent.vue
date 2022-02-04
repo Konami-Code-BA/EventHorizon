@@ -146,6 +146,7 @@
 					data['images'] = image_id
 				}
 				let newEvent = await api.createEvent(data)
+				this.store.events.all.push(newEvent)
 				await f.getEvents()
 				f.goToPage({ page: 'event', args: { id: newEvent.id}})
 				this.store.loading = false

@@ -151,8 +151,7 @@
 				this.selectedTab = 1
 			},
 			createComponentKey(letters) {
-				let key = (this.store.events.display.length > 0 ? this.store.events.display[0]['id'] : 0).toString()
-				key += (this.store.events.selected ? this.store.events.selected.id : 0).toString() + letters
+				let key = JSON.stringify(this.store.events.display) + JSON.stringify(this.store.events.selected) + letters
 				return key
 			},
 			doFiltering () {
@@ -160,8 +159,6 @@
 				let keys = Object.keys(this.filters)
 				for (let i = 0; i < keys.length; i++) {
 					if (this.filters[keys[i]]) {  // if this filter is true
-						console.log('HERE2', keys[i], this.filters[keys[i]])
-						console.log(this.store.events[keys[i]])
 						this.store.events.display = this.store.events.display.concat(this.store.events[keys[i]])
 					}
 				}
@@ -190,7 +187,6 @@
 						} // otherwise do nothing special, the changed filter has already been changed
 					}
 				}
-				console.log('HERE1', this.filters)
 				this.doFiltering()
 			},
 		} // methods
