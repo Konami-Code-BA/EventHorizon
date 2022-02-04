@@ -462,8 +462,22 @@
 			return {
 				store: store,
 				event: store.events.selected,  // just make sure the key fro this component has event in it
-				myAttendingStatus: null,
-				people: null,
+				myAttendingStatus: {
+					'hosts': false,
+					'invited': false,
+					'attending': false,
+					'maybe': false,
+					'wait_list': false,
+					'invite_request': false,
+				},
+				people: {
+					'hosts': [],
+					'invited': [],
+					'attending': [],
+					'maybe': [],
+					'wait_list': [],
+					'invite_request': [],
+				},
 				showStatus: null,
 				statusNames: {
 					'hosts': this.t('HOSTS'),
