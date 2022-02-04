@@ -7,8 +7,19 @@
 
 			<div style="font-size: 24px;">{{ store.user.display_name }}</div>
 
+  	<div class="line-height"/>
+<!-- Change display name input -->
+      <div class="dual-set">
+				<button v-on:click.prevent="showChangeDisplayNameModal = true" class="button" style="width: 100%">
+					{{ 'EDIT DISPLAY NAME' }}&nbsp;
+				</button>
+
+
+			</div>
+
 			<div class="line-height"/>
 
+      <!-- E-mail preferences checkbox -->
 			<button class="button" v-if="store.user.email === ''" v-on:click.prevent="showAddEmailModal = true">
 				{{ t('ADD EMAIL ADDRESS') }}
 			</button>
@@ -75,6 +86,24 @@
 				<button v-on:click.prevent="changePassword()" class="button" style="width: 100%">
 					{{ t('CHANGE PASSWORD') }}
 				</button>
+<!-- DISPLAY NAME CHANGE MODAL -->
+        	<!-- <modal v-show="showChangeDisplayNameModal" @closeModals="showChangeDisplayNameModal = false">
+			<div slot="contents" class="modal">
+				<div style="align-self: flex-end">
+					<button v-on:click.prevent="showChangeDisplayNameModal = false" class="no-border-button x-button">
+						✖
+					</button>
+				</div>
+				<form v-on:keyup.enter="changePassword()" style="width: 100%;">
+					<password-input ref="passwordInput1" :doublePassword="false" usage="ChangePassword1"
+							customPlaceholder="CURRENT PASSWORD"/>
+					<password-input ref="passwordInput2" :doublePassword="true" usage="ChangePassword2"
+							customPlaceholder="NEW PASSWORD"/>
+				</form>
+				<button v-on:click.prevent="changePassword()" class="button" style="width: 100%">
+					{{ t('CHANGE PASSWORD') }}
+				</button> -->
+
 			</div>
 		</modal>
 		<flash-modal :text="t('PASSWORD CHANGED!')" ref="flashPasswordChangedSettings" :time="1000"/>
@@ -104,6 +133,7 @@
 				store: store,
 				showAddEmailModal: false,
 				showChangePasswordModal: false,
+        // showChangeDisplayNameModal = false
 			}
 		},
 		props: {
@@ -200,6 +230,9 @@
 				this.store.loading = false
 				f.shakeFunction([this.$refs.passwordInput1, this.$refs.passwordInput2])
 			},
+      async changeDisplayName() {
+
+      }
 		} // methods
 	} // export
 </script>
