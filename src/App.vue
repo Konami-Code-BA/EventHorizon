@@ -50,7 +50,7 @@
 
 			// get groups
 			store.groups = await api.getGroups()
-			
+
 			// user auto-login from cookies
 			if (store.user.groups[0] === 100) { // if never logged in, not even to visitor account, login
 				console.log(process.env.PYTHON_ENV)
@@ -155,18 +155,6 @@
 			position: relative;
 			bottom: 0;
 			z-index: 2;
-		}
-		.main {
-			overflow-x: hidden;
-			overflow-y: hidden;
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			width: 100%;
-			height: 100%;
-			z-index: 1;
-			padding-left: 10px;
-			padding-right: 10px;
 		}
 		/*[v-cloak] {
 			display: none;
@@ -500,7 +488,7 @@
 		}
 
 		/* SHAKE */
-			
+
 		.shake {
 			animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
 			transform: translate3d(0, 0, 0);
@@ -533,5 +521,25 @@
 			opacity: 0;
 			transition: opacity 1s;
 		}
+
+    .main {
+      overflow-x: hidden;
+      overflow-y: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      padding-left: 10px;
+      padding-right: 10px;
+}
+@media (min-width: 600px) {
+    	.main {
+        width: 80%;
+        height: 100%;
+        margin:0 auto;
+      }
+    }
 	}
 </style>

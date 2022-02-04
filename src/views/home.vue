@@ -4,11 +4,11 @@
 			<div class="viewer filters" style="display: flex; flex-direction: column; align-items: center;
 					width: 100%; min-height: 105px; height: 105px;"><!--remove filters from class and check mac is ok-->
 				<div style="border-bottom: 2px solid rgba(255, 255, 255, .3); width: 100%; display: flex;
-						flex-direction: row; align-items: center; justify-content: center; padding: 5px;">
+						flex-direction: row; align-items: center; justify-content: center; padding: 5px; position:relative;">
 					<div>
 						{{ t('SELECT WHAT EVENTS TO DISPLAY') }}
 					</div>
-					<div style="position: absolute; right: 2%;">
+					<div style="right: 2%; position: absolute;">
 						<button style="background: none; border: none"
 								v-on:click.prevent="showInformation = 'peopleFilters'">
 							<img src="@/assets/iIcon.png" class="icon" style="padding: 3px;" id="people-info"/>
@@ -16,7 +16,7 @@
 					</div>
 				</div>
 				<div style="display: flex; flex-direction: column; align-items: flex-start; width: 100%;
-						padding-top: 5px; padding-bottom: 5px;">
+						padding-top: 5px; padding-bottom: 5px; position: relative;">
 					<div class="filters">
 						<input type="checkbox" class="checkbox" v-model="filters['all']"
 								@click="filterChange('all')"/>
@@ -57,7 +57,7 @@
 						<img src="@/assets/fullScreen.png" class="icon" style="width: 80%; height: 80%"/>
 					</button>
 				</div-->
-				<div style="display: flex; flex-direction: row; align-items: center; justify-content: center; padding: 5px;">
+				<div style="display: flex; flex-direction: row; align-items: center; justify-content: center; padding: 5px; position:relative;">
 					<div>
 						{{ t('EVENTS') }}
 					</div>
