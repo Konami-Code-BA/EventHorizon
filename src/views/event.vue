@@ -15,7 +15,7 @@
 					<small>{{ event.is_private ? 'PRIVATE EVENT' : 'PUBLIC EVENT' }}</small>
 				</div>
 			</div>
-			<img :src="image" style="height: 160px; width: auto; margin-top: 16px; margin-bottom: 10px;"/>
+			<img :src="image" style="height: 160px; width: auto; margin-top: 16px; margin-bottom: 10px; border-radius: 2px;"/>
 			<div class="flex-table">
 				<!-- <br v-if="(!event.is_private || myAttendingStatus['invited']) && event.venue_name"/> -->
 				<div v-if="(!event.is_private || myAttendingStatus['invited']) && event.venue_name" class="flex-row"
@@ -30,9 +30,7 @@
 				<div class="flex-row" style="justify-content: space-between;">
           <button style="align-self: center; width: 28%;" v-on:click.prevent="copyToClipboard()" class="button event-page-button">
             <small> Copy Address </small>
-
 					</button>
-
 					<button style="align-self: center; width: 70%;" v-on:click.prevent="openInGoogleMaps()" class="button google-maps-button">
             Open in Google Maps
 					</button>
@@ -441,6 +439,7 @@
 		</modal>
 		<flash-modal :text="'DONE!'" ref="flashDone" :time="1500"/>
 		<flash-modal :text="'CAN\'T CHANGE PAST EVENTS'" ref="flashCantChangePastEvents" :time="1500"/>
+    <flash-modal :text="'Copied to clipboard'" ref="flashCoppied" :time="1500"/>
 	</div>
 </template>
 <script>
