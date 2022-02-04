@@ -223,14 +223,13 @@
 								<div style="align-self: center">
 									TOTAL UNINVITED FOLLOWERS
 								</div>
-								<!--can't see invite_request people if not host-->
-								<button v-on:click.prevent="showStatus = 'invite_request'" class="button"
+								<button v-on:click.prevent="showStatus = 'uninvited_followers'" class="button"
 										style="align-self: center; width: 100px;"
-										:disabled="!myAttendingStatus['hosts'] || people['invite_request'].length === 0">
+										:disabled="!myAttendingStatus['hosts'] || people['uninvited_followers'].length === 0">
 									<div class="flex-row"
 											style="align-self: center">
-										{{ people['invite_request'].length }}
-										<div v-if="people['invite_request'].length != 1">
+										{{ people['uninvited_followers'].length }}
+										<div v-if="people['uninvited_followers'].length != 1">
 											&nbsp;{{ t('PEOPLE') }}
 										</div>
 										<div v-else>
@@ -511,6 +510,7 @@
 					'maybe': [],
 					'wait_list': [],
 					'invite_request': [],
+					'uninvited_followers': [],
 				},
 				showStatus: null,
 				statusNames: {
@@ -520,6 +520,7 @@
 					'maybe': this.t('MAYBE'),
 					'wait_list': this.t('WAIT LIST'),
 					'invite_request': this.t('INVITE REQUESTS'),
+					'uninvited_followers': 'UNINVITED FOLLOWERS',
 				},
 				plusOneStatus: null,
 				showHostPanel: false,

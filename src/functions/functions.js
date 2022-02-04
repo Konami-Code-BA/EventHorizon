@@ -292,6 +292,7 @@ export default {
             'maybe': [],
             'wait_list': [],
             'invite_request': [],
+            'uninvited_followers': [],
         }
         people['hosts'] = await api.getEventUserInfo(eventId, 'hosts')
         people['invited'] = await api.getEventUserInfo(eventId, 'invited')
@@ -299,6 +300,7 @@ export default {
         people['attending'] = await api.getEventUserInfo(eventId, 'attending')
         people['wait_list'] = await api.getEventUserInfo(eventId, 'wait_list')
         people['invite_request'] = await api.getEventUserInfo(eventId, 'invite_request')
+        people['uninvited_followers'] = await api.getUserLimitedInfo()
 
         myAttendingStatus['hosts'] = this.checkPeopleList(people, 'hosts')
         myAttendingStatus['invited'] = this.checkPeopleList(people, 'invited')
