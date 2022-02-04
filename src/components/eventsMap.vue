@@ -202,7 +202,7 @@
 					if (markers[this.selectedEventId]) {
 						bounds.extend(markers[this.selectedEventId].getPosition())
 						await map.fitBounds(bounds)
-						map.setZoom(15)
+						map.setZoom(12)
 						map.panTo(markers[this.selectedEventId].getPosition())
 						google.maps.event.trigger(markers[this.selectedEventId], 'click');
 					}
