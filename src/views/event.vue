@@ -714,6 +714,7 @@
 
   .address-value {
     margin: 0 auto;
+	text-align: center;
   }
 
   .event-attr {
