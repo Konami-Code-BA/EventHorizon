@@ -360,7 +360,8 @@
 					</div>
 				</div>
 				<div style="width: 100%; overflow-y: scroll;">
-					<div v-for="person in people[showStatus]" style="width: 100%;">
+					<div v-for="person in people[showStatus]" style="width: 100%; border: 2px solid #ffe07a;
+							border-radius: 15px;">
 						<div style="display: flex; flex-direction: row; justify-content: space-between; width: 100%;">
 							<div style="height: 30px; display: flex; flex-direction: column; justify-content: center;">
 								●　{{person.display_name}}
@@ -370,12 +371,18 @@
 								MESSAGE
 							</button>
 						</div>
+						<button v-if="myAttendingStatus['hosts'] && showStatus === 'invite_request'"
+								v-on:click.prevent="changeAttendingStatus('invited', person.id)" class="button">
+							INVITE!
+						</button>
 					</div>
 				</div>
+				<div style="padding-right: 10px; width: 100%; margin-top: 10px;">
 				<button v-on:click.prevent="messageAllPeople = true" v-if="myAttendingStatus['hosts']"
 						class="button">
 					MESSAGE ALL
 				</button>
+				</div>
 			</div>
 		</modal>
 		<!--modal v-if="showHostPanel" @closeModals="showHostPanel = false">
@@ -558,12 +565,25 @@
 				}
 				this.store.loading = false
 			},
-			async changeAttendingStatus (status) {
+			async changeAttendingStatus (status, userId = null) {
 				if (!this.isAuthenticatedUser) {
 					this.goToLogin()
 					return
 				}
-				if (status === 'decline' || !this.myAttendingStatus[status]) {
+				if (status === 'invited') {
+					store.loading = true
+					let result = await api.changeGuestStatus(this.event.id, status, userId)
+					if (result === 'failed') {
+						store.loading = false
+						await this.$refs.flashCantChangePastEvents.flashModal()
+						return
+					}
+					await f.getEvent(this.event)
+					await this.getEventAndMyStatusAndPeople()
+					store.loading = false
+					await this.$refs.flashDone.flashModal()
+					return
+				} else if (status === 'decline' || !this.myAttendingStatus[status]) {
 					store.loading = true
 					let result = await api.changeGuestStatus(this.event.id, status, null)
 					if (result === 'failed') {

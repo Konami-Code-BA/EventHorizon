@@ -268,7 +268,8 @@ class UserViewset(viewsets.ModelViewSet):
 			user.error = 'a user with this id could not be found'
 			return user
 		event = EventSerializer.Meta.model.objects.get(pk=request.data['event_id'])
-		# SECURITY: i must be the host of the event id im passing, and the user must be affiliated with that event
+		# SECURITY: i must be the host of the event id im passing, and the receiver must be affiliated with that event
+		# or, i must be affiliated with the event, and i am messaging the host
 		# note: before we let people make events. people could make an event and invite someone just to be able to message them. this could be an issue later.
 		if (
 				(
@@ -765,13 +766,61 @@ class EventViewset(viewsets.ViewSet):
 			plus_one = event.plus_ones.filter(chaperone=request.user.id)
 			if plus_one:
 				plus_one.delete()
+			user = UserSerializer.Meta.model.objects.get(pk=user_to_change)
+			for host in event.hosts.all():
+				f.notify_user(
+					host,
+					f"""Event: {event.name}
+
+Notification:
+{user.display_name} has left this event.
+
+
+To view this event, go here: {f.create_url(f'/?page=event&id={event.id}')}
+
+To turn off notifications, go here: {f.create_url('/?page=settings')}
+*Note: you can't reply to this message here""",
+				)
 		elif request.data['status'] == 'invite_request':
 			if not request.user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists():
 				event.invite_request.add(user_to_change)  # only non-visitors can request an invite
-		#elif request.data['status'] == 'invited':
-		#	if event.hosts.filter(id=request.user.id).exists():  # only host can invite user if private
-		#		event.invited.add(user_to_change)
-		#		event.maybe.add(user_to_change)
+				user = UserSerializer.Meta.model.objects.get(pk=user_to_change)
+				for host in event.hosts.all():
+					f.notify_user(
+						host,
+						f"""Event: {event.name}
+
+Notification:
+{user.display_name} has requested an invite to this event.
+
+
+To view this event, go here: {f.create_url(f'/?page=event&id={event.id}')}
+
+To message {user.display_name}: go to the event (above link) ⇨ Show People ⇨ Invite Requests
+To turn off notifications, go here: {f.create_url('/?page=settings')}
+*Note: you can't reply to this message here""",
+					)
+		elif request.data['status'] == 'invited':
+			if event.hosts.filter(id=request.user.id).exists():  # only host can invite user
+				event.invite_request.remove(user_to_change)
+				event.invited.add(user_to_change)
+				event.maybe.add(user_to_change)
+				user = UserSerializer.Meta.model.objects.get(pk=user_to_change)
+				f.notify_user(
+					user,
+					f"""Event: {event.name}
+
+Notification:
+You have been invited to this event!
+For now, you're marked as a "maybe".
+
+
+To view this event, go here: {f.create_url(f'/?page=event&id={event.id}')}
+
+To turn off notifications, go here: {f.create_url('/?page=settings')}
+To message the host: go to the event (above link) ⇨ Show People ⇨ Hosts
+*Note: you can't reply to this message here""",
+				)
 		elif request.data['status'] == 'wait_list':
 			# only invited can be changed to wait_list (unless its public)
 			if event.invited.filter(id=user_to_change).exists() or (not event.is_private):
