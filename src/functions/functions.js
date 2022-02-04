@@ -86,7 +86,10 @@ export default {
             }
         }
         store.events.all = this.sortEventsByDate(events)
-        store.events.mine = this.filterEvents(store.events.all, store.user.id, ['invited'], false)
+        store.events.mine = this.filterEvents(
+            store.events.all,
+            store.user.id, ['hosts', 'invited', 'maybe', 'attending', 'wait_list', 'invite_request'],
+            false)
         store.events.display = store.events.all
     },
     async getEvent(thisEvent) {

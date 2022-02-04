@@ -31,6 +31,8 @@
 		methods: {
 			t (w) { return translations.t(w) },
 			async changePassword () {
+				this.$refs.passwordInput.hasErrors()
+				this.$refs.passwordInput.hasErrors2()
 				if (
 					this.$refs.passwordInput.error.length > 0
 					|| this.$refs.passwordInput.error2.length > 0
