@@ -537,7 +537,7 @@
 				this.event = f.filterEvents(this.store.events.all, f.currentPage.args.id, ['id'], true)[0]
 				this.store.events.selected = this.event
 
-				let result = f.getEventUserInfoCheckPeopleList(this.event.id)
+				let result = await f.getEventUserInfoCheckPeopleList(this.event.id)
 				this.myAttendingStatus = result.myAttendingStatus
 				this.people = result.people
 
