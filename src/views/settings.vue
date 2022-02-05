@@ -10,15 +10,11 @@
   	<div class="line-height"/>
 <!-- Change display name input -->
       <div class="dual-set">
-				<button v-on:click.prevent="showChangeDisplayNameModal = true" class="button" style="width: 100%">
+				<button v-on:click.prevent="updateUserDisplayName()" class="button" style="width: 100%">
 					{{ 'EDIT DISPLAY NAME' }}&nbsp;
 				</button>
-
-
 			</div>
-
 			<div class="line-height"/>
-
       <!-- E-mail preferences checkbox -->
 			<button class="button" v-if="store.user.email === ''" v-on:click.prevent="showAddEmailModal = true">
 				{{ t('ADD EMAIL ADDRESS') }}
@@ -155,6 +151,10 @@
 			async updateUserDoGetEmails () {
 				store.user.do_get_emails = !store.user.do_get_emails
 				await api.updateUserDoGetEmails()
+			},
+      async updateUserDisplayName() {
+				store.user.display_name = "Successfully changed!"
+				await api.updateUserDisplayName()
 			},
 			async updateUserDoGetLines () {
 				store.user.do_get_lines = !store.user.do_get_lines
