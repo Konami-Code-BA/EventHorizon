@@ -20,7 +20,6 @@
 
 			<div class="line-height"/>
 			<div class="line-height"/>
-			<div class="line-height"/>
 
 			<button v-on:click.prevent="goToPage({ page: 'registerWithEmail', args: {} })" class="button">
 				{{t('REGISTER EMAIL')}}

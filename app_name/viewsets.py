@@ -185,18 +185,21 @@ class UserViewset(viewsets.ModelViewSet):
 			serializer_data = self.serializer_class(self.queryset, many=True).data
 		return Response(serializer_data)
 
-	#def get_user_limited_info(self, request):  # SECURITY: retrieve only returns id/pk and name of user
-	#	user_array = self.model.objects.filter(pk__in=request.data['ids'])
-	#	serializer_data = []
-	#	for all_user_info_dont_send_me in user_array:
-	#		serializer_data += [OrderedDict([
-	#			('id', all_user_info_dont_send_me.id),
-	#			('pk', all_user_info_dont_send_me.pk),
-	#			('display_name', all_user_info_dont_send_me.display_name),
-	#			('limited_user', True),
-	#			('plus_ones', []),
-	#		])]
-	#	return serializer_data
+	def get_user_limited_info(self, request):  # SECURITY: retrieve only returns limited user info
+		#user_array = self.model.objects.filter(pk__in=request.data['ids'])  # normally it would be my followers. but for now it will be null and we will get everyone
+		if request.user.is_superuser:  # for now only superuser. later we will get followers of any person
+			user_array = self.model.objects.all()
+			serializer_data = []
+			for user in user_array:
+				serializer_data += [OrderedDict([
+					('id', user.id),
+					('display_name', user.display_name),
+					('limited_user', True),
+					('plus_one', False),
+				])]
+			return serializer_data
+		else:
+			return [OrderedDict([])]
 
 	def get_event_user_info(self, request):  # SECURITY: retrieve only returns display_name of user
 		# everyone can see hosts
@@ -268,7 +271,8 @@ class UserViewset(viewsets.ModelViewSet):
 			user.error = 'a user with this id could not be found'
 			return user
 		event = EventSerializer.Meta.model.objects.get(pk=request.data['event_id'])
-		# SECURITY: i must be the host of the event id im passing, and the user must be affiliated with that event
+		# SECURITY: i must be the host of the event id im passing, and the receiver must be affiliated with that event
+		# or, i must be affiliated with the event, and i am messaging the host
 		# note: before we let people make events. people could make an event and invite someone just to be able to message them. this could be an issue later.
 		if (
 				(
@@ -486,7 +490,7 @@ To message the host: go to the event (above link) ⇨ Show People ⇨ Hosts
 			user.error = 'This email is not registered'
 		return user
 		
-	def change_password(self, request):
+	def change_password(self, request):  # could this be in patch with the other change stuff?
 		current_user = self.model.objects.get(pk=request.user.pk)
 		user = self.model.objects.get(email=request.data['email'])
 		if ((
@@ -765,13 +769,62 @@ class EventViewset(viewsets.ViewSet):
 			plus_one = event.plus_ones.filter(chaperone=request.user.id)
 			if plus_one:
 				plus_one.delete()
+			user = UserSerializer.Meta.model.objects.get(pk=user_to_change)
+			for host in event.hosts.all():
+				f.notify_user(
+					host,
+					f"""Event: {event.name}
+
+Notification:
+{user.display_name} has left this event.
+
+
+To view this event, go here: {f.create_url(f'/?page=event&id={event.id}')}
+
+To turn off notifications, go here: {f.create_url('/?page=settings')}
+*Note: you can't reply to this message here""",
+				)
 		elif request.data['status'] == 'invite_request':
 			if not request.user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists():
 				event.invite_request.add(user_to_change)  # only non-visitors can request an invite
-		#elif request.data['status'] == 'invited':
-		#	if event.hosts.filter(id=request.user.id).exists():  # only host can invite user if private
-		#		event.invited.add(user_to_change)
-		#		event.maybe.add(user_to_change)
+				user = UserSerializer.Meta.model.objects.get(pk=user_to_change)
+				for host in event.hosts.all():
+					f.notify_user(
+						host,
+						f"""Event: {event.name}
+
+Notification:
+{user.display_name} has requested an invite to this event.
+
+
+To view this event, go here: {f.create_url(f'/?page=event&id={event.id}')}
+
+To message {user.display_name}: go to the event (above link) ⇨ Show People ⇨ Invite Requests
+To turn off notifications, go here: {f.create_url('/?page=settings')}
+*Note: you can't reply to this message here""",
+					)
+		elif request.data['status'] == 'invited':
+			# only host can invite user
+			if event.hosts.filter(id=request.user.id).exists() and not event.invited.filter(id=user_to_change).exists():
+				event.invite_request.remove(user_to_change)
+				event.invited.add(user_to_change)
+				event.maybe.add(user_to_change)
+				user = UserSerializer.Meta.model.objects.get(pk=user_to_change)
+				f.notify_user(
+					user,
+					f"""Event: {event.name}
+
+Notification:
+You have been invited to this event!
+For now, you're marked as a "maybe".
+
+
+To view this event, go here: {f.create_url(f'/?page=event&id={event.id}')}
+
+To turn off notifications, go here: {f.create_url('/?page=settings')}
+To message the host: go to the event (above link) ⇨ Show People ⇨ Hosts
+*Note: you can't reply to this message here""",
+				)
 		elif request.data['status'] == 'wait_list':
 			# only invited can be changed to wait_list (unless its public)
 			if event.invited.filter(id=user_to_change).exists() or (not event.is_private):
@@ -960,10 +1013,10 @@ class ImageViewset(viewsets.ViewSet):
 		return response
 
 	def get_event_image(self, request):
-		my_events = EventSerializer.Meta.model.objects.filter(invited=request.user.id)
+		#my_events = EventSerializer.Meta.model.objects.filter(invited=request.user.id)
 		event = EventSerializer.Meta.model.objects.get(pk=request.data['event_id'])
 		image = self.model.objects.get(pk=request.data['image_id'])
-		if image in event.images.all() and event in my_events:
+		if image in event.images.all():  # and event in my_events:  # used to only get images if its your event.
 			result = aws_get_file(image.key)
 			response = HttpResponse(result)
 			response['Content-Type'] = "image/jpg"

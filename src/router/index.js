@@ -33,7 +33,7 @@ const router = new Router({
 
 router.beforeEach(
     async(to, from, next) => {
-        if (['', '/', '/temp'].includes(from.path)) {
+        if (['', '/', '/temp', '/temp/'].includes(from.path)) {
             next()
         } else {
             next(false)
