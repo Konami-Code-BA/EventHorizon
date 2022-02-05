@@ -9,10 +9,13 @@
 
   	<div class="line-height"/>
 <!-- Change display name input -->
-      <div class="dual-set">
-				<button v-on:click.prevent="updateUserDisplayName()" class="button" style="width: 100%">
+      <!-- <div class="dual-set">
+        <button v-on:click.prevent="showChangeDisplayNameModal = true" class="button" style="width: 100%">
 					{{ 'EDIT DISPLAY NAME' }}&nbsp;
 				</button>
+			</div> -->
+
+        <div class="dual-set">
 			</div>
 			<div class="line-height"/>
       <!-- E-mail preferences checkbox -->
@@ -82,27 +85,27 @@
 				<button v-on:click.prevent="changePassword()" class="button" style="width: 100%">
 					{{ t('CHANGE PASSWORD') }}
 				</button>
+			</div>
+		</modal>
 <!-- DISPLAY NAME CHANGE MODAL -->
-        	<!-- <modal v-show="showChangeDisplayNameModal" @closeModals="showChangeDisplayNameModal = false">
+        	<modal v-show="showChangeDisplayNameModal" @closeModals="showChangeDisplayNameModal = false">
 			<div slot="contents" class="modal">
 				<div style="align-self: flex-end">
 					<button v-on:click.prevent="showChangeDisplayNameModal = false" class="no-border-button x-button">
 						✖
 					</button>
 				</div>
-				<form v-on:keyup.enter="changePassword()" style="width: 100%;">
-					<password-input ref="passwordInput1" :doublePassword="false" usage="ChangePassword1"
-							customPlaceholder="CURRENT PASSWORD"/>
-					<password-input ref="passwordInput2" :doublePassword="true" usage="ChangePassword2"
-							customPlaceholder="NEW PASSWORD"/>
+				<form v-on:keyup.enter="changeDisplayName()" style="width: 100%;">
+					<display-name-input ref="displayNameInput" :doublePassword="false" usage="Update"
+							customPlaceholder="Enter Display Name"/>
 				</form>
-				<button v-on:click.prevent="changePassword()" class="button" style="width: 100%">
-					{{ t('CHANGE PASSWORD') }}
-				</button> -->
-
-			</div>
-		</modal>
+				<button v-on:click.prevent="changeDisplayName()" class="button" style="width: 100%">
+					{{ "CHANGE DISPLAY NAME" }}
+				</button>
+        	</div>
+        		</modal>
 		<flash-modal :text="t('PASSWORD CHANGED!')" ref="flashPasswordChangedSettings" :time="1000"/>
+    <flash-modal :text="'DISPLAY NAME CHANGED!'" ref="flashDisplayNameChanged" :time="1000"/>
 	</div>
 </template>
 <script>
@@ -115,6 +118,7 @@
 	import lineButton from '@/components/lineButton.vue'
 	import modal from '@/components/modal.vue'
 	import flashModal from '@/components/flashModal.vue'
+  import displayNameInput from '@/components/displayNameInput.vue'
 	export default {
 		name: 'settings',
 		components: {
@@ -123,13 +127,14 @@
 			emailInput,
 			passwordInput,
 			flashModal,
+      displayNameInput
 		},
 		data () {
 			return {
 				store: store,
 				showAddEmailModal: false,
 				showChangePasswordModal: false,
-        // showChangeDisplayNameModal = false
+        showChangeDisplayNameModal: false
 			}
 		},
 		props: {
@@ -153,7 +158,7 @@
 				await api.updateUserDoGetEmails()
 			},
       async updateUserDisplayName() {
-				store.user.display_name = "Successfully changed!"
+				store.user.display_name = this.$refs.displayName
 				await api.updateUserDisplayName()
 			},
 			async updateUserDoGetLines () {
@@ -231,20 +236,16 @@
 				f.shakeFunction([this.$refs.passwordInput1, this.$refs.passwordInput2])
 			},
 
-      // Display name change
+      // Display name change  INCOMPLETE
       // async changeDisplayName() {
-			// 	let user = await api.changePassword(
-			// 		this.store.user.email,
-			// 		this.$refs.passwordInput2.password,
-			// 		null,
-			// 		this.$refs.passwordInput1.password,
-			// 	)
-			// 		this.showChangePasswordModal = false
-			// 		this.$refs.passwordInput1.password = ''
-			// 		this.$refs.passwordInput2.password = ''
-			// 		this.$refs.passwordInput2.password2 = ''
-			// 		this.store.loading = false
-			// 		await this.$refs.flashPasswordChangedSettings.flashModal()
+      //   this.$refs.displayNameInput.hasErrors()
+      //   if (this.$refs.displayNameInput.error.length > 0) {
+      //   f.shakeFunction([this.$refs.displayNameInput])
+      //   return }
+			// 	store.user.display_name = this.$refs.DisplayName
+			// 	await api.updateUserDisplayName()
+      //   this.$refs.DisplayNameInput.DisplayName = ''
+			// 	await this.$refs.flashDisplayNameChanged.flashModal()
       // }
 		} // methods
 	} // export
