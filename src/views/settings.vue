@@ -230,9 +230,22 @@
 				this.store.loading = false
 				f.shakeFunction([this.$refs.passwordInput1, this.$refs.passwordInput2])
 			},
-      async changeDisplayName() {
 
-      }
+      // Display name change
+      // async changeDisplayName() {
+			// 	let user = await api.changePassword(
+			// 		this.store.user.email,
+			// 		this.$refs.passwordInput2.password,
+			// 		null,
+			// 		this.$refs.passwordInput1.password,
+			// 	)
+			// 		this.showChangePasswordModal = false
+			// 		this.$refs.passwordInput1.password = ''
+			// 		this.$refs.passwordInput2.password = ''
+			// 		this.$refs.passwordInput2.password2 = ''
+			// 		this.store.loading = false
+			// 		await this.$refs.flashPasswordChangedSettings.flashModal()
+      // }
 		} // methods
 	} // export
 </script>
