@@ -133,6 +133,19 @@ class UserViewset(viewsets.ModelViewSet):
 	#	else:  # if user does not have this alert, add it
 	#		alert.user_set.add(user)
 	#	return user
+	def update_user_display_name(self, request, pk):
+		try:
+			user = self.model.objects.get(pk=pk)
+		except self.model.DoesNotExist:
+			user = namedtuple('user', 'error')
+			user.error = 'a user with this id could not be found'
+		if user == request.user:
+			user.display_name = request.data['display_name']
+			user.save()
+		else:
+			user = namedtuple('user', 'error')
+			user.error = 'you don\'t have permission'
+		return user
 
 	def register_email(self, request, pk):
 		if ('email' in request.data and 'password' in request.data and request.data['email'] != '' and
