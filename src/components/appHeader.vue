@@ -27,8 +27,9 @@
 						<p>{{ store.user.display_name }}</p>
 					</div>
           			<button class="no-border-button" v-else v-on:click.prevent="goToLoginRegister()"
-							style="width: 44px; padding-right: 7px;">
-						<p>LOGIN</p>
+							style="width: 44px; padding-right: 7px; height: 30px; padding-top: 0; padding-bottom: 0;
+								padding-left: 0; margin: 0;">
+						LOGIN
 					</button>
 				</div>
 			</tabs>
