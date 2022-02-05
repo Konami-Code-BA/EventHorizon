@@ -40,273 +40,6 @@ random.seed(1)
 
 # USER VIEW SET ########################################################################################################
 class UserViewset(viewsets.ModelViewSet):
-<<<<<<< HEAD
-    serializer_class = UserSerializer
-    model = serializer_class.Meta.model
-    queryset = model.objects.all()
-
-    def list(self, request):  # GET {prefix}/
-        self.queryset = [request.user]  # SECURITY: list only returns yourself
-        serializer_data = self.serializer_class(self.queryset, many=True).data
-        return Response(serializer_data)
-
-    def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
-        self.queryset = [request.user]  # SECURITY: retrieve only returns yourself
-        serializer_data = self.serializer_class(self.queryset, many=True).data
-        return Response(serializer_data)
-
-    def update(self, request, pk=None):  # PUT {prefix}/{lookup}/
-        self.queryset = [request.user]  # SECURITY: update only returns yourself
-        serializer_data = self.serializer_class(self.queryset, many=True).data
-        return Response(serializer_data)
-
-    def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
-        return Response()  # SECURITY: this just does nothing
-
-    # PARTIAL_UPDATE #############################################################
-    def partial_update(self, request, pk):  # PATCH {prefix}/{lookup}/
-        user = eval(f"self.{request.data['command']}(request, pk)")  # SECURITY: inside each command function
-        self.queryset = [user]
-        if hasattr(self.queryset[0], 'error'):
-            serializer_data = [OrderedDict([('error', self.queryset[0].error)])]
-        else:
-            serializer_data = self.serializer_class(self.queryset, many=True).data
-        return Response(serializer_data)
-
-    def update_user_language(self, request, pk):
-        try:
-            user = self.model.objects.get(pk=pk)
-        except self.model.DoesNotExist:
-            user = namedtuple('user', 'error')
-            user.error = 'a user with this id could not be found'
-            return user
-        if user == request.user:  # SECURITY: you can only do this for yourself
-            user.language = request.data['language']
-            user.save()
-            return user
-        else:
-            user = namedtuple('user', 'error')
-            user.error = 'you don\'t have permission'
-            return user
-
-    def update_user_do_get_emails(self, request, pk):
-        try:
-            user = self.model.objects.get(pk=pk)
-        except self.model.DoesNotExist:
-            user = namedtuple('user', 'error')
-            user.error = 'a user with this id could not be found'
-            return user
-        if user == request.user:  # SECURITY: you can only do this for yourself
-            user.do_get_emails = request.data['do_get_emails']
-            user.save()
-            return user
-        else:
-            user = namedtuple('user', 'error')
-            user.error = 'you don\'t have permission'
-            return user
-
-    def update_user_do_get_lines(self, request, pk):
-        try:
-            user = self.model.objects.get(pk=pk)
-        except self.model.DoesNotExist:
-            user = namedtuple('user', 'error')
-            user.error = 'a user with this id could not be found'
-            return user
-        if user == request.user:  # SECURITY: you can only do this for yourself
-            user.do_get_lines = request.data['do_get_lines']
-            user.save()
-            return user
-        else:
-            user = namedtuple('user', 'error')
-            user.error = 'you don\'t have permission'
-            return user
-
-    def update_user_display_name(self, request, pk):
-    	try:
-    		user = self.model.objects.get(pk=pk)
-    	except self.model.DoesNotExist:
-    		user = namedtuple('user', 'error')
-    		user.error = 'a user with this id could not be found'
-    		return user
-    	if user == request.user:
-            user.display_name = request.data['display_name']
-            user.save()
-    	else:
-            user = namedtuple('user', 'error')
-            user.error = 'you don\'t have permission'
-    	return user
-
-    #def update_user_alerts(self, request, pk):
-    #	try:
-    #		user = self.model.objects.get(pk=pk)
-    #	except self.model.DoesNotExist:
-    #		user = namedtuple('user', 'error')
-    #		user.error = 'a user with this id could not be found'
-    #		return user
-    #	alert = Alert.objects.get(name=request.data['name'])
-    #	if user.alerts.filter(name=request.data['name']).exists():  # if user has this alert, remove it
-    #		alert.user_set.remove(user)
-    #	else:  # if user does not have this alert, add it
-    #		alert.user_set.add(user)
-    #	return user
-
-    def register_email(self, request, pk):
-        if ('email' in request.data and 'password' in request.data and request.data['email'] != '' and
-          request.data['password'] != ''):
-            try:  # get the current user
-                current_user = self.model.objects.get(pk=pk)
-                if current_user != request.user:  # SECURITY: you can only do this for yourself
-                    user = namedtuple('user', 'error')
-                    user.error = 'you don\'t have permission'
-                    return user
-                # if user is visitor, should be in register_with_email
-                if current_user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists():
-                    user = namedtuple('user', 'error')
-                    user.error = 'something strange happened... a visitor should not be able to run this'
-                    return user
-            except self.model.DoesNotExist:  # if can't get current user
-                user = namedtuple('user', 'error')
-                user.error = 'a user with this id could not be found'
-                return user
-            try:  # check if a user with the new email exists
-                existing_user = self.model.objects.get(email=request.data['email'])
-                # if existing user with this email does exist, check their password, and if its good too, merge accounts
-                if existing_user.check_password(request.data['password']):  # if password matches too
-                    current_user = f.merge_users(current_user, existing_user)  # merge users
-                    return current_user
-                else:  # if password doesn't match
-                    user = namedtuple('user', 'error')
-                    user.error = 'Incorrect password for this email'
-                    return user
-            except self.model.DoesNotExist:  # if exisiting user with this email doesnt exist, add email to current user
-                current_user.email = request.data['email']
-                current_user.password = make_password(request.data['password'])
-                current_user.do_get_emails = True
-                current_user.save()
-                return current_user
-        else:  # missing email / password info
-            user = namedtuple('user', 'error')
-            user.error = 'missing email / password info'
-            return user
-
-    # CREATE #####################################################################
-    def create(self, request):  # POST {prefix}/
-        user = eval(f"self.{request.data['command']}(request)")  # SECURITY: inside each command function
-        self.queryset = [user]
-        if hasattr(self.queryset[0], 'error'):
-            serializer_data = [OrderedDict([('error', self.queryset[0].error)])]
-        elif type(user) != self.model:
-            serializer_data = user
-        else:
-            serializer_data = self.serializer_class(self.queryset, many=True).data
-        return Response(serializer_data)
-
-    #def get_user_limited_info(self, request):  # SECURITY: retrieve only returns id/pk and name of user
-    #	user_array = self.model.objects.filter(pk__in=request.data['ids'])
-    #	serializer_data = []
-    #	for all_user_info_dont_send_me in user_array:
-    #		serializer_data += [OrderedDict([
-    #			('id', all_user_info_dont_send_me.id),
-    #			('pk', all_user_info_dont_send_me.pk),
-    #			('display_name', all_user_info_dont_send_me.display_name),
-    #			('limited_user', True),
-    #			('plus_ones', []),
-    #		])]
-    #	return serializer_data
-
-    def get_event_user_info(self, request):  # SECURITY: retrieve only returns display_name of user
-        # everyone can see hosts
-        # can't see invited/attending/maybe people if not invited
-        # can't see wait_list, invite_request people if not host
-        event = EventSerializer.Meta.model.objects.get(pk=request.data['event_id'])
-        plus_ones = event.plus_ones.all()
-        guest_ids = getattr(event, request.data['guest_type']).all().values_list('id', flat=True)
-        actual_guest_array = list(self.model.objects.filter(pk__in=guest_ids))
-        final_guest_array = []
-        for guest in actual_guest_array:
-            # if it is me, i get more info. also if i am a host
-            if (guest.id == request.user.id or f.user_in_guest_statuses(event, request.user.id, ['hosts'])
-              or f.user_in_guest_statuses(event, guest.id, ['hosts'])):
-                final_guest_array += [OrderedDict([
-                 ('id', guest.id),
-                 ('display_name', guest.display_name),
-                 ('limited_user', True),
-                 ('plus_one', False),
-                ])]
-                if request.data['guest_type'] != 'hosts':  # hosts' plus-ones aren't added to hosts, they're added elsewhere
-                    plus_one = plus_ones.filter(chaperone=guest.id)  # get plus-one for this guest
-                    if len(plus_one) > 0:  # if there is a plus-one
-                        final_guest_array += [OrderedDict([
-                         ('id', guest.id),
-                         ('display_name', plus_one[0].name),
-                         ('limited_user', True),
-                         ('plus_one', True),
-                        ])]
-            elif ((  # get some info if
-              request.user.id in event.invited.all().values_list('id', flat=True)  # im invited and
-              and request.data['guest_type'] in ['invited', 'attending', 'maybe']  # get invited/attending/maybe
-             ) or (  # or im getting hosts
-              request.data['guest_type'] == 'hosts'
-             )
-            ):
-                final_guest_array += [OrderedDict([
-                 ('display_name', guest.display_name),
-                 ('limited_user', True),
-                 ('plus_one', False),
-                ])]
-                if request.data['guest_type'] != 'hosts':  # hosts' plus-ones aren't added to hosts, they're added elsewhere
-                    plus_one = plus_ones.filter(chaperone=guest.id)  # get plus-one for this guest
-                    if len(plus_one) > 0:  # if there is a plus-one
-                        final_guest_array += [OrderedDict([
-                         ('display_name', plus_one[0].name),
-                         ('limited_user', True),
-                         ('plus_one', True),
-                        ])]
-            else: # im not getting me, im not a host, im not invited getting invitees, im not getting hosts
-                final_guest_array += [OrderedDict([
-                 ('limited_user', True),
-                 ('plus_one', False),
-                ])]
-                if request.data['guest_type'] != 'hosts':  # hosts' plus-ones aren't added to hosts, they're added elsewhere
-                    plus_one = plus_ones.filter(chaperone=guest.id)  # get plus-one for this guest
-                    if len(plus_one) > 0:  # if there is a plus-one
-                        final_guest_array += [OrderedDict([
-                         ('limited_user', True),
-                         ('plus_one', True),
-                        ])]
-        return final_guest_array
-
-    def message_user(self, request):
-        try:
-            user = self.model.objects.get(pk=request.data['user_id'])
-        except self.model.DoesNotExist:
-            user = namedtuple('user', 'error')
-            user.error = 'a user with this id could not be found'
-            return user
-        event = EventSerializer.Meta.model.objects.get(pk=request.data['event_id'])
-        # SECURITY: i must be the host of the event id im passing, and the user must be affiliated with that event
-        # note: before we let people make events. people could make an event and invite someone just to be able to message them. this could be an issue later.
-        if (
-          (
-           # send from
-           f.user_in_guest_statuses(event, request.user.id, ['hosts'])
-           # send to
-           and f.user_in_guest_statuses(
-            event, user.id, ['hosts', 'invited', 'wait_list', 'invite_request']
-           )
-          ) or (
-           # send from
-           f.user_in_guest_statuses(
-            event, request.user.id, ['hosts', 'invited', 'wait_list', 'invite_request']
-           )
-           # send to
-           and f.user_in_guest_statuses(event, user.id, ['hosts'])
-          )
-        ):
-            f.notify_user(
-             user,
-             f"""Event: {event.name}
-=======
 	serializer_class = UserSerializer
 	model = serializer_class.Meta.model
 	queryset = model.objects.all()
@@ -338,7 +71,7 @@ class UserViewset(viewsets.ModelViewSet):
 		else:
 			serializer_data = self.serializer_class(self.queryset, many=True).data
 		return Response(serializer_data)
-	
+
 	def update_user_language(self, request, pk):
 		try:
 			user = self.model.objects.get(pk=pk)
@@ -354,7 +87,7 @@ class UserViewset(viewsets.ModelViewSet):
 			user = namedtuple('user', 'error')
 			user.error = 'you don\'t have permission'
 			return user
-	
+
 	def update_user_do_get_emails(self, request, pk):
 		try:
 			user = self.model.objects.get(pk=pk)
@@ -370,7 +103,7 @@ class UserViewset(viewsets.ModelViewSet):
 			user = namedtuple('user', 'error')
 			user.error = 'you don\'t have permission'
 			return user
-	
+
 	def update_user_do_get_lines(self, request, pk):
 		try:
 			user = self.model.objects.get(pk=pk)
@@ -386,7 +119,7 @@ class UserViewset(viewsets.ModelViewSet):
 			user = namedtuple('user', 'error')
 			user.error = 'you don\'t have permission'
 			return user
-	
+
 	#def update_user_alerts(self, request, pk):
 	#	try:
 	#		user = self.model.objects.get(pk=pk)
@@ -400,7 +133,7 @@ class UserViewset(viewsets.ModelViewSet):
 	#	else:  # if user does not have this alert, add it
 	#		alert.user_set.add(user)
 	#	return user
-	
+
 	def register_email(self, request, pk):
 		if ('email' in request.data and 'password' in request.data and request.data['email'] != '' and
 				request.data['password'] != ''):
@@ -529,7 +262,7 @@ class UserViewset(viewsets.ModelViewSet):
 							('plus_one', True),
 						])]
 		return final_guest_array
-	
+
 	def message_user(self, request):
 		try:
 			user = self.model.objects.get(pk=request.data['user_id'])
@@ -561,7 +294,6 @@ class UserViewset(viewsets.ModelViewSet):
 			f.notify_user(
 				user,
 				f"""Event: {event.name}
->>>>>>> a189ef8752d12e8cdf602f37affa6210b0d793d4
 
 Direct Message From {
 	'Host' if f.user_in_guest_statuses(event, request.user.id, ['hosts']) else 'Guest'
@@ -903,7 +635,7 @@ To message the host: go to the event (above link) ⇨ Show People ⇨ Hosts
 			user = namedtuple('user', 'error')
 			user.error = 'a user with this id could not be found'
 		return user
-	
+
 	def send_email(self, request):
 		if request.user.is_superuser:
 			subject = 'Test sending email from site from mikey'
@@ -912,7 +644,7 @@ To message the host: go to the event (above link) ⇨ Show People ⇨ Hosts
 			recipient_list = ['mdsimeone@gmail.com',]
 			send_mail(subject, message, email_from, recipient_list, fail_silently=False)
 		return request.user
-	
+
 	def forgot_password(self, request):
 		try:
 			user = self.model.objects.get(email=request.data['email'])
@@ -929,7 +661,7 @@ To message the host: go to the event (above link) ⇨ Show People ⇨ Hosts
 			user = namedtuple('user', 'error')
 			user.error = 'This email is not registered'
 		return user
-		
+
 	def change_password(self, request):  # could this be in patch with the other change stuff?
 		current_user = self.model.objects.get(pk=request.user.pk)
 		user = self.model.objects.get(email=request.data['email'])
@@ -1347,7 +1079,7 @@ class EventViewset(viewsets.ViewSet):
 		my_invite_requests = self.model.objects.filter(Q(is_private=True) & Q(invite_request=request.user.id))
 		serializer_data_my_invite_requests = serializer_private(my_invite_requests)
 		return serializer_data_my_hosting + serializer_data_my_invited + serializer_data_my_invite_requests
-	
+
 	def check_user_status(self, request):
 		user = request.user
 		event = EventSerializer.Meta.model.objects.get(pk=request.data['event_id'])
@@ -1378,7 +1110,7 @@ class EventViewset(viewsets.ViewSet):
 	def partial_update(self, request, pk):  # PATCH {prefix}/{lookup}/
 		eval(f"self.{request.data['command']}(request, pk)")  # SECURITY: inside each command function
 		return Response()  # SECURITY: returns nothing
-	
+
 	def update_guest_status(self, request, pk):
 		event = self.model.objects.get(pk=pk)  # SECURITY: in the following comments
 		if event.hosts.filter(id=request.user.id).exists():  # only host can change other users statuses
@@ -1693,7 +1425,7 @@ class ImageViewset(viewsets.ViewSet):
 		for key in request.data['keys'].split(','):
 			if 'MapIcon' in key:
 				result += aws_get_file(key)
-			else: 
+			else:
 				result += {'error': 'Not authorized'}
 		response = HttpResponse(result)
 		response['Content-Type'] = "image/png"
