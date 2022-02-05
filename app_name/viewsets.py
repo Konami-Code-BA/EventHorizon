@@ -804,7 +804,8 @@ To turn off notifications, go here: {f.create_url('/?page=settings')}
 *Note: you can't reply to this message here""",
 					)
 		elif request.data['status'] == 'invited':
-			if event.hosts.filter(id=request.user.id).exists():  # only host can invite user
+			# only host can invite user
+			if event.hosts.filter(id=request.user.id).exists() and not event.invited.filter(id=user_to_change).exists():
 				event.invite_request.remove(user_to_change)
 				event.invited.add(user_to_change)
 				event.maybe.add(user_to_change)
