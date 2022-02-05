@@ -4,7 +4,8 @@
 			<tabs :num-tabs="5" :initial="0" @on-click="tab => { selectATab(tab) }"
 					style="background-color: rgba(0, 0, 0, .5);">
 				<div slot="1">
-					<img src="@/assets/backIcon.png" style="height: 22px; margin-top: 4px;">
+					<img src="@/assets/backIcon.png" style="height: 22px; margin-top: 4px;"
+							v-if="store.pages.length > 1">
 				</div>
 				<div slot="2">
 					<img src="@/assets/languageIcon.png" style="height: 24px; margin-top: 4px;">
@@ -25,8 +26,10 @@
           			<div class="current-user" v-if="isAuthenticatedUser">
 						<p>{{ store.user.display_name }}</p>
 					</div>
-          			<button class="no-border-button" v-else v-on:click.prevent="goToLoginRegister()">
-						<p>LOGIN</p>
+          			<button class="no-border-button" v-else v-on:click.prevent="goToLoginRegister()"
+							style="width: 44px; padding-right: 7px; height: 30px; padding-top: 0; padding-bottom: 0;
+								padding-left: 0; margin: 0;">
+						LOGIN
 					</button>
 				</div>
 			</tabs>
@@ -159,7 +162,9 @@
 				if (tab === 3) {
 					window.location.replace(window.origin)
 				} else if (tab === 1) {
-					f.goBack()
+					if (store.pages.length > 1) {
+						f.goBack()
+					}
 				}
 			},
 			async english () {
@@ -204,13 +209,21 @@
 	.button {
 		width: 100%;
 	}
-  .current-user {
-    color: #cae2ff;
-    font-size: 10px;
-    width: 44px;
-}
-  .current-user > p {
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+	.current-user {
+		color: #cae2ff;
+		font-size: 10px;
+		width: 44px;
+	}
+	.current-user > p {
+		white-space: pre-wrap;
+		overflow-wrap: break-word;
+		overflow-x: hidden;
+		overflow-y: hidden;
+		max-width: 100%;
+		height: 30px;
+		padding-top: 0;
+		padding-bottom: 0;
+		padding-left: 0;
+		margin: 0;
+	}
 </style>

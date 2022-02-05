@@ -107,7 +107,6 @@
 						],
 					})
 					let bounds = new google.maps.LatLngBounds()
-					let infowindow = new google.maps.InfoWindow({ map: map })
 					let markers = {}
 					let infowindowContents = []
 					let noEvents = true
@@ -139,12 +138,14 @@
 										onclick="openEventModal(${this.store.events.display[i].id})"
 										style="
 											text-decoration: none;
-											color: blue;
+											color: #FF00FF;
 											font-weight: 600;
 											font-size: 16px;
 											-webkit-font-smoothing: antialiased;
 											-moz-osx-font-smoothing: grayscale;
-											border: none;
+											border: 2px solid #FF00FF;
+											height: 30px;
+											border-radius: 15px;
 											outline: none;
 										"
 									>
@@ -164,14 +165,16 @@
 									icon: image,
 								})
 								markers[this.store.events.display[i].id] = marker
+								let infowindow = new google.maps.InfoWindow({ map: map })
 								google.maps.event.addListener(marker, 'click', function() {
-									infowindow.close()
+									//infowindow.close()
 									infowindow.setContent(infowindowContents[i])
 									infowindow.open(map, this)
 								})
-								google.maps.event.addListener(map, "click", function() {
-									infowindow.close()
-								})
+								google.maps.event.trigger(marker, 'click')
+								//google.maps.event.addListener(map, "click", function() {
+								//	infowindow.close()
+								//})
 								bounds.extend(position)
 								await map.fitBounds(bounds)
 								map.setZoom(12)
@@ -202,7 +205,7 @@
 					if (markers[this.selectedEventId]) {
 						bounds.extend(markers[this.selectedEventId].getPosition())
 						await map.fitBounds(bounds)
-						map.setZoom(15)
+						map.setZoom(12)
 						map.panTo(markers[this.selectedEventId].getPosition())
 						google.maps.event.trigger(markers[this.selectedEventId], 'click');
 					}

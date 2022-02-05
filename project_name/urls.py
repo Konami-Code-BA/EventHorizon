@@ -15,6 +15,7 @@ urlpatterns = [
     path('', index, name='index'),
     path('/', index, name='index'),
     path('home/', index, name='index'),
+    path('temp/', index, name='index'),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 #urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

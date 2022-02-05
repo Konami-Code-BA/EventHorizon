@@ -51,6 +51,7 @@
 		padding: 8px;
 		border-radius: 4px;
 		height: 50px;
+		min-height: 50px;
 	}
 	.text-area {
 		overflow-x: clip;
