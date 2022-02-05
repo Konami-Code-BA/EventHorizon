@@ -1,6 +1,6 @@
 <template>
 	<div class="main" v-if="store.events.selected && event" style="overflow-y: scroll">
-		<div style="width: 98%; display: flex; flex-direction: column; align-items: center;">
+		<div style="width: 98%; display: flex; flex-direction: column; align-items: center; height: auto;">
 			<div class="flex-row" style="align-items: center; justify-content: center; height: 60px;">
 				<h2 style="max-width: 80%; overflow-x: scroll; max-height: 100%; overflow-y: hidden;
 						white-space: nowrap">
@@ -16,7 +16,7 @@
 				</div>
 			</div>
 			<img :src="image" style="height: 160px; width: auto; margin-top: 16px; margin-bottom: 10px; border-radius: 2px;"/>
-			<div class="flex-table">
+			<div class="flex-table" style="height: auto;">
 				<!-- <br v-if="(!event.is_private || myAttendingStatus['invited']) && event.venue_name"/> -->
 				<div v-if="(!event.is_private || myAttendingStatus['invited']) && event.venue_name" class="flex-row"
 						style="justify-content: space-between; flex-direction: column">
@@ -64,7 +64,7 @@
 						<div style="width: 10px;">⇧</div>
 					</div>
 				</button>
-				<div v-show="showPeople" style="margin-bottom: 1em">
+				<div v-show="showPeople" style="margin-bottom: 1em; height: auto;">
 					<div>
 						<div style="border: 2px solid rgba(255, 255, 255, .3); margin-bottom: 3px; border-radius: 7px;
 								padding: 5px; width: 100%;">
