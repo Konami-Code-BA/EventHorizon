@@ -9,11 +9,11 @@
 
   	<div class="line-height"/>
 <!-- Change display name input -->
-      <!-- <div class="dual-set">
+      <div class="dual-set">
         <button v-on:click.prevent="showChangeDisplayNameModal = true" class="button" style="width: 100%">
 					{{ 'EDIT DISPLAY NAME' }}&nbsp;
 				</button>
-			</div> -->
+			</div>
 
         <div class="dual-set">
 			</div>
@@ -237,16 +237,17 @@
 			},
 
       // Display name change  INCOMPLETE
-      // async changeDisplayName() {
-      //   this.$refs.displayNameInput.hasErrors()
-      //   if (this.$refs.displayNameInput.error.length > 0) {
-      //   f.shakeFunction([this.$refs.displayNameInput])
-      //   return }
-			// 	store.user.display_name = this.$refs.DisplayName
-			// 	await api.updateUserDisplayName()
-      //   this.$refs.DisplayNameInput.DisplayName = ''
-			// 	await this.$refs.flashDisplayNameChanged.flashModal()
-      // }
+      async changeDisplayName() {
+        this.$refs.displayNameInput.hasErrors()
+        if (this.$refs.displayNameInput.error.length > 0) {
+          f.shakeFunction([this.$refs.displayNameInput])
+        return }
+				store.user.display_name = this.$refs.displayNameInput.displayName
+				await api.updateUserDisplayName()
+        this.$refs.displayNameInput.DisplayName = ''
+        this.showChangeDisplayNameModal = false
+				await this.$refs.flashDisplayNameChanged.flashModal()
+      }
 		} // methods
 	} // export
 </script>
