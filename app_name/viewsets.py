@@ -307,30 +307,30 @@ To message back: go to the event (above link) ⇨ Show People ⇨ {
 }
 *Note: You can't turn off direct messages from hosts
 *Note: you can't reply to this message here""",
-             notification_type='DM',
-             )
-            return
-        else:
-            user = namedtuple('user', 'error')
-            user.error = 'you don\'t have permission'
-            return
+				notification_type='DM',
+				)
+			return
+		else:
+			user = namedtuple('user', 'error')
+			user.error = 'you don\'t have permission'
+			return
 
-    def message_users(self, request):
-        for id in request.data['user_ids']:
-            try:
-                user = self.model.objects.get(pk=id)
-            except self.model.DoesNotExist:
-                user = namedtuple('user', 'error')
-                user.error = 'a user with this id could not be found'
-                continue
-            event = EventSerializer.Meta.model.objects.get(pk=request.data['event_id'])
-            # SECURITY: i must be the host of the event id im passing, and the user must be affiliated with that event
-            # note: before we let people make events. people could make an event and invite someone just to be able to message them. this could be an issue later.
-            if f.user_in_guest_statuses(event, request.user.id, ['hosts']) and f.user_in_guest_statuses(
-              event, id, ['hosts', 'invited', 'wait_list', 'invite_request']):
-                f.notify_user(
-                 user,
-                 f"""Event: {event.name}
+	def message_users(self, request):
+		for id in request.data['user_ids']:
+			try:
+				user = self.model.objects.get(pk=id)
+			except self.model.DoesNotExist:
+				user = namedtuple('user', 'error')
+				user.error = 'a user with this id could not be found'
+				continue
+			event = EventSerializer.Meta.model.objects.get(pk=request.data['event_id'])
+			# SECURITY: i must be the host of the event id im passing, and the user must be affiliated with that event
+			# note: before we let people make events. people could make an event and invite someone just to be able to message them. this could be an issue later.
+			if f.user_in_guest_statuses(event, request.user.id, ['hosts']) and f.user_in_guest_statuses(
+					event, id, ['hosts', 'invited', 'wait_list', 'invite_request']):
+				f.notify_user(
+					user,
+					f"""Event: {event.name}
 
 Direct Message From Host:
 {request.data['message']}
@@ -514,107 +514,107 @@ To message the host: go to the event (above link) ⇨ Show People ⇨ Hosts
 
 # LINE VIEW SET ########################################################################################################
 class LineViewset(viewsets.ViewSet):
-    queryset = []
+	queryset = []
 
-    def list(self, request):  # GET {prefix}/
-        pass
+	def list(self, request):  # GET {prefix}/
+		pass
 
-    def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
-        pass
+	def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
+		pass
 
-    def update(self, request, pk=None):  # PUT {prefix}/{lookup}/
-        pass
+	def update(self, request, pk=None):  # PUT {prefix}/{lookup}/
+		pass
 
-    def partial_update(self, request, pk):  # PATCH {prefix}/{lookup}/
-        pass
+	def partial_update(self, request, pk):  # PATCH {prefix}/{lookup}/
+		pass
 
-    def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
-        pass
+	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
+		pass
 
-    def create(self, request):
-        if request.user.is_superuser:  # SECURITY: only superuser can
-            response = eval(f"self.{request.data['command']}(request)")  # SECURITY: inside each command function
-        else:
-            response = {}
-            response['error'] = 'only superuser can do this'
-        return Response(response)
+	def create(self, request):
+		if request.user.is_superuser:  # SECURITY: only superuser can
+			response = eval(f"self.{request.data['command']}(request)")  # SECURITY: inside each command function
+		else:
+			response = {}
+			response['error'] = 'only superuser can do this'
+		return Response(response)
 
-    def consumption(self, request):  # SECURITY: messaging channel access token only used here in backend
-        url = 'https://api.line.me/v2/bot/message/quota/consumption'
-        headers = {
-         'Content-Type': 'application/json',
-         'Authorization': 'Bearer ' + config('MESSAGING_CHANNEL_ACCESS_TOKEN'),
-        }
-        response = requests.get(url, headers=headers)
-        return response
+	def consumption(self, request):  # SECURITY: messaging channel access token only used here in backend
+		url = 'https://api.line.me/v2/bot/message/quota/consumption'
+		headers = {
+			'Content-Type': 'application/json',
+			'Authorization': 'Bearer ' + config('MESSAGING_CHANNEL_ACCESS_TOKEN'),
+		}
+		response = requests.get(url, headers=headers)
+		return response
 
-    def broadcast(self, request):  # SECURITY: messaging channel access token only used here in backend
-        url = 'https://api.line.me/v2/bot/message/broadcast'
-        headers = {
-         'Content-Type': 'application/json',
-         'Authorization': 'Bearer ' + config('MESSAGING_CHANNEL_ACCESS_TOKEN'),
-        }
-        data = json.dumps({
-         'messages': [{
-          "type": "text",
-          "text": request.data['message'],
-         }]
-        })
-        response = requests.post(url, headers=headers, data=data)
-        return response
+	def broadcast(self, request):  # SECURITY: messaging channel access token only used here in backend
+		url = 'https://api.line.me/v2/bot/message/broadcast'
+		headers = {
+			'Content-Type': 'application/json',
+			'Authorization': 'Bearer ' + config('MESSAGING_CHANNEL_ACCESS_TOKEN'),
+		}
+		data = json.dumps({
+			'messages': [{
+				"type": "text",
+				"text": request.data['message'],
+			}]
+		})
+		response = requests.post(url, headers=headers, data=data)
+		return response
 
-    def push(self, request):  # SECURITY: messaging channel access token only used here in backend
-        mikeyOrStu = {
-         'mikey': config('MIKEY_LINE_USER_ID'),
-         'stu': config('STU_LINE_USER_ID'),
-        }
-        data = request.data['data']
-        data['to'] = mikeyOrStu[data['to']]
-        url = 'https://api.line.me/v2/bot/message/push'
-        headers = {
-         'Content-Type': 'application/json',
-         'Authorization': 'Bearer ' + config('MESSAGING_CHANNEL_ACCESS_TOKEN'),
-        }
-        data = json.dumps(data)
-        response = requests.post(url, headers=headers, data=data)
-        return response
+	def push(self, request):  # SECURITY: messaging channel access token only used here in backend
+		mikeyOrStu = {
+			'mikey': config('MIKEY_LINE_USER_ID'),
+			'stu': config('STU_LINE_USER_ID'),
+		}
+		data = request.data['data']
+		data['to'] = mikeyOrStu[data['to']]
+		url = 'https://api.line.me/v2/bot/message/push'
+		headers = {
+			'Content-Type': 'application/json',
+			'Authorization': 'Bearer ' + config('MESSAGING_CHANNEL_ACCESS_TOKEN'),
+		}
+		data = json.dumps(data)
+		response = requests.post(url, headers=headers, data=data)
+		return response
 
 
 # SECRETS VIEW SET #####################################################################################################
 class SecretsViewset(viewsets.ViewSet):
-    queryset = []
+	queryset = []
 
-    def list(self, request):  # GET {prefix}/
-        pass
+	def list(self, request):  # GET {prefix}/
+		pass
 
-    def update(self, request, pk=None):  # PUT {prefix}/{lookup}/
-        pass
+	def update(self, request, pk=None):  # PUT {prefix}/{lookup}/
+		pass
 
-    def partial_update(self, request, pk):  # PATCH {prefix}/{lookup}/
-        pass
+	def partial_update(self, request, pk):  # PATCH {prefix}/{lookup}/
+		pass
 
-    def create(self, request):  # POST {prefix}/
-        pass
+	def create(self, request):  # POST {prefix}/
+		pass
 
-    def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
-        pass
+	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
+		pass
 
-    def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
-        if ((pk in ['mikey-line-user-id', 'stu-line-user-id'] and request.user.is_superuser)
-          or pk not in ['mikey-line-user-id', 'stu-line-user-id']):  # SECURITY: only superuser can get our ids
-            secrets_dict = {
-             'new-random-secret': secrets.token_urlsafe(16),
-             # SECURITY: this is safe because of domain restriction, and channel secret not used in client, only back
-             'login-channel-id': config('LOGIN_CHANNEL_ID'),
-             # SECURITY: this is safe because of domain restriction
-             'google-maps-api-key': config('GOOGLE_MAPS_API_KEY'),
-             # SECURITY: this is safe because only superuser can get it
-             'mikey-line-user-id': config('MIKEY_LINE_USER_ID'),
-             # SECURITY: this is safe because only superuser can get it
-             'stu-line-user-id': config('STU_LINE_USER_ID'),
-            }
-            return Response(secrets_dict[pk])
-        return Response()
+	def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
+		if ((pk in ['mikey-line-user-id', 'stu-line-user-id'] and request.user.is_superuser)
+				or pk not in ['mikey-line-user-id', 'stu-line-user-id']):  # SECURITY: only superuser can get our ids
+			secrets_dict = {
+				'new-random-secret': secrets.token_urlsafe(16),
+				# SECURITY: this is safe because of domain restriction, and channel secret not used in client, only back
+				'login-channel-id': config('LOGIN_CHANNEL_ID'),
+				# SECURITY: this is safe because of domain restriction
+				'google-maps-api-key': config('GOOGLE_MAPS_API_KEY'),
+				# SECURITY: this is safe because only superuser can get it
+				'mikey-line-user-id': config('MIKEY_LINE_USER_ID'),
+				# SECURITY: this is safe because only superuser can get it
+				'stu-line-user-id': config('STU_LINE_USER_ID'),
+			}
+			return Response(secrets_dict[pk])
+		return Response()
 
 
 # EVENTS VIEW SET ######################################################################################################
@@ -857,31 +857,31 @@ To message the host: go to the event (above link) ⇨ Show People ⇨ Hosts
 
 
 def randomize_lat_lng(address):
-    gmaps = googlemaps.Client(key=config('GOOGLE_MAPS_API_KEY'))
-    geocoded = gmaps.geocode(address)
-    address = geocoded[0]['formatted_address']
-    area = ''
-    for component in geocoded[0]['address_components']:
-        if 'sublocality_level_2' in component['types']:
-            area += component['long_name']
-        if 'locality' in component['types']:
-            area += ', ' + component['long_name']
-        if 'postal_code' in component['types']:
-            area += ' ' + component['long_name']
-        if 'country' in component['types']:
-            country = component['long_name']
-    geocoded = gmaps.geocode(f'{area} {country}')
-    outter = 300
-    latitude = geocoded[0]['geometry']['location']['lat']
-    rand_sign = 1 if random.random() > .5 else -1
-    rand_value = random.random()
-    rand_latitude = float(latitude) + rand_value / outter * rand_sign
-    outter = 350
-    longitude = geocoded[0]['geometry']['location']['lng']
-    rand_sign = 1 if random.random() > .5 else -1
-    rand_value = random.random()
-    rand_longitude = float(longitude) + rand_value / outter * rand_sign
-    return address, area, rand_latitude, rand_longitude
+	gmaps = googlemaps.Client(key=config('GOOGLE_MAPS_API_KEY'))
+	geocoded = gmaps.geocode(address)
+	address = geocoded[0]['formatted_address']
+	area = ''
+	for component in geocoded[0]['address_components']:
+		if 'sublocality_level_2' in component['types']:
+			area += component['long_name']
+		if 'locality' in component['types']:
+			area += ', ' + component['long_name']
+		if 'postal_code' in component['types']:
+			area += ' ' + component['long_name']
+		if 'country' in component['types']:
+			country = component['long_name']
+	geocoded = gmaps.geocode(f'{area} {country}')
+	outter = 300
+	latitude = geocoded[0]['geometry']['location']['lat']
+	rand_sign = 1 if random.random() > .5 else -1
+	rand_value = random.random()
+	rand_latitude = float(latitude) + rand_value / outter * rand_sign
+	outter = 350
+	longitude = geocoded[0]['geometry']['location']['lng']
+	rand_sign = 1 if random.random() > .5 else -1
+	rand_value = random.random()
+	rand_longitude = float(longitude) + rand_value / outter * rand_sign
+	return address, area, rand_latitude, rand_longitude
 
 # SECURITY:
 # address only shows area if not invited
@@ -891,80 +891,80 @@ def randomize_lat_lng(address):
 # can't see invited/attending/ maybe people if not invited
 # can't see wait_list, invite_request people if not host
 def serializer_private(events):
-    serializer_data = []
-    for event in events:
-        serializer_data += [OrderedDict({
-         'id': event.id,
-         'name': event.name,
-         'address': event.area,
-         'description': event.description,
-         'latitude': event.rand_latitude,
-         'longitude': event.rand_longitude,
-         'date_time': event.date_time,
-         'include_time': event.include_time,
-         'is_private': event.is_private,
-         'hosts': event.hosts.all().values_list('id', flat=True),
-         'invited': event.invited.count(),
-         'attending': event.attending.count(),
-         'maybe': event.maybe.count(),
-         'wait_list': event.wait_list.count(),
-         'invite_request': event.invite_request.count(),
-         'images': event.images.all().values_list('id', flat=True),
-         'attending_limit': event.attending_limit,
-        })]
-    return serializer_data
+	serializer_data = []
+	for event in events:
+		serializer_data += [OrderedDict({
+			'id': event.id,
+			'name': event.name,
+			'address': event.area,
+			'description': event.description,
+			'latitude': event.rand_latitude,
+			'longitude': event.rand_longitude,
+			'date_time': event.date_time,
+			'include_time': event.include_time,
+			'is_private': event.is_private,
+			'hosts': event.hosts.all().values_list('id', flat=True),
+			'invited': event.invited.count(),
+			'attending': event.attending.count(),
+			'maybe': event.maybe.count(),
+			'wait_list': event.wait_list.count(),
+			'invite_request': event.invite_request.count(),
+			'images': event.images.all().values_list('id', flat=True),
+			'attending_limit': event.attending_limit,
+		})]
+	return serializer_data
 
 
 def serializer_public_invited(events):
-    serializer_data = []
-    for event in events:
-        serializer_data += [OrderedDict({
-         'id': event.id,
-         'name': event.name,
-         'address': event.address,
-         'venue_name': event.venue_name,
-         'description': event.description,
-         'latitude': event.latitude,
-         'longitude': event.longitude,
-         'date_time': event.date_time,
-         'include_time': event.include_time,
-         'is_private': event.is_private,
-         'hosts': event.hosts.all().values_list('id', flat=True),
-         'invited': event.invited.all().values_list('id', flat=True),
-         'attending': event.attending.all().values_list('id', flat=True),
-         'maybe': event.maybe.all().values_list('id', flat=True),
-         'wait_list': event.wait_list.count(),
-         'invite_request': event.invite_request.count(),
-         'images': event.images.all().values_list('id', flat=True),
-         'attending_limit': event.attending_limit,
-        })]
-    return serializer_data
+	serializer_data = []
+	for event in events:
+		serializer_data += [OrderedDict({
+			'id': event.id,
+			'name': event.name,
+			'address': event.address,
+			'venue_name': event.venue_name,
+			'description': event.description,
+			'latitude': event.latitude,
+			'longitude': event.longitude,
+			'date_time': event.date_time,
+			'include_time': event.include_time,
+			'is_private': event.is_private,
+			'hosts': event.hosts.all().values_list('id', flat=True),
+			'invited': event.invited.all().values_list('id', flat=True),
+			'attending': event.attending.all().values_list('id', flat=True),
+			'maybe': event.maybe.all().values_list('id', flat=True),
+			'wait_list': event.wait_list.count(),
+			'invite_request': event.invite_request.count(),
+			'images': event.images.all().values_list('id', flat=True),
+			'attending_limit': event.attending_limit,
+		})]
+	return serializer_data
 
 
 def serializer_host(events):
-    serializer_data = []
-    for event in events:
-        serializer_data += [OrderedDict({
-         'id': event.id,
-         'name': event.name,
-         'address': event.address,
-         'venue_name': event.venue_name,
-         'description': event.description,
-         'latitude': event.latitude,
-         'longitude': event.longitude,
-         'date_time': event.date_time,
-         'include_time': event.include_time,
-         'is_private': event.is_private,
-         'hosts': event.hosts.all().values_list('id', flat=True),
-         'invited': event.invited.all().values_list('id', flat=True),
-         'attending': event.attending.all().values_list('id', flat=True),
-         'maybe': event.maybe.all().values_list('id', flat=True),
-         'wait_list': event.wait_list.all().values_list('id', flat=True),
-         'invite_request': event.invite_request.all().values_list('id', flat=True),
-         'images': event.images.all().values_list('id', flat=True),
-         'attending_limit': event.attending_limit,
-        })]
-    return serializer_data
+	serializer_data = []
+	for event in events:
+		serializer_data += [OrderedDict({
+			'id': event.id,
+			'name': event.name,
+			'address': event.address,
+			'venue_name': event.venue_name,
+			'description': event.description,
+			'latitude': event.latitude,
+			'longitude': event.longitude,
+			'date_time': event.date_time,
+			'include_time': event.include_time,
+			'is_private': event.is_private,
+			'hosts': event.hosts.all().values_list('id', flat=True),
+			'invited': event.invited.all().values_list('id', flat=True),
+			'attending': event.attending.all().values_list('id', flat=True),
+			'maybe': event.maybe.all().values_list('id', flat=True),
+			'wait_list': event.wait_list.all().values_list('id', flat=True),
+			'invite_request': event.invite_request.all().values_list('id', flat=True),
+			'images': event.images.all().values_list('id', flat=True),
+			'attending_limit': event.attending_limit,
+		})]
+	return serializer_data
 
 
 # IMAGES VIEW SET ######################################################################################################
@@ -1027,133 +1027,133 @@ class ImageViewset(viewsets.ViewSet):
 		return Response(serializer_data)
 
 def aws_upload_file(file):
-    s3_client = boto3.client(
-     's3',
-     aws_access_key_id=config('AWS_ACCESS_KEY_ID'),
-     aws_secret_access_key=config('AWS_SECRET_ACCESS_KEY')
-    )
-    try:
-        file_type = '.' + file.name.split('.')[len(file.name.split('.'))-1]
-        if file_type not in ['.jpg', '.JPG', '.jpeg', '.JPEG', '.png', '.PNG', '.gif', '.PNG']:
-            return {'error': 'Not supported file type'}
-        key = str(datetime.now()).replace(' ', 'T').replace(':', '_').replace('.', '_')
-        key += '--' + str(secrets.token_urlsafe(4)) + file_type
-        s3_client.upload_fileobj(file, config('AWS_BUCKET_ACCESS_POINT'), key)
-        return {'key': key}
-    except ClientError as e:
-        print('AWS S3 UPLOAD ERROR:', e)
-        return {'error': e}
+	s3_client = boto3.client(
+		's3',
+		aws_access_key_id=config('AWS_ACCESS_KEY_ID'),
+		aws_secret_access_key=config('AWS_SECRET_ACCESS_KEY')
+	)
+	try:
+		file_type = '.' + file.name.split('.')[len(file.name.split('.'))-1]
+		if file_type not in ['.jpg', '.JPG', '.jpeg', '.JPEG', '.png', '.PNG', '.gif', '.PNG']:
+			return {'error': 'Not supported file type'}
+		key = str(datetime.now()).replace(' ', 'T').replace(':', '_').replace('.', '_')
+		key += '--' + str(secrets.token_urlsafe(4)) + file_type
+		s3_client.upload_fileobj(file, config('AWS_BUCKET_ACCESS_POINT'), key)
+		return {'key': key}
+	except ClientError as e:
+		print('AWS S3 UPLOAD ERROR:', e)
+		return {'error': e}
 
 def aws_get_file(key):
-    try:
-        s3_client = boto3.client(
-         's3',
-         aws_access_key_id=config('AWS_ACCESS_KEY_ID'),
-         aws_secret_access_key=config('AWS_SECRET_ACCESS_KEY')
-        )
-        file_stream = io.BytesIO()
-        s3_client.download_fileobj(config('AWS_BUCKET_ACCESS_POINT'), key, file_stream)
-        send = base64.b64encode(file_stream.getbuffer())
-        return send
-    except ClientError as e:
-        print('AWS S3 UPLOAD ERROR:', e)
-        return {'error': e}
+	try:
+		s3_client = boto3.client(
+			's3',
+			aws_access_key_id=config('AWS_ACCESS_KEY_ID'),
+			aws_secret_access_key=config('AWS_SECRET_ACCESS_KEY')
+		)
+		file_stream = io.BytesIO()
+		s3_client.download_fileobj(config('AWS_BUCKET_ACCESS_POINT'), key, file_stream)
+		send = base64.b64encode(file_stream.getbuffer())
+		return send
+	except ClientError as e:
+		print('AWS S3 UPLOAD ERROR:', e)
+		return {'error': e}
 
 
 # PLUS ONE VIEW SET ####################################################################################################
 class PlusOneViewset(viewsets.ViewSet):
-    serializer_class = PlusOneSerializer
-    model = serializer_class.Meta.model
-    queryset = []
+	serializer_class = PlusOneSerializer
+	model = serializer_class.Meta.model
+	queryset = []
 
-    # everyone can see hosts
-    # can't see invited/attending/maybe plus ones if not invited
-    # can't see wait_list/invite_request plus ones if not host
-    def list(self, request):  # GET {prefix}/
-        pass  # SECURITY: does nothing
+	# everyone can see hosts
+	# can't see invited/attending/maybe plus ones if not invited
+	# can't see wait_list/invite_request plus ones if not host
+	def list(self, request):  # GET {prefix}/
+		pass  # SECURITY: does nothing
 
-    def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
-        pass  # SECURITY: does nothing
+	def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
+		pass  # SECURITY: does nothing
 
-    def update(self, request, pk=None):  # PUT {prefix}/{lookup}/
-        pass  # SECURITY: does nothing
+	def update(self, request, pk=None):  # PUT {prefix}/{lookup}/
+		pass  # SECURITY: does nothing
 
-    def partial_update(self, request, pk=None):  # PATCH {prefix}/{lookup}/
-        pass  # SECURITY: does nothing
+	def partial_update(self, request, pk=None):  # PATCH {prefix}/{lookup}/
+		pass  # SECURITY: does nothing
 
-    def create(self, request):  # POST {prefix}/
-        result = eval(f"self.{request.data['command']}(request)")  # SECURITY: inside each command function
-        return Response(result)
+	def create(self, request):  # POST {prefix}/
+		result = eval(f"self.{request.data['command']}(request)")  # SECURITY: inside each command function
+		return Response(result)
 
-    def set_plus_one(self, request):  # get is done in get_event_user_info
-        event = EventSerializer.Meta.model.objects.get(pk=request.data['event_id'])
-        if event.plus_ones.filter(chaperone=request.user.id).exists():  # SECURITY: user can't add more than 1 plus-one
-            return [OrderedDict([('error', 'user can\'t add more than 1 plus-one')])]
-        elif f.impossibly_over_attending_limit(event, request.user.id, change_is_plus_one=True):  # can't if no space
-            return [OrderedDict([('error', 'no space in attending to add a plus one')])]
-        elif (  # SECURITY:  only someone part of this event (in any way) can add a plus-one
-         event.hosts.filter(id=request.user.id).exists()
-         or event.invited.filter(id=request.user.id).exists()
-         or event.attending.filter(id=request.user.id).exists()
-         or event.maybe.filter(id=request.user.id).exists()
-         or event.wait_list.filter(id=request.user.id).exists()
-         or event.invite_request.filter(id=request.user.id).exists()
-        ):
-            f.notify_waiting_users_if_necessary(event, request.user.id, change_is_plus_one=1)
-            plus_one = self.model(name='(+1) ' + request.data['plus_one_name'])
-            plus_one.save()
-            plus_one.chaperone.add(request.user.id)
-            event.plus_ones.add(plus_one.id)
-            return [OrderedDict([('success', plus_one.id)])]
-        else:
-            return [OrderedDict([('error', 'you are not affiliated with this event')])]
+	def set_plus_one(self, request):  # get is done in get_event_user_info
+		event = EventSerializer.Meta.model.objects.get(pk=request.data['event_id'])
+		if event.plus_ones.filter(chaperone=request.user.id).exists():  # SECURITY: user can't add more than 1 plus-one
+			return [OrderedDict([('error', 'user can\'t add more than 1 plus-one')])]
+		elif f.impossibly_over_attending_limit(event, request.user.id, change_is_plus_one=True):  # can't if no space
+			return [OrderedDict([('error', 'no space in attending to add a plus one')])]
+		elif (  # SECURITY:  only someone part of this event (in any way) can add a plus-one
+			event.hosts.filter(id=request.user.id).exists()
+			or event.invited.filter(id=request.user.id).exists()
+			or event.attending.filter(id=request.user.id).exists()
+			or event.maybe.filter(id=request.user.id).exists()
+			or event.wait_list.filter(id=request.user.id).exists()
+			or event.invite_request.filter(id=request.user.id).exists()
+		):
+			f.notify_waiting_users_if_necessary(event, request.user.id, change_is_plus_one=1)
+			plus_one = self.model(name='(+1) ' + request.data['plus_one_name'])
+			plus_one.save()
+			plus_one.chaperone.add(request.user.id)
+			event.plus_ones.add(plus_one.id)
+			return [OrderedDict([('success', plus_one.id)])]
+		else:
+			return [OrderedDict([('error', 'you are not affiliated with this event')])]
 
-    def delete_plus_one(self, request):
-        event = EventSerializer.Meta.model.objects.get(pk=request.data['event_id'])
-        if not event.plus_ones.filter(chaperone=request.user.id).exists():  # SECURITY: can't del +1 if doesnt exist
-            return [OrderedDict([('error', 'user has no plus one to delete')])]
-        if (  # SECURITY:  only someone part of this event (in any way) can delete a plus-one
-         event.hosts.filter(id=request.user.id).exists()
-         or event.invited.filter(id=request.user.id).exists()
-         or event.attending.filter(id=request.user.id).exists()
-         or event.maybe.filter(id=request.user.id).exists()
-         or event.wait_list.filter(id=request.user.id).exists()
-         or event.invite_request.filter(id=request.user.id).exists()
-        ):
-            f.notify_waiting_users_if_necessary(event, request.user.id, change_is_plus_one=-1)
-            plus_one = event.plus_ones.filter(chaperone=request.user.id)
-            plus_one.delete()
-            return []
-        else:
-            return [OrderedDict([('error', 'you are not affiliated with this event')])]
+	def delete_plus_one(self, request):
+		event = EventSerializer.Meta.model.objects.get(pk=request.data['event_id'])
+		if not event.plus_ones.filter(chaperone=request.user.id).exists():  # SECURITY: can't del +1 if doesnt exist
+			return [OrderedDict([('error', 'user has no plus one to delete')])]
+		if (  # SECURITY:  only someone part of this event (in any way) can delete a plus-one
+			event.hosts.filter(id=request.user.id).exists()
+			or event.invited.filter(id=request.user.id).exists()
+			or event.attending.filter(id=request.user.id).exists()
+			or event.maybe.filter(id=request.user.id).exists()
+			or event.wait_list.filter(id=request.user.id).exists()
+			or event.invite_request.filter(id=request.user.id).exists()
+		):
+			f.notify_waiting_users_if_necessary(event, request.user.id, change_is_plus_one=-1)
+			plus_one = event.plus_ones.filter(chaperone=request.user.id)
+			plus_one.delete()
+			return []
+		else:
+			return [OrderedDict([('error', 'you are not affiliated with this event')])]
 
-    def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
-        pass  # SECURITY: does nothing
+	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
+		pass  # SECURITY: does nothing
 
 
 # GROUP VIEW SET #######################################################################################################
 class GroupViewset(viewsets.ViewSet):
-    model = Group
-    queryset = []
+	model = Group
+	queryset = []
 
-    def list(self, request):  # GET {prefix}/
-        groups = self.model.objects.all()
-        result = []
-        for group in groups:
-            result += [OrderedDict([('name', group.name), ('id', group.id)])]
-        return Response(result)
+	def list(self, request):  # GET {prefix}/
+		groups = self.model.objects.all()
+		result = []
+		for group in groups:
+			result += [OrderedDict([('name', group.name), ('id', group.id)])]
+		return Response(result)
 
-    def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
-        pass
+	def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
+		pass
 
-    def update(self, request, pk=None):  # PUT {prefix}/{lookup}/
-        pass
+	def update(self, request, pk=None):  # PUT {prefix}/{lookup}/
+		pass
 
-    def partial_update(self, request, pk):  # PATCH {prefix}/{lookup}/
-        pass
+	def partial_update(self, request, pk):  # PATCH {prefix}/{lookup}/
+		pass
 
-    def create(self, request):  # POST {prefix}/
-        pass
+	def create(self, request):  # POST {prefix}/
+		pass
 
-    def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
-        pass
+	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
+		pass
