@@ -1,6 +1,6 @@
 <template>
 	<div class="main" v-if="store.events.selected && event" style="overflow-y: scroll">
-		<div style="width: 98%; display: flex; flex-direction: column; align-items: center;">
+		<div style="width: 98%; display: flex; flex-direction: column; align-items: center; height: auto;">
 			<div class="flex-row" style="align-items: center; justify-content: center; height: 60px;">
 				<h2 style="max-width: 80%; overflow-x: scroll; max-height: 100%; overflow-y: hidden;
 						white-space: nowrap">
@@ -16,7 +16,7 @@
 				</div>
 			</div>
 			<img :src="image" style="height: 160px; width: auto; margin-top: 16px; margin-bottom: 10px; border-radius: 2px;"/>
-			<div class="flex-table">
+			<div class="flex-table" style="height: auto;">
 				<!-- <br v-if="(!event.is_private || myAttendingStatus['invited']) && event.venue_name"/> -->
 				<div v-if="(!event.is_private || myAttendingStatus['invited']) && event.venue_name" class="flex-row"
 						style="justify-content: space-between; flex-direction: column">
@@ -28,11 +28,13 @@
 				</div>
 						<small class="event-attr">Address</small> <small class="address-value">{{ event.address }}</small>
 				<div class="flex-row" style="justify-content: space-between;">
-          <button style="align-self: center; width: 28%;" v-on:click.prevent="copyToClipboard()" class="button event-page-button">
-            <small> Copy Address </small>
+					<button class="button event-page-button" v-on:click.prevent="copyToClipboard()"
+							style="align-self: center; width: auto;">
+						<small> Copy Address </small>
 					</button>
-					<button style="align-self: center; width: 70%;" v-on:click.prevent="openInGoogleMaps()" class="button google-maps-button">
-            Open in Google Maps
+					<button class="button google-maps-button" v-on:click.prevent="openInGoogleMaps()"
+							style="display: flex; flex-direction: row; justify-content: center; width: 100%;">
+            			Open in Google Maps
 					</button>
 				</div>
 				<button v-on:click.prevent="showDescription=!showDescription" class="button event-page-button">
@@ -62,7 +64,7 @@
 						<div style="width: 10px;">⇧</div>
 					</div>
 				</button>
-				<div v-show="showPeople" style="margin-bottom: 1em">
+				<div v-show="showPeople" style="margin-bottom: 1em; height: auto;">
 					<div>
 						<div style="border: 2px solid rgba(255, 255, 255, .3); margin-bottom: 3px; border-radius: 7px;
 								padding: 5px; width: 100%;">
@@ -217,6 +219,28 @@
 								</button>
 							</div>
 						</div>
+						<div style="border: 2px solid rgba(255, 255, 255, .3); margin-bottom: 3px; border-radius: 7px;
+								padding: 5px; width: 100%;" v-if="myAttendingStatus['hosts']">
+							<div class="flex-row" style="justify-content: space-between">
+								<div style="align-self: center">
+									TOTAL UNINVITED FOLLOWERS
+								</div>
+								<button v-on:click.prevent="showStatus = 'uninvited_followers'" class="button"
+										style="align-self: center; width: 100px;"
+										:disabled="!myAttendingStatus['hosts'] || people['uninvited_followers'].length === 0">
+									<div class="flex-row"
+											style="align-self: center">
+										{{ people['uninvited_followers'].length }}
+										<div v-if="people['uninvited_followers'].length != 1">
+											&nbsp;{{ t('PEOPLE') }}
+										</div>
+										<div v-else>
+											&nbsp;{{ t('PERSON') }}
+										</div>
+									</div>
+								</button>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -239,14 +263,14 @@
 			</div>
 			<div style="margin-top: 0.7em; width: 100%; display: flex; flex-direction: column; align-items: center;
 					border: 2px solid rgba(255, 255, 255, .3); border-radius: 7px;" v-show="showEventStatus">
-				<div class="dual-set" v-if="myAttendingStatus['invited']" style="border-bottom: 2px solid rgba(255, 255, 255, .3)">
+				<div class="dual-set" v-if="myAttendingStatus['invited']"
+						style="border-bottom: 2px solid rgba(255, 255, 255, .3); width: 80%; margin-bottom: 5px;">
 					YOU ARE INVITED
 					<input type="checkbox" class="checkbox" checked="checked" onclick="return false;"/>
 				</div>
 				<!--if invited, can click maybe / attending / decline-->
-				<tabs :num-tabs="3" :initial="0"
-						v-if="myAttendingStatus['invited']">
-					<div slot="1">
+				<div v-if="myAttendingStatus['invited']" style="width: 70%">
+					<div>
 						<div class="dual-set">
 							<button class="button"
 									v-on:click.prevent="changeAttendingStatus('maybe')">
@@ -255,7 +279,7 @@
 							</button>
 						</div>
 					</div>
-					<div slot="2" v-if="isSpaceToAttend || myAttendingStatus['attending']">
+					<div v-if="isSpaceToAttend || myAttendingStatus['attending']">
 						<div class="dual-set"><!--if limit is not surpassed, otherwise show a waitlist option-->
 							<button class="button"
 									v-on:click.prevent="changeAttendingStatus('attending')">
@@ -264,7 +288,7 @@
 							</button>
 						</div>
 					</div>
-					<div slot="2" v-else>
+					<div v-else>
 						<div class="dual-set"><!--if limit is not surpassed, otherwise show a waitlist option-->
 							<button class="button"
 									v-on:click.prevent="changeAttendingStatus('wait_list')">
@@ -273,61 +297,61 @@
 							</button>
 						</div>
 					</div>
-					<div slot="3">
+					<div>
 						<div class="dual-set">
 							<button class="button"
 									v-on:click.prevent="changeAttendingStatus('decline')">
 								DECLINE
+								<input type="checkbox" class="checkbox" onclick="return false;"/>
 							</button>
 						</div>
 					</div>
-				</tabs>
+				</div>
 				<!--if public and not invited, can click maybe / attending-->
-				<tabs :num-tabs="2" :initial="0" style="width: 100%;"
-						v-if="!myAttendingStatus['invited'] && !event.is_private">
-					<div slot="1">
+				<div style="width: 70%;" v-if="!myAttendingStatus['invited'] && !event.is_private">
+					<div>
 						<div class="dual-set">
-							<button class="button" style="width: auto"
+							<button class="button"
 									v-on:click.prevent="changeAttendingStatus('maybe')">
 								MAYBE
 								<input type="checkbox" class="checkbox" v-model="myAttendingStatus['maybe']"/>
 							</button>
 						</div>
 					</div>
-					<div slot="2" v-if="isSpaceToAttend">
+					<div v-if="isSpaceToAttend">
 						<div class="dual-set"><!--if limit is not surpassed, otherwise show a waitlist option-->
-							<button class="button" style="width: auto"
+							<button class="button"
 									v-on:click.prevent="changeAttendingStatus('attending')">
 								I WILL ATTEND
 								<input type="checkbox" class="checkbox" v-model="myAttendingStatus['attending']"/>
 							</button>
 						</div>
 					</div>
-					<div slot="2" v-else>
+					<div v-else>
 						<div class="dual-set"><!--if limit is not surpassed, otherwise show a waitlist option-->
-							<button class="button" style="width: auto"
+							<button class="button"
 									v-on:click.prevent="changeAttendingStatus('wait_list')">
 								WAIT LIST
 								<input type="checkbox" class="checkbox" v-model="myAttendingStatus['wait_list']"/>
 							</button>
 						</div>
 					</div>
-				</tabs>
+				</div>
 				<!--if private and not invited, can click invite request-->
-				<tabs :num-tabs="1" :initial="0" style="width: 100%;"
-						v-if="!myAttendingStatus['invited'] && event.is_private">
-					<div slot="1">
+				<div style="width: 70%;" v-if="!myAttendingStatus['invited'] && event.is_private">
+					<div>
 						<div class="dual-set">
-							<button class="button" style="width: auto"
+							<button class="button"
 									v-on:click.prevent="changeAttendingStatus('invite_request')">
 								INVITE REQUEST
 								<input type="checkbox" class="checkbox" v-model="myAttendingStatus['invite_request']"/>
 							</button>
 						</div>
 					</div>
-				</tabs>
+				</div>
 				<div v-if="(myAttendingStatus['invited'] || myAttendingStatus['invite_request'])"
-						style="display: flex; flex-direction: row; align-items: flex-start; width: 100%;">
+						style="display: flex; flex-direction: row; align-items: flex-start; width: 95%;
+						padding-top: 5px;">
 					<div class="dual-set" style="padding-bottom: 2px; width: auto; align-self: flex-start">
 						<button class="button" v-on:click.prevent="changePlusOne()">
 							ADD A PLUS ONE
@@ -360,22 +384,34 @@
 					</div>
 				</div>
 				<div style="width: 100%; overflow-y: scroll;">
-					<div v-for="person in people[showStatus]" style="width: 100%;">
+					<div v-for="person in people[showStatus]" style="width: 100%; border: 2px solid #ffe07a;
+							border-radius: 15px;">
 						<div style="display: flex; flex-direction: row; justify-content: space-between; width: 100%;">
-							<div style="height: 30px; display: flex; flex-direction: column; justify-content: center;">
-								●　{{person.display_name}}
+							<div style="min-height: 30px; display: flex; flex-direction: row;
+									justify-content: flex-start; align-items: center; max-width: 100%; min-width: 0;
+									flex-shrink: 1; write-space: pre-wrap; overflow-wrap: break-word;
+									padding-left: 5px;">
+								{{person.display_name}}
 							</div>
-							<button v-on:click.prevent="messagePerson = person" class="button" style="width: auto;"
-									v-if="(myAttendingStatus['hosts'] || showStatus === 'hosts') && !person.plus_one">
+							<button v-on:click.prevent="messagePerson = person" class="button" style="width: auto;
+									border: 2px solid #18002e; background-color: #ffe07a; color: #18002e"
+									v-if="((myAttendingStatus['hosts'] || showStatus === 'hosts') && isAuthenticatedUser) && !person.plus_one">
 								MESSAGE
 							</button>
 						</div>
+						<button v-if="myAttendingStatus['hosts'] && ['invite_request', 'uninvited_followers'].includes(showStatus)"
+								v-on:click.prevent="changeAttendingStatus('invited', person.id)" class="button"
+								style="border: 2px solid #18002e; background-color: #ffe07a; color: #18002e">
+							INVITE!
+						</button>
 					</div>
 				</div>
+				<div style="padding-right: 10px; width: 100%; margin-top: 10px;">
 				<button v-on:click.prevent="messageAllPeople = true" v-if="myAttendingStatus['hosts']"
 						class="button">
 					MESSAGE ALL
 				</button>
+				</div>
 			</div>
 		</modal>
 		<!--modal v-if="showHostPanel" @closeModals="showHostPanel = false">
@@ -481,6 +517,7 @@
 					'maybe': [],
 					'wait_list': [],
 					'invite_request': [],
+					'uninvited_followers': [],
 				},
 				showStatus: null,
 				statusNames: {
@@ -490,6 +527,7 @@
 					'maybe': this.t('MAYBE'),
 					'wait_list': this.t('WAIT LIST'),
 					'invite_request': this.t('INVITE REQUESTS'),
+					'uninvited_followers': 'UNINVITED FOLLOWERS',
 				},
 				plusOneStatus: null,
 				showHostPanel: false,
@@ -558,12 +596,25 @@
 				}
 				this.store.loading = false
 			},
-			async changeAttendingStatus (status) {
+			async changeAttendingStatus (status, userId = null) {
 				if (!this.isAuthenticatedUser) {
 					this.goToLogin()
 					return
 				}
-				if (status === 'decline' || !this.myAttendingStatus[status]) {
+				if (status === 'invited') {
+					store.loading = true
+					let result = await api.changeGuestStatus(this.event.id, status, userId)
+					if (result === 'failed') {
+						store.loading = false
+						await this.$refs.flashCantChangePastEvents.flashModal()
+						return
+					}
+					await f.getEvent(this.event)
+					await this.getEventAndMyStatusAndPeople()
+					store.loading = false
+					await this.$refs.flashDone.flashModal()
+					return
+				} else if (status === 'decline' || !this.myAttendingStatus[status]) {
 					store.loading = true
 					let result = await api.changeGuestStatus(this.event.id, status, null)
 					if (result === 'failed') {
@@ -698,46 +749,45 @@
 	}
 	.button {
 		width: 100%;
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
 	}
 	.tabs {
 		border: none;
 	}
-
-  .event-page-button{
-    align-self: center;
-    /* white-space: pre-line; */
-    height: auto;
-    min-height: 30px;
-    margin-bottom: 1em;
-  }
-
-  .drop-down-button {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-  }
-
-  .google-maps-button {
-    align-self: center;
-    height: auto;
-    min-height: 30px;
-    margin-bottom: 1em;
-    background-color:#ffe07a;
-    color: black;
-  }
-
-  .address-value {
-    margin: 0 auto;
-	text-align: center;
-  }
-
-  .event-attr {
-    border-bottom: solid 1px;
-    width: 70%;
-    margin-bottom: 2px;
-    text-align: center;
-    margin: 0 auto;
-  }
+	.event-page-button{
+		align-self: center;
+		/* white-space: pre-line; */
+		height: auto;
+		min-height: 30px;
+		margin-bottom: 1em;
+	}
+	.drop-down-button {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		width: 100%;
+	}
+	.google-maps-button {
+		align-self: center;
+		height: auto;
+		min-height: 30px;
+		margin-bottom: 1em;
+		background-color:#ffe07a;
+		color: black;
+	}
+	.address-value {
+		margin: 0 auto;
+		text-align: center;
+	}
+	.event-attr {
+		border-bottom: solid 1px;
+		width: 70%;
+		margin-bottom: 2px;
+		text-align: center;
+		margin: 0 auto;
+	}
 </style>
