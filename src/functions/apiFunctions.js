@@ -154,13 +154,12 @@ export default {
             })
     },
     // USERS ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //async getUserLimitedInfo(userIds) { // userIds is an array
-    //    return await this.userApi('post', null, {
-    //        command: 'get_user_limited_info',
-    //        ids: userIds,
-    //        pks: userIds,
-    //    })
-    //},
+    async getUserLimitedInfo(userIds = null) { // userIds is an array. normally it would be my followers. but for now it will be null and we will get everyone
+        return await this.userApi('post', null, {
+            command: 'get_user_limited_info',
+            ids: userIds,
+        })
+    },
     async getEventUserInfo(eventId, guestType) {
         return await this.userApi('post', null, {
             command: 'get_event_user_info',
