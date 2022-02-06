@@ -362,7 +362,9 @@
 					</div>
 					<display-name-input ref="displayNameInput" usage="PlusOne"
 							v-if="!plusOneStatus" style="width: 50%;" :enter="changePlusOne"/>
-					<div v-else style="width: 50%; align-self: center">&nbsp;Plus One: {{plusOneStatus.slice(5)}}</div>
+					<div v-else style="width: 50%; align-self: center; text-align: center">
+						Plus One: {{plusOneStatus.slice(5)}}
+					</div>
 				</div>
 				<!--button v-on:click.prevent="showHostPanel = true" v-if="myAttendingStatus['hosts']" class="button">
 					OPEN HOST PANEL
@@ -399,7 +401,8 @@
 								MESSAGE
 							</button>
 						</div>
-						<button v-if="myAttendingStatus['hosts'] && ['invite_request', 'uninvited_followers'].includes(showStatus)"
+						<button v-if="myAttendingStatus['hosts'] && !person.plus_one && isAuthenticatedUser
+								&& ['invite_request', 'uninvited_followers'].includes(showStatus)"
 								v-on:click.prevent="changeAttendingStatus('invited', person.id)" class="button"
 								style="border: 2px solid #18002e; background-color: #ffe07a; color: #18002e">
 							INVITE!
