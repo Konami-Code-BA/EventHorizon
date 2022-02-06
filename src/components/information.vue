@@ -11,66 +11,71 @@
 
 			<!--peopleFilters-->
 			<div v-if="whichInfo === 'peopleFilters'">
-				{{'All: Public events + events to which you have and have not been invited. \n \nMine: Events to which you have been invited/have confirmed attendance. \n\nPeople I follow: Feature currently under construction'}}
+				<p>{{t('ALL')}}{{`:\xa0\xa0\xa0\xa0`}}{{t('ALL EVENTS')}}</p>
+				<p>{{t('MINE')}}{{`:\xa0\xa0\xa0\xa0`}}{{t('EVENTS I AM AFFILIATED WITH')}}</p>
+				<p>{{t('PEOPLE I FOLLOW')}}{{`:\xa0\xa0\xa0\xa0`}}{{t('COMING SOON')}}</p>
 			</div>
 			
 			<!--events-->
-			<div v-if="whichInfo === 'events'">
-				<div style="display: flex; flex-direction: row; justify-content: space-between;
-						align-items: flex-start; height: 300px;">
+			<div v-if="whichInfo === 'events'" style="display: flex; flex-direction: column; align-items: center;">
+				<h2 style="text-align: center">{{t('EVENT TYPES')}}</h2>
+				<div style="display: flex; flex-direction: column; justify-content: space-between;
+						align-items: center; height: 300px;">
 					<div style="display: flex; flex-direction: column; justify-content: space-between;
-							align-items: flex-start; height: 100%;">
-						<div style="display: flex; flex-direction: column; justify-content: space-between;
-								align-items: flex-start;">
-							<div style="font-size: 25px;">
-								INVITED
+							align-items: center; height: 100%;">
+						<div style="display: flex; flex-direction: column;
+								align-items: center;">
+							<div style="font-size: 18px; border-bottom: solid 1px; width: 100%; text-align: center;">
+								{{t('invited2')}}
 							</div>
-							<div style="display: flex; flex-direction: row; justify-content: space-between;
+							<div style="display: flex; flex-direction: row;
 									align-items: center;">
 								<img src="@/assets/myMapIcon.png" style="width: 25px; height: 25px;"/>
-								UPCOMING
+								{{t('UPCOMING')}}
 							</div>
-							<div style="display: flex; flex-direction: row; justify-content: space-between;
-									align-items: center; width: 100%">
+							<div style="display: flex; flex-direction: row;
+									align-items: center;">
 								<img src="@/assets/myPastMapIcon.png" style="width: 25px; height: 25px;"/>
-								PAST
+								{{t('PAST')}}
 							</div>
 						</div>
-						<div style="display: flex; flex-direction: column; justify-content: space-between;
-								align-items: flex-start">
-							<div style="font-size: 25px;">
-								PUBLIC
+						<div style="display: flex; flex-direction: column;
+								align-items: center">
+							<div style="font-size: 18px; border-bottom: solid 1px; margin-top: 10px; width: 100%;
+									text-align: center;">
+								{{t('PUBLIC')}}
 							</div>
-							<div style="display: flex; flex-direction: row; justify-content: space-between;
+							<div style="display: flex; flex-direction: row;
 									align-items: center;">
 								<img src="@/assets/publicMapIcon.png" style="width: 25px; height: 25px;"/>
-								UPCOMING
+								{{t('UPCOMING')}}
 							</div>
-							<div style="display: flex; flex-direction: row; justify-content: space-between;
-									align-items: center; width: 100%">
+							<div style="display: flex; flex-direction: row;
+									align-items: center;">
 								<img src="@/assets/publicPastMapIcon.png" style="width: 25px; height: 25px;"/>
-								PAST
+								{{t('PAST')}}
 							</div>
 						</div>
-						<div style="display: flex; flex-direction: column; justify-content: space-between;
-								align-items: flex-start">
-							<div style="font-size: 25px;">
-								PRIVATE
+						<div style="display: flex; flex-direction: column;
+								align-items: center">
+							<div style="font-size: 18px; border-bottom: solid 1px; margin-top: 10px; width: 100%;
+									text-align: center;">
+								{{t('PRIVATE')}}
 							</div>
-							<div style="display: flex; flex-direction: row; justify-content: space-between;
+							<div style="display: flex; flex-direction: row;
 									align-items: center;">
 								<img src="@/assets/privateMapIcon.png" style="width: 25px; height: 25px;"/>
-								UPCOMING
+								{{t('UPCOMING')}}
 							</div>
-							<div style="display: flex; flex-direction: row; justify-content: space-between;
-									align-items: center; width: 100%">
+							<div style="display: flex; flex-direction: row;
+									align-items: center;">
 								<img src="@/assets/privatePastMapIcon.png" style="width: 25px; height: 25px;"/>
-								PAST
+								{{t('PAST')}}
 							</div>
 						</div>
 					</div>
-					<div style="width: 50%; white-space: pre-line;">
-						{{'Upcoming events can be displayed by location, calendar, or list format. Click into an event to find more information.\n\nPrivate events\' locations aren\'t shown in the exact place.'}}
+					<div style="width: 100%; white-space: pre-line;">
+						{{ t('Note: Private events\' locations aren\'t shown in the exact place.') }}
 					</div>
 				</div>
 			</div>
@@ -80,10 +85,11 @@
 			<div class="line-height"/>
 			
 			<div style="display: flex; flex-direction: row;">
-				For more info, go to the
+				{{ t('For more info, go to the') }}
 				<button v-on:click.prevent="goToFaq()" class="link-button">
 					FAQ
 				</button>
+				{{ t('to') }}
 			</div>
 		</div>
 	</modal>

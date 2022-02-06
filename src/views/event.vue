@@ -23,10 +23,12 @@
 					<p class="event-attr">
 						<strong>Venue</strong>
 					</p>
-					<p class="address-value" style="margin-bottom: 1em;"> {{ event.venue_name }}
+					<p class="address-value" style="margin-bottom: 1em;">
+						{{ event.venue_name }}
 					</p>
 				</div>
-						<small class="event-attr">Address</small> <small class="address-value">{{ event.address }}</small>
+					<small class="event-attr">Address</small>
+					<small class="address-value">{{ event.address }}</small>
 				<div class="flex-row" style="justify-content: space-between;">
 					<button class="button event-page-button" v-on:click.prevent="copyToClipboard()"
 							style="align-self: center; width: auto;">
@@ -70,7 +72,7 @@
 								padding: 5px; width: 100%;">
 							<div class="flex-row" style="justify-content: space-between">
 								<div style="align-self: center">
-									{{ t('TOTAL INVITED') }}
+									{{ t('invited') }}
 								</div>
 								<!--can't see invited people if not invited-->
 								<button v-on:click.prevent="showStatus = 'invited'" class="button"
@@ -90,7 +92,7 @@
 							</div>
 							<div class="flex-row" style="justify-content: space-between">
 								<div style="align-self: center">
-									{{ t('HOSTS') }}
+									{{ t('hosts') }}
 								</div>
 								<!--everyone can see hosts-->
 								<button v-on:click.prevent="showStatus = 'hosts'" class="button"
@@ -110,7 +112,7 @@
 						<div style="border: 2px solid rgba(255, 255, 255, .3); border-radius: 7px; padding: 5px; width: 100%;">
 							<div class="flex-row" style="justify-content: space-between">
 								<div style="align-self: center">
-									{{ t('ATTENDING') }}
+									{{ t('attending') }}
 								</div>
 								<!--can't see attending people if not invited-->
 								<button v-on:click.prevent="showStatus = 'attending'" class="button"
@@ -157,7 +159,7 @@
 								padding: 5px; width: 100%;">
 							<div class="flex-row" style="justify-content: space-between">
 								<div style="align-self: center">
-									{{ t('MAYBE') }}
+									{{ t('maybe') }}
 								</div>
 								<!--can't see maybe people if not invited-->
 								<button v-on:click.prevent="showStatus = 'maybe'" class="button"
@@ -177,7 +179,7 @@
 							</div>
 							<div class="flex-row" style="justify-content: space-between">
 								<div style="align-self: center">
-									{{ t('WAIT LIST') }}
+									{{ t('wait_list') }}
 								</div>
 								<!--can't see wait_list people if not host-->
 								<button v-on:click.prevent="showStatus = 'wait_list'" class="button"
@@ -200,7 +202,7 @@
 								padding: 5px; width: 100%;">
 							<div class="flex-row" style="justify-content: space-between">
 								<div style="align-self: center">
-									{{ t('INVITE REQUESTS') }}
+									{{ t('invite_request') }}
 								</div>
 								<!--can't see invite_request people if not host-->
 								<button v-on:click.prevent="showStatus = 'invite_request'" class="button"
@@ -265,7 +267,7 @@
 					border: 2px solid rgba(255, 255, 255, .3); border-radius: 7px;" v-show="showEventStatus">
 				<div class="dual-set" v-if="myAttendingStatus['invited']"
 						style="border-bottom: 2px solid rgba(255, 255, 255, .3); width: 80%; margin-bottom: 5px;">
-					YOU ARE INVITED
+					{{ t('invited') }}
 					<input type="checkbox" class="checkbox" checked="checked" onclick="return false;"/>
 				</div>
 				<!--if invited, can click maybe / attending / decline-->
@@ -274,7 +276,7 @@
 						<div class="dual-set">
 							<button class="button"
 									v-on:click.prevent="changeAttendingStatus('maybe')">
-								MAYBE
+								{{ t('maybe') }}
 								<input type="checkbox" class="checkbox" v-model="myAttendingStatus['maybe']"/>
 							</button>
 						</div>
@@ -283,7 +285,7 @@
 						<div class="dual-set"><!--if limit is not surpassed, otherwise show a waitlist option-->
 							<button class="button"
 									v-on:click.prevent="changeAttendingStatus('attending')">
-								I WILL ATTEND
+								{{ t('I WILL ATTEND') }}
 								<input type="checkbox" class="checkbox" v-model="myAttendingStatus['attending']"/>
 							</button>
 						</div>
@@ -292,7 +294,7 @@
 						<div class="dual-set"><!--if limit is not surpassed, otherwise show a waitlist option-->
 							<button class="button"
 									v-on:click.prevent="changeAttendingStatus('wait_list')">
-								WAIT LIST
+								{{ t('wait_list') }}
 								<input type="checkbox" class="checkbox" v-model="myAttendingStatus['wait_list']"/>
 							</button>
 						</div>
@@ -301,7 +303,7 @@
 						<div class="dual-set">
 							<button class="button"
 									v-on:click.prevent="changeAttendingStatus('decline')">
-								DECLINE
+								{{ t('DECLINE') }}
 								<input type="checkbox" class="checkbox" onclick="return false;"/>
 							</button>
 						</div>
