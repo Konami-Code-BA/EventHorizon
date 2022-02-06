@@ -205,12 +205,13 @@ class UserViewset(viewsets.ModelViewSet):
 			user_array = self.model.objects.all()
 			serializer_data = []
 			for user in user_array:
-				serializer_data += [OrderedDict([
-					('id', user.id),
-					('display_name', user.display_name),
-					('limited_user', True),
-					('plus_one', False),
-				])]
+				if not user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists():
+					serializer_data += [OrderedDict([
+						('id', user.id),
+						('display_name', user.display_name),
+						('limited_user', True),
+						('plus_one', False),
+					])]
 			return serializer_data
 		else:
 			return [OrderedDict([])]
