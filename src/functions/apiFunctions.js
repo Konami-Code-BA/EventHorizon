@@ -25,9 +25,9 @@ export default {
                     store.user = store.defaultUser
                     return store.user
                 } else if ([
-                  'login', 'register_with_email', 'register_email', 'update_user_do_get_lines',
-                  'update_user_do_get_emails', 'update_user_language', 'line_new_device', 'forgot_password',
-                  'change_password', 'update_user_display_name'
+                        'login', 'register_with_email', 'register_email', 'update_user_do_get_lines',
+                        'update_user_do_get_emails', 'update_user_language', 'line_new_device', 'forgot_password',
+                        'change_password', 'update_user_display_name',
                     ].includes(data.command) && !('error' in response.data[0])) {
                     console.log(`success - userApi ${data.command}`)
                     store.user = response.data[0]
@@ -257,12 +257,12 @@ export default {
             do_get_lines: store.user.do_get_lines,
         })
     },
-  async updateUserDisplayName() {
-    return await this.userApi('patch', store.user.id, {
-      command: 'update_user_display_name',
-      display_name: store.user.display_name
-    })
-  },
+    async updateUserDisplayName() {
+        return await this.userApi('patch', store.user.id, {
+            command: 'update_user_display_name',
+            display_name: store.user.display_name
+        })
+    },
     //async updateUserAlerts(name) {
     //    return await this.userApi('patch', store.user.id, {
     //        command: 'update_user_alerts',
