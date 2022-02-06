@@ -22,7 +22,7 @@
 				</div>
 			</div>
 		</div>
-		<div v-else style="font-size: 24px;">NO EVENTS</div>
+		<div v-else style="font-size: 24px;">{{ t('NO EVENTS') }}</div>
 	</div>
 </template>
 <script defer>
