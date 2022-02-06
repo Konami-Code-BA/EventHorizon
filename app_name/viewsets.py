@@ -133,6 +133,7 @@ class UserViewset(viewsets.ModelViewSet):
 	#	else:  # if user does not have this alert, add it
 	#		alert.user_set.add(user)
 	#	return user
+
 	def update_user_display_name(self, request, pk):
 		try:
 			user = self.model.objects.get(pk=pk)
