@@ -52,13 +52,14 @@
 		align-items: center;  /* this isnt for buttons, its for text */
 	}
 	.tab {
-		width: 100%;
+		width: auto;
 		padding-left: 5px;
 		padding-right: 5px;
 		display: flex;
 		flex-direction: column;
-		align-items: stretch;
+		align-items: center;
 		justify-content: center;
+		text-align: center;
 	}
 	.button {
 		outline: none;

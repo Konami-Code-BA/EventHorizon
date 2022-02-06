@@ -7,7 +7,7 @@
 			</div>
 			<div class="date-area" style="">
 				<div style="font-weight: 100;">{{ event.date_time.split('T')[0] }}</div>
-				<div style="color: green">{{ userStatus }}</div>
+				<div style="color: green">{{ t(userStatus) }}</div>
 			</div>
 		</div>
 	</div>

@@ -308,7 +308,7 @@ export default {
                 people['invited'], people['maybe'], people['attending'], people['wait_list']
             ).map(
                 x => { return x.id }
-            ).includes(person.id))
+            ).includes(person.id)) && this.isAuthenticatedUser
         })
 
         myAttendingStatus['hosts'] = this.checkPeopleList(people, 'hosts')
