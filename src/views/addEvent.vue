@@ -195,6 +195,6 @@
 		position: fixed;
 		height: 20px;
 		width: 20px;
-		transform: translate(110px, 0)
+		transform: translate(90px, 0);
 	}
 </style>
