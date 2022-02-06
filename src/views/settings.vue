@@ -23,12 +23,12 @@
 				{{ t('ADD EMAIL ADDRESS') }}
 			</button>
 			<div v-else class="dual-set">
-				<button class="button" style="width: 100%"
+				<button class="button" style="width: 100%;"
 						v-on:click.prevent="updateUserDoGetEmails()">
 					{{ t('GET EMAILS') }}&nbsp;
 				</button>
 				<input type="checkbox" class="checkbox" v-model="store.user.do_get_emails"
-						:key="store.user.do_get_emails"/>
+						:key="store.user.do_get_emails" style="align-self: center;"/>
 			</div>
 
 			<div class="line-height"/>
@@ -41,7 +41,7 @@
 					{{ t('GET LINE MESSAGES') }}&nbsp;
 				</button>
 				<input type="checkbox" class="checkbox" v-model="store.user.do_get_lines"
-						:key="store.user.do_get_lines"/>
+						:key="store.user.do_get_lines" style="align-self: center;"/>
 			</div>
 
 			<div class="line-height"/>
@@ -254,6 +254,7 @@
 		align-items: center;
 		justify-content: center;
 		padding: 0;
+		margin: 0;
 		width: 80%;
 	}
 	.checkbox {

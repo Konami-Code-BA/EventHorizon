@@ -161,6 +161,7 @@
 		}*/
 		.icon {
 			height: 20px;
+			width: auto;
 			vertical-align: bottom;
 		}
 		.line-height{
