@@ -100,11 +100,11 @@ export default {
         },
         'GET EMAILS': {
             'EN': 'GET EMAILS',
-            'JP': 'メール送信'
+            'JP': 'メール受信'
         },
         'GET LINE MESSAGES': {
             'EN': 'GET LINE MESSAGES',
-            'JP': 'LINEのメール送信'
+            'JP': 'LINEのメール受信'
         },
         'UPCOMING EVENTS': {
             'EN': 'UPCOMING EVENTS',
@@ -164,7 +164,7 @@ export default {
         },
         'CHANGE PASSWORD': {
             'EN': 'CHANGE PASSWORD',
-            'JP': 'パスワード変更する'
+            'JP': 'パスワード変更'
         },
         'Password can\'t be empty': {
             'EN': 'Password can\'t be empty',
@@ -360,7 +360,7 @@ export default {
         },
         'SELECT WHAT EVENTS TO DISPLAY': {
             'EN': 'SELECT WHAT EVENTS TO DISPLAY',
-            'JP': 'どんなイベントを表示しよう'
+            'JP': '表示するイベントを選択'
         },
         'ALL': {
             'EN': 'ALL',
@@ -368,11 +368,83 @@ export default {
         },
         'MINE': {
             'EN': 'MINE',
-            'JP': '僕の'
+            'JP': '自分のイベント'
         },
         'PEOPLE I FOLLOW': {
             'EN': 'PEOPLE I FOLLOW',
             'JP': 'フォローしている人'
+        },
+        'hosts': {
+            'EN': 'HOST',
+            'JP': '主催者'
+        },
+        'invited': {
+            'EN': 'INVITED',
+            'JP': '招待客'
+        },
+        'invited2': {
+            'EN': 'INVITED',
+            'JP': '招待されている'
+        },
+        'attending': {
+            'EN': 'ATTENDING',
+            'JP': '参加者'
+        },
+        'maybe': {
+            'EN': 'MAYBE',
+            'JP': '検討中'
+        },
+        'wait_list': {
+            'EN': 'WAIT LIST',
+            'JP': 'キャンセル待ち'
+        },
+        'invite_request': {
+            'EN': 'INVITE REQUEST',
+            'JP': '招待希望'
+        },
+        'decline': {
+            'EN': 'DECLINE',
+            'JP': '辞退'
+        },
+        'I WILL ATTEND': {
+            'EN': 'I WILL ATTEND',
+            'JP': '参加する'
+        },
+        'EVENTS I AM AFFILIATED WITH': {
+            'EN': 'EVENTS I AM AFFILIATED WITH',
+            'JP': '自分が関係しているイベント'
+        },
+        'For more info, go to the': {
+            'EN': 'For more info, go to the',
+            'JP': '詳しくは'
+        },
+        'to': {
+            'EN': '',
+            'JP': 'へ'
+        },
+        'PAST': {
+            'EN': 'PAST',
+            'JP': '過去'
+        },
+        'UPCOMING': {
+            'EN': 'UPCOMING',
+            'JP': '予定'
+        },
+        'PUBLIC': {
+            'EN': 'PUBLIC',
+            'JP': '公開'
+        },
+        'PRIVATE': {
+            'EN': 'PRIVATE',
+            'JP': 'プライベート'
+        },
+        'EVENT TYPES': {
+            'EN': 'EVENT TYPES',
+            'JP': 'イベントの種類'
+        },
+        'Note: Private events\' locations aren\'t shown in the exact place.': {
+            'EN': 'Note: Private events\' locations aren\'t shown in the exact place.',
+            'JP': '※プライベートイベントの場所は正確に表示されません。'
         },
         '\'S': {
             'EN': '\'S',
@@ -402,33 +474,9 @@ export default {
             'EN': 'IMAGE',
             'JP': '画像'
         },
-        'HOSTS': {
-            'EN': 'HOSTS',
-            'JP': 'HOSTS'
-        },
-        'ATTENDING': {
-            'EN': 'ATTENDING',
-            'JP': 'ATTENDING'
-        },
-        'MAYBE': {
-            'EN': 'MAYBE',
-            'JP': 'MAYBE'
-        },
-        'WAIT LIST': {
-            'EN': 'WAIT LIST',
-            'JP': 'WAIT LIST'
-        },
-        'INVITE REQUESTS': {
-            'EN': 'INVITE REQUESTS',
-            'JP': 'INVITE REQUESTS'
-        },
-        'TOTAL INVITED': {
-            'EN': 'TOTAL INVITED',
-            'JP': 'TOTAL INVITED'
-        },
         'ALL EVENTS': {
             'EN': 'ALL EVENTS',
-            'JP': 'オール　イベント'
+            'JP': 'すべてのイベント'
         },
         'CURRENTLY, ONLY ADMINS CAN CREATE EVENTS. THIS FEATURE WILL BECOME OPEN TO THE PUBLIC SOON!': {
             'EN': 'CURRENTLY, ONLY ADMINS CAN CREATE EVENTS. THIS FEATURE WILL BECOME OPEN TO THE PUBLIC SOON!',

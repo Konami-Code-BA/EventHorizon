@@ -8,7 +8,7 @@
 					<div>
 						{{ t('SELECT WHAT EVENTS TO DISPLAY') }}
 					</div>
-					<div style="right: 2%; position: absolute;">
+					<div style="right: 0; position: absolute;">
 						<button style="background: none; border: none"
 								v-on:click.prevent="showInformation = 'peopleFilters'">
 							<img src="@/assets/iIcon.png" class="icon" style="padding: 3px;" id="people-info"/>
@@ -61,7 +61,7 @@
 					<div>
 						{{ t('EVENTS') }}
 					</div>
-					<div style="position: absolute; right: 2%;">
+					<div style="position: absolute; right: 0;">
 						<button style="background: none; border: none"
 								v-on:click.prevent="showInformation = 'events'">
 							<img src="@/assets/iIcon.png" class="icon" style="padding: 3px;" id="events-info"/>
@@ -71,14 +71,14 @@
 				<tabs :num-tabs="3" :initial="selectedTab" :key="selectedTab"
 						@on-click="(arg) => { selectedTab = arg }"
 						style="border-left: none; border-right: none; border-bottom: none; height: auto !important;">
-					<div slot="1">
-						<img src="@/assets/mapIcon.png" class="icon"/>
+					<div slot="1" class="tab">
+						<img src="@/assets/mapIcon.png" class="icon" style="vertical-align: bottom;"/>
 					</div>
-					<div slot="2">
-						<img src="@/assets/threeBarsHIcon.png" class="icon" style="vertical-align: bottom"/>
+					<div slot="2" class="tab">
+						<img src="@/assets/threeBarsHIcon.png" class="icon" style="vertical-align: bottom;"/>
 					</div>
-					<div slot="3">
-						<img src="@/assets/calendarIcon.png" class="icon" style="vertical-align: bottom"/>
+					<div slot="3" class="tab">
+						<img src="@/assets/calendarIcon.png" class="icon" style="vertical-align: bottom;"/>
 					</div>
 				</tabs>
 			</div>
@@ -199,6 +199,14 @@
 		border-top-right-radius: 7px;
 		border: 2px solid rgba(255, 255, 255, .3);
 	}
+	.tabs {
+		justify-content: space-around;
+	}
+	.tab {
+		width: 80px !important;
+		height: 20px !important;
+		min-width: 100% !important;
+	}
 	.events {
 		border-top: none;
 		border-top-left-radius: 0;
@@ -240,6 +248,6 @@
 		display: flex;
 		flex-direction: row;
 		width: 100%;
-		align-items: center;
+		align-items: flex-start;
 	}
 </style>

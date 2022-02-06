@@ -115,43 +115,155 @@
 							if (this.store.events.display[i].latitude != 0
 									|| this.store.events.display[i].longitude != 0) {
 								noEvents = false
-								let icon = window.origin.replace('8080', '8000') + '/static/publicPastMapIcon.png'
-								if (f.isoStringDateToDateObject(this.store.events.display[i].date_time) > f.today) {
-									icon = window.origin.replace('8080', '8000') + '/static/publicMapIcon.png'
-								}
+								let icon = ''
 								if (this.store.events.display[i].is_private
 										&& !f.isGuestStatus(this.store.events.display[i], 'invited')) {
+									// PRIVATE UPCOMING
 									if (f.isoStringDateToDateObject(this.store.events.display[i].date_time) > f.today) {
 										icon = window.origin.replace('8080', '8000') + '/static/privateMapIcon.png'
+										infowindowContents.push(`
+											<button
+												onclick="openEventModal(${this.store.events.display[i].id})"
+												style="
+													text-decoration: none;
+													color: black;
+													font-weight: 600;
+													font-size: 16px;
+													-webkit-font-smoothing: antialiased;
+													-moz-osx-font-smoothing: grayscale;
+													border: 2px solid #fff200;
+													height: 30px;
+													border-radius: 15px;
+													outline: none;
+													background-color: #fff200 !important;
+												"
+											>
+												${this.store.events.display[i].name}
+											</button>
+										`)
+									// PRIVATE PAST
 									} else {
 										icon = window.origin.replace('8080', '8000') + '/static/privatePastMapIcon.png'
+										infowindowContents.push(`
+											<button
+												onclick="openEventModal(${this.store.events.display[i].id})"
+												style="
+													text-decoration: none;
+													color: black;
+													font-weight: 600;
+													font-size: 16px;
+													-webkit-font-smoothing: antialiased;
+													-moz-osx-font-smoothing: grayscale;
+													border: 2px solid #d3a814;
+													height: 30px;
+													border-radius: 15px;
+													outline: none;
+													background-color: #d3a814 !important;
+												"
+											>
+												${this.store.events.display[i].name}
+											</button>
+										`)
 									}
+								} else if (!this.store.events.display[i].is_private
+										&& !f.isGuestStatus(this.store.events.display[i], 'invited')) {
+									// PUBLIC UPCOMING
+									if (f.isoStringDateToDateObject(this.store.events.display[i].date_time) > f.today) {
+										icon = window.origin.replace('8080', '8000') + '/static/publicMapIcon.png'
+										infowindowContents.push(`
+											<button
+												onclick="openEventModal(${this.store.events.display[i].id})"
+												style="
+													text-decoration: none;
+													color: black;
+													font-weight: 600;
+													font-size: 16px;
+													-webkit-font-smoothing: antialiased;
+													-moz-osx-font-smoothing: grayscale;
+													border: 2px solid #0ed145;
+													height: 30px;
+													border-radius: 15px;
+													outline: none;
+													background-color: #0ed145 !important;
+												"
+											>
+												${this.store.events.display[i].name}
+											</button>
+										`)
+									} else {
+										// PUBLIC PAST
+										icon = window.origin.replace('8080', '8000')
+											+ '/static/publicPastMapIcon.png'
+										infowindowContents.push(`
+											<button
+												onclick="openEventModal(${this.store.events.display[i].id})"
+												style="
+													text-decoration: none;
+													color: black;
+													font-weight: 600;
+													font-size: 16px;
+													-webkit-font-smoothing: antialiased;
+													-moz-osx-font-smoothing: grayscale;
+													border: 2px solid #09541e;
+													height: 30px;
+													border-radius: 15px;
+													outline: none;
+													background-color: #09541e !important;
+												"
+											>
+												${this.store.events.display[i].name}
+											</button>
+										`)
+									}	
 								} else if (f.isGuestStatus(this.store.events.display[i], 'invited')) {
+									// INVITED UPCOMING
 									if (f.isoStringDateToDateObject(this.store.events.display[i].date_time) > f.today) {
 										icon = window.origin.replace('8080', '8000') + '/static/myMapIcon.png'
+										infowindowContents.push(`
+											<button
+												onclick="openEventModal(${this.store.events.display[i].id})"
+												style="
+													text-decoration: none;
+													color: black;
+													font-weight: 600;
+													font-size: 16px;
+													-webkit-font-smoothing: antialiased;
+													-moz-osx-font-smoothing: grayscale;
+													border: 2px solid #0b5bf1;
+													height: 30px;
+													border-radius: 15px;
+													outline: none;
+													background-color: #0b5bf1 !important;
+												"
+											>
+												${this.store.events.display[i].name}
+											</button>
+										`)
 									} else {
+										// INVITED PAST
 										icon = window.origin.replace('8080', '8000') + '/static/myPastMapIcon.png'
+										infowindowContents.push(`
+											<button
+												onclick="openEventModal(${this.store.events.display[i].id})"
+												style="
+													text-decoration: none;
+													color: black;
+													font-weight: 600;
+													font-size: 16px;
+													-webkit-font-smoothing: antialiased;
+													-moz-osx-font-smoothing: grayscale;
+													border: 2px solid #7218bb;
+													height: 30px;
+													border-radius: 15px;
+													outline: none;
+													background-color: #7218bb !important;
+												"
+											>
+												${this.store.events.display[i].name}
+											</button>
+										`)
 									}
 								}
-								infowindowContents.push(`
-									<button
-										onclick="openEventModal(${this.store.events.display[i].id})"
-										style="
-											text-decoration: none;
-											color: #FF00FF;
-											font-weight: 600;
-											font-size: 16px;
-											-webkit-font-smoothing: antialiased;
-											-moz-osx-font-smoothing: grayscale;
-											border: 2px solid #FF00FF;
-											height: 30px;
-											border-radius: 15px;
-											outline: none;
-										"
-									>
-										${this.store.events.display[i].name}
-									</button>
-								`)
 								let position = new google.maps.LatLng(
 									this.store.events.display[i].latitude,
 									this.store.events.display[i].longitude

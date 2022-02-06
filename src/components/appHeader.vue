@@ -3,14 +3,15 @@
 		<div class="header" style="width: 100%;">
 			<tabs :num-tabs="5" :initial="0" @on-click="tab => { selectATab(tab) }"
 					style="background-color: rgba(0, 0, 0, .5);">
-				<div slot="1">
+				<div slot="1" style="width: 35px !important;">
 					<img src="@/assets/backIcon.png" style="height: 22px; margin-top: 4px;"
 							v-if="store.pages.length > 1">
+					<div v-else style="width: 35px;"/>
 				</div>
-				<div slot="2">
-					<img src="@/assets/languageIcon.png" style="height: 24px; margin-top: 4px;">
+				<div slot="2" style="width: 35px !important;">
+					<img src="@/assets/threeBarsIcon.png" style="height: 24px; margin-top: 4px;">
 				</div>
-				<div slot="3">
+				<div slot="3" style="width: 140px !important;">
 					<div class="no-border-button" style="display: flex; flex-direction: row; align-items: center;">
 						<div>EVENT</div>
 						<div>
@@ -19,29 +20,26 @@
 						<div>HORIZON</div>
 					</div>
 				</div>
-				<div slot="4">
-					<img src="@/assets/threeBarsIcon.png" class="icon" style="height: 21px; margin-bottom: 2px;"/>
-				</div>
-				<div slot="5">
-          			<div class="current-user" v-if="isAuthenticatedUser">
-						<p>{{ store.user.display_name }}</p>
+				<div slot="4" style="width: 0 !important; padding: 0 !important; margin: 0 !important;"/>
+				<div slot="5" style="width: 70px !important;">
+          			<div class="current-user" v-if="isAuthenticatedUser" style="color: #cae2ff; font-size: 10px;">
+						{{ store.user.display_name }}
 					</div>
-          			<button class="no-border-button" v-else v-on:click.prevent="goToLoginRegister()"
-							style="width: 44px; padding-right: 7px; height: 30px; padding-top: 0; padding-bottom: 0;
-								padding-left: 0; margin: 0;">
+          			<button class="no-border-button current-user" v-else v-on:click.prevent="goToLoginRegister()"
+					  		style="font-size: 14px;">
 						LOGIN
 					</button>
 				</div>
 			</tabs>
 		</div>
-		<modal v-if="selectedTab === 2" @closeModals="selectedTab = 0">
+		<modal v-if="showLanguageModal" @closeModals="showLanguageModal = false">
 			<div slot="contents" class="modal">
 				<div style="align-self: flex-end; padding-bottom: 5px;">
-					<button v-on:click.prevent="selectedTab = 0" class="no-border-button x-button">
+					<button v-on:click.prevent="showLanguageModal = false" class="no-border-button x-button">
 						✖
 					</button>
 				</div>
-				<div style="width: 100%">
+				<div style="width: 100%;">
 					<button v-on:click.prevent="english()" class="button">
 						ENGLISH
 					</button>
@@ -59,7 +57,7 @@
 
 			</div>
 		</modal>
-		<modal v-if="selectedTab === 4" @closeModals="selectedTab = 0">
+		<modal v-if="selectedTab === 2" @closeModals="selectedTab = 0">
 			<div slot="contents" class="modal">
 				<div style="align-self: flex-end; padding-bottom: 5px;">
 					<button v-on:click.prevent="selectedTab = 0" class="no-border-button x-button">
@@ -92,6 +90,15 @@
 					<button v-on:click.prevent="selectedTab = 0; goToPage({ page: 'faq', args: {} })"
 							class="button">
 						FAQ
+					</button>
+				</div>
+
+				<div class="line-height"/>
+
+				<div style="width: 100%">
+					<button v-on:click.prevent="selectedTab = 0; showLanguageModal = true"
+							class="button">
+						ENGLISH/日本語
 					</button>
 				</div>
 
@@ -136,6 +143,7 @@
 				store: store,
 				selectedTab: 0,
 				showQrModal: false,
+				showLanguageModal: false,
 			}
 		},
 		components: {
@@ -205,25 +213,27 @@
 		border-top: none !important;
 		border-left: none !important;
 		border-right: none !important;
+		justify-content: space-around !important;
+		width: 100%;
+		max-width: 100%;
 	}
 	.button {
 		width: 100%;
 	}
 	.current-user {
-		color: #cae2ff;
-		font-size: 10px;
-		width: 44px;
-	}
-	.current-user > p {
-		white-space: pre-wrap;
-		overflow-wrap: break-word;
-		overflow-x: hidden;
-		overflow-y: hidden;
+		width: 100%;
 		max-width: 100%;
-		height: 30px;
-		padding-top: 0;
-		padding-bottom: 0;
-		padding-left: 0;
-		margin: 0;
+		height: 40px;
+		max-height: 30px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		vertical-align: middle;
+		overflow-wrap: break-word;
+  		word-break: break-word;
+		text-align: left;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		justify-content: center;
 	}
 </style>
