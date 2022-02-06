@@ -71,7 +71,7 @@ class UserViewset(viewsets.ModelViewSet):
 		else:
 			serializer_data = self.serializer_class(self.queryset, many=True).data
 		return Response(serializer_data)
-	
+
 	def update_user_language(self, request, pk):
 		try:
 			user = self.model.objects.get(pk=pk)
@@ -87,7 +87,7 @@ class UserViewset(viewsets.ModelViewSet):
 			user = namedtuple('user', 'error')
 			user.error = 'you don\'t have permission'
 			return user
-	
+
 	def update_user_do_get_emails(self, request, pk):
 		try:
 			user = self.model.objects.get(pk=pk)
@@ -103,7 +103,7 @@ class UserViewset(viewsets.ModelViewSet):
 			user = namedtuple('user', 'error')
 			user.error = 'you don\'t have permission'
 			return user
-	
+
 	def update_user_do_get_lines(self, request, pk):
 		try:
 			user = self.model.objects.get(pk=pk)
@@ -119,7 +119,7 @@ class UserViewset(viewsets.ModelViewSet):
 			user = namedtuple('user', 'error')
 			user.error = 'you don\'t have permission'
 			return user
-	
+
 	#def update_user_alerts(self, request, pk):
 	#	try:
 	#		user = self.model.objects.get(pk=pk)
@@ -133,7 +133,21 @@ class UserViewset(viewsets.ModelViewSet):
 	#	else:  # if user does not have this alert, add it
 	#		alert.user_set.add(user)
 	#	return user
-	
+
+	def update_user_display_name(self, request, pk):
+		try:
+			user = self.model.objects.get(pk=pk)
+		except self.model.DoesNotExist:
+			user = namedtuple('user', 'error')
+			user.error = 'a user with this id could not be found'
+		if user == request.user:
+			user.display_name = request.data['display_name']
+			user.save()
+		else:
+			user = namedtuple('user', 'error')
+			user.error = 'you don\'t have permission'
+		return user
+
 	def register_email(self, request, pk):
 		if ('email' in request.data and 'password' in request.data and request.data['email'] != '' and
 				request.data['password'] != ''):
@@ -262,7 +276,7 @@ class UserViewset(viewsets.ModelViewSet):
 							('plus_one', True),
 						])]
 		return final_guest_array
-	
+
 	def message_user(self, request):
 		try:
 			user = self.model.objects.get(pk=request.data['user_id'])
@@ -314,7 +328,7 @@ To message back: go to the event (above link) ⇨ Show People ⇨ {
 			user = namedtuple('user', 'error')
 			user.error = 'you don\'t have permission'
 			return
-	
+
 	def message_users(self, request):
 		for id in request.data['user_ids']:
 			try:
@@ -463,7 +477,7 @@ To message the host: go to the event (above link) ⇨ Show People ⇨ Hosts
 			user = namedtuple('user', 'error')
 			user.error = 'a user with this id could not be found'
 		return user
-	
+
 	def send_email(self, request):
 		if request.user.is_superuser:
 			subject = 'Test sending email from site from mikey'
@@ -472,7 +486,7 @@ To message the host: go to the event (above link) ⇨ Show People ⇨ Hosts
 			recipient_list = ['mdsimeone@gmail.com',]
 			send_mail(subject, message, email_from, recipient_list, fail_silently=False)
 		return request.user
-	
+
 	def forgot_password(self, request):
 		try:
 			user = self.model.objects.get(email=request.data['email'])
@@ -489,7 +503,7 @@ To message the host: go to the event (above link) ⇨ Show People ⇨ Hosts
 			user = namedtuple('user', 'error')
 			user.error = 'This email is not registered'
 		return user
-		
+
 	def change_password(self, request):  # could this be in patch with the other change stuff?
 		current_user = self.model.objects.get(pk=request.user.pk)
 		user = self.model.objects.get(email=request.data['email'])
@@ -583,10 +597,10 @@ class LineViewset(viewsets.ViewSet):
 # SECRETS VIEW SET #####################################################################################################
 class SecretsViewset(viewsets.ViewSet):
 	queryset = []
-	
+
 	def list(self, request):  # GET {prefix}/
 		pass
-	
+
 	def update(self, request, pk=None):  # PUT {prefix}/{lookup}/
 		pass
 
@@ -718,7 +732,7 @@ class EventViewset(viewsets.ViewSet):
 		my_invite_requests = self.model.objects.filter(Q(is_private=True) & Q(invite_request=request.user.id))
 		serializer_data_my_invite_requests = serializer_private(my_invite_requests)
 		return serializer_data_my_hosting + serializer_data_my_invited + serializer_data_my_invite_requests
-	
+
 	def check_user_status(self, request):
 		user = request.user
 		event = EventSerializer.Meta.model.objects.get(pk=request.data['event_id'])
@@ -749,7 +763,7 @@ class EventViewset(viewsets.ViewSet):
 	def partial_update(self, request, pk):  # PATCH {prefix}/{lookup}/
 		eval(f"self.{request.data['command']}(request, pk)")  # SECURITY: inside each command function
 		return Response()  # SECURITY: returns nothing
-	
+
 	def update_guest_status(self, request, pk):
 		event = self.model.objects.get(pk=pk)  # SECURITY: in the following comments
 		if event.hosts.filter(id=request.user.id).exists():  # only host can change other users statuses
@@ -1005,7 +1019,7 @@ class ImageViewset(viewsets.ViewSet):
 		for key in request.data['keys'].split(','):
 			if 'MapIcon' in key:
 				result += aws_get_file(key)
-			else: 
+			else:
 				result += {'error': 'Not authorized'}
 		response = HttpResponse(result)
 		response['Content-Type'] = "image/png"
@@ -1065,7 +1079,7 @@ class PlusOneViewset(viewsets.ViewSet):
 	serializer_class = PlusOneSerializer
 	model = serializer_class.Meta.model
 	queryset = []
-	
+
 	# everyone can see hosts
 	# can't see invited/attending/maybe plus ones if not invited
 	# can't see wait_list/invite_request plus ones if not host

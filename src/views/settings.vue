@@ -7,8 +7,18 @@
 
 			<div style="font-size: 24px;">{{ store.user.display_name }}</div>
 
+  			<div class="line-height"/>
+
+			<!-- Change display name input -->
+			<div class="dual-set">
+				<button v-on:click.prevent="showChangeDisplayNameModal = true" class="button" style="width: 100%">
+					{{ 'EDIT DISPLAY NAME' }}&nbsp;
+				</button>
+			</div>
+
 			<div class="line-height"/>
 
+			<!-- E-mail preferences checkbox -->
 			<button class="button" v-if="store.user.email === ''" v-on:click.prevent="showAddEmailModal = true">
 				{{ t('ADD EMAIL ADDRESS') }}
 			</button>
@@ -77,7 +87,25 @@
 				</button>
 			</div>
 		</modal>
+		<!-- DISPLAY NAME CHANGE MODAL -->
+		<modal v-show="showChangeDisplayNameModal" @closeModals="showChangeDisplayNameModal = false">
+			<div slot="contents" class="modal">
+				<div style="align-self: flex-end">
+					<button v-on:click.prevent="showChangeDisplayNameModal = false" class="no-border-button x-button">
+						✖
+					</button>
+				</div>
+				<form v-on:keyup.enter="changeDisplayName()" style="width: 100%;">
+					<display-name-input ref="displayNameInput" :doublePassword="false" usage="Update"
+							customPlaceholder="Enter Display Name"/>
+				</form>
+				<button v-on:click.prevent="changeDisplayName()" class="button" style="width: 100%">
+					{{ "CHANGE DISPLAY NAME" }}
+				</button>
+        	</div>
+		</modal>
 		<flash-modal :text="t('PASSWORD CHANGED!')" ref="flashPasswordChangedSettings" :time="1000"/>
+    	<flash-modal :text="'DISPLAY NAME CHANGED!'" ref="flashDisplayNameChanged" :time="1000"/>
 	</div>
 </template>
 <script>
@@ -90,6 +118,7 @@
 	import lineButton from '@/components/lineButton.vue'
 	import modal from '@/components/modal.vue'
 	import flashModal from '@/components/flashModal.vue'
+	import displayNameInput from '@/components/displayNameInput.vue'
 	export default {
 		name: 'settings',
 		components: {
@@ -98,12 +127,14 @@
 			emailInput,
 			passwordInput,
 			flashModal,
+			displayNameInput,
 		},
 		data () {
 			return {
 				store: store,
 				showAddEmailModal: false,
 				showChangePasswordModal: false,
+				showChangeDisplayNameModal: false,
 			}
 		},
 		props: {
@@ -200,6 +231,18 @@
 				this.store.loading = false
 				f.shakeFunction([this.$refs.passwordInput1, this.$refs.passwordInput2])
 			},
+			async changeDisplayName() {
+				this.$refs.displayNameInput.hasErrors()
+				if (this.$refs.displayNameInput.error.length > 0) {
+					f.shakeFunction([this.$refs.displayNameInput])
+					return
+				}
+				store.user.display_name = this.$refs.displayNameInput.displayName
+				await api.updateUserDisplayName()
+				this.$refs.displayNameInput.DisplayName = ''
+				this.showChangeDisplayNameModal = false
+				await this.$refs.flashDisplayNameChanged.flashModal()
+			}
 		} // methods
 	} // export
 </script>
