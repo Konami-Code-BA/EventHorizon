@@ -226,14 +226,15 @@
 		height: 40px;
 		max-height: 30px;
 		overflow: hidden;
-		text-overflow: ellipsis;
 		vertical-align: middle;
-		overflow-wrap: break-word;
-  		word-break: break-word;
+		white-space: normal;
+		overflow-wrap: normal;
+  		word-break: normal;
 		text-align: left;
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
 		justify-content: center;
+		text-overflow: "...";
 	}
 </style>

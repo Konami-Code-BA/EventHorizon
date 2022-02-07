@@ -375,7 +375,7 @@ export default {
             'JP': 'フォローしている人'
         },
         'hosts': {
-            'EN': 'HOST',
+            'EN': 'HOSTS',
             'JP': '主催者'
         },
         'invited': {
@@ -405,6 +405,10 @@ export default {
         'decline': {
             'EN': 'DECLINE',
             'JP': '辞退'
+        },
+        'uninvited_followers': {
+            'EN': 'UNINVITED FOLLOWERS',
+            'JP': '未招待客'
         },
         'I WILL ATTEND': {
             'EN': 'I WILL ATTEND',
@@ -485,6 +489,10 @@ export default {
         'COPIED!': {
             'EN': 'COPIED!',
             'JP': 'コピーされた！'
+        },
+        'DONE!': {
+            'EN': 'DONE!',
+            'JP': 'できた！'
         },
     },
 
