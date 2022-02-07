@@ -19,6 +19,8 @@ from botocore.exceptions import ClientError
 import io
 from datetime import datetime
 import base64
+from binascii import a2b_base64
+import os
 
 
 random.seed(1)
@@ -1005,8 +1007,8 @@ class ImageViewset(viewsets.ViewSet):
 		return response
 
 	def upload_image(self,request):
-		file = request.data['file']
-		result = aws_upload_file(file)
+		data = request.data['data']
+		result = aws_upload_file(data)
 		if 'error' in result:
 			serializer_data = self.serializer_class([result], many=True).data
 		else:
@@ -1041,20 +1043,24 @@ class ImageViewset(viewsets.ViewSet):
 			serializer_data = self.serializer_class([{'error': 'Not authorized'}], many=True).data
 		return Response(serializer_data)
 
-def aws_upload_file(file):
+def aws_upload_file(data):
 	s3_client = boto3.client(
 		's3',
 		aws_access_key_id=config('AWS_ACCESS_KEY_ID'),
 		aws_secret_access_key=config('AWS_SECRET_ACCESS_KEY')
 	)
 	try:
-		file_type = '.' + file.name.split('.')[len(file.name.split('.'))-1]
-		if file_type not in ['.jpg', '.JPG', '.jpeg', '.JPEG', '.png', '.PNG', '.gif', '.PNG']:
-			return {'error': 'Not supported file type'}
-		key = str(datetime.now()).replace(' ', 'T').replace(':', '_').replace('.', '_')
-		key += '--' + str(secrets.token_urlsafe(4)) + file_type
-		s3_client.upload_fileobj(file, config('AWS_BUCKET_ACCESS_POINT'), key)
-		return {'key': key}
+		binary_data = a2b_base64(data.split('data:image/png;base64,')[1])
+		with open('image.jpg', 'wb') as file:
+			file.write(binary_data)
+			file.close()
+		with open('image.jpg', 'rb') as file:
+			key = str(datetime.now()).replace(' ', 'T').replace(':', '_').replace('.', '_')
+			key += '--' + str(secrets.token_urlsafe(4)) + '.png'
+			s3_client.upload_fileobj(file, config('AWS_BUCKET_ACCESS_POINT'), key)
+			file.close()
+			os.remove('image.jpg')
+			return {'key': key}
 	except ClientError as e:
 		print('AWS S3 UPLOAD ERROR:', e)
 		return {'error': e}
