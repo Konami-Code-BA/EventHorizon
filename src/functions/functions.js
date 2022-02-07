@@ -301,8 +301,6 @@ export default {
         people['wait_list'] = await api.getEventUserInfo(eventId, 'wait_list')
         people['invite_request'] = await api.getEventUserInfo(eventId, 'invite_request')
         people['uninvited_followers'] = await api.getUserLimitedInfo()
-        console.log("people['uninvited_followers']", people['uninvited_followers'])
-        console.log("people['uninvited_followers']", people['uninvited_followers'])
         people['uninvited_followers'] = people['uninvited_followers'].filter(person => {
             return !(people['hosts'].concat(
                 people['invited'], people['maybe'], people['attending'], people['wait_list']
