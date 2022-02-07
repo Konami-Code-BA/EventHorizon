@@ -228,8 +228,9 @@
 									TOTAL UNINVITED FOLLOWERS
 								</div>
 								<button v-on:click.prevent="showStatus = 'uninvited_followers'" class="button"
-										style="align-self: center; width: 100px;"
-										:disabled="!myAttendingStatus['hosts'] || people['uninvited_followers'].length === 0">
+										style="align-self: center; width: 100px; min-width: 100px;"
+										:disabled="!myAttendingStatus['hosts']
+										|| people['uninvited_followers'].length === 0">
 									<div class="flex-row"
 											style="align-self: center">
 										{{ people['uninvited_followers'].length }}
@@ -372,6 +373,7 @@
 					OPEN HOST PANEL
 				</button-->
 			</div>
+			<div class="line-height"/>
 		</div>
 		<modal v-if="showStatus" @closeModals="showStatus = null">
 			<div slot="contents" class="modal" style="height: 55%;">
@@ -379,7 +381,7 @@
 						align-content: flex-start">
 					<div/>
 					<div style="font-size: 24px;">
-						{{ statusNames[showStatus] }}
+						{{ t(showStatus) }}
 					</div>
 					<div style="padding-bottom: 5px;">
 						<button v-on:click.prevent="showStatus = null" class="no-border-button x-button">
@@ -388,7 +390,7 @@
 					</div>
 				</div>
 				<div style="width: 100%; overflow-y: scroll;">
-					<div v-for="person in people[showStatus]" style="width: 100%; border: 2px solid #ffe07a;
+					<div v-for="person in people[showStatus]" style="width: 100%; border: 2px solid #cae2ff;
 							border-radius: 15px;">
 						<div style="display: flex; flex-direction: row; justify-content: space-between; width: 100%;">
 							<div style="min-height: 30px; display: flex; flex-direction: row;
@@ -480,7 +482,7 @@
 				</button>
 			</div>
 		</modal>
-		<flash-modal :text="'DONE!'" ref="flashDone" :time="1500"/>
+		<flash-modal :text="t('DONE!')" ref="flashDone" :time="1500"/>
 		<flash-modal :text="'CAN\'T CHANGE PAST EVENTS'" ref="flashCantChangePastEvents" :time="1500"/>
     <flash-modal :text="'Copied!'" ref="flashCoppied" :time="1500"/>
 		<flash-modal :text="'SENT!'" ref="flashSent" :time="1500"/>
@@ -525,15 +527,6 @@
 					'uninvited_followers': [],
 				},
 				showStatus: null,
-				statusNames: {
-					'hosts': this.t('HOSTS'),
-					'invited': this.t('TOTAL INVITED'),
-					'attending': this.t('ATTENDING'),
-					'maybe': this.t('MAYBE'),
-					'wait_list': this.t('WAIT LIST'),
-					'invite_request': this.t('INVITE REQUESTS'),
-					'uninvited_followers': 'UNINVITED FOLLOWERS',
-				},
 				plusOneStatus: null,
 				showHostPanel: false,
 				messagePerson: null,
