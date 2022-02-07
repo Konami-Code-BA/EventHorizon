@@ -303,7 +303,7 @@
 						<div class="dual-set">
 							<button class="button"
 									v-on:click.prevent="changeAttendingStatus('decline')">
-								{{ t('DECLINE') }}
+								{{ t('decline') }}
 								<input type="checkbox" class="checkbox" onclick="return false;"/>
 							</button>
 						</div>
