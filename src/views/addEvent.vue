@@ -49,8 +49,7 @@
 						<div>
 							{{ t('IMAGE') }}
 						</div>
-						<input type="file" accept="image/*" @change="(e) => {imageFile = e.target.files[0]}"
-								autocomplete="off"/>
+						<input type="file" accept="image/*" @change="(e) => {imageFile = e.target.files[0]}"/>
 					</div>
 					<div style="padding-top: 5px;">
 						<button class="button" v-on:click.prevent="createEvent()">
@@ -91,6 +90,8 @@
 				date_time: null,
 				include_time: false,
 				is_private: true,
+				imageId: null,
+				eventData: null,
 			}
 		},
 		computed: {
@@ -104,6 +105,9 @@
 			},
 			'time' () {
 				this.date_time = new Date(this.date + 'T' + this.time)
+			},
+			async 'imageId' () {
+				await this.finishCreateEvent()
 			},
 		},
 		async mounted () {
@@ -132,7 +136,7 @@
 			t (w) { return translations.t(w) },
 			async createEvent () {
 				this.store.loading = true
-				let data = {
+				this.eventData = {
 					name: this.name,
 					description: this.description,
 					address: this.address,
@@ -142,8 +146,16 @@
 					is_private: this.is_private,
 				}
 				if (this.imageFile) {
-					let image_id = await this.saveImage()
-					data['images'] = image_id
+					await this.saveImage()
+				} else {
+					await this.finishCreateEvent()
+				}
+				return
+			},
+			async finishCreateEvent () {
+				let data = this.eventData
+				if (this.imageId) {
+					data['images'] = this.imageId
 				}
 				let newEvent = await api.createEvent(data)
 				this.store.events.all.push(newEvent)
@@ -152,10 +164,44 @@
 				this.store.loading = false
 			},
 			async saveImage () {
-				let formData = new FormData()
-				formData.append('file', this.imageFile)
-				let result = await api.saveImage(formData)
-				return result.id
+				let input = document.getElementById('img-input')
+				let file = this.imageFile
+				let blobURL = URL.createObjectURL(file)
+				let img = new Image()
+				img.src = blobURL
+				img.onerror = () => {
+					URL.revokeObjectURL(this.src)
+					console.log('Cannot load image')
+				}
+				let vm = this
+				this.imgId = img.onload = async () => {
+					URL.revokeObjectURL(this.src)
+					let width = img.width
+					let height = img.height
+					let maxWidth = 400
+					let maxHeight = 400
+					if (width > height) {
+						if (width > maxWidth) {
+							height = Math.round((height * maxWidth) / width)
+							width = maxWidth
+						}
+					} else {
+						if (height > maxHeight) {
+							width = Math.round((width * maxHeight) / height)
+							height = maxHeight
+						}
+					}
+					let canvas = document.createElement('canvas')
+					canvas.width = width
+					canvas.height = height
+					let ctx = canvas.getContext('2d')
+					ctx.drawImage(img, 0, 0, width, height)
+					let url = canvas.toDataURL('image/png', .7)
+					let formData = new FormData()
+					formData.append('data', url)
+					let result = await api.saveImage(formData)
+					vm.imageId = result.id
+				}
 			},
 		} // methods
 	} // export
