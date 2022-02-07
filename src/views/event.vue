@@ -135,10 +135,10 @@
 									ATTENDING LIMIT
 								</div>
 								<!--can't see invited people if not invited-->
-								<button class="button" :disabled="true" style="align-self: center; width: 100px;"
+								<button class="button" :disabled="true" style="align-self: center; width: 100px;
+									justify-content: center;"
 										:style="[isSpaceToAttend ? {color: 'green', borderColor: 'green'}
 										: {color: 'red', borderColor: 'red'}]">
-									<div>
 										<div v-if="event.attending_limit != 999999" class="flex-row" style="align-self: center">
 											{{ event.attending_limit }}
 											<div v-if="event.attending_limit != 1">
@@ -151,7 +151,6 @@
 										<div v-else>
 											UNLIMITED
 										</div>
-									</div>
 								</button>
 							</div>
 						</div>
