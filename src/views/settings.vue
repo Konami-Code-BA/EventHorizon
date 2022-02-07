@@ -95,17 +95,15 @@
 						✖
 					</button>
 				</div>
-				<form v-on:keyup.enter="changeDisplayName()" style="width: 100%;">
-					<display-name-input ref="displayNameInput" :doublePassword="false" usage="Update"
-							customPlaceholder="Enter Display Name"/>
-				</form>
+				<display-name-input ref="displayNameInput" :doublePassword="false" usage="Update"
+						:enter="changeDisplayName" customPlaceholder="Enter Display Name" style="width: 100%;"/>
 				<button v-on:click.prevent="changeDisplayName()" class="button" style="width: 100%">
 					{{ "CHANGE DISPLAY NAME" }}
 				</button>
         	</div>
 		</modal>
-		<flash-modal :text="t('PASSWORD CHANGED!')" ref="flashPasswordChangedSettings" :time="1000"/>
-    	<flash-modal :text="'DISPLAY NAME CHANGED!'" ref="flashDisplayNameChanged" :time="1000"/>
+		<flash-modal :text="t('DONE!')" ref="flashPasswordChangedSettings" :time="1000"/>
+    	<flash-modal :text="t('DONE!')" ref="flashDisplayNameChanged" :time="1000"/>
 	</div>
 </template>
 <script>

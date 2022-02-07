@@ -132,7 +132,6 @@
 													-webkit-font-smoothing: antialiased;
 													-moz-osx-font-smoothing: grayscale;
 													border: 2px solid #fff200;
-													height: 30px;
 													border-radius: 15px;
 													outline: none;
 													background-color: #fff200 !important;
@@ -155,7 +154,6 @@
 													-webkit-font-smoothing: antialiased;
 													-moz-osx-font-smoothing: grayscale;
 													border: 2px solid #d3a814;
-													height: 30px;
 													border-radius: 15px;
 													outline: none;
 													background-color: #d3a814 !important;
@@ -181,7 +179,6 @@
 													-webkit-font-smoothing: antialiased;
 													-moz-osx-font-smoothing: grayscale;
 													border: 2px solid #0ed145;
-													height: 30px;
 													border-radius: 15px;
 													outline: none;
 													background-color: #0ed145 !important;
@@ -205,7 +202,6 @@
 													-webkit-font-smoothing: antialiased;
 													-moz-osx-font-smoothing: grayscale;
 													border: 2px solid #09541e;
-													height: 30px;
 													border-radius: 15px;
 													outline: none;
 													background-color: #09541e !important;
@@ -230,7 +226,6 @@
 													-webkit-font-smoothing: antialiased;
 													-moz-osx-font-smoothing: grayscale;
 													border: 2px solid #0b5bf1;
-													height: 30px;
 													border-radius: 15px;
 													outline: none;
 													background-color: #0b5bf1 !important;
@@ -253,7 +248,6 @@
 													-webkit-font-smoothing: antialiased;
 													-moz-osx-font-smoothing: grayscale;
 													border: 2px solid #7218bb;
-													height: 30px;
 													border-radius: 15px;
 													outline: none;
 													background-color: #7218bb !important;
@@ -283,6 +277,8 @@
 									infowindow.setContent(infowindowContents[i])
 									infowindow.open(map, this)
 								})
+								google.maps.event.trigger(marker, 'click')
+								google.maps.event.trigger(marker, 'click')
 								google.maps.event.trigger(marker, 'click')
 								//google.maps.event.addListener(map, "click", function() {
 								//	infowindow.close()
