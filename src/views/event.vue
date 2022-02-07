@@ -42,12 +42,12 @@
 				<button v-on:click.prevent="showDescription=!showDescription" class="button event-page-button">
 					<div v-if="!showDescription" class="drop-down-button">
 						<div style="width: 10px;"/>
-						<div>SHOW DESCRIPTION</div>
+						<div>{{ t('SHOW DESCRIPTION') }}</div>
 						<div style="width: 10px;">⇩</div>
 					</div>
 					<div v-else class="drop-down-button">
 						<div style="width: 10px;"/>
-						<div>HIDE DESCRIPTION</div>
+						<div>{{ t('HIDE DESCRIPTION') }}</div>
 						<div style="width: 10px;">⇧</div>
 					</div>
 				</button>
@@ -57,12 +57,12 @@
 				<button v-on:click.prevent="showPeople=!showPeople" class="button event-page-button" style="align-self: center">
 					<div v-if="!showPeople" class="drop-down-button">
 						<div style="width: 10px;"/>
-						<div>SHOW PEOPLE</div>
+						<div>	{{ t('SHOW PEOPLE') }}</div>
 						<div style="width: 10px;">⇩</div>
 					</div>
 					<div v-else class="drop-down-button">
 						<div style="width: 10px;"/>
-						<div>HIDE PEOPLE</div>
+						<div>{{ t('HIDE PEOPLE') }}</div>
 						<div style="width: 10px;">⇧</div>
 					</div>
 				</button>
@@ -132,7 +132,7 @@
 							</div>
 							<div class="flex-row" style="justify-content: space-between">
 								<div style="align-self: center">
-									ATTENDING LIMIT
+									{{ t('ATTENDING LIMIT') }}
 								</div>
 								<!--can't see invited people if not invited-->
 								<button class="button" :disabled="true" style="align-self: center; width: 100px;
@@ -149,7 +149,7 @@
 											</div>
 										</div>
 										<div v-else>
-											UNLIMITED
+											{{ t('UNLIMITED') }}
 										</div>
 								</button>
 							</div>
@@ -251,12 +251,12 @@
 					<div v-if="!showEventStatus" class="drop-down-button">
 						<div style="width: 10px;"/>
 						<div v-if="myAttendingStatus['invited']">SHOW ATTENDING STATUS</div>
-						<div v-else>CLICK TO JOIN</div>
+						<div v-else>{{ t('CLICK TO JOIN') }}</div>
 						<div style="width: 10px;">⇩</div>
 					</div>
 					<div v-else class="drop-down-button">
 						<div style="width: 10px;"/>
-						<div>HIDE ATTENDING STATUS</div>
+						<div>{{ t('HIDE ATTENDING STATUS') }}</div>
 						<div style="width: 10px;">⇧</div>
 					</div>
 			</button>
@@ -276,7 +276,7 @@
 						<div class="dual-set">
 							<button class="button"
 									v-on:click.prevent="changeAttendingStatus('maybe')">
-								{{ t('maybe') }}
+								{{ t('MAYBE') }}
 								<input type="checkbox" class="checkbox" v-model="myAttendingStatus['maybe']"/>
 							</button>
 						</div>
