@@ -78,12 +78,18 @@ export default {
     async getEvents() {
         let events = await api.getAllEvents()
         for (let i = 0; i < events.length; i++) {
+            // only get new images if (there is an image to get AND
+            // (there are no events at all OR (there are events and the image_data hasn't been saved yet)))
             if (events[i].images.length > 0 && (store.events.all.length === 0 || (store.events.all.length > 0 && !('image_data' in store.events.all[i])))) {
                 let result = await api.getEventImage(events[i].images[0], events[i].id)
                 if (result != 'fail') {
                     events[i].image_data = `https://event-horizon-use1.s3.amazonaws.com/${result}`
                 }
-            }
+                // otherwise just get the image from the store, if
+                // there is an image to get but events have been stored and the image is saved there too
+            } else if (events[i].images.length > 0 && store.events.all.length > 0 && 'image_data' in store.events.all[i]) {
+                events[i].image_data = store.events.all[i].image_data
+            } // and if there are no images to get, then
         }
         store.events.all = this.sortEventsByDate(events)
         store.events.mine = await this.filterEventsByMyStatus()
