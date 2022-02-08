@@ -142,7 +142,7 @@ class UserViewset(viewsets.ModelViewSet):
 		except self.model.DoesNotExist:
 			user = namedtuple('user', 'error')
 			user.error = 'a user with this id could not be found'
-		if user == request.user:
+		if user == request.user:  # SECURITY: you can only do this for yourself
 			user.display_name = request.data['display_name']
 			user.save()
 		else:
@@ -201,7 +201,7 @@ class UserViewset(viewsets.ModelViewSet):
 			serializer_data = self.serializer_class(self.queryset, many=True).data
 		return Response(serializer_data)
 
-	def get_user_limited_info(self, request):  # SECURITY: retrieve only returns limited user info
+	def get_user_limited_info(self, request):  # SECURITY: only returns limited user info
 		#user_array = self.model.objects.filter(pk__in=request.data['ids'])  # normally it would be my followers. but for now it will be null and we will get everyone
 		if request.user.is_superuser:  # for now only superuser. later we will get followers of any person
 			user_array = self.model.objects.all()
@@ -218,7 +218,7 @@ class UserViewset(viewsets.ModelViewSet):
 		else:
 			return [OrderedDict([])]
 
-	def get_event_user_info(self, request):  # SECURITY: retrieve only returns display_name of user
+	def get_event_user_info(self, request):  # SECURITY: only returns limited user info
 		# everyone can see hosts
 		# can't see invited/attending/maybe people if not invited
 		# can't see wait_list, invite_request people if not host
@@ -481,16 +481,16 @@ To message the host: go to the event (above link) ⇨ Show People ⇨ Hosts
 			user.error = 'a user with this id could not be found'
 		return user
 
-	def send_email(self, request):
-		if request.user.is_superuser:
-			subject = 'Test sending email from site from mikey'
-			message = 'Was I able to send it?'
-			email_from = settings.EMAIL_HOST_USER
-			recipient_list = ['mdsimeone@gmail.com',]
-			send_mail(subject, message, email_from, recipient_list, fail_silently=False)
-		return request.user
+	#def send_email(self, request):
+	#	if request.user.is_superuser:  # SECURITY: this is only in experimental
+	#		subject = 'Test sending email from site from mikey'
+	#		message = 'Was I able to send it?'
+	#		email_from = settings.EMAIL_HOST_USER
+	#		recipient_list = ['mdsimeone@gmail.com',]
+	#		send_mail(subject, message, email_from, recipient_list, fail_silently=False)
+	#	return request.user
 
-	def forgot_password(self, request):
+	def forgot_password(self, request):  # SECURITY: anyone can say they forgot a password
 		try:
 			user = self.model.objects.get(email=request.data['email'])
 			user.random_secret = secrets.token_urlsafe(16)
@@ -510,9 +510,9 @@ To message the host: go to the event (above link) ⇨ Show People ⇨ Hosts
 	def change_password(self, request):  # could this be in patch with the other change stuff?
 		current_user = self.model.objects.get(pk=request.user.pk)
 		user = self.model.objects.get(email=request.data['email'])
-		if ((
+		if ((  # SECURITY: either they forgot password and code matches the one they have
 			'code' in request.data and user.random_secret == request.data['code']
-		) or (
+		) or (  # SECURITY: or they are changing the password and they have input the correct one
 			'current_password' in request.data and user.check_password(request.data['current_password'])
 		)):
 			user.password = make_password(request.data['new_password'])
@@ -534,67 +534,67 @@ class LineViewset(viewsets.ViewSet):
 	queryset = []
 
 	def list(self, request):  # GET {prefix}/
-		pass
+		pass  # SECURITY: does nothing
 
 	def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
-		pass
+		pass  # SECURITY: does nothing
 
 	def update(self, request, pk=None):  # PUT {prefix}/{lookup}/
-		pass
+		pass  # SECURITY: does nothing
 
 	def partial_update(self, request, pk):  # PATCH {prefix}/{lookup}/
-		pass
+		pass  # SECURITY: does nothing
 
 	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
-		pass
+		pass  # SECURITY: does nothing
 
-	def create(self, request):
-		if request.user.is_superuser:  # SECURITY: only superuser can
-			response = eval(f"self.{request.data['command']}(request)")  # SECURITY: inside each command function
-		else:
-			response = {}
-			response['error'] = 'only superuser can do this'
-		return Response(response)
+	#def create(self, request):
+	#	if request.user.is_superuser:  # SECURITY: only superuser can
+	#		response = eval(f"self.{request.data['command']}(request)")  # SECURITY: inside each command function
+	#	else:
+	#		response = {}
+	#		response['error'] = 'only superuser can do this'
+	#	return Response(response)
 
-	def consumption(self, request):  # SECURITY: messaging channel access token only used here in backend
-		url = 'https://api.line.me/v2/bot/message/quota/consumption'
-		headers = {
-			'Content-Type': 'application/json',
-			'Authorization': 'Bearer ' + config('MESSAGING_CHANNEL_ACCESS_TOKEN'),
-		}
-		response = requests.get(url, headers=headers)
-		return response
+	#def consumption(self, request):  # SECURITY: messaging channel access token only used here in backend
+	#	url = 'https://api.line.me/v2/bot/message/quota/consumption'
+	#	headers = {
+	#		'Content-Type': 'application/json',
+	#		'Authorization': 'Bearer ' + config('MESSAGING_CHANNEL_ACCESS_TOKEN'),
+	#	}
+	#	response = requests.get(url, headers=headers)
+	#	return response
 
-	def broadcast(self, request):  # SECURITY: messaging channel access token only used here in backend
-		url = 'https://api.line.me/v2/bot/message/broadcast'
-		headers = {
-			'Content-Type': 'application/json',
-			'Authorization': 'Bearer ' + config('MESSAGING_CHANNEL_ACCESS_TOKEN'),
-		}
-		data = json.dumps({
-			'messages': [{
-				"type": "text",
-				"text": request.data['message'],
-			}]
-		})
-		response = requests.post(url, headers=headers, data=data)
-		return response
+	#def broadcast(self, request):  # SECURITY: messaging channel access token only used here in backend
+	#	url = 'https://api.line.me/v2/bot/message/broadcast'
+	#	headers = {
+	#		'Content-Type': 'application/json',
+	#		'Authorization': 'Bearer ' + config('MESSAGING_CHANNEL_ACCESS_TOKEN'),
+	#	}
+	#	data = json.dumps({
+	#		'messages': [{
+	#			"type": "text",
+	#			"text": request.data['message'],
+	#		}]
+	#	})
+	#	response = requests.post(url, headers=headers, data=data)
+	#	return response
 
-	def push(self, request):  # SECURITY: messaging channel access token only used here in backend
-		mikeyOrStu = {
-			'mikey': config('MIKEY_LINE_USER_ID'),
-			'stu': config('STU_LINE_USER_ID'),
-		}
-		data = request.data['data']
-		data['to'] = mikeyOrStu[data['to']]
-		url = 'https://api.line.me/v2/bot/message/push'
-		headers = {
-			'Content-Type': 'application/json',
-			'Authorization': 'Bearer ' + config('MESSAGING_CHANNEL_ACCESS_TOKEN'),
-		}
-		data = json.dumps(data)
-		response = requests.post(url, headers=headers, data=data)
-		return response
+	#def push(self, request):  # SECURITY: messaging channel access token only used here in backend
+	#	mikeyOrStu = {
+	#		'mikey': config('MIKEY_LINE_USER_ID'),
+	#		'stu': config('STU_LINE_USER_ID'),
+	#	}
+	#	data = request.data['data']
+	#	data['to'] = mikeyOrStu[data['to']]
+	#	url = 'https://api.line.me/v2/bot/message/push'
+	#	headers = {
+	#		'Content-Type': 'application/json',
+	#		'Authorization': 'Bearer ' + config('MESSAGING_CHANNEL_ACCESS_TOKEN'),
+	#	}
+	#	data = json.dumps(data)
+	#	response = requests.post(url, headers=headers, data=data)
+	#	return response
 
 
 # SECRETS VIEW SET #####################################################################################################
@@ -602,36 +602,29 @@ class SecretsViewset(viewsets.ViewSet):
 	queryset = []
 
 	def list(self, request):  # GET {prefix}/
-		pass
+		pass  # SECURITY: does nothing
 
 	def update(self, request, pk=None):  # PUT {prefix}/{lookup}/
-		pass
+		pass  # SECURITY: does nothing
 
 	def partial_update(self, request, pk):  # PATCH {prefix}/{lookup}/
-		pass
+		pass  # SECURITY: does nothing
 
 	def create(self, request):  # POST {prefix}/
-		pass
+		pass  # SECURITY: does nothing
 
 	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
-		pass
+		pass  # SECURITY: does nothing
 
 	def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
-		if ((pk in ['mikey-line-user-id', 'stu-line-user-id'] and request.user.is_superuser)
-				or pk not in ['mikey-line-user-id', 'stu-line-user-id']):  # SECURITY: only superuser can get our ids
-			secrets_dict = {
-				'new-random-secret': secrets.token_urlsafe(16),
-				# SECURITY: this is safe because of domain restriction, and channel secret not used in client, only back
-				'login-channel-id': config('LOGIN_CHANNEL_ID'),
-				# SECURITY: this is safe because of domain restriction
-				'google-maps-api-key': config('GOOGLE_MAPS_API_KEY'),
-				# SECURITY: this is safe because only superuser can get it
-				'mikey-line-user-id': config('MIKEY_LINE_USER_ID'),
-				# SECURITY: this is safe because only superuser can get it
-				'stu-line-user-id': config('STU_LINE_USER_ID'),
-			}
-			return Response(secrets_dict[pk])
-		return Response()
+		secrets_dict = {  # SECURITY: in the end anyone can get these secrets lol
+			'new-random-secret': secrets.token_urlsafe(16),
+			# SECURITY: this is safe because of domain restriction, and channel secret not used in client, only back
+			'login-channel-id': config('LOGIN_CHANNEL_ID'),
+			# SECURITY: this is safe because of domain restriction
+			'google-maps-api-key': config('GOOGLE_MAPS_API_KEY'),
+		}
+		return Response(secrets_dict[pk])
 
 
 # EVENTS VIEW SET ######################################################################################################
@@ -641,10 +634,10 @@ class EventViewset(viewsets.ViewSet):
 	queryset = []
 
 	def update(self, request, pk=None):  # PUT {prefix}/{lookup}/
-		pass
+		pass  # SECURITY: does nothing
 
 	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
-		pass
+		pass  # SECURITY: does nothing
 
 	def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
 		my_hosting = self.model.objects.filter(hosts=request.user.id)
@@ -727,17 +720,17 @@ class EventViewset(viewsets.ViewSet):
 			serializer_data = self.serializer_class([], many=True).data
 		return serializer_data
 
-	def my_events(self, request):  # SECURITY: anyone can get my events
-		my_hosting = self.model.objects.filter(hosts=request.user.id)
-		serializer_data_my_hosting = serializer_host(my_hosting)  # SECURITY: see serializers
-		my_invited = self.model.objects.filter(Q(invited=request.user.id) & ~Q(hosts=request.user.id))
-		serializer_data_my_invited = serializer_public_invited(my_invited)
-		my_invite_requests = self.model.objects.filter(Q(is_private=True) & Q(invite_request=request.user.id))
-		serializer_data_my_invite_requests = serializer_private(my_invite_requests)
-		return serializer_data_my_hosting + serializer_data_my_invited + serializer_data_my_invite_requests
+	#def my_events(self, request):  # SECURITY: anyone can get my events  # this is maybe not used anymore
+	#	my_hosting = self.model.objects.filter(hosts=request.user.id)
+	#	serializer_data_my_hosting = serializer_host(my_hosting)  # SECURITY: see serializers
+	#	my_invited = self.model.objects.filter(Q(invited=request.user.id) & ~Q(hosts=request.user.id))
+	#	serializer_data_my_invited = serializer_public_invited(my_invited)
+	#	my_invite_requests = self.model.objects.filter(Q(is_private=True) & Q(invite_request=request.user.id))
+	#	serializer_data_my_invite_requests = serializer_private(my_invite_requests)
+	#	return serializer_data_my_hosting + serializer_data_my_invited + serializer_data_my_invite_requests
 
 	def check_user_status(self, request):
-		user = request.user
+		user = request.user  # SECURITY: anyone can get their own user status
 		event = EventSerializer.Meta.model.objects.get(pk=request.data['event_id'])
 		if f.user_in_guest_statuses(event, user.id, ['hosts']):
 			result = [OrderedDict([('status', 'hosts')])]
@@ -870,7 +863,7 @@ To message the host: go to the event (above link) ⇨ Show People ⇨ Hosts
 					event.attending.add(user_to_change)
 				else:
 					return [OrderedDict([('error', 'full')])]
-		return {}  # SECURITY: returns nothing
+		return {}  # SECURITY: returns nothing so you get no info from this
 
 
 def randomize_lat_lng(address):
@@ -991,37 +984,40 @@ class ImageViewset(viewsets.ViewSet):
 	queryset = []
 
 	def list(self, request):  # GET {prefix}/
-		pass
+		pass  # SECURITY: does nothing
 
 	def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
-		pass
+		pass  # SECURITY: does nothing
 
 	def update(self, request, pk=None):  # PUT {prefix}/{lookup}/
-		pass
+		pass  # SECURITY: does nothing
 
 	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
-		pass
+		pass  # SECURITY: does nothing
 
 	def create(self, request):  # POST {prefix}/
 		response = eval(f"self.{request.data['command']}(request)")  # SECURITY: inside each command function
 		return response
 
-	def upload_image(self,request):
-		data = request.data['data']
-		result = aws_upload_file(data)
-		if 'error' in result:
-			serializer_data = self.serializer_class([result], many=True).data
+	def upload_image(self, request):
+		if request.user.is_superuser:  # SECURITY: only super user can add images now (since only he can add events)
+			data = request.data['data']
+			result = aws_upload_file(data)
+			if 'error' in result:
+				serializer_data = self.serializer_class([result], many=True).data
+			else:
+				image = self.model(key=result['key'])
+				image.save()
+				serializer_data = self.serializer_class([image], many=True).data
+			return Response(serializer_data)
 		else:
-			image = self.model(key=result['key'])
-			image.save()
-			serializer_data = self.serializer_class([image], many=True).data
-		return Response(serializer_data)
+			serializer_data = self.serializer_class([], many=True).data
+			return Response(serializer_data)
 
-	def get_event_image(self, request):
-		#my_events = EventSerializer.Meta.model.objects.filter(invited=request.user.id)
+	def get_event_image(self, request):  # SECURITY: anyone can get images for now, they are public
 		event = EventSerializer.Meta.model.objects.get(pk=request.data['event_id'])
 		image = self.model.objects.get(pk=request.data['image_id'])
-		if image in event.images.all():  # and event in my_events:  # used to only get images if its your event.
+		if image in event.images.all():
 			serializer_data = [OrderedDict([('key', image.key)])]
 		else:
 			serializer_data = self.serializer_class([{'error': 'Not authorized'}], many=True).data
@@ -1056,6 +1052,7 @@ class PlusOneViewset(viewsets.ViewSet):
 	model = serializer_class.Meta.model
 	queryset = []
 
+	# SECURITY:
 	# everyone can see hosts
 	# can't see invited/attending/maybe plus ones if not invited
 	# can't see wait_list/invite_request plus ones if not host
@@ -1075,7 +1072,7 @@ class PlusOneViewset(viewsets.ViewSet):
 		result = eval(f"self.{request.data['command']}(request)")  # SECURITY: inside each command function
 		return Response(result)
 
-	def set_plus_one(self, request):  # get is done in get_event_user_info
+	def set_plus_one(self, request):  # note: get is done in get_event_user_info
 		event = EventSerializer.Meta.model.objects.get(pk=request.data['event_id'])
 		if event.plus_ones.filter(chaperone=request.user.id).exists():  # SECURITY: user can't add more than 1 plus-one
 			return [OrderedDict([('error', 'user can\'t add more than 1 plus-one')])]
@@ -1111,7 +1108,7 @@ class PlusOneViewset(viewsets.ViewSet):
 			or event.invite_request.filter(id=request.user.id).exists()
 		):
 			f.notify_waiting_users_if_necessary(event, request.user.id, change_is_plus_one=-1)
-			plus_one = event.plus_ones.filter(chaperone=request.user.id)
+			plus_one = event.plus_ones.filter(chaperone=request.user.id)  # SECURITY: this deletes your own plus one
 			plus_one.delete()
 			return []
 		else:
@@ -1127,23 +1124,23 @@ class GroupViewset(viewsets.ViewSet):
 	queryset = []
 
 	def list(self, request):  # GET {prefix}/
-		groups = self.model.objects.all()
+		groups = self.model.objects.all()  # SECURITY: anyone can get list of groups, cuz really its like nothing
 		result = []
 		for group in groups:
 			result += [OrderedDict([('name', group.name), ('id', group.id)])]
 		return Response(result)
 
 	def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
-		pass
+		pass  # SECURITY: does nothing
 
 	def update(self, request, pk=None):  # PUT {prefix}/{lookup}/
-		pass
+		pass  # SECURITY: does nothing
 
 	def partial_update(self, request, pk):  # PATCH {prefix}/{lookup}/
-		pass
+		pass  # SECURITY: does nothing
 
 	def create(self, request):  # POST {prefix}/
-		pass
+		pass  # SECURITY: does nothing
 
 	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
-		pass
+		pass  # SECURITY: does nothing
