@@ -40,13 +40,13 @@
 					</button>
 				</div>
 
-				<div class="line-height"/>
+				<!--div class="line-height"/>
 
 				<div style="width: 100%">
 					<button v-on:click.prevent="showShareModal = false; showImageModal = true" class="button" style="width: 100%">
 						{{ t('SHARE IMAGE') }}
 					</button>
-				</div>
+				</div-->
 			</div>
 		</modal>
 		<qr-code-generator v-if="showQrModal" @closeModals="showQrModal = false"/>
