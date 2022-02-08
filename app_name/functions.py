@@ -191,7 +191,7 @@ def merge_users(current_user, merge_user):
 		current_user.do_get_line_display_name = merge_user.do_get_line_display_name
 		current_user.is_line_friend = merge_user.is_line_friend
 		current_user.do_get_lines = merge_user.do_get_lines
-	elif merge_user.email:
+	if merge_user.email:
 		current_user.email = merge_user.email
 		current_user.password = merge_user.password
 		current_user.do_get_emails = merge_user.do_get_emails
