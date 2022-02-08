@@ -81,7 +81,7 @@ export default {
             if (events[i].images.length > 0 && (store.events.all.length === 0 || (store.events.all.length > 0 && !('image_data' in store.events.all[i])))) {
                 let result = await api.getEventImage(events[i].images[0], events[i].id)
                 if (result != 'fail') {
-                    events[i].image_data = "data:image/jpg;base64," + result
+                    events[i].image_data = `https://event-horizon-use1.s3.amazonaws.com/${result}`
                 }
             }
         }
@@ -94,7 +94,7 @@ export default {
         if (event.images.length > 0 && !('image_data' in thisEvent)) {
             let result = await api.getEventImage(event.images[0], event.id)
             if (result != 'fail') {
-                event.image_data = "data:image/jpg;base64," + result
+                event.image_data = `https://event-horizon-use1.s3.amazonaws.com/${result}`
             }
         }
         store.events.selected = event
