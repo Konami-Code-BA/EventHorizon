@@ -1017,28 +1017,12 @@ class ImageViewset(viewsets.ViewSet):
 			serializer_data = self.serializer_class([image], many=True).data
 		return Response(serializer_data)
 
-	def get_image(self, request):
-		result = []
-		for key in request.data['keys'].split(','):
-			if 'MapIcon' in key:
-				result += aws_get_file(key)
-			else:
-				result += {'error': 'Not authorized'}
-		response = HttpResponse(result)
-		response['Content-Type'] = "image/png"
-		response['Cache-Control'] = "max-age=0"
-		return response
-
 	def get_event_image(self, request):
 		#my_events = EventSerializer.Meta.model.objects.filter(invited=request.user.id)
 		event = EventSerializer.Meta.model.objects.get(pk=request.data['event_id'])
 		image = self.model.objects.get(pk=request.data['image_id'])
 		if image in event.images.all():  # and event in my_events:  # used to only get images if its your event.
-			result = aws_get_file(image.key)
-			response = HttpResponse(result)
-			response['Content-Type'] = "image/jpg"
-			response['Cache-Control'] = "max-age=0"
-			return response
+			serializer_data = [OrderedDict([('key', image.key)])]
 		else:
 			serializer_data = self.serializer_class([{'error': 'Not authorized'}], many=True).data
 		return Response(serializer_data)
@@ -1057,25 +1041,10 @@ def aws_upload_file(data):
 		with open('image.jpg', 'rb') as file:
 			key = str(datetime.now()).replace(' ', 'T').replace(':', '_').replace('.', '_')
 			key += '--' + str(secrets.token_urlsafe(4)) + '.png'
-			s3_client.upload_fileobj(file, config('AWS_BUCKET_ACCESS_POINT'), key)
+			s3_client.upload_fileobj(file, 'event-horizon-use1', key)
 			file.close()
 			os.remove('image.jpg')
 			return {'key': key}
-	except ClientError as e:
-		print('AWS S3 UPLOAD ERROR:', e)
-		return {'error': e}
-
-def aws_get_file(key):
-	try:
-		s3_client = boto3.client(
-			's3',
-			aws_access_key_id=config('AWS_ACCESS_KEY_ID'),
-			aws_secret_access_key=config('AWS_SECRET_ACCESS_KEY')
-		)
-		file_stream = io.BytesIO()
-		s3_client.download_fileobj(config('AWS_BUCKET_ACCESS_POINT'), key, file_stream)
-		send = base64.b64encode(file_stream.getbuffer())
-		return send
 	except ClientError as e:
 		print('AWS S3 UPLOAD ERROR:', e)
 		return {'error': e}

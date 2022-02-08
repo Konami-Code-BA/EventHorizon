@@ -369,18 +369,11 @@ export default {
         formData.append('command', 'get_event_image')
         formData.append('image_id', imageId)
         let result = await this.imagesApi('post', null, formData)
-        if (typeof result == 'string') {
-            return result
+        if (result.length > 0) {
+            return result[0].key
         } else {
             return 'fail'
         }
-    },
-    async getImage(keys) { // for getting images in general
-        let formData = new FormData()
-        formData.append('keys', keys)
-        formData.append('command', 'get_image')
-        let result = await this.imagesApi('post', null, formData)
-        return result
     },
     // GROUPS //////////////////////////////////////////////////////////////////////////////////////////////////////////
     async getGroups() {
