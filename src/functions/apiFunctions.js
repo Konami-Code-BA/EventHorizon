@@ -304,10 +304,10 @@ export default {
         let result = await this.eventsApi('post', null, data)
         return result[0]
     },
-    async getMyEvents() {
-        let result = await this.eventsApi('post', null, { command: 'my_events' })
-        return result
-    },
+    //async getMyEvents() {
+    //    let result = await this.eventsApi('post', null, { command: 'my_events' })
+    //    return result
+    //},
     async checkUserStatus(eventId) {
         return await this.eventsApi('post', null, {
             command: 'check_user_status',
