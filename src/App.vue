@@ -390,16 +390,14 @@
 	.loading {
 		content: '';
 		position: fixed;
-		display: inline-block;
-		left: 0;
-		z-index: 1000;
+		z-index: 10000;
 		transform: translate(-5px, -5px);
 		margin-left: 50%;
-		margin-top: 50%;
+		padding-top: 300px;
 		top: 0;
 		left: 0;
-		width: 100%;
-		height: 100%;
+		width: 0;
+		height: 0;
 	}
 	/* Transparent Overlay */
 	.loading:before {

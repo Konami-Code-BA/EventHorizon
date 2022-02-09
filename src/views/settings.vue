@@ -51,9 +51,9 @@
 			</button>
 		</div>
 
-		<modal v-show="showAddEmailModal" @closeModals="showAddEmailModal = false">
+		<modal v-if="showAddEmailModal" @closeModals="showAddEmailModal = false" ref="showAddEmailModal">
 			<div slot="contents" class="modal">
-				<x-close-button :closeFunc="() => {showAddEmailModal = false}" style="align-self: flex-end;"/>
+				<x-close-button :closeFunc="() => {$refs.showAddEmailModal.closeModals()}" style="align-self: flex-end;"/>
 				<form v-on:keyup.enter="addEmail()" style="width: 100%;">
 					<email-input ref="emailInput" usage="AddEmail"
 							:key="store.user.language+'emailInputAddEmail'"/>
@@ -65,9 +65,9 @@
 				</button>
 			</div>
 		</modal>
-		<modal v-show="showChangePasswordModal" @closeModals="showChangePasswordModal = false">
+		<modal v-if="showChangePasswordModal" @closeModals="showChangePasswordModal = false" ref="showChangePasswordModal">
 			<div slot="contents" class="modal">
-				<x-close-button :closeFunc="() => {showChangePasswordModal = false}" style="align-self: flex-end;"/>
+				<x-close-button :closeFunc="() => {$refs.showChangePasswordModal.closeModals()}" style="align-self: flex-end;"/>
 				<form v-on:keyup.enter="changePassword()" style="width: 100%;">
 					<password-input ref="passwordInput1" :doublePassword="false" usage="ChangePassword1"
 							customPlaceholder="CURRENT PASSWORD"/>
@@ -80,9 +80,9 @@
 			</div>
 		</modal>
 		<!-- DISPLAY NAME CHANGE MODAL -->
-		<modal v-show="showChangeDisplayNameModal" @closeModals="showChangeDisplayNameModal = false">
+		<modal v-if="showChangeDisplayNameModal" @closeModals="showChangeDisplayNameModal = false" ref="showChangeDisplayNameModal">
 			<div slot="contents" class="modal">
-				<x-close-button :closeFunc="() => {showChangeDisplayNameModal = false}" style="align-self: flex-end;"/>
+				<x-close-button :closeFunc="() => {$refs.showChangeDisplayNameModal.closeModals()}" style="align-self: flex-end;"/>
 				<display-name-input ref="displayNameInput" :doublePassword="false" usage="Update"
 						:enter="changeDisplayName" customPlaceholder="Enter Display Name" style="width: 100%;"/>
 				<button v-on:click.prevent="changeDisplayName()" class="button" style="width: 100%">
@@ -137,7 +137,9 @@
 			if (this.$refs.lineButton && this.tryLine) {
 				await this.$refs.lineButton.tryLineNewDevice()
 			}
-			f.focusCursor(document, 'emailAddEmail')
+			if (this.showAddEmailModal) {
+				f.focusCursor(document, 'emailAddEmail')
+			}
 		},
 		methods: {
 			t (w) { return translations.t(w) },
@@ -243,7 +245,7 @@
 		justify-content: center;
 		padding: 0;
 		margin: 0;
-		width: 80%;
+		width: 100%;
 	}
 	.checkbox {
 		position: fixed;
@@ -271,7 +273,7 @@
 		transform: translate(0, 2px);
 	}
 	.button {
-		width: 80%;
+		width: 100%;
 		z-index:2;
 	}
 </style>

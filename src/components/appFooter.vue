@@ -19,9 +19,9 @@
 				</div>
 			</tabs>
 		</div>
-		<modal v-if="showShareModal" @closeModals="showShareModal = false">
+		<modal v-if="showShareModal" @closeModals="showShareModal = false" ref="showShareModal">
 			<div slot="contents" class="modal">
-				<x-close-button :closeFunc="() => {showShareModal = false}" style="align-self: flex-end;"/>
+				<x-close-button :closeFunc="() => {$refs.showShareModal.closeModals()}" style="align-self: flex-end;"/>
 				<div style="width: 100%">
 					<button v-on:click.prevent="showShareModal = false; showQrModal = true" class="button" style="width: 100%">
 						{{ t('SHARE QR CODE') }}
