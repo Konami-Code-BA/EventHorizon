@@ -2,7 +2,7 @@
 	<div>
 		<div class="footer" style="width: 100%">
 			<tabs :num-tabs="4" :initial="0" :key="selectedTab" @on-click="(arg) => { selectTab(arg) }"
-					style="background-color: rgba(0, 0, 0, .5);">
+					style="background-color: rgba(0, 0, 0, .5); height: 100%;">
 				<div slot="1" class="tab">
 					<img src="@/assets/homeIcon.png" class="icon" style="margin-bottom: 2px;"/>
 				</div>
@@ -19,9 +19,9 @@
 				</div>
 			</tabs>
 		</div>
-		<modal v-if="showShareModal" @closeModals="showShareModal = false">
+		<modal v-if="showShareModal" @closeModals="showShareModal = false" ref="showShareModal">
 			<div slot="contents" class="modal">
-				<x-close-button :closeFunc="() => {showShareModal = false}" style="align-self: flex-end;"/>
+				<x-close-button :closeFunc="() => {$refs.showShareModal.closeModals()}" style="align-self: flex-end;"/>
 				<div style="width: 100%">
 					<button v-on:click.prevent="showShareModal = false; showQrModal = true" class="button" style="width: 100%">
 						{{ t('SHARE QR CODE') }}
