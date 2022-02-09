@@ -2,11 +2,7 @@
 	<div>
 		<modal @closeModals="$emit('closeModals')">
 			<div slot="contents" class="modal">
-				<div style="align-self: flex-end; padding-bottom: 5px; padding-bottom: 5px;">
-					<button v-on:click.prevent="$emit('closeModals')" class="no-border-button x-button">
-						✖
-					</button>
-				</div>
+				<x-close-button :closeFunc="() => {$emit('closeModals')}" style="align-self: flex-end;"/>
 				<div style="width: 100%; display: flex; flex-direction: row; align-items: center">
 					<button v-on:click.prevent="copyToClipboard()" class="button" style="border: none;">
 						<img src="@/assets/copyIcon.png" class="icon"/>
@@ -30,11 +26,13 @@
 	import modal from '@/components/modal'
 	import f from '@/functions/functions.js'
 	import flashModal from '@/components/flashModal.vue'
+	import xCloseButton from '@/components/xCloseButton.vue'
 	export default {
 		name: 'urlDisplay',
 		components: {
 			modal,
 			flashModal,
+			xCloseButton,
 		},
 		data () {
 			return {
