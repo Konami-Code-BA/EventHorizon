@@ -1,8 +1,8 @@
 <template>
 	<div>
-		<modal v-if="!closeModal" @closeModals="$emit('closeModals')">
+		<modal v-if="!closeModal" @closeModals="$emit('closeModals')" ref="qrCodeGenerator">
 			<div slot="contents" class="modal">
-				<x-close-button :closeFunc="() => {$emit('closeModals')}" style="align-self: flex-end;"/>
+				<x-close-button :closeFunc="() => {$refs.qrCodeGenerator.closeModals()}" style="align-self: flex-end;"/>
 				<div style="width: 100%">
 					<button v-on:click.prevent="closeModal=true; selectedQr = url; getQr()" class="button">
 						This Page QR
@@ -30,11 +30,11 @@
 
 			</div>
 		</modal>
-		<modal v-if="image_name!=null" @closeModals="$emit('closeModals')">
+		<modal v-if="image_name!=null" @closeModals="$emit('closeModals')" ref="qrCode">
 			<div slot="contents" class="qr">
 				<div style="height: auto; width: 100%; display: flex; justify-content: center"
 						v-on:click.prevent="$emit('closeModals')">
-					<x-close-button :closeFunc="() => {$emit('closeModals')}" class="qr-button"
+					<x-close-button :closeFunc="() => {$refs.qrCode.closeModals()}" class="qr-button"
 							style="padding-bottom: 0;" :black="true"/>
 				</div>
 				<div>

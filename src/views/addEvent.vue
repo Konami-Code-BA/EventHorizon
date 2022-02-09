@@ -1,80 +1,76 @@
 <template>
-	<div>
-		<div class="main" style="overflow-y: scroll;">
-			<div style="font-size: 36px;">{{ t('ADD EVENT') }}</div>
+	<div class="main" style="overflow-y: scroll;">
+		<div style="font-size: 36px;">{{ t('ADD EVENT') }}</div>
 
-			<div class="line-height"/>
+		<div class="line-height"/>
 
-			<div style="display: flex; flex-direction: column; align-items: center; width: 80%;">
-				<form v-on:keyup.enter="login()" v-if="isAdmin">
-					<div style="padding-bottom: 5px;">
-						<input :placeholder="t('EVENT NAME')" v-model="name" type="text"
-								autocapitalize="words" autocomplete="off"/>
-					</div>
-					<div class="dual-set" style="padding-bottom: 5px;">
-						<button class="button" style="width: 100%" v-on:click.prevent="is_private=!is_private">
-							{{ t('PRIVATE EVENT?') }}
-						</button>
-						<input type="checkbox" class="checkbox" v-model="is_private"/><!--wanna put a little i in a cirle for info about what a private event means vs public-->
-					</div>
-					<div>
-						<textarea :placeholder="t('DESCRIPTION')" v-model="description" type="text"
-								autocapitalize="sentences" style="height: 60px" autocomplete="off"/>
-					</div>
-					<div style="padding-bottom: 5px;">
-						<input :placeholder="t('ADDRESS')" v-model="address" type="text" autocorrect="none"
-								autocapitalize="words" autocomplete="off"/>
-					</div>
-					<div style="padding-bottom: 5px;">
-						<input :placeholder="t('VENUE NAME')" v-model="venue_name" type="text" autocorrect="none"
-								autocapitalize="words" autocomplete="off"/>
-					</div>
-					<div style="padding-bottom: 5px; width: 100%; display: flex; flex-direction: row;">
-						<div :style="[include_time ? {width: '50%'} : {width: '100%'}]">
-							<input v-model="date" type="date" autocomplete="off"
-									style="width: 100%; height: 30px; font: inherit; font-size: 11px;"/>
-						</div>
-						<div v-if="include_time" style="width: 50%">
-							<input v-model="time" type="time" autocomplete="off" 
-									style="width: 100%; height: 30px; font: inherit; font-size: 11px;">
-						</div>
-					</div>
-					<div class="dual-set" style="padding-bottom: 5px;">
-						<button class="button" style="width: 100%" v-on:click.prevent="include_time=!include_time">
-							{{ t('INCLUDE TIME?') }}
-						</button>
-						<input type="checkbox" class="checkbox" v-model="include_time"/>
-					</div>
-					<div class="file-input">
-						<div>
-							{{ t('IMAGE') }}
-						</div>
-						<input type="file" accept="image/*" @change="(e) => {imageFile = e.target.files[0]}"/>
-					</div>
-					<div style="padding-top: 5px;">
-						<button class="button" v-on:click.prevent="createEvent()">
-							<div style="font-size: 18px;">{{ t('ADD') }}</div>
-						</button>
-					</div>
-				</form>
-				<div style="color: grey; display: flex; flex-direction: column; align-items: center" v-else>
-					<div>({{ t('COMING SOON') }})</div>
-					<div><small>{{ t('CURRENTLY, ONLY ADMINS CAN CREATE EVENTS. THIS FEATURE WILL BECOME OPEN TO THE PUBLIC SOON!') }}</small></div>
+		<div style="display: flex; flex-direction: column; align-items: center; width: 80%;">
+			<form v-on:keyup.enter="login()" v-if="isAdmin">
+				<div style="padding-bottom: 5px;">
+					<input :placeholder="t('EVENT NAME')" v-model="name" type="text"
+							autocapitalize="words" autocomplete="off"/>
 				</div>
+				<div class="dual-set" style="padding-bottom: 5px;">
+					<button class="button" style="width: 100%" v-on:click.prevent="is_private=!is_private">
+						{{ t('PRIVATE EVENT?') }}
+					</button>
+					<input type="checkbox" class="checkbox" v-model="is_private"/><!--wanna put a little i in a cirle for info about what a private event means vs public-->
+				</div>
+				<div>
+					<textarea :placeholder="t('DESCRIPTION')" v-model="description" type="text"
+							autocapitalize="sentences" style="height: 60px" autocomplete="off"/>
+				</div>
+				<div style="padding-bottom: 5px;">
+					<input :placeholder="t('ADDRESS')" v-model="address" type="text" autocorrect="none"
+							autocapitalize="words" autocomplete="off"/>
+				</div>
+				<div style="padding-bottom: 5px;">
+					<input :placeholder="t('VENUE NAME')" v-model="venue_name" type="text" autocorrect="none"
+							autocapitalize="words" autocomplete="off"/>
+				</div>
+				<div style="padding-bottom: 5px; width: 100%; display: flex; flex-direction: row;">
+					<div :style="[include_time ? {width: '50%'} : {width: '100%'}]">
+						<input v-model="date" type="date" autocomplete="off"
+								style="width: 100%; height: 30px; font: inherit; font-size: 11px;"/>
+					</div>
+					<div v-if="include_time" style="width: 50%">
+						<input v-model="time" type="time" autocomplete="off" 
+								style="width: 100%; height: 30px; font: inherit; font-size: 11px;">
+					</div>
+				</div>
+				<div class="dual-set" style="padding-bottom: 5px;">
+					<button class="button" style="width: 100%" v-on:click.prevent="include_time=!include_time">
+						{{ t('INCLUDE TIME?') }}
+					</button>
+					<input type="checkbox" class="checkbox" v-model="include_time"/>
+				</div>
+				<div class="file-input">
+					<div>
+						{{ t('IMAGE') }}
+					</div>
+					<input type="file" accept="image/*" @change="(e) => {imageFile = e.target.files[0]}"/>
+				</div>
+				<div style="padding-top: 5px;">
+					<button class="button" v-on:click.prevent="createEvent()">
+						<div style="font-size: 18px;">{{ t('ADD') }}</div>
+					</button>
+				</div>
+			</form>
+			<div style="color: grey; display: flex; flex-direction: column; align-items: center" v-else>
+				<div>({{ t('COMING SOON') }})</div>
+				<div><small>{{ t('CURRENTLY, ONLY ADMINS CAN CREATE EVENTS. THIS FEATURE WILL BECOME OPEN TO THE PUBLIC SOON!') }}</small></div>
 			</div>
 		</div>
 	</div>
 </template>
 <script>
 	import store from '@/store.js'
-	import modal from '@/components/modal.vue'
 	import translations from '@/functions/translations.js'
 	import api from '@/functions/apiFunctions.js'
 	import f from '@/functions/functions.js'
 	export default {
 		name: 'addEvent',
 		components: {
-			modal,
 		},
 		data () {
 			return {

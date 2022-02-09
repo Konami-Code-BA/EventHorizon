@@ -94,7 +94,6 @@
 </template>
 <script>
 	import store from '@/store.js'
-	import modal from '@/components/modal.vue'
 	import information from '@/components/information'
 	import tabs from '@/components/tabs.vue'
 	import eventsMap from '@/components/eventsMap.vue'
@@ -106,7 +105,6 @@
 	export default {
 		name: 'home',
 		components: {
-			modal,
 			information,
 			tabs,
 			eventsMap,
