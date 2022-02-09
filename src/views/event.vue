@@ -382,11 +382,7 @@
 					<div style="font-size: 24px;">
 						{{ t(showStatus) }}
 					</div>
-					<div style="padding-bottom: 5px;">
-						<button v-on:click.prevent="showStatus = null" class="no-border-button x-button">
-							✖
-						</button>
-					</div>
+					<x-close-button :closeFunc="() => {showStatus = null}" style="align-self: flex-end;"/>
 				</div>
 				<div style="width: 100%; overflow-y: scroll;">
 					<div v-for="person in people[showStatus]" style="width: 100%; border: 2px solid #cae2ff;
@@ -420,25 +416,6 @@
 				</div>
 			</div>
 		</modal>
-		<!--modal v-if="showHostPanel" @closeModals="showHostPanel = false">
-			<div slot="contents" class="modal" style="max-height: 50%;">
-				<div style="width: 100%; display: flex; flex-direction: row; justify-content: space-between;
-						align-content: flex-start">
-					<div/>
-					<div style="font-size: 24px;">
-						HOST PANEL
-					</div>
-					<div style="padding-bottom: 5px;">
-						<button v-on:click.prevent="showHostPanel = false" class="no-border-button x-button">
-							✖
-						</button>
-					</div>
-				</div>
-				<button v-on:click.prevent="showHostPanel = true" v-if="myAttendingStatus['hosts']" class="button">
-					MESSAGE ALL
-				</button>
-			</div>
-		</modal-->
 		<modal v-if="messagePerson" @closeModals="messagePerson = null">
 			<div slot="contents" class="modal" style="height: 55%;">
 				<div style="width: 100%; display: flex; flex-direction: row; justify-content: space-between;
@@ -447,11 +424,7 @@
 					<div style="font-size: 24px; text-align: center;">
 						MESSAGE<br>{{messagePerson.display_name}}
 					</div>
-					<div style="padding-bottom: 5px; width: 20px;">
-						<button v-on:click.prevent="messagePerson = null" class="no-border-button x-button">
-							✖
-						</button>
-					</div>
+					<x-close-button :closeFunc="() => {messagePerson = null}" style="align-self: flex-end;"/>
 				</div>
 				<textarea placeholder="MESSAGE" v-model="messageContent" type="text"
 						autocapitalize="sentences" style="height: 90px;" autocomplete="off"/>
@@ -468,11 +441,7 @@
 					<div style="font-size: 24px;">
 						MESSAGE ALL
 					</div>
-					<div style="padding-bottom: 5px; width: 20px;">
-						<button v-on:click.prevent="messageAllPeople = false" class="no-border-button x-button">
-							✖
-						</button>
-					</div>
+					<x-close-button :closeFunc="() => {messageAllPeople = false}" style="align-self: flex-end;"/>
 				</div>
 				<textarea placeholder="MESSAGE" v-model="messageContent" type="text"
 						autocapitalize="sentences" style="height: 90px;" autocomplete="off"/>
@@ -496,6 +465,7 @@
 	import modal from '@/components/modal.vue'
 	import displayNameInput from '@/components/displayNameInput.vue'
 	import flashModal from '@/components/flashModal.vue'
+	import xCloseButton from '@/components/xCloseButton.vue'
 	export default {
 		name: 'event',
 		components: {
@@ -503,6 +473,7 @@
 			modal,
 			displayNameInput,
 			flashModal,
+			xCloseButton,
 		},
 		data () {
 			return {

@@ -1,11 +1,7 @@
 <template>
 	<modal @closeModals="closeInfo">
 		<div slot="contents" class="modal">
-			<div style="align-self: flex-end; padding-bottom: 5px;">
-				<button v-on:click.prevent="closeInfo" class="no-border-button x-button">
-					✖
-				</button>
-			</div>
+			<x-close-button :closeFunc="() => {closeInfo()}" style="align-self: flex-end;"/>
 
 			<!--START INFO-->
 
@@ -98,10 +94,12 @@
 	import modal from '@/components/modal'
 	import translations from '@/functions/translations.js'
 	import f from '@/functions/functions.js'
+	import xCloseButton from '@/components/xCloseButton.vue'
 	export default {
 		name: 'information',
 		components: {
 			modal,
+			xCloseButton,
 		},
 		props: {
 			closeInfo: {},
