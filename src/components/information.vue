@@ -114,6 +114,7 @@
 		methods: {
 			t (w) { return translations.t(w) },
 			goToFaq () {
+				this.closeInfo()
 				f.goToPage({ page: 'faq', args: {} })
 			},
 		}
