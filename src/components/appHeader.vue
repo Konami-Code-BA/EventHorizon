@@ -2,7 +2,7 @@
 	<div>
 		<div class="header" style="width: 100%;">
 			<tabs :num-tabs="5" :initial="0" @on-click="tab => { selectATab(tab) }"
-					style="background-color: rgba(0, 0, 0, .5);">
+					style="background-color: rgba(0, 0, 0, .5); height: 100%;">
 				<div slot="1" style="width: 35px !important;">
 					<img src="@/assets/backIcon.png" style="height: 22px; margin-top: 4px;"
 							v-if="store.pages.length > 1">
@@ -32,9 +32,9 @@
 				</div>
 			</tabs>
 		</div>
-		<modal v-if="showLanguageModal" @closeModals="showLanguageModal = false">
+		<modal v-if="showLanguageModal" @closeModals="showLanguageModal = false" ref="showLanguageModal">
 			<div slot="contents" class="modal">
-				<x-close-button :closeFunc="() => {showLanguageModal = false}" style="align-self: flex-end;"/>
+				<x-close-button :closeFunc="() => {$refs.showLanguageModal.closeModals()}" style="align-self: flex-end;"/>
 				<div style="width: 100%;">
 					<button v-on:click.prevent="english()" class="button">
 						ENGLISH
@@ -53,11 +53,11 @@
 
 			</div>
 		</modal>
-		<modal v-if="selectedTab === 2" @closeModals="selectedTab = 0">
+		<modal v-if="selectedTab === 2" @closeModals="selectedTab = 0" ref="selectedTab2">
 			<div slot="contents" class="modal">
-				<x-close-button :closeFunc="() => {selectedTab = 0}" style="align-self: flex-end;"/>
+				<x-close-button :closeFunc="() => {$refs.selectedTab2.closeModals()}" style="align-self: flex-end;"/>
 				<div v-if="!isAuthenticatedUser" style="width: 100%">
-					<button v-on:click.prevent="goToLoginRegister()" class="button">
+					<button v-on:click.prevent="$refs.selectedTab2.closeModals(); goToLoginRegister()" class="button">
 						{{ t('LOGIN / REGISTER') }}
 					</button>
 				</div>
@@ -70,7 +70,7 @@
 				<div class="line-height"/>
 
 				<div style="width: 100%">
-					<button v-on:click.prevent="selectedTab = 0; goToPage({ page: 'aboutUs', args: {} })"
+					<button v-on:click.prevent="$refs.selectedTab2.closeModals(); goToPage({ page: 'aboutUs', args: {} })"
 							class="button">
 						ABOUT US
 					</button>
@@ -79,7 +79,7 @@
 				<div class="line-height"/>
 
 				<div style="width: 100%">
-					<button v-on:click.prevent="selectedTab = 0; goToPage({ page: 'faq', args: {} })"
+					<button v-on:click.prevent="$refs.selectedTab2.closeModals(); goToPage({ page: 'faq', args: {} })"
 							class="button">
 						FAQ
 					</button>
@@ -88,7 +88,7 @@
 				<div class="line-height"/>
 
 				<div style="width: 100%">
-					<button v-on:click.prevent="selectedTab = 0; showLanguageModal = true"
+					<button v-on:click.prevent="$refs.selectedTab2.closeModals(); showLanguageModal = true"
 							class="button">
 						ENGLISH/日本語
 					</button>

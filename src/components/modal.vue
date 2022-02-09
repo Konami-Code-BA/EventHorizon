@@ -1,7 +1,6 @@
 <template>
 	<div>
-		<div class="modal-outside" v-on:click.prevent="$emit('closeModals')">
-		</div>
+		<div class="modal-outside" v-on:click.prevent="closeModals()"/>
 		<div class="modal-inside">
 			<slot name="contents">
 			</slot>
@@ -9,15 +8,31 @@
 	</div>
 </template>
 <script>
+	import xCloseButton from '@/components/xCloseButton.vue'
+	import f from '@/functions/functions.js'
+	import store from '@/store'
 	export default {
 		name: 'modal',
+		components: {
+			xCloseButton,
+		},
 		data () {
 			return {
+				store: store,
 			}
 		},
-		mounted () {
+		created () {
+			this.store.modalBack = true
+			let closeModals = this.closeModals
+			window.addEventListener('popstate', () => { closeModals() })
 		},
 		methods: {
+			closeModals () {
+				let closeModals = this.closeModals
+				window.removeEventListener('popstate', closeModals)
+				store.modalBack = false
+				this.$emit('closeModals')
+			}
 		}
 	}
 </script>

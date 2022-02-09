@@ -374,7 +374,7 @@
 			</div>
 			<div class="line-height"/>
 		</div>
-		<modal v-if="showStatus" @closeModals="showStatus = null">
+		<modal v-if="showStatus" @closeModals="showStatus = null" ref="showStatus">
 			<div slot="contents" class="modal" style="height: 55%;">
 				<div style="width: 100%; display: flex; flex-direction: row; justify-content: space-between;
 						align-content: flex-start">
@@ -382,7 +382,7 @@
 					<div style="font-size: 24px;">
 						{{ t(showStatus) }}
 					</div>
-					<x-close-button :closeFunc="() => {showStatus = null}" style="align-self: flex-end;"/>
+					<x-close-button :closeFunc="() => {$refs.showStatus.closeModals()}" style="align-self: flex-end;"/>
 				</div>
 				<div style="width: 100%; overflow-y: scroll;">
 					<div v-for="person in people[showStatus]" style="width: 100%; border: 2px solid #cae2ff;
@@ -416,7 +416,7 @@
 				</div>
 			</div>
 		</modal>
-		<modal v-if="messagePerson" @closeModals="messagePerson = null">
+		<modal v-if="messagePerson" @closeModals="messagePerson = null" ref="messagePerson">
 			<div slot="contents" class="modal" style="height: 55%;">
 				<div style="width: 100%; display: flex; flex-direction: row; justify-content: space-between;
 						align-content: flex-start">
@@ -424,7 +424,7 @@
 					<div style="font-size: 24px; text-align: center;">
 						MESSAGE<br>{{messagePerson.display_name}}
 					</div>
-					<x-close-button :closeFunc="() => {messagePerson = null}" style="align-self: flex-end;"/>
+					<x-close-button :closeFunc="() => {$refs.messagePerson.closeModals()}" style="align-self: flex-end;"/>
 				</div>
 				<textarea placeholder="MESSAGE" v-model="messageContent" type="text"
 						autocapitalize="sentences" style="height: 90px;" autocomplete="off"/>
@@ -433,7 +433,7 @@
 				</button>
 			</div>
 		</modal>
-		<modal v-if="messageAllPeople" @closeModals="messageAllPeople = false">
+		<modal v-if="messageAllPeople" @closeModals="messageAllPeople = false" ref="messageAllPeople">
 			<div slot="contents" class="modal" style="height: 55%;">
 				<div style="width: 100%; display: flex; flex-direction: row; justify-content: space-between;
 						align-content: flex-start">
@@ -441,7 +441,7 @@
 					<div style="font-size: 24px;">
 						MESSAGE ALL
 					</div>
-					<x-close-button :closeFunc="() => {messageAllPeople = false}" style="align-self: flex-end;"/>
+					<x-close-button :closeFunc="() => {$refs.messageAllPeople.closeModals()}" style="align-self: flex-end;"/>
 				</div>
 				<textarea placeholder="MESSAGE" v-model="messageContent" type="text"
 						autocapitalize="sentences" style="height: 90px;" autocomplete="off"/>

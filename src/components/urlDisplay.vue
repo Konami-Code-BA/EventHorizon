@@ -1,8 +1,8 @@
 <template>
 	<div>
-		<modal @closeModals="$emit('closeModals')">
+		<modal @closeModals="$emit('closeModals')" ref="urlDisplayModal">
 			<div slot="contents" class="modal">
-				<x-close-button :closeFunc="() => {$emit('closeModals')}" style="align-self: flex-end;"/>
+				<x-close-button :closeFunc="() => {$refs.urlDisplayModal.closeModals()}" style="align-self: flex-end;"/>
 				<div style="width: 100%; display: flex; flex-direction: row; align-items: center">
 					<button v-on:click.prevent="copyToClipboard()" class="button" style="border: none;">
 						<img src="@/assets/copyIcon.png" class="icon"/>
