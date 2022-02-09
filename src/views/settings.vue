@@ -53,29 +53,21 @@
 
 		<modal v-show="showAddEmailModal" @closeModals="showAddEmailModal = false">
 			<div slot="contents" class="modal">
-				<div style="align-self: flex-end">
-					<button v-on:click.prevent="showAddEmailModal = false" class="no-border-button x-button">
-						✖
-					</button>
-				</div>
-				<form v-on:keyup.enter="addEmail()" style="width: 80%;">
+				<x-close-button :closeFunc="() => {showAddEmailModal = false}" style="align-self: flex-end;"/>
+				<form v-on:keyup.enter="addEmail()" style="width: 100%;">
 					<email-input ref="emailInput" usage="AddEmail"
 							:key="store.user.language+'emailInputAddEmail'"/>
 					<password-input ref="passwordInput" :doublePassword="true" usage="AddEmail"
 							:key="store.user.language+'passwordInputAddEmail'"/>
 				</form>
-				<button v-on:click.prevent="addEmail()" class="button">
+				<button v-on:click.prevent="addEmail()" class="button" style="width: 100%;">
 					{{ t('ADD EMAIL ADDRESS') }}
 				</button>
 			</div>
 		</modal>
 		<modal v-show="showChangePasswordModal" @closeModals="showChangePasswordModal = false">
 			<div slot="contents" class="modal">
-				<div style="align-self: flex-end">
-					<button v-on:click.prevent="showChangePasswordModal = false" class="no-border-button x-button">
-						✖
-					</button>
-				</div>
+				<x-close-button :closeFunc="() => {showChangePasswordModal = false}" style="align-self: flex-end;"/>
 				<form v-on:keyup.enter="changePassword()" style="width: 100%;">
 					<password-input ref="passwordInput1" :doublePassword="false" usage="ChangePassword1"
 							customPlaceholder="CURRENT PASSWORD"/>
@@ -90,11 +82,7 @@
 		<!-- DISPLAY NAME CHANGE MODAL -->
 		<modal v-show="showChangeDisplayNameModal" @closeModals="showChangeDisplayNameModal = false">
 			<div slot="contents" class="modal">
-				<div style="align-self: flex-end">
-					<button v-on:click.prevent="showChangeDisplayNameModal = false" class="no-border-button x-button">
-						✖
-					</button>
-				</div>
+				<x-close-button :closeFunc="() => {showChangeDisplayNameModal = false}" style="align-self: flex-end;"/>
 				<display-name-input ref="displayNameInput" :doublePassword="false" usage="Update"
 						:enter="changeDisplayName" customPlaceholder="Enter Display Name" style="width: 100%;"/>
 				<button v-on:click.prevent="changeDisplayName()" class="button" style="width: 100%">
@@ -117,6 +105,7 @@
 	import modal from '@/components/modal.vue'
 	import flashModal from '@/components/flashModal.vue'
 	import displayNameInput from '@/components/displayNameInput.vue'
+	import xCloseButton from '@/components/xCloseButton.vue'
 	export default {
 		name: 'settings',
 		components: {
@@ -126,6 +115,7 @@
 			passwordInput,
 			flashModal,
 			displayNameInput,
+			xCloseButton,
 		},
 		data () {
 			return {

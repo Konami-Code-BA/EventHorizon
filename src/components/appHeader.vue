@@ -34,11 +34,7 @@
 		</div>
 		<modal v-if="showLanguageModal" @closeModals="showLanguageModal = false">
 			<div slot="contents" class="modal">
-				<div style="align-self: flex-end; padding-bottom: 5px;">
-					<button v-on:click.prevent="showLanguageModal = false" class="no-border-button x-button">
-						✖
-					</button>
-				</div>
+				<x-close-button :closeFunc="() => {showLanguageModal = false}" style="align-self: flex-end;"/>
 				<div style="width: 100%;">
 					<button v-on:click.prevent="english()" class="button">
 						ENGLISH
@@ -59,11 +55,7 @@
 		</modal>
 		<modal v-if="selectedTab === 2" @closeModals="selectedTab = 0">
 			<div slot="contents" class="modal">
-				<div style="align-self: flex-end; padding-bottom: 5px;">
-					<button v-on:click.prevent="selectedTab = 0" class="no-border-button x-button">
-						✖
-					</button>
-				</div>
+				<x-close-button :closeFunc="() => {selectedTab = 0}" style="align-self: flex-end;"/>
 				<div v-if="!isAuthenticatedUser" style="width: 100%">
 					<button v-on:click.prevent="goToLoginRegister()" class="button">
 						{{ t('LOGIN / REGISTER') }}
@@ -106,25 +98,6 @@
 
 			</div>
 		</modal>
-		<!--modal v-if="selectedTab === 5" @closeModals="selectedTab = 0">
-			<div slot="contents" class="modal">
-				<div style="width: 100%; display: flex; flex-direction: row; justify-content: space-between;
-						align-content: flex-start">
-					<div/>
-					<div style="font-size: 24px;">
-						NOTIFICATIONS
-					</div>
-					<div style="padding-bottom: 5px;">
-						<button v-on:click.prevent="selectedTab = 0" class="no-border-button x-button">
-							✖
-						</button>
-					</div>
-				</div>
-				<div>
-
-				</div>
-			</div>
-		</modal-->
 		<qr-code-generator v-if="showQrModal" @closeModals="showQrModal=false"/>
 	</div>
 </template>
@@ -135,9 +108,16 @@
 	import qrCodeGenerator from '@/components/qrCodeGenerator.vue'
 	import translations from '@/functions/translations.js'
 	import api from '@/functions/apiFunctions.js'
+	import xCloseButton from '@/components/xCloseButton.vue'
 	import f from '@/functions/functions.js'
 	export default {
 		name: 'appHeader',
+		components: {
+			modal,
+			tabs,
+			qrCodeGenerator,
+			xCloseButton,
+		},
 		data () {
 			return {
 				store: store,
@@ -145,11 +125,6 @@
 				showQrModal: false,
 				showLanguageModal: false,
 			}
-		},
-		components: {
-			modal,
-			tabs,
-			qrCodeGenerator,
 		},
 		computed: {
 			isAuthenticatedUser () {
