@@ -61,8 +61,10 @@ export default {
     goBack() {
         if (store.pages.length === 1) {
             window.history.go(-2)
-        } else {
+        } else if (!store.modalBack) {
             store.pages.pop() // remove the current page
+        } else {
+            store.modalBack = false
         }
     },
     focusCursor(documentt, id) {

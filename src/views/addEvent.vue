@@ -65,14 +65,12 @@
 </template>
 <script>
 	import store from '@/store.js'
-	import modal from '@/components/modal.vue'
 	import translations from '@/functions/translations.js'
 	import api from '@/functions/apiFunctions.js'
 	import f from '@/functions/functions.js'
 	export default {
 		name: 'addEvent',
 		components: {
-			modal,
 		},
 		data () {
 			return {
