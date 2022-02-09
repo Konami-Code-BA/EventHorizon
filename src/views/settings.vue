@@ -1,6 +1,6 @@
 <template>
-	<div>
-		<div class="main" style="overflow-y: scroll;">
+	<div class="main">
+		<div class="main" style="overflow-y: scroll; width: 100%;">
 			<div style="font-size: 36px;">{{ t('SETTINGS') }}</div>
 
 			<div class="line-height"/>
