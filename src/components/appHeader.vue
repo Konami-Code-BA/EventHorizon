@@ -2,7 +2,7 @@
 	<div>
 		<div class="header" style="width: 100%;">
 			<tabs :num-tabs="5" :initial="0" @on-click="tab => { selectATab(tab) }"
-					style="background-color: rgba(0, 0, 0, .5);">
+					style="background-color: rgba(0, 0, 0, .5); height: 100%;">
 				<div slot="1" style="width: 35px !important;">
 					<img src="@/assets/backIcon.png" style="height: 22px; margin-top: 4px;"
 							v-if="store.pages.length > 1">
