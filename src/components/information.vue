@@ -1,7 +1,7 @@
 <template>
-	<modal @closeModals="closeInfo">
+	<modal @closeModals="closeInfo" ref="information">
 		<div slot="contents" class="modal">
-			<x-close-button :closeFunc="() => {closeInfo()}" style="align-self: flex-end;"/>
+			<x-close-button :closeFunc="() => {$refs.information.closeModals()}" style="align-self: flex-end;"/>
 
 			<!--START INFO-->
 
@@ -82,7 +82,7 @@
 			
 			<div style="display: flex; flex-direction: row;">
 				{{ t('For more info, go to the') }}
-				<button v-on:click.prevent="goToFaq()" class="link-button">
+				<button v-on:click.prevent="$refs.information.closeModals(); goToFaq()" class="link-button">
 					FAQ
 				</button>
 				{{ t('to') }}
@@ -114,7 +114,6 @@
 		methods: {
 			t (w) { return translations.t(w) },
 			goToFaq () {
-				this.closeInfo()
 				f.goToPage({ page: 'faq', args: {} })
 			},
 		}
