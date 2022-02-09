@@ -21,11 +21,7 @@
 		</div>
 		<modal v-if="showShareModal" @closeModals="showShareModal = false">
 			<div slot="contents" class="modal">
-				<div style="align-self: flex-end; padding-bottom: 5px;">
-					<button v-on:click.prevent="showShareModal = false" class="no-border-button x-button">
-						✖
-					</button>
-				</div>
+				<x-close-button :closeFunc="() => {showShareModal = false}" style="align-self: flex-end;"/>
 				<div style="width: 100%">
 					<button v-on:click.prevent="showShareModal = false; showQrModal = true" class="button" style="width: 100%">
 						{{ t('SHARE QR CODE') }}
@@ -59,11 +55,19 @@
 	import tabs from '@/components/tabs.vue'
 	import qrCodeGenerator from '@/components/qrCodeGenerator.vue'
 	import urlDisplay from '@/components/urlDisplay.vue'
+	import xCloseButton from '@/components/xCloseButton.vue'
 	import translations from '@/functions/translations.js'
 	import api from '@/functions/apiFunctions.js'
 	import f from '@/functions/functions.js'
 	export default {
 		name: 'appFooter',
+		components: {
+			modal,
+			tabs,
+			qrCodeGenerator,
+			urlDisplay,
+			xCloseButton,
+		},
 		data () {
 			return {
 				store: store,
@@ -75,12 +79,6 @@
 				footerPages: ['home', 'addEvent', 'settings'],
 				actions: [this.home, this.addEvent, this.settings, this.share],
 			}
-		},
-		components: {
-			modal,
-			tabs,
-			qrCodeGenerator,
-			urlDisplay,
 		},
 		computed: {
 			isAuthenticatedUser () {
