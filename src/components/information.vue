@@ -6,10 +6,41 @@
 			<!--START INFO-->
 
 			<!--peopleFilters-->
-			<div v-if="whichInfo === 'peopleFilters'">
-				<p>{{t('ALL')}}{{`:\xa0\xa0\xa0\xa0`}}{{t('ALL EVENTS')}}</p>
-				<p>{{t('MINE')}}{{`:\xa0\xa0\xa0\xa0`}}{{t('EVENTS I AM AFFILIATED WITH')}}</p>
-				<p>{{t('PEOPLE I FOLLOW')}}{{`:\xa0\xa0\xa0\xa0`}}{{t('COMING SOON')}}</p>
+			<div v-if="whichInfo === 'peopleFilters'" style="display: flex; flex-direction: column;
+					justify-content: flex-start; align-items: center; width: 100%;">
+				<div style="display: flex; flex-direction: row; justify-content: space-between;
+						align-items: center; width: 100%;">
+					<div style="width: 35%;">
+						{{ t('ALL') }}
+					</div>
+					<div style="width: 45%;">
+						{{ t('ALL EVENTS') }}
+					</div>
+				</div>
+
+				<div class="line-height"/>
+
+				<div style="display: flex; flex-direction: row; justify-content: space-between;
+						align-items: center; width: 100%;">
+					<div style="width: 35%;">
+						{{ t('MINE') }}
+					</div>
+					<div style="width: 45%;">
+						{{ t('EVENTS I AM AFFILIATED WITH') }}
+					</div>
+				</div>
+
+				<div class="line-height"/>
+				
+				<div style="display: flex; flex-direction: row; justify-content: space-between;
+						align-items: center; width: 100%;">
+					<div style="width: 35%;">
+						{{ t('PEOPLE I FOLLOW') }}
+					</div>
+					<div style="width: 45%;">
+						{{ t('COMING SOON') }}
+					</div>
+				</div>
 			</div>
 
 			<!--events-->
@@ -25,11 +56,11 @@
 								{{t('invited2')}}
 							</div>
 							<div class="nav-items">
-								<img src="@/assets/myMapIcon.png" style="width: 25px; height: 25px;"/>
+								<img src="@/assets/upcomingMyMapIcon2.png" style="width: 25px; height: 25px;"/>
 								{{t('UPCOMING')}}
 							</div>
 							<div class="nav-items">
-								<img src="@/assets/myPastMapIcon.png" style="width: 25px; height: 25px;"/>
+								<img src="@/assets/pastMyMapIcon2.png" style="width: 25px; height: 25px;"/>
 								{{t('PAST')}}
 							</div>
 						</div>
@@ -39,11 +70,11 @@
 								{{t('PUBLIC')}}
 							</div>
 							<div class="nav-items">
-								<img src="@/assets/publicMapIcon.png" style="width: 25px; height: 25px;"/>
+								<img src="@/assets/upcomingPublicMapIcon2.png" style="width: 25px; height: 25px;"/>
 								{{t('UPCOMING')}}
 							</div>
 							<div class="nav-items">
-								<img src="@/assets/publicPastMapIcon.png" style="width: 25px; height: 25px;"/>
+								<img src="@/assets/pastPublicMapIcon2.png" style="width: 25px; height: 25px;"/>
 								{{t('PAST')}}
 							</div>
 						</div>
@@ -53,11 +84,11 @@
 								{{t('PRIVATE')}}
 							</div>
 							<div class="nav-items">
-								<img src="@/assets/privateMapIcon.png" style="width: 25px; height: 25px;"/>
+								<img src="@/assets/upcomingPrivateMapIcon2.png" style="width: 25px; height: 25px;"/>
 								{{t('UPCOMING')}}
 							</div>
 							<div class="nav-items">
-								<img src="@/assets/privatePastMapIcon.png" style="width: 25px; height: 25px;"/>
+								<img src="@/assets/pastPrivateMapIcon2.png" style="width: 25px; height: 25px;"/>
 								{{t('PAST')}}
 							</div>
 						</div>
