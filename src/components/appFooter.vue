@@ -23,7 +23,8 @@
 			<div slot="contents" class="modal">
 				<x-close-button :closeFunc="() => {$refs.showShareModal.closeModals()}" style="align-self: flex-end;"/>
 				<div style="width: 100%">
-					<button v-on:click.prevent="showShareModal = false; showQrModal = true" class="button" style="width: 100%">
+					<button v-on:click.prevent="$refs.showShareModal.closeModals(); showQrModal = true" class="button"
+							style="width: 100%">
 						{{ t('SHARE QR CODE') }}
 					</button>
 				</div>
@@ -31,7 +32,8 @@
 				<div class="line-height"/>
 
 				<div style="width: 100%">
-					<button v-on:click.prevent="showShareModal = false; showUrlModal = true" class="button" style="width: 100%">
+					<button v-on:click.prevent="$refs.showShareModal.closeModals(); showUrlModal = true" class="button"
+							style="width: 100%">
 						{{ t('SHARE URL') }}
 					</button>
 				</div>
