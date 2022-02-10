@@ -120,7 +120,8 @@
 										&& !f.isGuestStatus(this.store.events.display[i], 'invited')) {
 									// PRIVATE UPCOMING
 									if (f.isoStringDateToDateObject(this.store.events.display[i].date_time) > f.today) {
-										icon = window.origin.replace('8080', '8000') + '/static/privateMapIcon.png'
+										icon = window.origin.replace('8080', '8000')
+											+ '/static/upcomingPrivateMapIcon2.png'
 										infowindowContents.push(`
 											<button
 												onclick="openEventModal(${this.store.events.display[i].id})"
@@ -131,10 +132,11 @@
 													font-size: 16px;
 													-webkit-font-smoothing: antialiased;
 													-moz-osx-font-smoothing: grayscale;
-													border: 2px solid #fff200;
+													border: 3px solid #ffffff;
 													border-radius: 15px;
-													outline: none;
-													background-color: #fff200 !important;
+													outline: 1px solid #585858;
+													margin: 1px;
+													background-color: #ffffff !important;
 												"
 											>
 												${this.store.events.display[i].name}
@@ -142,7 +144,8 @@
 										`)
 									// PRIVATE PAST
 									} else {
-										icon = window.origin.replace('8080', '8000') + '/static/privatePastMapIcon.png'
+										icon = window.origin.replace('8080', '8000')
+											+ '/static/pastPrivateMapIcon2.png'
 										infowindowContents.push(`
 											<button
 												onclick="openEventModal(${this.store.events.display[i].id})"
@@ -153,10 +156,11 @@
 													font-size: 16px;
 													-webkit-font-smoothing: antialiased;
 													-moz-osx-font-smoothing: grayscale;
-													border: 2px solid #d3a814;
+													border: 3px solid #ffffff;
 													border-radius: 15px;
-													outline: none;
-													background-color: #d3a814 !important;
+													outline: 1px solid #585858;
+													margin: 1px;
+													background-color: #585858 !important;
 												"
 											>
 												${this.store.events.display[i].name}
@@ -167,7 +171,8 @@
 										&& !f.isGuestStatus(this.store.events.display[i], 'invited')) {
 									// PUBLIC UPCOMING
 									if (f.isoStringDateToDateObject(this.store.events.display[i].date_time) > f.today) {
-										icon = window.origin.replace('8080', '8000') + '/static/publicMapIcon.png'
+										icon = window.origin.replace('8080', '8000')
+											+ '/static/upcomingPublicMapIcon2.png'
 										infowindowContents.push(`
 											<button
 												onclick="openEventModal(${this.store.events.display[i].id})"
@@ -178,10 +183,11 @@
 													font-size: 16px;
 													-webkit-font-smoothing: antialiased;
 													-moz-osx-font-smoothing: grayscale;
-													border: 2px solid #0ed145;
+													border: 3px solid #ffffff;
 													border-radius: 15px;
-													outline: none;
-													background-color: #0ed145 !important;
+													outline: 1px solid #585858;
+													margin: 1px;
+													background-color: #ffffff !important;
 												"
 											>
 												${this.store.events.display[i].name}
@@ -190,7 +196,7 @@
 									} else {
 										// PUBLIC PAST
 										icon = window.origin.replace('8080', '8000')
-											+ '/static/publicPastMapIcon.png'
+											+ '/static/pastPublicMapIcon2.png'
 										infowindowContents.push(`
 											<button
 												onclick="openEventModal(${this.store.events.display[i].id})"
@@ -201,10 +207,11 @@
 													font-size: 16px;
 													-webkit-font-smoothing: antialiased;
 													-moz-osx-font-smoothing: grayscale;
-													border: 2px solid #09541e;
+													border: 3px solid #ffffff;
 													border-radius: 15px;
-													outline: none;
-													background-color: #09541e !important;
+													outline: 1px solid #585858;
+													margin: 1px;
+													background-color: #585858 !important;
 												"
 											>
 												${this.store.events.display[i].name}
@@ -214,7 +221,8 @@
 								} else if (f.isGuestStatus(this.store.events.display[i], 'invited')) {
 									// INVITED UPCOMING
 									if (f.isoStringDateToDateObject(this.store.events.display[i].date_time) > f.today) {
-										icon = window.origin.replace('8080', '8000') + '/static/myMapIcon.png'
+										icon = window.origin.replace('8080', '8000')
+											+ '/static/upcomingMyMapIcon2.png'
 										infowindowContents.push(`
 											<button
 												onclick="openEventModal(${this.store.events.display[i].id})"
@@ -225,10 +233,11 @@
 													font-size: 16px;
 													-webkit-font-smoothing: antialiased;
 													-moz-osx-font-smoothing: grayscale;
-													border: 2px solid #0b5bf1;
+													border: 3px solid #44ff00;
 													border-radius: 15px;
-													outline: none;
-													background-color: #0b5bf1 !important;
+													outline: 1px solid #585858;
+													margin: 1px;
+													background-color: #ffffff !important;
 												"
 											>
 												${this.store.events.display[i].name}
@@ -236,7 +245,7 @@
 										`)
 									} else {
 										// INVITED PAST
-										icon = window.origin.replace('8080', '8000') + '/static/myPastMapIcon.png'
+										icon = window.origin.replace('8080', '8000') + '/static/pastMyMapIcon2.png'
 										infowindowContents.push(`
 											<button
 												onclick="openEventModal(${this.store.events.display[i].id})"
@@ -247,10 +256,11 @@
 													font-size: 16px;
 													-webkit-font-smoothing: antialiased;
 													-moz-osx-font-smoothing: grayscale;
-													border: 2px solid #7218bb;
+													border: 3px solid #44ff00;
 													border-radius: 15px;
-													outline: none;
-													background-color: #7218bb !important;
+													outline: 1px solid #585858;
+													margin: 1px;
+													background-color: #585858 !important;
 												"
 											>
 												${this.store.events.display[i].name}
