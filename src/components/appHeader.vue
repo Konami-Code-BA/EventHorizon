@@ -32,11 +32,12 @@
 				</div>
 			</tabs>
 		</div>
-		<modal v-if="showLanguageModal" @closeModals="showLanguageModal = false" ref="showLanguageModal">
+		<modal v-if="showLanguageModal" @closeModals="showLanguageModal = false" ref="showLanguageModal"
+				:key="showLanguageModal">
 			<div slot="contents" class="modal">
 				<x-close-button :closeFunc="() => {$refs.showLanguageModal.closeModals()}" style="align-self: flex-end;"/>
 				<div style="width: 100%;">
-					<button v-on:click.prevent="english()" class="button">
+					<button v-on:click.prevent="$refs.showLanguageModal.closeModals(); english()" class="button">
 						ENGLISH
 					</button>
 				</div>
@@ -44,7 +45,7 @@
 				<div class="line-height"/>
 
 				<div style="width: 100%">
-					<button v-on:click.prevent="japanese()" class="button">
+					<button v-on:click.prevent="$refs.showLanguageModal.closeModals(); japanese()" class="button">
 						日本語
 					</button>
 				</div>
@@ -57,7 +58,7 @@
 			<div slot="contents" class="modal">
 				<x-close-button :closeFunc="() => {$refs.selectedTab2.closeModals()}" style="align-self: flex-end;"/>
 				<div v-if="!isAuthenticatedUser" style="width: 100%">
-					<button v-on:click.prevent="$refs.selectedTab2.closeModals(); goToLoginRegister()" class="button">
+					<button v-on:click.prevent="$refs.selectedTab2.closeModals(); goToLoginRegister();" class="button">
 						{{ t('LOGIN / REGISTER') }}
 					</button>
 				</div>
@@ -70,7 +71,7 @@
 				<div class="line-height"/>
 
 				<div style="width: 100%">
-					<button v-on:click.prevent="$refs.selectedTab2.closeModals(); goToPage({ page: 'aboutUs', args: {} })"
+					<button v-on:click.prevent="$refs.selectedTab2.closeModals(); goToPage({ page: 'aboutUs', args: {} });"
 							class="button">
 						ABOUT US
 					</button>
@@ -79,7 +80,7 @@
 				<div class="line-height"/>
 
 				<div style="width: 100%">
-					<button v-on:click.prevent="$refs.selectedTab2.closeModals(); goToPage({ page: 'faq', args: {} })"
+					<button v-on:click.prevent="$refs.selectedTab2.closeModals(); goToPage({ page: 'faq', args: {} });"
 							class="button">
 						FAQ
 					</button>
@@ -88,7 +89,7 @@
 				<div class="line-height"/>
 
 				<div style="width: 100%">
-					<button v-on:click.prevent="$refs.selectedTab2.closeModals(); showLanguageModal = true"
+					<button v-on:click.prevent="$refs.selectedTab2.closeModals(); showLanguageModal = true;"
 							class="button">
 						ENGLISH/日本語
 					</button>
@@ -153,13 +154,11 @@
 			async english () {
 				let lang = 'EN'
 				store.user.language = lang
-				this.selectedTab = 0
 				await api.updateUserLanguage()
 			},
 			async japanese () {
 				let lang = 'JP'
 				store.user.language = lang
-				this.selectedTab = 0
 				await api.updateUserLanguage()
 			},
 			goToLoginRegister () {
@@ -171,11 +170,6 @@
 				f.goToPage({ page: 'home', args: {} })
 				await api.logout()
 				location.reload()
-			},
-			closeModal () {
-				f.freeUpBackButton(this)  // this should change
-				this.selectedTab = 0
-				this.showQrModal = false
 			},
 		}
 	}
