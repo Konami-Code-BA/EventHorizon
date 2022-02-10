@@ -45,7 +45,8 @@
 		},
 		async created () {
 			// back button setup
-			window.addEventListener('popstate', () => { f.goBack() })
+			let goBack = f.goBack
+			window.addEventListener('popstate', goBack)
 			window.addEventListener('pushstate', () => { })  // the history has been lost so do nothing on forward
 
 			// get groups
