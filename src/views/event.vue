@@ -416,7 +416,8 @@
 				</div>
 			</div>
 		</modal>
-		<modal v-if="messagePerson" @closeModals="messagePerson = null" ref="messagePerson">
+		<modal v-if="messagePerson" @closeModals="messagePerson = null" ref="messagePerson"
+				:haveBackground="false">
 			<div slot="contents" class="modal" style="height: 55%;">
 				<div style="width: 100%; display: flex; flex-direction: row; justify-content: space-between;
 						align-content: flex-start">
@@ -433,7 +434,8 @@
 				</button>
 			</div>
 		</modal>
-		<modal v-if="messageAllPeople" @closeModals="messageAllPeople = false" ref="messageAllPeople">
+		<modal v-if="messageAllPeople" @closeModals="messageAllPeople = false" ref="messageAllPeople"
+				:haveBackground="false">
 			<div slot="contents" class="modal" style="height: 55%;">
 				<div style="width: 100%; display: flex; flex-direction: row; justify-content: space-between;
 						align-content: flex-start">
