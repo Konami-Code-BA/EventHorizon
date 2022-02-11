@@ -2,10 +2,10 @@
 	<div class="main" v-if="store.events.selected && event" style="overflow-y: scroll">
 		<div style="width: 98%; display: flex; flex-direction: column; align-items: center; height: auto;">
 			<div class="flex-row" style="align-items: center; justify-content: center; height: 60px;">
-				<h2 style="max-width: 80%; overflow-x: scroll; max-height: 100%; overflow-y: hidden;
-						white-space: nowrap">
+				<div style="max-width: 100%; overflow-x: scroll; max-height: 100%; overflow-y: hidden;
+						white-space: nowrap; font-size: 22px;">
 					{{event.name}}
-				</h2>
+				</div>
 			</div>
 			<div class="flex-row" style="justify-content: space-between;">
 				<div>
