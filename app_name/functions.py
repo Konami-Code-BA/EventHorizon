@@ -188,16 +188,18 @@ def merge_users(current_user, merge_user):
 		current_user.line_id = merge_user.line_id
 		current_user.line_access_token = merge_user.line_access_token
 		current_user.line_refresh_token = merge_user.line_refresh_token
-		current_user.do_get_line_display_name = merge_user.do_get_line_display_name
-		current_user.is_line_friend = merge_user.is_line_friend
-		current_user.do_get_lines = merge_user.do_get_lines
+	current_user.do_get_line_display_name = current_user.do_get_line_display_name or merge_user.do_get_line_display_name
+	current_user.is_line_friend = current_user.is_line_friend or merge_user.is_line_friend
+	current_user.do_get_lines = current_user.do_get_lines or merge_user.do_get_lines
 	if merge_user.email:
 		current_user.email = merge_user.email
 		current_user.password = merge_user.password
-		current_user.do_get_emails = merge_user.do_get_emails
+	current_user.do_get_emails = current_user.do_get_emails or merge_user.do_get_emails
 	if merge_user.date_joined < current_user.date_joined:
 		current_user.date_joined = merge_user.date_joined
 	current_user.visit_count += merge_user.visit_count
+	current_user.is_staff = current_user.is_staff or merge_user.is_staff
+	current_user.is_superuser = current_user.is_superuser or merge_user.is_superuser
 	current_user.save()
 	# merge events
 	events = Event.objects.filter(invited=merge_user.id)
