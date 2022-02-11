@@ -682,24 +682,17 @@ class EventViewset(viewsets.ViewSet):
 
 	def add_event(self, request):
 		event = None
-		print('*****************1')
 		if request.user.is_superuser:  # SECURITY: only superuser can add event
-			print('*****************2')
 			if request.data['address']:
-				print('*****************3')
 				gmaps = googlemaps.Client(key=config('GOOGLE_MAPS_API_KEY'))
 				geocoded = gmaps.geocode(request.data['address'])
 				latitude = geocoded[0]['geometry']['location']['lat']
 				longitude = geocoded[0]['geometry']['location']['lng']
 				address, area, rand_latitude, rand_longitude = randomize_lat_lng(request.data['address'])
-				print('*****************4')
 			else:
-				print('*****************5')
 				latitude = 0
 				longitude = 0
 				address, area, rand_latitude, rand_longitude = '', '', 0, 0
-				print('*****************6')
-			print('*****************7')
 			event = self.model(
 				name=request.data['name'],
 				description=request.data['description'],
@@ -714,25 +707,17 @@ class EventViewset(viewsets.ViewSet):
 				include_time=request.data['include_time'],
 				is_private=request.data['is_private'],
 			)
-			print('*****************8')
 			event.save()
-			print('*****************9')
 			event.hosts.add(request.user.id)
 			event.invited.add(request.user.id)
 			event.maybe.add(request.user.id)
-			print('*****************10')
 			if 'images' in request.data:
-				print('*****************11')
 				event.images.add(request.data['images'])
-			print('*****************12')
 		try:
-			print('*****************13')
 			serializer_data = self.serializer_class([event], many=True).data
 		except Exception as e:
-			print('*****************14')
 			print('ERROR IN ADD_EVENT API:', e)
 			serializer_data = self.serializer_class([], many=True).data
-		print('*****************15')
 		return serializer_data
 
 	#def my_events(self, request):  # SECURITY: anyone can get my events  # this is maybe not used anymore
