@@ -16,3 +16,4 @@ you can edit the database as you do in python in the viewsets etc. by using this
 	>>> group.name = 'Temp Visitor'
 	>>> group.save()
 	>>> exit()
+	heroku run python manage.py createsuperuser --app=event-horizon-jp
