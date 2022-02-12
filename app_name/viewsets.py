@@ -826,7 +826,7 @@ To turn off notifications, go here: {f.create_url('/?page=settings')}
 
 Notification:
 You have been invited to this event!
-For now, you're marked as a "maybe".
+For now, you're marked as "undecided".
 
 
 To view this event, go here: {f.create_url(f'/?page=event&id={event.id}')}
