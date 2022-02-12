@@ -43,12 +43,12 @@
 					<div v-if="!showDescription" class="drop-down-button">
 						<div style="width: 10px;"/>
 						<div>{{ t('SHOW DESCRIPTION') }}</div>
-						<div style="width: 10px;">⇩</div>
+						<img src="@/assets/downArrowIcon.png" style="width: 10px;"/>
 					</div>
 					<div v-else class="drop-down-button">
 						<div style="width: 10px;"/>
 						<div>{{ t('HIDE DESCRIPTION') }}</div>
-						<div style="width: 10px;">⇧</div>
+						<img src="@/assets/upArrowIcon.png" style="width: 10px;"/>
 					</div>
 				</button>
 				<div style="align-self: center; overflow-y: scroll; max-height: 100px; height: auto; margin-bottom: 0.7em" v-show="showDescription">
@@ -58,12 +58,12 @@
 					<div v-if="!showPeople" class="drop-down-button">
 						<div style="width: 10px;"/>
 						<div>	{{ t('SHOW PEOPLE') }}</div>
-						<div style="width: 10px;">⇩</div>
+						<img src="@/assets/downArrowIcon.png" style="width: 10px;"/>
 					</div>
 					<div v-else class="drop-down-button">
 						<div style="width: 10px;"/>
 						<div>{{ t('HIDE PEOPLE') }}</div>
-						<div style="width: 10px;">⇧</div>
+						<img src="@/assets/upArrowIcon.png" style="width: 10px;"/>
 					</div>
 				</button>
 				<div v-show="showPeople" style="margin-bottom: 1em; height: auto;">
@@ -252,12 +252,12 @@
 						<div style="width: 10px;"/>
 						<div v-if="myAttendingStatus['invited']">SHOW ATTENDING STATUS</div>
 						<div v-else>{{ t('CLICK TO JOIN') }}</div>
-						<div style="width: 10px;">⇩</div>
+						<img src="@/assets/downArrowIcon.png" style="width: 10px;"/>
 					</div>
 					<div v-else class="drop-down-button">
 						<div style="width: 10px;"/>
 						<div>{{ t('HIDE ATTENDING STATUS') }}</div>
-						<div style="width: 10px;">⇧</div>
+						<img src="@/assets/upArrowIcon.png" style="width: 10px;"/>
 					</div>
 			</button>
 			<div v-show="!isSpaceToAttend && showEventStatus" style="color: red; width: 100%; text-align: center;">
