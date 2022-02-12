@@ -34,7 +34,7 @@
 <style scoped>
 	.flash-modal {
 		color: black;
-		font-size: 72px;
+		font-size: 45px;
 		background-color: rgba(255, 255, 255, .5);
 		z-index: 90000;
 		width: 90%;
