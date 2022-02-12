@@ -408,7 +408,11 @@ export default {
         },
         'uninvited_followers': {
             'EN': 'UNINVITED FOLLOWERS',
-            'JP': '未招待客'
+            'JP': '未招待のフォロワー'
+        },
+        'THE EVENT IS FULL': {
+            'EN': 'THE EVENT IS FULL',
+            'JP': 'このイベントは満員です'
         },
         'I WILL ATTEND': {
             'EN': 'I WILL ATTEND',
@@ -461,6 +465,14 @@ export default {
         'ADDRESS': {
             'EN': 'ADDRESS',
             'JP': '住所'
+        },
+        'COPY ADDRESS': {
+            'EN': 'COPY ADDRESS',
+            'JP': '住所をコピー'
+        },
+        'OPEN IN GOOGLE MAPS': {
+            'EN': 'OPEN IN GOOGLE MAPS',
+            'JP': 'GOOGLEマップを開く'
         },
         'VENUE NAME': {
             'EN': 'VENUE NAME',
@@ -540,7 +552,67 @@ export default {
         },
         'ADD A PLUS ONE': {
             'EN': 'ADD A PLUS ONE',
-            'JP': 'ADD A PLUS ONE'
+            'JP': '同伴者を追加'
+        },
+        '+1 NAME': {
+            'EN': '+1 NAME',
+            'JP': '同伴者の氏名'
+        },
+        'purpose': {
+            'EN': 'PURPOSE',
+            'JP': '目的'
+        },
+        'purpose1': {
+            'EN': 'Getting people together is what life is all about, but man if it isn\'t a pain in the ass.',
+            'JP': '人々を集めるのが人生だ。ただ、それは面倒だ。'
+        },
+        'purpose2': {
+            'EN': 'We want to make it so you spend less time on the GETTING together and more time on the BEING together.',
+            'JP': '我々は、「人を集めること」に費やす時間を減らし、「人と一緒に過ごすこと」に時間を費やせるようにしたいと考えている。'
+        },
+        'purpose3': {
+            'EN': 'Make events, invite friends, and sit back and relax.',
+            'JP': 'イベントを作り、友人を誘い、ゆっくりとくつろいでください。'
+        },
+        'history': {
+            'EN': 'HISTORY',
+            'JP': '沿革'
+        },
+        'history1': {
+            'EN': 'Basically Mikey started working on this idea somewhere around Feb 16 2021.',
+            'JP': 'Mikeyは、2021年2月16日頃このアイディアに取り組み始めた。'
+        },
+        'history2': {
+            'EN': 'Stu was immediately brought in for moral support / advice / brainstorming / business planning.',
+            'JP': 'その後すぐ、Stuがサポート、アドバイス、ブレインストーミング、ビジネスプランニングのために参加した。'
+        },
+        'history3': {
+            'EN': 'Louis joined Feb 1 2022, he and Stu helped out finishing up the site before the launch, and now the team is us three.',
+            'JP': 'Louisは2022年2月1日に加わり、Stuと共にサイトの立ち上げを手伝い、現在の3名のチームとなった。'
+        },
+        'history4': {
+            'EN': 'The initial launch date was Feb 15 2022, officially less than 1 year after conception.',
+            'JP': 'リリース日は2022年2月15日と、構想から1年足らずでの正式発表となった。'
+        },
+        'hopes and dreams': {
+            'EN': 'HOPES AND DREAMS',
+            'JP': '展望'
+        },
+        'hopes and dreams1': {
+            'EN': 'Literally everything that happens is an event. The big bang was an event. Watching a movie at home is an event.',
+            'JP': '文字通り、起こることすべてが出来事（event）だ。ビッグバンもそう。家で映画を見るのだってそうだ。'
+        },
+        'hopes and dreams2': {
+            'EN': 'We think the potential for Event Horizon could be a lot more than parties.',
+            'JP': '我々は、Event Horizonが単なるパーティーのためだけではなく、あらゆる可能性を秘めたものであると考えている。'
+        },
+        'hopes and dreams3': {
+            'EN': 'And we intend to find out just how far we can take it.',
+            'JP': 'そしてそれをどこまで実現できるか試してみるつもりだ。'
+        },
+        'VENUE': {
+            'EN': 'VENUE',
+            'JP': '場所'
         },
     },
 

@@ -12,7 +12,7 @@
 					{{ getDate }}
 				</div>
 				<div>
-					<small>{{ event.is_private ? 'PRIVATE EVENT' : 'PUBLIC EVENT' }}</small>
+					<small>{{ event.is_private ? t('PRIVATE') : t('PUBLIC') }}</small>
 				</div>
 			</div>
 			<img :src="image" style="height: 160px; width: auto; margin-top: 16px; margin-bottom: 10px; border-radius: 2px;"/>
@@ -20,22 +20,22 @@
 				<div v-if="(!event.is_private || myAttendingStatus['invited']) && event.venue_name" class="flex-row"
 						style="justify-content: space-between; flex-direction: column">
 					<p class="event-attr">
-						<strong>Venue</strong>
+						<strong>{{t('VENUE')}}</strong>
 					</p>
 					<p class="address-value" style="margin-bottom: 1em;">
 						{{ event.venue_name }}
 					</p>
 				</div>
-					<small class="event-attr">Address</small>
+					<small class="event-attr">{{t('ADDRESS')}}</small>
 					<small class="address-value">{{ event.address }}</small>
 				<div class="flex-row" style="justify-content: space-between;">
 					<button class="button event-page-button" v-on:click.prevent="copyToClipboard()"
 							style="align-self: center; width: auto;">
-						<small> Copy Address </small>
+						<small>{{t('COPY ADDRESS')}}</small>
 					</button>
 					<button class="button google-maps-button" v-on:click.prevent="openInGoogleMaps()"
 							style="display: flex; flex-direction: row; justify-content: center; width: 100%;">
-            			Open in Google Maps
+            			{{t('OPEN IN GOOGLE MAPS')}}
 					</button>
 				</div>
 				<button v-on:click.prevent="showDescription=!showDescription" class="button event-page-button">
@@ -223,7 +223,7 @@
 								padding: 5px; width: 100%;" v-if="myAttendingStatus['hosts']">
 							<div class="flex-row" style="justify-content: space-between">
 								<div style="align-self: center">
-									TOTAL UNINVITED FOLLOWERS
+									{{ t('uninvited_followers') }}
 								</div>
 								<button v-on:click.prevent="showStatus = 'uninvited_followers'" class="button"
 										style="align-self: center; width: 100px; min-width: 100px;"
@@ -260,7 +260,7 @@
 					</div>
 			</button>
 			<div v-show="!isSpaceToAttend && showEventStatus" style="color: red; width: 100%; text-align: center;">
-				THE EVENT IS FULL
+				{{ t('THE EVENT IS FULL') }}
 			</div>
 			<div style="margin-top: 0.7em; width: 100%; display: flex; flex-direction: column; align-items: center;
 					border: 2px solid rgba(255, 255, 255, .3); border-radius: 7px;" v-show="showEventStatus">
@@ -358,7 +358,7 @@
 								style="width: 70%;">
 							<button class="button" v-on:click.prevent="plusOneButton()">
 								<div v-if="!plusOneStatus" style="width: 100%; text-align: center;">
-									ADD A PLUS ONE
+									{{ t('ADD A PLUS ONE') }}
 								</div>
 								<div v-else style="width: 100%; display: flex; flex-direction: row;
 										justify-content: space-between; align-items: center;">
