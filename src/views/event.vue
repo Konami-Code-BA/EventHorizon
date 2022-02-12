@@ -368,7 +368,7 @@
 							</button>
 						</div>
 					</div>
-					<div style="width: 25px; align-self: flex-start;">
+					<div style="width: 25px; align-self: flex-start; visibility: hidden;">
 						<button style="background: none; border: none"
 								v-on:click.prevent="showInformation = 'attendingStatus'">
 							<img src="@/assets/iIcon.png" class="icon" style="padding: 3px;" id="events-info"/>
