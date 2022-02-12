@@ -90,7 +90,7 @@
 								</button>
 							</div>
 						</div>
-						<div v-else style="font-size: 24px; text-align: center;">{{t('NO EVENTS')}}</div>
+						<div v-else style="font-size: 20px; text-align: center;">{{t('NO EVENTS')}}</div>
 					</div>
 				</div>
 			</div>

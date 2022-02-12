@@ -14,6 +14,10 @@ export default {
             'EN': 'REGISTER',
             'JP': '登録'
         },
+        'LOGIN': {
+            'EN': 'LOGIN',
+            'JP': 'ログイン'
+        },
         'LOGIN / REGISTER': {
             'EN': 'LOGIN / REGISTER',
             'JP': 'ログイン・登録'
@@ -29,10 +33,6 @@ export default {
         'LINE LOGIN / REGISTER': {
             'EN': 'LINE LOGIN / REGISTER',
             'JP': 'LINEでログイン/新規登録'
-        },
-        'ADD LINE': {
-            'EN': 'ADD LINE',
-            'JP': 'LINE登録'
         },
         'MENU': {
             'EN': 'MENU',
@@ -60,7 +60,7 @@ export default {
         },
         'CONFIRM PASSWORD': {
             'EN': 'CONFIRM PASSWORD',
-            'JP': 'パスワード確認'
+            'JP': 'パスワードの確認'
         },
         'NEW PASSWORD': {
             'EN': 'NEW PASSWORD',
@@ -125,10 +125,6 @@ export default {
         'COMING SOON': {
             'EN': 'COMING SOON',
             'JP': '近日公開'
-        },
-        'LOGIN WITH EMAIL': {
-            'EN': 'LOGIN WITH EMAIL',
-            'JP': 'メールでログイン'
         },
         'REGISTER WITH EMAIL': {
             'EN': 'REGISTER WITH EMAIL',
@@ -613,6 +609,18 @@ export default {
         'VENUE': {
             'EN': 'VENUE',
             'JP': '場所'
+        },
+        'Forgot Password': {
+            'EN': 'Forgot Password',
+            'JP': 'パスワードを忘れた場合'
+        },
+        'ADD LINE': {
+            'EN': 'ADD LINE',
+            'JP': 'LINEを追加する'
+        },
+        'THIS PAGE': {
+            'EN': 'THIS PAGE',
+            'JP': 'このページ'
         },
     },
 
