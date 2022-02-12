@@ -47,8 +47,8 @@ export default {
             'JP': '表示名'
         },
         'EDIT DISPLAY NAME': {
-          'EN': 'EDIT DISPLAY NAME',
-          'JP': '表示名を変更する'
+            'EN': 'EDIT DISPLAY NAME',
+            'JP': '表示名を変更する'
         },
         'EMAIL': {
             'EN': 'EMAIL',
@@ -153,10 +153,6 @@ export default {
         'CURRENT PASSWORD IS INCORRECT': {
             'EN': 'CURRENT PASSWORD IS INCORRECT',
             'JP': '現在のパスワードが間違っています'
-        },
-        'MAYBE': {
-            'EN': 'MAYBE',
-            'JP': '興味あり'
         },
         'PASSWORD-CHANGE EMAIL SENT!': {
             'EN': 'PASSWORD-CHANGE EMAIL SENT!',
@@ -395,8 +391,8 @@ export default {
             'JP': '参加者'
         },
         'maybe': {
-            'EN': 'MAYBE',
-            'JP': '検討中'
+            'EN': 'UNDECIDED',
+            'JP': '未定'
         },
         'wait_list': {
             'EN': 'WAIT LIST',
@@ -499,40 +495,52 @@ export default {
             'JP': '完了しました'
         },
         'CLICK TO JOIN': {
-          'EN': 'CLICK TO JOIN',
-          'JP': 'イベントに参加する'
+            'EN': 'CLICK TO JOIN',
+            'JP': 'イベントに参加する'
         },
         'HIDE ATTENDING STATUS': {
-          'EN': 'HIDE ATTENDING STATUS',
-          'JP': '参加状況を非表示にする'
+            'EN': 'HIDE ATTENDING STATUS',
+            'JP': '参加状況を非表示にする'
+        },
+        'SHOW ATTENDING STATUS': {
+            'EN': 'SHOW ATTENDING STATUS',
+            'JP': '参加状況を表示する'
+        },
+        'ATTENDING STATUS': {
+            'EN': 'ATTENDING STATUS',
+            'JP': '参加状況'
         },
         'INVITE REQUEST': {
-          'EN': 'INVITE REQUEST',
-          'JP': 'イベントに友達を招待する'
+            'EN': 'INVITE REQUEST',
+            'JP': 'イベントに友達を招待する'
         },
         'ATTENDING LIMIT': {
-          'EN': 'ATTENDING LIMIT',
-          'JP': '人数上限'
+            'EN': 'ATTENDING LIMIT',
+            'JP': '人数上限'
         },
         'SHOW PEOPLE': {
-          'EN': 'SHOW PEOPLE',
-          'JP': '参加者リストを表示'
+            'EN': 'SHOW PEOPLE',
+            'JP': '参加者リストを表示'
         },
         'HIDE PEOPLE': {
-          'EN': 'HIDE PEOPLE',
-          'JP': '参加者リストを非表示'
+            'EN': 'HIDE PEOPLE',
+            'JP': '参加者リストを非表示'
         },
         'SHOW DESCRIPTION': {
-          'EN': 'SHOW DESCRIPTION',
-          'JP': '詳細を表示'
+            'EN': 'SHOW DESCRIPTION',
+            'JP': '詳細を表示'
         },
         'HIDE DESCRIPTION': {
-          'EN': 'HIDE DESCRIPTION',
-          'JP': '詳細を非表示'
+            'EN': 'HIDE DESCRIPTION',
+            'JP': '詳細を非表示'
         },
         'UNLIMITED': {
-          'EN': 'UNLIMITED',
-          'JP': '上限なし'
+            'EN': 'UNLIMITED',
+            'JP': '上限なし'
+        },
+        'ADD A PLUS ONE': {
+            'EN': 'ADD A PLUS ONE',
+            'JP': 'ADD A PLUS ONE'
         },
     },
 
