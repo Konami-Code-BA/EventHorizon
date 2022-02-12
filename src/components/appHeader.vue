@@ -27,7 +27,7 @@
 					</div>
           			<button class="no-border-button current-user" v-else v-on:click.prevent="goToLoginRegister()"
 					  		style="font-size: 14px;">
-						LOGIN
+						{{t('LOGIN')}}
 					</button>
 				</div>
 			</tabs>
@@ -91,7 +91,7 @@
 				<div style="width: 100%">
 					<button v-on:click.prevent="$refs.selectedTab2.closeModals(); showLanguageModal = true;"
 							class="button">
-						ENGLISH/日本語
+						ENGLISH / 日本語
 					</button>
 				</div>
 
