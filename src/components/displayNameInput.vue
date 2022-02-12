@@ -35,7 +35,7 @@
 				this.hasErrors()
 			}
 			if (this.usage === 'PlusOne') {
-				this.placeholder = '+1 Name'
+				this.placeholder = this.t('+1 NAME')
 			} else {
 				this.placeholder = this.t('DISPLAY NAME')
 			}
