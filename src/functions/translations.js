@@ -110,6 +110,22 @@ export default {
             'EN': 'GET LINE MESSAGES',
             'JP': 'LINEのメール受信'
         },
+        'MESSAGE': {
+            'EN': 'MESSAGE',
+            'JP': 'メッセージ'
+        },
+        'MESSAGE ALL': {
+            'EN': 'MESSAGE ALL',
+            'JP': '全員にメッセージ'
+        },
+        'INVITE!': {
+            'EN': 'INVITE!',
+            'JP': ''
+        },
+        'SEND': {
+            'EN': 'SEND',
+            'JP': '送信'
+        },
         'UPCOMING EVENTS': {
             'EN': 'UPCOMING EVENTS',
             'JP': '今後のイベント'
@@ -418,9 +434,9 @@ export default {
             'EN': 'EVENTS I AM AFFILIATED WITH',
             'JP': '自分が関係しているイベント'
         },
-        'For more info, go to the': {
-            'EN': 'For more info, go to the',
-            'JP': '詳しくは'
+        'For other info, go to the': {
+            'EN': 'For other info, go to the',
+            'JP': 'その他のお問い合わせは'
         },
         'to': {
             'EN': '',
