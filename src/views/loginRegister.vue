@@ -14,7 +14,7 @@
 			<br>
 			<div style="width: 100%; display: flex; flex-direction: column; justify-content: center;">
 				<button class="link-button" v-on:click.prevent="forgotPassword()">
-					Forgot Password
+					{{t('Forgot Password')}}
 				</button>
 			</div>
 

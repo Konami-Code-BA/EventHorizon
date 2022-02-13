@@ -12,7 +12,7 @@
 			<!-- Change display name input -->
 			<div class="dual-set">
 				<button v-on:click.prevent="showChangeDisplayNameModal = true" class="button" style="width: 100%">
-					{{ 'EDIT DISPLAY NAME' }}&nbsp;
+					{{ t('EDIT DISPLAY NAME') }}&nbsp;
 				</button>
 			</div>
 
@@ -86,7 +86,7 @@
 				<display-name-input ref="displayNameInput" :doublePassword="false" usage="Update"
 						:enter="changeDisplayName" customPlaceholder="Enter Display Name" style="width: 100%;"/>
 				<button v-on:click.prevent="changeDisplayName()" class="button" style="width: 100%">
-					{{ "CHANGE DISPLAY NAME" }}
+					{{ t('EDIT DISPLAY NAME') }}
 				</button>
         	</div>
 		</modal>

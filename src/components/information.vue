@@ -99,6 +99,45 @@
 				</div>
 			</div>
 
+			<!--attendingStatus-->
+			<div v-if="whichInfo === 'attendingStatus'" style="display: flex; flex-direction: column;
+					justify-content: flex-start; align-items: center; width: 100%;">
+				<h2 style="text-align: center; font-size: 20px; margin: 0.4em;">{{t('ATTENDING STATUS')}}</h2>
+				<div style="display: flex; flex-direction: row; justify-content: space-between;
+						align-items: center; width: 100%;">
+					<div style="width: 35%;">
+						{{t('I WILL ATTEND')}}
+					</div>
+					<div style="width: 45%;">
+						{{t('I WILL ATTEND explanation')}}
+					</div>
+				</div>
+
+				<div class="line-height"/>
+
+				<div style="display: flex; flex-direction: row; justify-content: space-between;
+						align-items: center; width: 100%;">
+					<div style="width: 35%;">
+						{{t('maybe')}}
+					</div>
+					<div style="width: 45%;">
+						{{t('maybe explanation')}}
+					</div>
+				</div>
+
+				<div class="line-height"/>
+				
+				<div style="display: flex; flex-direction: row; justify-content: space-between;
+						align-items: center; width: 100%;">
+					<div style="width: 35%;">
+						{{t('wait_list')}}
+					</div>
+					<div style="width: 45%;">
+						{{ t('wait_list explanation') }}
+					</div>
+				</div>
+			</div>
+
 			<!--FINISH INFO-->
 
 			<div class="line-height"/>
