@@ -49,14 +49,21 @@
 		methods: {
 			t (w) { return translations.t(w) },
 			async copyToClipboard () {
-				navigator.clipboard.writeText(this.url)
+        const promise1 = new Promise((resolve, reject) => {
+          resolve(this.url);
+        });
+        promise1.then((value) => {
+          navigator.clipboard.writeText(value)
+          console.log(`Copied: "${value}"`);
+    // expected output: "Success!"
+        });
 				//// if the above fails on some browser, this is supposed to work. maybe use both if the first fails
-				//let textArea = document.createElement("textarea")
-				//textArea.value = this.url
-				//textArea.hidden = true  // not sure about this line or not
-				//document.body.appendChild(textArea)
-				//textArea.select()
-				//document.execCommand('copy')
+				// let textArea = document.createElement("textarea")
+				// textArea.value = this.url
+				// textArea.hidden = true  // not sure about this line or not
+				// document.body.appendChild(textArea)
+				// textArea.select()
+				// document.execCommand('copy')
 
 				await this.$refs.flashCoppied.flashModal()
 			},
