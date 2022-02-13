@@ -28,7 +28,11 @@ ALLOWED_HOSTS = [
 	'event-horizon-jp.herokuapp.com/',
 	'event-horizon-test.herokuapp.com/',
 	'localhost',
-	'eventhorizon.vip/'
+	'eventhorizon.vip/',
+    'localhost',
+    'localhost/',
+    '127.0.0.1',
+    '127.0.0.1/',
 ]
 
 CORS_ALLOW_CREDENTIALS = True
