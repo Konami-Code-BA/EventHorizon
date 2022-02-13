@@ -9,41 +9,40 @@
 				<small>Louis</small>
 				<small>Stu</small>
 			</div>
-			<h2>Purpose</h2>
+			<h2>{{t('purpose')}}</h2>
 			<p>
-				Getting people together is what life is all about, but man if it isn't a pain in the ass.
+				{{t('purpose1')}}
 			</p>
 			<p>
-				We want to make it so you spend less time on the GETTING together and more time on the BEING together.
+				{{t('purpose2')}}
 			</p>
 			<p>
-				Make events, invite friends, and sit back and relax.
+				{{t('purpose3')}}
 			</p>
-			<h2>History</h2>
+			<h2>{{t('history')}}</h2>
 			<p>
-				Basically Mikey started working on this idea somewhere around Feb 16 2021.
-			</p>
-			<p>
-				Stu was immediately brought in for moral support / advice / brainstorming / business planning.
+				{{t('history1')}}
 			</p>
 			<p>
-				Louis joined Feb 1 2022, he and Stu helped out finishing up the site before the launch, 
-				and now the team is us three.
+				{{t('history2')}}
 			</p>
 			<p>
-				The initial launch date was Feb 15 2022, officially less than 1 year after conception.
-			</p>
-			<h2>Hopes and dreams</h2>
-			<p>
-				Literally everything that happens is an event. The big bang was an event. T
+				{{t('history3')}}
 			</p>
 			<p>
-				We think the potential for Event Horizon could be a lot more than parties.
+				{{t('history4')}}
+			</p>
+			<h2>{{t('hopes and dreams')}}</h2>
+			<p>
+				{{t('hopes and dreams1')}}
 			</p>
 			<p>
-				And we intend to find out just how far we can take it.
+				{{t('hopes and dreams2')}}
 			</p>
-			<img src="@/assets/eventhorizonLogo.png" style="width: 100%; margin-bottom: 50px;"/>
+			<p>
+				{{t('hopes and dreams3')}}
+			</p>
+			<img src="@/assets/eventhorizonLogo.png" style="width: 100%; max-width: 300px; margin-bottom: 50px;"/>
 		</div>
 	</div>
 	

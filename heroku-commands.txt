@@ -16,3 +16,9 @@ you can edit the database as you do in python in the viewsets etc. by using this
 	>>> group.name = 'Temp Visitor'
 	>>> group.save()
 	>>> exit()
+	>>> from app_name.serializers import UserSerializer
+	>>> user = UserSerializer.Meta.model.objects.get(email="mdsimeone@gmail.com")
+	>>> user.is_superuser = True
+	>>> user.is_staff = True
+	>>> user.save()
+	heroku run python manage.py createsuperuser --app=event-horizon-jp
