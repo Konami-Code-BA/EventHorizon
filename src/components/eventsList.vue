@@ -4,10 +4,7 @@
 			<input :placeholder="t('SEARCH')" :value="search" @input="setSearch" type="text" autocorrect="off"
 					autocapitalize="none" style="width: 100% padding-bottom: 2px" v-on:keyup.enter="removeFocus()"
 					id="search" autocomplete="off"/>
-			<div style="width: 10px;"/>
-			<button v-on:click.prevent="setSearch({target: {value: ''}})" class="no-border-button x-button">
-				✖
-			</button>
+			<x-close-button :closeFunc="() => {setSearch({target: {value: ''}})}" style="padding-bottom: 0;"/>
 		</div>
 		<div v-if="!noEvents" style="width: 100%; overflow-y: scroll; overflow-x: hidden; display: flex; flex-direction: column;
 				align-items: center; padding-left: 10px; height: 100%;" id="scroller">
@@ -16,13 +13,13 @@
 					<div v-for="event in listEvents" class="event-card-item" style="">
 						<button v-on:click.prevent="openEventModal(event.id)" class="no-border-button"
 								style="width: 100%;" :id="`item${event.id}`">
-							<event-block :event="event"/>
+							<event-block :event="event" :key="JSON.stringify(event)"/>
 						</button>
 					</div>
 				</div>
 			</div>
 		</div>
-		<div v-else style="font-size: 24px;">NO EVENTS</div>
+		<div v-else style="font-size: 24px;">{{ t('NO EVENTS') }}</div>
 	</div>
 </template>
 <script defer>
@@ -31,10 +28,12 @@
 	import f from '@/functions/functions.js'
 	import api from '@/functions/apiFunctions.js'
 	import eventBlock from '@/components/eventBlock.vue'
+	import xCloseButton from '@/components/xCloseButton.vue'
 	export default {
 		name: 'eventsList',
 		components: {
 			eventBlock,
+			xCloseButton,
 		},
 		data () {
 			return {

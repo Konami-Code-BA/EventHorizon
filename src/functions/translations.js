@@ -46,6 +46,10 @@ export default {
             'EN': 'DISPLAY NAME',
             'JP': '表示名'
         },
+        'EDIT DISPLAY NAME': {
+          'EN': 'EDIT DISPLAY NAME',
+          'JP': '表示名を変更する'
+        },
         'EMAIL': {
             'EN': 'EMAIL',
             'JP': 'メール'
@@ -60,11 +64,11 @@ export default {
         },
         'NEW PASSWORD': {
             'EN': 'NEW PASSWORD',
-            'JP': '新たなパスワード'
+            'JP': '新しいパスワード'
         },
         'CONFIRM NEW PASSWORD': {
             'EN': 'CONFIRM NEW PASSWORD',
-            'JP': '新たなパスワードの確認'
+            'JP': '新しいパスワードの確認'
         },
         'CONFIRM CURRENT PASSWORD': {
             'EN': 'CONFIRM CURRENT PASSWORD',
@@ -76,7 +80,7 @@ export default {
         },
         "FORGOT PASSWORD": {
             'EN': "FORGOT PASSWORD",
-            'JP': 'パスワードが忘れました'
+            'JP': 'パスワードを忘れた'
         },
         'SHOW': {
             'EN': 'SHOW',
@@ -100,11 +104,11 @@ export default {
         },
         'GET EMAILS': {
             'EN': 'GET EMAILS',
-            'JP': 'メール送信'
+            'JP': 'メール受信'
         },
         'GET LINE MESSAGES': {
             'EN': 'GET LINE MESSAGES',
-            'JP': 'LINEのメール送信'
+            'JP': 'LINEのメール受信'
         },
         'UPCOMING EVENTS': {
             'EN': 'UPCOMING EVENTS',
@@ -136,7 +140,7 @@ export default {
         },
         'THIS APP USES COOKIES': {
             'EN': 'THIS APP\nUSES COOKIES',
-            'JP': 'このアプリでは\nクッキーが使われています'
+            'JP': 'このアプリには\nクッキーが使われています'
         },
         'ADD EMAIL ADDRESS': {
             'EN': 'ADD EMAIL ADDRESS',
@@ -148,11 +152,11 @@ export default {
         },
         'CURRENT PASSWORD IS INCORRECT': {
             'EN': 'CURRENT PASSWORD IS INCORRECT',
-            'JP': '現在のパスワードが間違っている'
+            'JP': '現在のパスワードが間違っています'
         },
         'MAYBE': {
             'EN': 'MAYBE',
-            'JP': '未決定'
+            'JP': '興味あり'
         },
         'PASSWORD-CHANGE EMAIL SENT!': {
             'EN': 'PASSWORD-CHANGE EMAIL SENT!',
@@ -164,7 +168,7 @@ export default {
         },
         'CHANGE PASSWORD': {
             'EN': 'CHANGE PASSWORD',
-            'JP': 'パスワード変更する'
+            'JP': 'パスワード変更'
         },
         'Password can\'t be empty': {
             'EN': 'Password can\'t be empty',
@@ -180,23 +184,23 @@ export default {
         },
         'Passwords don\'t match': {
             'EN': 'Passwords don\'t match',
-            'JP': 'パスワードが不一致'
+            'JP': 'パスワードが一致しません'
         },
         'This is an impossible email': {
             'EN': 'This is an impossible email',
-            'JP': '無効なメールアドレス'
+            'JP': '無効なメールアドレスです'
         },
         'Must be 75 characters or less': {
             'EN': 'Must be 75 characters or less',
-            'JP': '75文字以下'
+            'JP': '75文字以下で入力してください'
         },
         'Required': {
             'EN': 'Required',
-            'JP': '必須項目'
+            'JP': '必須'
         },
         'Plus One needs name': {
             'EN': 'Plus One needs name',
-            'JP': 'Plus One needs name'
+            'JP': '追加する方の名前を入力してください'
         },
         'Only these symbols are allowed: . _ - @': {
             'EN': 'Only these symbols are allowed: . _ - @',
@@ -216,11 +220,11 @@ export default {
         },
         'This email is already registered': {
             'EN': 'This email is already registered',
-            'JP': '登録済のメールアドレス'
+            'JP': '登録済のメールアドレスです'
         },
         'Incorrect password for this email': {
             'EN': 'Incorrect password for this email',
-            'JP': '登録済のメールアドレスとパスワード相違'
+            'JP': 'パスワードが違います'
         },
         'ADD': {
             'EN': 'ADD',
@@ -332,7 +336,7 @@ export default {
         },
         'NO EVENTS': {
             'EN': 'NO EVENTS',
-            'JP': 'イベント無し'
+            'JP': 'イベントがありません'
         },
         'MONTH VIEW': {
             'EN': 'MONTH',
@@ -360,7 +364,7 @@ export default {
         },
         'SELECT WHAT EVENTS TO DISPLAY': {
             'EN': 'SELECT WHAT EVENTS TO DISPLAY',
-            'JP': 'どんなイベントを表示しよう'
+            'JP': '表示するイベントを選択'
         },
         'ALL': {
             'EN': 'ALL',
@@ -368,11 +372,87 @@ export default {
         },
         'MINE': {
             'EN': 'MINE',
-            'JP': '僕の'
+            'JP': '自分のイベント'
         },
         'PEOPLE I FOLLOW': {
             'EN': 'PEOPLE I FOLLOW',
             'JP': 'フォローしている人'
+        },
+        'hosts': {
+            'EN': 'HOSTS',
+            'JP': '主催者'
+        },
+        'invited': {
+            'EN': 'INVITED',
+            'JP': '招待客'
+        },
+        'invited2': {
+            'EN': 'INVITED',
+            'JP': '招待されている'
+        },
+        'attending': {
+            'EN': 'ATTENDING',
+            'JP': '参加者'
+        },
+        'maybe': {
+            'EN': 'MAYBE',
+            'JP': '検討中'
+        },
+        'wait_list': {
+            'EN': 'WAIT LIST',
+            'JP': 'キャンセル待ち'
+        },
+        'invite_request': {
+            'EN': 'INVITE REQUEST',
+            'JP': '招待希望'
+        },
+        'decline': {
+            'EN': 'DECLINE',
+            'JP': '辞退'
+        },
+        'uninvited_followers': {
+            'EN': 'UNINVITED FOLLOWERS',
+            'JP': '未招待客'
+        },
+        'I WILL ATTEND': {
+            'EN': 'I WILL ATTEND',
+            'JP': '参加する'
+        },
+        'EVENTS I AM AFFILIATED WITH': {
+            'EN': 'EVENTS I AM AFFILIATED WITH',
+            'JP': '自分が関係しているイベント'
+        },
+        'For more info, go to the': {
+            'EN': 'For more info, go to the',
+            'JP': '詳しくは'
+        },
+        'to': {
+            'EN': '',
+            'JP': 'へ'
+        },
+        'PAST': {
+            'EN': 'PAST',
+            'JP': '過去'
+        },
+        'UPCOMING': {
+            'EN': 'UPCOMING',
+            'JP': '予定'
+        },
+        'PUBLIC': {
+            'EN': 'PUBLIC',
+            'JP': '公開'
+        },
+        'PRIVATE': {
+            'EN': 'PRIVATE',
+            'JP': 'プライベート'
+        },
+        'EVENT TYPES': {
+            'EN': 'EVENT TYPES',
+            'JP': 'イベントの種類'
+        },
+        'Note: Private events\' locations aren\'t shown in the exact place.': {
+            'EN': 'Note: Private events\' locations aren\'t shown in the exact place.',
+            'JP': '※プライベートイベントの場所は正確に表示されません。'
         },
         '\'S': {
             'EN': '\'S',
@@ -402,41 +482,57 @@ export default {
             'EN': 'IMAGE',
             'JP': '画像'
         },
-        'HOSTS': {
-            'EN': 'HOSTS',
-            'JP': 'HOSTS'
-        },
-        'ATTENDING': {
-            'EN': 'ATTENDING',
-            'JP': 'ATTENDING'
-        },
-        'MAYBE': {
-            'EN': 'MAYBE',
-            'JP': 'MAYBE'
-        },
-        'WAIT LIST': {
-            'EN': 'WAIT LIST',
-            'JP': 'WAIT LIST'
-        },
-        'INVITE REQUESTS': {
-            'EN': 'INVITE REQUESTS',
-            'JP': 'INVITE REQUESTS'
-        },
-        'TOTAL INVITED': {
-            'EN': 'TOTAL INVITED',
-            'JP': 'TOTAL INVITED'
-        },
         'ALL EVENTS': {
             'EN': 'ALL EVENTS',
-            'JP': 'オール　イベント'
+            'JP': 'すべてのイベント'
         },
         'CURRENTLY, ONLY ADMINS CAN CREATE EVENTS. THIS FEATURE WILL BECOME OPEN TO THE PUBLIC SOON!': {
             'EN': 'CURRENTLY, ONLY ADMINS CAN CREATE EVENTS. THIS FEATURE WILL BECOME OPEN TO THE PUBLIC SOON!',
-            'JP': '現在、イベントを作成できるのは管理者のみです。 しかし、この機能はまもなく公開されます！'
+            'JP': '現在、イベントを作成できるのは管理者のみです。 この機能は近日中に実装予定です。'
         },
         'COPIED!': {
             'EN': 'COPIED!',
-            'JP': 'コピーされた！'
+            'JP': 'コピーしました'
+        },
+        'DONE!': {
+            'EN': 'DONE!',
+            'JP': '完了しました'
+        },
+        'CLICK TO JOIN': {
+          'EN': 'CLICK TO JOIN',
+          'JP': 'イベントに参加する'
+        },
+        'HIDE ATTENDING STATUS': {
+          'EN': 'HIDE ATTENDING STATUS',
+          'JP': '参加状況を非表示にする'
+        },
+        'INVITE REQUEST': {
+          'EN': 'INVITE REQUEST',
+          'JP': 'イベントに友達を招待する'
+        },
+        'ATTENDING LIMIT': {
+          'EN': 'ATTENDING LIMIT',
+          'JP': '人数上限'
+        },
+        'SHOW PEOPLE': {
+          'EN': 'SHOW PEOPLE',
+          'JP': '参加者リストを表示'
+        },
+        'HIDE PEOPLE': {
+          'EN': 'HIDE PEOPLE',
+          'JP': '参加者リストを非表示'
+        },
+        'SHOW DESCRIPTION': {
+          'EN': 'SHOW DESCRIPTION',
+          'JP': '詳細を表示'
+        },
+        'HIDE DESCRIPTION': {
+          'EN': 'HIDE DESCRIPTION',
+          'JP': '詳細を非表示'
+        },
+        'UNLIMITED': {
+          'EN': 'UNLIMITED',
+          'JP': '上限なし'
         },
     },
 

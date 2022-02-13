@@ -60,7 +60,7 @@ class User(AbstractUser):
 
 class UserAdmin(admin.ModelAdmin):
 	readonly_fields = ('id',)
-	list_display = ('display_name', 'email', 'line_id', 'id')
+	list_display = ('display_name', 'email', 'line_id', 'id', 'visit_count')
 	fields = (
 		'id', 'display_name', 'email', 'do_get_emails', 'line_id', 'line_access_token', 'line_refresh_token',
 		'do_get_line_display_name', 'is_line_friend', 'do_get_lines', 'language', 'groups', 'user_permissions',

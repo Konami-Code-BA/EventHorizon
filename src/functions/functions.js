@@ -61,7 +61,7 @@ export default {
     goBack() {
         if (store.pages.length === 1) {
             window.history.go(-2)
-        } else {
+        } else if (!store.modalBack) {
             store.pages.pop() // remove the current page
         }
     },
@@ -78,18 +78,21 @@ export default {
     async getEvents() {
         let events = await api.getAllEvents()
         for (let i = 0; i < events.length; i++) {
+            // only get new images if (there is an image to get AND
+            // (there are no events at all OR (there are events and the image_data hasn't been saved yet)))
             if (events[i].images.length > 0 && (store.events.all.length === 0 || (store.events.all.length > 0 && !('image_data' in store.events.all[i])))) {
                 let result = await api.getEventImage(events[i].images[0], events[i].id)
                 if (result != 'fail') {
-                    events[i].image_data = "data:image/jpg;base64," + result
+                    events[i].image_data = `https://event-horizon-use1.s3.amazonaws.com/${result}`
                 }
-            }
+                // otherwise just get the image from the store, if
+                // there is an image to get but events have been stored and the image is saved there too
+            } else if (events[i].images.length > 0 && store.events.all.length > 0 && 'image_data' in store.events.all[i]) {
+                events[i].image_data = store.events.all[i].image_data
+            } // and if there are no images to get, then
         }
         store.events.all = this.sortEventsByDate(events)
-        store.events.mine = this.filterEvents(
-            store.events.all,
-            store.user.id, ['hosts', 'invited', 'maybe', 'attending', 'wait_list', 'invite_request'],
-            false)
+        store.events.mine = await this.filterEventsByMyStatus()
         store.events.display = store.events.all
     },
     async getEvent(thisEvent) {
@@ -97,14 +100,36 @@ export default {
         if (event.images.length > 0 && !('image_data' in thisEvent)) {
             let result = await api.getEventImage(event.images[0], event.id)
             if (result != 'fail') {
-                event.image_data = "data:image/jpg;base64," + result
+                event.image_data = `https://event-horizon-use1.s3.amazonaws.com/${result}`
             }
         }
         store.events.selected = event
         let ind = store.events.all.find(ev => { ev.id === event.id })
         store.events.all[ind] = event
-        store.events.mine = this.filterEvents(store.events.all, store.user.id, ['invited'], false)
+        store.events.mine = await this.filterEventsByMyStatus()
         store.events.display = store.events.all
+    },
+    async asyncFilter(arr, callback) { // how to use: await this.asyncFilter(events, async event => {})
+        const fail = Symbol()
+        return (await Promise.all(arr.map(async item => (await callback(item)) ? item : fail))).filter(i => i !== fail)
+    },
+    async filterEventsByMyStatus() {
+        let filteredEvents = []
+        for (let i = 0; i < store.events.all.length; i++) {
+            let result = await api.checkUserStatus(store.events.all[i].id)
+            store.events.all[i].myStatus = result[0].status
+            if (
+                store.events.all[i].myStatus === 'hosts' ||
+                store.events.all[i].myStatus === 'invited' ||
+                store.events.all[i].myStatus === 'attending' ||
+                store.events.all[i].myStatus === 'maybe' ||
+                store.events.all[i].myStatus === 'wait_list' ||
+                store.events.all[i].myStatus === 'invite_request'
+            ) {
+                filteredEvents.push(store.events.all[i])
+            }
+        }
+        return filteredEvents
     },
     sortEventsByDate(events) {
         let sorted_events = []
@@ -243,4 +268,60 @@ export default {
             setTimeout(() => { thiss.shakeIt = false; }, 1000)
         }
     },
+    checkPeopleList(people, guestStatus) {
+        let me = {
+            id: store.user.id,
+            display_name: store.user.display_name,
+            limited_user: true,
+            plus_one: false,
+        }
+        for (let i = 0; i < people[guestStatus].length; i++) {
+            if (JSON.stringify(people[guestStatus][i]) === JSON.stringify(me)) {
+                return true
+            }
+        }
+        return false
+    },
+    async getEventUserInfoCheckPeopleList(eventId) {
+        let myAttendingStatus = {
+            'hosts': false,
+            'invited': false,
+            'attending': false,
+            'maybe': false,
+            'wait_list': false,
+            'invite_request': false,
+        }
+        let people = {
+            'hosts': [],
+            'invited': [],
+            'attending': [],
+            'maybe': [],
+            'wait_list': [],
+            'invite_request': [],
+            'uninvited_followers': [],
+        }
+        people['hosts'] = await api.getEventUserInfo(eventId, 'hosts')
+        people['invited'] = await api.getEventUserInfo(eventId, 'invited')
+        people['maybe'] = await api.getEventUserInfo(eventId, 'maybe')
+        people['attending'] = await api.getEventUserInfo(eventId, 'attending')
+        people['wait_list'] = await api.getEventUserInfo(eventId, 'wait_list')
+        people['invite_request'] = await api.getEventUserInfo(eventId, 'invite_request')
+        people['uninvited_followers'] = await api.getUserLimitedInfo()
+        people['uninvited_followers'] = people['uninvited_followers'].filter(person => {
+            return !(people['hosts'].concat(
+                people['invited'], people['maybe'], people['attending'], people['wait_list']
+            ).map(
+                x => { return x.id }
+            ).includes(person.id)) && this.isAuthenticatedUser
+        })
+
+        myAttendingStatus['hosts'] = this.checkPeopleList(people, 'hosts')
+        myAttendingStatus['invited'] = this.checkPeopleList(people, 'invited')
+        myAttendingStatus['attending'] = this.checkPeopleList(people, 'attending')
+        myAttendingStatus['maybe'] = this.checkPeopleList(people, 'maybe')
+        myAttendingStatus['wait_list'] = this.checkPeopleList(people, 'wait_list')
+        myAttendingStatus['invite_request'] = this.checkPeopleList(people, 'invite_request')
+
+        return { people: people, myAttendingStatus: myAttendingStatus }
+    }
 }

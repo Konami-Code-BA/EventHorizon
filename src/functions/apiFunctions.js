@@ -27,7 +27,7 @@ export default {
                 } else if ([
                         'login', 'register_with_email', 'register_email', 'update_user_do_get_lines',
                         'update_user_do_get_emails', 'update_user_language', 'line_new_device', 'forgot_password',
-                        'change_password',
+                        'change_password', 'update_user_display_name',
                     ].includes(data.command) && !('error' in response.data[0])) {
                     console.log(`success - userApi ${data.command}`)
                     store.user = response.data[0]
@@ -154,13 +154,12 @@ export default {
             })
     },
     // USERS ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //async getUserLimitedInfo(userIds) { // userIds is an array
-    //    return await this.userApi('post', null, {
-    //        command: 'get_user_limited_info',
-    //        ids: userIds,
-    //        pks: userIds,
-    //    })
-    //},
+    async getUserLimitedInfo(userIds = null) { // userIds is an array. normally it would be my followers. but for now it will be null and we will get everyone
+        return await this.userApi('post', null, {
+            command: 'get_user_limited_info',
+            ids: userIds,
+        })
+    },
     async getEventUserInfo(eventId, guestType) {
         return await this.userApi('post', null, {
             command: 'get_event_user_info',
@@ -258,6 +257,12 @@ export default {
             do_get_lines: store.user.do_get_lines,
         })
     },
+    async updateUserDisplayName() {
+        return await this.userApi('patch', store.user.id, {
+            command: 'update_user_display_name',
+            display_name: store.user.display_name
+        })
+    },
     //async updateUserAlerts(name) {
     //    return await this.userApi('patch', store.user.id, {
     //        command: 'update_user_alerts',
@@ -299,10 +304,10 @@ export default {
         let result = await this.eventsApi('post', null, data)
         return result[0]
     },
-    async getMyEvents() {
-        let result = await this.eventsApi('post', null, { command: 'my_events' })
-        return result
-    },
+    //async getMyEvents() {
+    //    let result = await this.eventsApi('post', null, { command: 'my_events' })
+    //    return result
+    //},
     async checkUserStatus(eventId) {
         return await this.eventsApi('post', null, {
             command: 'check_user_status',
@@ -364,18 +369,11 @@ export default {
         formData.append('command', 'get_event_image')
         formData.append('image_id', imageId)
         let result = await this.imagesApi('post', null, formData)
-        if (typeof result == 'string') {
-            return result
+        if (result.length > 0) {
+            return result[0].key
         } else {
             return 'fail'
         }
-    },
-    async getImage(keys) { // for getting images in general
-        let formData = new FormData()
-        formData.append('keys', keys)
-        formData.append('command', 'get_image')
-        let result = await this.imagesApi('post', null, formData)
-        return result
     },
     // GROUPS //////////////////////////////////////////////////////////////////////////////////////////////////////////
     async getGroups() {
