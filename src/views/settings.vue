@@ -1,24 +1,34 @@
 <template>
-	<div>
-		<div class="main" style="overflow-y: scroll;">
+	<div class="main">
+		<div class="main" style="overflow-y: scroll; width: 100%;">
 			<div style="font-size: 36px;">{{ t('SETTINGS') }}</div>
 
 			<div class="line-height"/>
 
 			<div style="font-size: 24px;">{{ store.user.display_name }}</div>
 
+  			<div class="line-height"/>
+
+			<!-- Change display name input -->
+			<div class="dual-set">
+				<button v-on:click.prevent="showChangeDisplayNameModal = true" class="button" style="width: 100%">
+					{{ 'EDIT DISPLAY NAME' }}&nbsp;
+				</button>
+			</div>
+
 			<div class="line-height"/>
 
+			<!-- E-mail preferences checkbox -->
 			<button class="button" v-if="store.user.email === ''" v-on:click.prevent="showAddEmailModal = true">
 				{{ t('ADD EMAIL ADDRESS') }}
 			</button>
 			<div v-else class="dual-set">
-				<button class="button" style="width: 100%"
+				<button class="button" style="width: 100%;"
 						v-on:click.prevent="updateUserDoGetEmails()">
 					{{ t('GET EMAILS') }}&nbsp;
 				</button>
 				<input type="checkbox" class="checkbox" v-model="store.user.do_get_emails"
-						:key="store.user.do_get_emails"/>
+						:key="store.user.do_get_emails" style="align-self: center;"/>
 			</div>
 
 			<div class="line-height"/>
@@ -31,7 +41,7 @@
 					{{ t('GET LINE MESSAGES') }}&nbsp;
 				</button>
 				<input type="checkbox" class="checkbox" v-model="store.user.do_get_lines"
-						:key="store.user.do_get_lines"/>
+						:key="store.user.do_get_lines" style="align-self: center;"/>
 			</div>
 
 			<div class="line-height"/>
@@ -41,31 +51,23 @@
 			</button>
 		</div>
 
-		<modal v-show="showAddEmailModal" @closeModals="showAddEmailModal = false">
+		<modal v-if="showAddEmailModal" @closeModals="showAddEmailModal = false" ref="showAddEmailModal">
 			<div slot="contents" class="modal">
-				<div style="align-self: flex-end">
-					<button v-on:click.prevent="showAddEmailModal = false" class="no-border-button x-button">
-						✖
-					</button>
-				</div>
-				<form v-on:keyup.enter="addEmail()" style="width: 80%;">
+				<x-close-button :closeFunc="() => {$refs.showAddEmailModal.closeModals()}" style="align-self: flex-end;"/>
+				<form v-on:keyup.enter="addEmail()" style="width: 100%;">
 					<email-input ref="emailInput" usage="AddEmail"
 							:key="store.user.language+'emailInputAddEmail'"/>
 					<password-input ref="passwordInput" :doublePassword="true" usage="AddEmail"
 							:key="store.user.language+'passwordInputAddEmail'"/>
 				</form>
-				<button v-on:click.prevent="addEmail()" class="button">
+				<button v-on:click.prevent="addEmail()" class="button" style="width: 100%;">
 					{{ t('ADD EMAIL ADDRESS') }}
 				</button>
 			</div>
 		</modal>
-		<modal v-show="showChangePasswordModal" @closeModals="showChangePasswordModal = false">
+		<modal v-if="showChangePasswordModal" @closeModals="showChangePasswordModal = false" ref="showChangePasswordModal">
 			<div slot="contents" class="modal">
-				<div style="align-self: flex-end">
-					<button v-on:click.prevent="showChangePasswordModal = false" class="no-border-button x-button">
-						✖
-					</button>
-				</div>
+				<x-close-button :closeFunc="() => {$refs.showChangePasswordModal.closeModals()}" style="align-self: flex-end;"/>
 				<form v-on:keyup.enter="changePassword()" style="width: 100%;">
 					<password-input ref="passwordInput1" :doublePassword="false" usage="ChangePassword1"
 							customPlaceholder="CURRENT PASSWORD"/>
@@ -77,7 +79,19 @@
 				</button>
 			</div>
 		</modal>
-		<flash-modal :text="t('PASSWORD CHANGED!')" ref="flashPasswordChangedSettings" :time="1000"/>
+		<!-- DISPLAY NAME CHANGE MODAL -->
+		<modal v-if="showChangeDisplayNameModal" @closeModals="showChangeDisplayNameModal = false" ref="showChangeDisplayNameModal">
+			<div slot="contents" class="modal">
+				<x-close-button :closeFunc="() => {$refs.showChangeDisplayNameModal.closeModals()}" style="align-self: flex-end;"/>
+				<display-name-input ref="displayNameInput" :doublePassword="false" usage="Update"
+						:enter="changeDisplayName" customPlaceholder="Enter Display Name" style="width: 100%;"/>
+				<button v-on:click.prevent="changeDisplayName()" class="button" style="width: 100%">
+					{{ "CHANGE DISPLAY NAME" }}
+				</button>
+        	</div>
+		</modal>
+		<flash-modal :text="t('DONE!')" ref="flashPasswordChangedSettings" :time="1000"/>
+    	<flash-modal :text="t('DONE!')" ref="flashDisplayNameChanged" :time="1000"/>
 	</div>
 </template>
 <script>
@@ -90,6 +104,8 @@
 	import lineButton from '@/components/lineButton.vue'
 	import modal from '@/components/modal.vue'
 	import flashModal from '@/components/flashModal.vue'
+	import displayNameInput from '@/components/displayNameInput.vue'
+	import xCloseButton from '@/components/xCloseButton.vue'
 	export default {
 		name: 'settings',
 		components: {
@@ -98,12 +114,15 @@
 			emailInput,
 			passwordInput,
 			flashModal,
+			displayNameInput,
+			xCloseButton,
 		},
 		data () {
 			return {
 				store: store,
 				showAddEmailModal: false,
 				showChangePasswordModal: false,
+				showChangeDisplayNameModal: false,
 			}
 		},
 		props: {
@@ -118,7 +137,9 @@
 			if (this.$refs.lineButton && this.tryLine) {
 				await this.$refs.lineButton.tryLineNewDevice()
 			}
-			f.focusCursor(document, 'emailAddEmail')
+			if (this.showAddEmailModal) {
+				f.focusCursor(document, 'emailAddEmail')
+			}
 		},
 		methods: {
 			t (w) { return translations.t(w) },
@@ -200,6 +221,18 @@
 				this.store.loading = false
 				f.shakeFunction([this.$refs.passwordInput1, this.$refs.passwordInput2])
 			},
+			async changeDisplayName() {
+				this.$refs.displayNameInput.hasErrors()
+				if (this.$refs.displayNameInput.error.length > 0) {
+					f.shakeFunction([this.$refs.displayNameInput])
+					return
+				}
+				store.user.display_name = this.$refs.displayNameInput.displayName
+				await api.updateUserDisplayName()
+				this.$refs.displayNameInput.DisplayName = ''
+				this.showChangeDisplayNameModal = false
+				await this.$refs.flashDisplayNameChanged.flashModal()
+			}
 		} // methods
 	} // export
 </script>
@@ -211,7 +244,8 @@
 		align-items: center;
 		justify-content: center;
 		padding: 0;
-		width: 80%;
+		margin: 0;
+		width: 100%;
 	}
 	.checkbox {
 		position: fixed;
@@ -239,7 +273,7 @@
 		transform: translate(0, 2px);
 	}
 	.button {
-		width: 80%;
+		width: 100%;
 		z-index:2;
 	}
 </style>

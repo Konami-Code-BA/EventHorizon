@@ -4,11 +4,11 @@
 			<div class="viewer filters" style="display: flex; flex-direction: column; align-items: center;
 					width: 100%; min-height: 105px; height: 105px;"><!--remove filters from class and check mac is ok-->
 				<div style="border-bottom: 2px solid rgba(255, 255, 255, .3); width: 100%; display: flex;
-						flex-direction: row; align-items: center; justify-content: center; padding: 5px;">
+						flex-direction: row; align-items: center; justify-content: center; padding: 5px; position:relative;">
 					<div>
 						{{ t('SELECT WHAT EVENTS TO DISPLAY') }}
 					</div>
-					<div style="position: absolute; right: 2%;">
+					<div style="right: 0; position: absolute;">
 						<button style="background: none; border: none"
 								v-on:click.prevent="showInformation = 'peopleFilters'">
 							<img src="@/assets/iIcon.png" class="icon" style="padding: 3px;" id="people-info"/>
@@ -16,7 +16,7 @@
 					</div>
 				</div>
 				<div style="display: flex; flex-direction: column; align-items: flex-start; width: 100%;
-						padding-top: 5px; padding-bottom: 5px;">
+						padding-top: 5px; padding-bottom: 5px; position: relative;">
 					<div class="filters">
 						<input type="checkbox" class="checkbox" v-model="filters['all']"
 								@click="filterChange('all')"/>
@@ -57,11 +57,11 @@
 						<img src="@/assets/fullScreen.png" class="icon" style="width: 80%; height: 80%"/>
 					</button>
 				</div-->
-				<div style="display: flex; flex-direction: row; align-items: center; justify-content: center; padding: 5px;">
+				<div style="display: flex; flex-direction: row; align-items: center; justify-content: center; padding: 5px; position:relative;">
 					<div>
 						{{ t('EVENTS') }}
 					</div>
-					<div style="position: absolute; right: 2%;">
+					<div style="position: absolute; right: 0;">
 						<button style="background: none; border: none"
 								v-on:click.prevent="showInformation = 'events'">
 							<img src="@/assets/iIcon.png" class="icon" style="padding: 3px;" id="events-info"/>
@@ -71,14 +71,14 @@
 				<tabs :num-tabs="3" :initial="selectedTab" :key="selectedTab"
 						@on-click="(arg) => { selectedTab = arg }"
 						style="border-left: none; border-right: none; border-bottom: none; height: auto !important;">
-					<div slot="1">
-						<img src="@/assets/mapIcon.png" class="icon"/>
+					<div slot="1" class="tab">
+						<img src="@/assets/mapIcon.png" class="icon" style="vertical-align: bottom;"/>
 					</div>
-					<div slot="2">
-						<img src="@/assets/threeBarsHIcon.png" class="icon" style="vertical-align: bottom"/>
+					<div slot="2" class="tab">
+						<img src="@/assets/threeBarsHIcon.png" class="icon" style="vertical-align: bottom;"/>
 					</div>
-					<div slot="3">
-						<img src="@/assets/calendarIcon.png" class="icon" style="vertical-align: bottom"/>
+					<div slot="3" class="tab">
+						<img src="@/assets/calendarIcon.png" class="icon" style="vertical-align: bottom;"/>
 					</div>
 				</tabs>
 			</div>
@@ -94,7 +94,6 @@
 </template>
 <script>
 	import store from '@/store.js'
-	import modal from '@/components/modal.vue'
 	import information from '@/components/information'
 	import tabs from '@/components/tabs.vue'
 	import eventsMap from '@/components/eventsMap.vue'
@@ -106,7 +105,6 @@
 	export default {
 		name: 'home',
 		components: {
-			modal,
 			information,
 			tabs,
 			eventsMap,
@@ -151,8 +149,7 @@
 				this.selectedTab = 1
 			},
 			createComponentKey(letters) {
-				let key = (this.store.events.display.length > 0 ? this.store.events.display[0]['id'] : 0).toString()
-				key += (this.store.events.selected ? this.store.events.selected.id : 0).toString() + letters
+				let key = JSON.stringify(this.store.events.display) + JSON.stringify(this.store.events.selected) + letters
 				return key
 			},
 			doFiltering () {
@@ -160,8 +157,6 @@
 				let keys = Object.keys(this.filters)
 				for (let i = 0; i < keys.length; i++) {
 					if (this.filters[keys[i]]) {  // if this filter is true
-						console.log('HERE2', keys[i], this.filters[keys[i]])
-						console.log(this.store.events[keys[i]])
 						this.store.events.display = this.store.events.display.concat(this.store.events[keys[i]])
 					}
 				}
@@ -190,7 +185,6 @@
 						} // otherwise do nothing special, the changed filter has already been changed
 					}
 				}
-				console.log('HERE1', this.filters)
 				this.doFiltering()
 			},
 		} // methods
@@ -202,6 +196,14 @@
 		border-top-left-radius: 7px;
 		border-top-right-radius: 7px;
 		border: 2px solid rgba(255, 255, 255, .3);
+	}
+	.tabs {
+		justify-content: space-around;
+	}
+	.tab {
+		width: 80px !important;
+		height: 20px !important;
+		min-width: 100% !important;
 	}
 	.events {
 		border-top: none;
@@ -244,6 +246,6 @@
 		display: flex;
 		flex-direction: row;
 		width: 100%;
-		align-items: center;
+		align-items: flex-start;
 	}
 </style>

@@ -1,12 +1,8 @@
 <template>
 	<div>
-		<modal v-if="!closeModal" @closeModals="$emit('closeModals')">
+		<modal v-if="!closeModal" @closeModals="$emit('closeModals')" ref="qrCodeGenerator">
 			<div slot="contents" class="modal">
-				<div style="align-self: flex-end; padding-bottom: 5px; padding-bottom: 5px;">
-					<button v-on:click.prevent="$emit('closeModals')" class="no-border-button x-button">
-						✖
-					</button>
-				</div>
+				<x-close-button :closeFunc="() => {$refs.qrCodeGenerator.closeModals()}" style="align-self: flex-end;"/>
 				<div style="width: 100%">
 					<button v-on:click.prevent="closeModal=true; selectedQr = url; getQr()" class="button">
 						This Page QR
@@ -34,16 +30,12 @@
 
 			</div>
 		</modal>
-		<modal v-if="image_name!=null" @closeModals="$emit('closeModals')">
+		<modal v-if="image_name!=null" @closeModals="$emit('closeModals')" ref="qrCode">
 			<div slot="contents" class="qr">
 				<div style="height: auto; width: 100%; display: flex; justify-content: center"
 						v-on:click.prevent="$emit('closeModals')">
-					<div class="qr-button" style="align-self: center">
-						<button v-on:click.prevent="$emit('closeModals')" class="no-border-button x-button"
-								style="color: black">
-							✖
-						</button>
-					</div>
+					<x-close-button :closeFunc="() => {$refs.qrCode.closeModals()}" class="qr-button"
+							style="padding-bottom: 0;" :black="true"/>
 				</div>
 				<div>
 					<a :href="image_file" :download="image_name">
@@ -74,8 +66,13 @@
 	import modal from '@/components/modal'
 	import store from '@/store.js'
 	import f from '@/functions/functions.js'
+	import xCloseButton from '@/components/xCloseButton.vue'
 	export default {
 		name: 'qrCodeGenerator',
+		components: {
+			modal,
+			xCloseButton,
+		},
 		data () {
 			return {
 				store: store,
@@ -87,9 +84,6 @@
 				image_file: null,
 				selectedQr: null,
 			}
-		},
-		components: {
-			modal,
 		},
 		props: {
 		},
