@@ -401,21 +401,21 @@
 							<button v-on:click.prevent="messagePerson = person" class="button" style="width: auto;
 									border: 2px solid #18002e; background-color: #ffe07a; color: #18002e"
 									v-if="((myAttendingStatus['hosts'] || showStatus === 'hosts') && isAuthenticatedUser) && !person.plus_one">
-								MESSAGE
+								{{ t('MESSAGE') }}
 							</button>
 						</div>
 						<button v-if="myAttendingStatus['hosts'] && !person.plus_one && isAuthenticatedUser
 								&& ['invite_request', 'uninvited_followers'].includes(showStatus)"
 								v-on:click.prevent="changeAttendingStatus('invited', person.id)" class="button"
 								style="border: 2px solid #18002e; background-color: #ffe07a; color: #18002e">
-							INVITE!
+							{{ t('INVITE!') }}
 						</button>
 					</div>
 				</div>
 				<div style="padding-right: 10px; width: 100%; margin-top: 10px;">
 				<button v-on:click.prevent="messageAllPeople = true" v-if="myAttendingStatus['hosts']"
 						class="button">
-					MESSAGE ALL
+					{{ t('MESSAGE ALL') }}
 				</button>
 				</div>
 			</div>
@@ -426,15 +426,15 @@
 				<div style="width: 100%; display: flex; flex-direction: row; justify-content: space-between;
 						align-content: flex-start">
 					<div style="width: 20px;"/>
-					<div style="font-size: 24px; text-align: center;">
-						MESSAGE<br>{{messagePerson.display_name}}
+					<div style="font-size: 20px; text-align: center;">
+						{{ t('MESSAGE') }}<br>{{messagePerson.display_name}}
 					</div>
 					<x-close-button :closeFunc="() => {$refs.messagePerson.closeModals()}" style="align-self: flex-end;"/>
 				</div>
-				<textarea placeholder="MESSAGE" v-model="messageContent" type="text"
+				<textarea :placeholder="t('MESSAGE')" v-model="messageContent" type="text"
 						autocapitalize="sentences" style="height: 90px;" autocomplete="off"/>
 				<button v-on:click.prevent="message()" class="button">
-					SEND
+					<div style="width: 100%; text-align: center;">{{ t('SEND') }}</div>
 				</button>
 			</div>
 		</modal>
@@ -444,15 +444,15 @@
 				<div style="width: 100%; display: flex; flex-direction: row; justify-content: space-between;
 						align-content: flex-start">
 					<div style="width: 20px;"/>
-					<div style="font-size: 24px;">
-						MESSAGE ALL
+					<div style="font-size: 20px;">
+						{{ t('MESSAGE ALL') }}
 					</div>
 					<x-close-button :closeFunc="() => {$refs.messageAllPeople.closeModals()}" style="align-self: flex-end;"/>
 				</div>
-				<textarea placeholder="MESSAGE" v-model="messageContent" type="text"
+				<textarea :placeholder="t('MESSAGE')" v-model="messageContent" type="text"
 						autocapitalize="sentences" style="height: 90px;" autocomplete="off"/>
 				<button v-on:click.prevent="messageAll(showStatus)" class="button">
-					SEND
+					<div style="width: 100%; text-align: center;">{{ t('SEND') }}</div>
 				</button>
 			</div>
 		</modal>
