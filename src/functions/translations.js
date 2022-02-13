@@ -14,6 +14,10 @@ export default {
             'EN': 'REGISTER',
             'JP': '登録'
         },
+        'LOGIN': {
+            'EN': 'LOGIN',
+            'JP': 'ログイン'
+        },
         'LOGIN / REGISTER': {
             'EN': 'LOGIN / REGISTER',
             'JP': 'ログイン・登録'
@@ -30,10 +34,6 @@ export default {
             'EN': 'LINE LOGIN / REGISTER',
             'JP': 'LINEでログイン/新規登録'
         },
-        'ADD LINE': {
-            'EN': 'ADD LINE',
-            'JP': 'LINE登録'
-        },
         'MENU': {
             'EN': 'MENU',
             'JP': 'メニュー'
@@ -47,8 +47,8 @@ export default {
             'JP': '表示名'
         },
         'EDIT DISPLAY NAME': {
-          'EN': 'EDIT DISPLAY NAME',
-          'JP': '表示名を変更する'
+            'EN': 'EDIT DISPLAY NAME',
+            'JP': '表示名を変更する'
         },
         'EMAIL': {
             'EN': 'EMAIL',
@@ -60,7 +60,7 @@ export default {
         },
         'CONFIRM PASSWORD': {
             'EN': 'CONFIRM PASSWORD',
-            'JP': 'パスワード確認'
+            'JP': 'パスワードの確認'
         },
         'NEW PASSWORD': {
             'EN': 'NEW PASSWORD',
@@ -126,10 +126,6 @@ export default {
             'EN': 'COMING SOON',
             'JP': '近日公開'
         },
-        'LOGIN WITH EMAIL': {
-            'EN': 'LOGIN WITH EMAIL',
-            'JP': 'メールでログイン'
-        },
         'REGISTER WITH EMAIL': {
             'EN': 'REGISTER WITH EMAIL',
             'JP': 'メールで登録'
@@ -153,10 +149,6 @@ export default {
         'CURRENT PASSWORD IS INCORRECT': {
             'EN': 'CURRENT PASSWORD IS INCORRECT',
             'JP': '現在のパスワードが間違っています'
-        },
-        'MAYBE': {
-            'EN': 'MAYBE',
-            'JP': '興味あり'
         },
         'PASSWORD-CHANGE EMAIL SENT!': {
             'EN': 'PASSWORD-CHANGE EMAIL SENT!',
@@ -395,8 +387,8 @@ export default {
             'JP': '参加者'
         },
         'maybe': {
-            'EN': 'MAYBE',
-            'JP': '検討中'
+            'EN': 'UNDECIDED',
+            'JP': '未定'
         },
         'wait_list': {
             'EN': 'WAIT LIST',
@@ -412,7 +404,11 @@ export default {
         },
         'uninvited_followers': {
             'EN': 'UNINVITED FOLLOWERS',
-            'JP': '未招待客'
+            'JP': '未招待のフォロワー'
+        },
+        'THE EVENT IS FULL': {
+            'EN': 'THE EVENT IS FULL',
+            'JP': 'このイベントは満員です'
         },
         'I WILL ATTEND': {
             'EN': 'I WILL ATTEND',
@@ -466,6 +462,14 @@ export default {
             'EN': 'ADDRESS',
             'JP': '住所'
         },
+        'COPY ADDRESS': {
+            'EN': 'COPY ADDRESS',
+            'JP': '住所をコピー'
+        },
+        'OPEN IN GOOGLE MAPS': {
+            'EN': 'OPEN IN GOOGLE MAPS',
+            'JP': 'GOOGLEマップを開く'
+        },
         'VENUE NAME': {
             'EN': 'VENUE NAME',
             'JP': '場所'
@@ -499,40 +503,124 @@ export default {
             'JP': '完了しました'
         },
         'CLICK TO JOIN': {
-          'EN': 'CLICK TO JOIN',
-          'JP': 'イベントに参加する'
+            'EN': 'CLICK TO JOIN',
+            'JP': 'イベントに参加する'
         },
         'HIDE ATTENDING STATUS': {
-          'EN': 'HIDE ATTENDING STATUS',
-          'JP': '参加状況を非表示にする'
+            'EN': 'HIDE ATTENDING STATUS',
+            'JP': '参加状況を非表示にする'
+        },
+        'SHOW ATTENDING STATUS': {
+            'EN': 'SHOW ATTENDING STATUS',
+            'JP': '参加状況を表示する'
+        },
+        'ATTENDING STATUS': {
+            'EN': 'ATTENDING STATUS',
+            'JP': '参加状況'
         },
         'INVITE REQUEST': {
-          'EN': 'INVITE REQUEST',
-          'JP': 'イベントに友達を招待する'
+            'EN': 'INVITE REQUEST',
+            'JP': 'イベントに友達を招待する'
         },
         'ATTENDING LIMIT': {
-          'EN': 'ATTENDING LIMIT',
-          'JP': '人数上限'
+            'EN': 'ATTENDING LIMIT',
+            'JP': '人数上限'
         },
         'SHOW PEOPLE': {
-          'EN': 'SHOW PEOPLE',
-          'JP': '参加者リストを表示'
+            'EN': 'SHOW PEOPLE',
+            'JP': '参加者リストを表示'
         },
         'HIDE PEOPLE': {
-          'EN': 'HIDE PEOPLE',
-          'JP': '参加者リストを非表示'
+            'EN': 'HIDE PEOPLE',
+            'JP': '参加者リストを非表示'
         },
         'SHOW DESCRIPTION': {
-          'EN': 'SHOW DESCRIPTION',
-          'JP': '詳細を表示'
+            'EN': 'SHOW DESCRIPTION',
+            'JP': '詳細を表示'
         },
         'HIDE DESCRIPTION': {
-          'EN': 'HIDE DESCRIPTION',
-          'JP': '詳細を非表示'
+            'EN': 'HIDE DESCRIPTION',
+            'JP': '詳細を非表示'
         },
         'UNLIMITED': {
-          'EN': 'UNLIMITED',
-          'JP': '上限なし'
+            'EN': 'UNLIMITED',
+            'JP': '上限なし'
+        },
+        'ADD A PLUS ONE': {
+            'EN': 'ADD A PLUS ONE',
+            'JP': '同伴者を追加'
+        },
+        '+1 NAME': {
+            'EN': '+1 NAME',
+            'JP': '同伴者の氏名'
+        },
+        'purpose': {
+            'EN': 'PURPOSE',
+            'JP': '目的'
+        },
+        'purpose1': {
+            'EN': 'Getting people together is what life is all about, but man if it isn\'t a pain in the ass.',
+            'JP': '人々を集めるのが人生だ。ただ、それは面倒だ。'
+        },
+        'purpose2': {
+            'EN': 'We want to make it so you spend less time on the GETTING together and more time on the BEING together.',
+            'JP': '我々は、「人を集めること」に費やす時間を減らし、「人と一緒に過ごすこと」に時間を費やせるようにしたいと考えている。'
+        },
+        'purpose3': {
+            'EN': 'Make events, invite friends, and sit back and relax.',
+            'JP': 'イベントを作り、友人を誘い、ゆっくりとくつろいでください。'
+        },
+        'history': {
+            'EN': 'HISTORY',
+            'JP': '沿革'
+        },
+        'history1': {
+            'EN': 'Basically Mikey started working on this idea somewhere around Feb 16 2021.',
+            'JP': 'Mikeyは、2021年2月16日頃このアイディアに取り組み始めた。'
+        },
+        'history2': {
+            'EN': 'Stu was immediately brought in for moral support / advice / brainstorming / business planning.',
+            'JP': 'その後すぐ、Stuがサポート、アドバイス、ブレインストーミング、ビジネスプランニングのために参加した。'
+        },
+        'history3': {
+            'EN': 'Louis joined Feb 1 2022, he and Stu helped out finishing up the site before the launch, and now the team is us three.',
+            'JP': 'Louisは2022年2月1日に加わり、Stuと共にサイトの立ち上げを手伝い、現在の3名のチームとなった。'
+        },
+        'history4': {
+            'EN': 'The initial launch date was Feb 15 2022, officially less than 1 year after conception.',
+            'JP': 'リリース日は2022年2月15日と、構想から1年足らずでの正式発表となった。'
+        },
+        'hopes and dreams': {
+            'EN': 'HOPES AND DREAMS',
+            'JP': '展望'
+        },
+        'hopes and dreams1': {
+            'EN': 'Literally everything that happens is an event. The big bang was an event. Watching a movie at home is an event.',
+            'JP': '文字通り、起こることすべてが出来事（event）だ。ビッグバンもそう。家で映画を見るのだってそうだ。'
+        },
+        'hopes and dreams2': {
+            'EN': 'We think the potential for Event Horizon could be a lot more than parties.',
+            'JP': '我々は、Event Horizonが単なるパーティーのためだけではなく、あらゆる可能性を秘めたものであると考えている。'
+        },
+        'hopes and dreams3': {
+            'EN': 'And we intend to find out just how far we can take it.',
+            'JP': 'そしてそれをどこまで実現できるか試してみるつもりだ。'
+        },
+        'VENUE': {
+            'EN': 'VENUE',
+            'JP': '場所'
+        },
+        'Forgot Password': {
+            'EN': 'Forgot Password',
+            'JP': 'パスワードを忘れた場合'
+        },
+        'ADD LINE': {
+            'EN': 'ADD LINE',
+            'JP': 'LINEを追加する'
+        },
+        'THIS PAGE': {
+            'EN': 'THIS PAGE',
+            'JP': 'このページ'
         },
     },
 

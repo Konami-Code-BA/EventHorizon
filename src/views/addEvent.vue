@@ -97,10 +97,12 @@
 		},
 		watch: {
 			'date' () {
-				this.date_time = new Date(this.date + 'T' + this.time)
+				let date_time = new Date(this.date + 'T' + this.time)
+				this.date_time = new Date(date_time.setHours(date_time.getHours() + 9))
 			},
 			'time' () {
-				this.date_time = new Date(this.date + 'T' + this.time)
+				let date_time = new Date(this.date + 'T' + this.time)
+				this.date_time = new Date(date_time.setHours(date_time.getHours() + 9))
 			},
 			async 'imageId' () {
 				await this.finishCreateEvent()
@@ -111,22 +113,14 @@
 			let year = (this.date_time.getYear() + 1900).toString()
 			let month = (this.date_time.getMonth() + 1).toString()
 			let day = (this.date_time.getDate()).toString()
-			let hour = (this.date_time.getHours()).toString()
-			let minute = (this.date_time.getMinutes()).toString()
 			if (month.length < 2) {
 				month = '0' + month
 			}
 			if (day.length < 2) {
 				day = '0' + day
 			}
-			if (hour.length < 2) {
-				hour = '0' + hour
-			}
-			if (minute.length < 2) {
-				minute = '0' + minute
-			}
 			this.date = year + '-' + month + '-' + day
-			this.time = hour + ':' + minute
+			this.time = '12:00'
 		},
 		methods: {
 			t (w) { return translations.t(w) },

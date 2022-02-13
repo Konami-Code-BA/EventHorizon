@@ -3,9 +3,10 @@
 		<modal v-if="!closeModal" @closeModals="$emit('closeModals')" ref="qrCodeGenerator">
 			<div slot="contents" class="modal">
 				<x-close-button :closeFunc="() => {$refs.qrCodeGenerator.closeModals()}" style="align-self: flex-end;"/>
+				<h2>QR</h2>
 				<div style="width: 100%">
 					<button v-on:click.prevent="closeModal=true; selectedQr = url; getQr()" class="button">
-						This Page QR
+						{{t('THIS PAGE')}}
 					</button>
 				</div>
 
@@ -14,7 +15,7 @@
 				<div style="width: 100%">
 					<button v-on:click.prevent="closeModal=true; selectedQr = instagram; getQr()"
 							class="button">
-						Instagram QR
+						INSTAGRAM
 					</button>
 				</div>
 
@@ -22,7 +23,7 @@
 
 				<div style="width: 100%">
 					<button v-on:click.prevent="closeModal=true; selectedQr = line; getQr()" class="button">
-						Line QR
+						LINE
 					</button>
 				</div>
 
@@ -46,11 +47,8 @@
 					<div style="height: 40px; width: 100%; z-index: 103; position: fixed"
 							v-on:click.prevent="$emit('closeModals')"/>
 					<a :href="image_file" :download="image_name" style="z-index: 105;">
-						<!--div class="qr-button" style="text-decoration: underline; position: fixed; transform: translate(-50%,-12%)">
-							⇩
-						</div-->
-						<div class="qr-button" style="text-decoration: underline;">
-							⇩
+						<div class="qr-button">
+							<img src="@/assets/downloadIcon.png" class="icon"/>
 						</div>
 					</a>
 					<button v-on:click.prevent="share()" class="qr-button">
