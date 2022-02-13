@@ -143,7 +143,7 @@
 			<div class="line-height"/>
 
 			<div style="display: flex; flex-direction: row; font-size:0.8em;">
-				{{ t('For more info, go to the') }}
+				{{ t('For other info, go to the') }}
 				<button v-on:click.prevent="$refs.information.closeModals(); goToFaq()" class="link-button">
 					FAQ
 				</button>
