@@ -54,7 +54,7 @@
         });
         promise1.then((value) => {
           navigator.clipboard.writeText(value)
-          console.log(`Copied: "${value}"`);
+          // console.log(`Copied: "${value}"`);
     // expected output: "Success!"
         });
 				//// if the above fails on some browser, this is supposed to work. maybe use both if the first fails
@@ -68,7 +68,13 @@
 				await this.$refs.flashCoppied.flashModal()
 			},
 			share () {
-				navigator.share({url: this.url})
+         const promise1 = new Promise((resolve, reject) => {
+          resolve(this.url);
+        });
+        promise1.then((value) => {
+          console.log(value);
+          navigator.share({url: value})
+        });
 			},
 		} // methods
 	} // export
