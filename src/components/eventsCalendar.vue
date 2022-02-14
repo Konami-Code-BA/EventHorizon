@@ -1,7 +1,7 @@
 <template>
 	<div v-if="loaded">
 		<!--month view-->
-		<div style="width: 100%; height: 100%; padding-left: 5px; padding-right: 5px; padding-top: 5px;"
+		<div style="width: 100%; height: 100%; min-height: 100%; padding-left: 5px; padding-right: 5px; padding-top: 5px;"
 				v-show="selectedDate === 0">
 			<div style="width: 100%; display: flex; flex-direction: row; align-items: center;
 					justify-content: space-between">
@@ -21,12 +21,12 @@
 			</div>
 			<!-- day labels -->
 			<div style="width: 100%; padding-top: 20px; display: flex; flex-diretion: row; justify-content: space-around">
-				<div v-for="week in 7" style="margin-bottom: 5px;">
+				<div v-for="week in 7">
 					<div>{{ t('day ' + (week)) }}</div>
 				</div>
 			</div>
 			<div style="height: 87%; display: flex; flex-direction: column; justify-content: center;
-					align-items: center;">
+					align-items: center; padding-bottom: 20px;">
 				<div class="weeks">
 					<div v-for="week in 6" style="margin-bottom: 5px;">
 						<div class="days">
