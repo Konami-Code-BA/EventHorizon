@@ -140,7 +140,6 @@
 					let date = new Date(
 						dateTime.getYear() - 100 + 2000, dateTime.getMonth(), dateTime.getDate(), 0, 0, 0, 0
 					).getTime()
-					console.log(dateTime.getDate(), this.store.events.display[i].name)
 					if (date in this.eventDates) {
 						this.eventDates[date].push(this.store.events.display[i])
 					} else {
