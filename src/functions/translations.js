@@ -638,6 +638,30 @@ export default {
             'EN': 'THIS PAGE',
             'JP': 'このページ'
         },
+        'I WILL ATTEND explanation': {
+            'EN': 'You are expected to attend the event.',
+            'JP': 'You are expected to attend the event.'
+        },
+        'maybe explanation': {
+            'EN': 'A neutral setting. Not attending. Not declining. Not receiving notifications.',
+            'JP': 'A neutral setting. Not attending. Not declining. Not receiving notifications.'
+        },
+        'wait_list explanation': {
+            'EN': 'You are waiting for a spot to open. If spots open / close you will get notifications.',
+            'JP': 'You are waiting for a spot to open. If spots open / close you will get notifications.'
+        },
+        'invite_request explanation': {
+            'EN': 'Ask the host to invite you to the event. Waiting to be accepted.',
+            'JP': 'Ask the host to invite you to the event. Waiting to be accepted.'
+        },
+        'decline explanation': {
+            'EN': 'Remove yourself from this event entirely. You will no longer be "invited".',
+            'JP': 'Remove yourself from this event entirely. You will no longer be "invited".'
+        },
+        'Privacy Policy': {
+            'EN': 'Privacy Policy',
+            'JP': 'Privacy Policy'
+        },
     },
 
     t: function(w) {
