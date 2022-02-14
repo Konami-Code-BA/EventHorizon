@@ -20,11 +20,11 @@
 				</button>
 			</div>
 			<!-- day labels -->
-				<div style="width: 100%; padding-top: 20px; display: flex; flex-diretion: row; justify-content: space-around">
-					<div v-for="week in 7" style="margin-bottom: 5px;">
-						<div>{{ t('day ' + (week)) }}</div>
-					</div>
+			<div style="width: 100%; padding-top: 20px; display: flex; flex-diretion: row; justify-content: space-around">
+				<div v-for="week in 7" style="margin-bottom: 5px;">
+					<div>{{ t('day ' + (week)) }}</div>
 				</div>
+			</div>
 			<div style="height: 87%; display: flex; flex-direction: column; justify-content: center;
 					align-items: center;">
 				<div class="weeks">
@@ -76,7 +76,7 @@
 					</div>
 					<div>
 						<div style="width: 20px; text-align: center;">
-							{{ t('day ' + selectedDate.getDay()) }}
+							{{ t('day ' + (selectedDate.getDay() + 1)) }}
 						</div>
 					</div>
 				</div>
