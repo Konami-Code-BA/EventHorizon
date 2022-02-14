@@ -15,8 +15,8 @@
 						style="display: flex; flex-direction: row; align-items: center; justify-content: space-between;
 						height: 50px; text-align: left; width: 100%;">
 					{{item.question}}&nbsp;
-					<div v-if="item.display">⇧</div>
-					<div v-else>⇩</div>
+					<div v-if="item.display"><img src="@/assets/upArrowIcon.png" style="width: 10px;"/></div>
+					<div v-else><img src="@/assets/downArrowIcon.png" style="width: 10px;"/></div>
 				</button>
 				<div v-show="item.display">
 					{{item.answer}}
