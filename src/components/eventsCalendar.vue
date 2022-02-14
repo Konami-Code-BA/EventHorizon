@@ -5,8 +5,8 @@
 				v-show="selectedDate === 0">
 			<div style="width: 100%; display: flex; flex-direction: row; align-items: center;
 					justify-content: space-between">
-				<button v-on:click.prevent="changeMonth(-1)" class="button" style="padding-bottom: 1px; width: 20px;">
-					{{'⇦'}}
+				<button v-on:click.prevent="changeMonth(-1)" class="button" style="padding-bottom: 1px; width: auto;">
+					<img src="@/assets/leftArrowIcon.png" style="width: 12px;"/>
 				</button>
 				<button v-on:click.prevent="goToToday()" class="button" style="width: 45px; font-size: 10px;">
 					{{t('TODAY')}}
@@ -15,8 +15,8 @@
 					<div>{{ selectedYear }}</div><div>{{ t('month ' + selectedMonth) }}</div>
 				</div>
 				<div style="width: 45px"/>
-				<button v-on:click.prevent="changeMonth(1)" class="button" style="padding-bottom: 1px; width: 20px;">
-					{{'⇨'}}
+				<button v-on:click.prevent="changeMonth(1)" class="button" style="padding-bottom: 1px; width: auto;">
+					<img src="@/assets/rightArrowIcon.png" style="width: 12px;"/>
 				</button>
 			</div>
 			<!-- day labels -->
@@ -52,8 +52,8 @@
 				v-if="selectedDate != 0">
 			<div style="width: 100%; display: flex; flex-direction: row; align-items: center;
 					justify-content: space-between">
-				<button v-on:click.prevent="changeDay(-1)" class="button" style="padding-bottom: 1px; width: 20px;">
-					{{'⇦'}}
+				<button v-on:click.prevent="changeDay(-1)" class="button" style="padding-bottom: 1px; width: auto;">
+					<img src="@/assets/leftArrowIcon.png" style="width: 12px;"/>
 				</button>
 				<button v-on:click.prevent="selectedDate = 0" class="button"
 						style="width: 45px; font-size: 10px; justify-self: flex-start">
@@ -81,8 +81,8 @@
 					</div>
 				</div>
 				<div style="width: 45px"/>
-				<button v-on:click.prevent="changeDay(1)" class="button" style="padding-bottom: 1px; width: 20px;">
-					{{'⇨'}}
+				<button v-on:click.prevent="changeDay(1)" class="button" style="padding-bottom: 1px; width: auto;">
+					<img src="@/assets/rightArrowIcon.png" style="width: 12px;"/>
 				</button>
 			</div>
 			<div style="height: 90%">
@@ -136,6 +136,7 @@
 			getAllEvents () {
 				for ( let i = 0; i < this.store.events.display.length; i++) {
 					let dateTime = new Date(this.store.events.display[i].date_time)
+					dateTime = new Date(dateTime.setHours(dateTime.getHours()-9))
 					let date = new Date(
 						dateTime.getYear() - 100 + 2000, dateTime.getMonth(), dateTime.getDate(), 0, 0, 0, 0
 					).getTime()
