@@ -4,7 +4,7 @@
 		<div style="display: flex; flex-direction: row; justify-content: center; align-items: center;">
 			<input :placeholder="t('SEARCH')" :value="search" @input="setSearch" type="text" autocorrect="off"
 					autocapitalize="none" style="width: 100% padding-bottom: 2px" v-on:keyup.enter="removeFocus()"
-					id="search" autocomplete="off"/>
+					id="searchFaq" autocomplete="off"/>
 			<div style="width: 10px;"/>
 			<x-close-button :closeFunc="() => {setSearch({target: {value: ''}})}" style="padding-bottom: 0;"/>
 		</div>
@@ -149,7 +149,7 @@
 			},
 
 			removeFocus() {
-				document.getElementById('search').blur()
+				document.getElementById('searchFaq').blur()
 			},
 		} // methods
 	} // export
