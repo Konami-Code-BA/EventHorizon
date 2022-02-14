@@ -314,31 +314,31 @@ export default {
             'EN': 'DEC',
             'JP': '12月'
         },
-        'day 0': {
+        'day 1': {
             'EN': 'Su',
             'JP': '日'
         },
-        'day 1': {
+        'day 2': {
             'EN': 'Mo',
             'JP': '月'
         },
-        'day 2': {
+        'day 3': {
             'EN': 'Tu',
             'JP': '火'
         },
-        'day 3': {
+        'day 4': {
             'EN': 'We',
             'JP': '水'
         },
-        'day 4': {
+        'day 5': {
             'EN': 'Th',
             'JP': '木'
         },
-        'day 5': {
+        'day 6': {
             'EN': 'Fr',
             'JP': '金'
         },
-        'day 6': {
+        'day 7': {
             'EN': 'Sa',
             'JP': '土'
         },

@@ -27,21 +27,27 @@
 						v-on:click.prevent="updateUserDoGetEmails()">
 					{{ t('GET EMAILS') }}&nbsp;
 				</button>
-				<input type="checkbox" class="checkbox" v-model="store.user.do_get_emails"
-						:key="store.user.do_get_emails" style="align-self: center;"/>
+				<div class = "checkboxdiv">
+					<input type="checkbox" class="checkbox" v-model="store.user.do_get_emails"
+						:key="store.user.do_get_emails"/>
+				</div>
 			</div>
 
 			<div class="line-height"/>
 
 			<line-button :pageToReturnTo="currentPage" :wording="t('ADD LINE')" v-if="store.user.line_id === ''"
 					ref="lineButton"/>
+
+			
 			<div v-else class="dual-set">
 				<button class="button" style="width: 100%"
 						v-on:click.prevent="updateUserDoGetLines()">
 					{{ t('GET LINE MESSAGES') }}&nbsp;
 				</button>
-				<input type="checkbox" class="checkbox" v-model="store.user.do_get_lines"
-						:key="store.user.do_get_lines" style="align-self: center;"/>
+				<div class = "checkboxdiv">
+					<input type="checkbox" class="checkbox" v-model="store.user.do_get_lines"
+						:key="store.user.do_get_lines"/>
+				</div>
 			</div>
 
 			<div class="line-height"/>
@@ -240,18 +246,27 @@
 	.dual-set {
 		display: flex;
 		flex-direction: row;
-		align-self: center;
+		align-self: stretch;
 		align-items: center;
+		vertical-align: stretch; 
 		justify-content: center;
 		padding: 0;
 		margin: 0;
 		width: 100%;
 	}
 	.checkbox {
+		height: 20px;
+		width: 20px;
+	}
+	.checkboxdiv {
+		vertical-align: middle; 
+		display: flex; 
+		flex-direction: column; 
+		justify-content: center; 
 		position: fixed;
 		height: 20px;
 		width: 20px;
-		transform: translate(90px, 0);
+		transform: translate(96px, 0);
 		z-index: 1;
 	}
 	.line-coloring {
