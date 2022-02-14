@@ -29,6 +29,15 @@
 
 			<line-button :pageToReturnTo="store.lastNonLoginRegisterPage" :wording="t('LINE LOGIN / REGISTER')"
 					ref="lineButton"/>
+
+			<div class="line-height"/>
+
+			<div style="width: 100%; display: flex; flex-direction: column; justify-content: center;">
+				<button class="link-button" v-on:click.prevent="openPrivacyPolicy()">
+					{{t('Privacy Policy')}}
+				</button>
+			</div>
+
 		</div>
 	</div>
 </template>
@@ -100,6 +109,12 @@
 			},
 			forgotPassword () {
 				f.goToPage({ page: 'forgotPassword', args: {} })
+			},
+			openPrivacyPolicy () {
+				window.open(
+					'https://www.privacypolicytemplate.net/live.php?token=4ZdtebbIvgIe1fWqttdZ873Pal0uM2oh',
+					'_blank'
+				).focus()
 			},
 		} // methods
 	} // export
