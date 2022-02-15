@@ -263,6 +263,14 @@ def notify_user(user, message, notification_type='other'):
 		send_mail(subject, message, email_from, recipient_list, fail_silently=False)
 
 
+def feedback(message):
+	subject = 'FEEDBACK'
+	message = message
+	email_from = settings.EMAIL_HOST_USER
+	recipient_list = [settings.EMAIL_HOST_USER,]
+	send_mail(subject, message, email_from, recipient_list, fail_silently=False)
+
+
 def impossibly_over_attending_limit(event, changing_user_id, change_is_plus_one=False):
 	# affecting attending if change is plus one and changing user is attending
 	# note: assume if not change_is_plus_one, we are adding changing_user to attending. otherwise we wouldn't be
