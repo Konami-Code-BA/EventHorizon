@@ -20,7 +20,7 @@
 					<div v-if="item.display"><img src="@/assets/upArrowIcon.png" style="width: 10px;"/></div>
 					<div v-else><img src="@/assets/downArrowIcon.png" style="width: 10px;"/></div>
 				</button>
-				<div v-show="item.display" style="padding-top: 5px;">
+				<div v-show="item.display" style="padding-top: 10px;">
 					{{item.answer}}
 				</div>
 			</div>
