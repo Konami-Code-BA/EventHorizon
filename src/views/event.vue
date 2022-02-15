@@ -28,13 +28,14 @@
 				</div>
 					<small class="event-attr">{{t('ADDRESS')}}</small>
 					<small class="address-value">{{ event.address }}</small>
-				<div class="flex-row" style="justify-content: space-between;">
+				<div class="flex-row" style="justify-content: space-between; max-width: 100%;">
 					<button class="button event-page-button" v-on:click.prevent="copyToClipboard()"
-							style="align-self: center; width: auto;">
+							style="align-self: center; width: auto; flex-shrink: 1; font-size: 14px;">
 						<small>{{t('COPY ADDRESS')}}</small>
 					</button>
 					<button class="button google-maps-button" v-on:click.prevent="openInGoogleMaps()"
-							style="display: flex; flex-direction: row; justify-content: center; width: 100%;">
+							style="display: flex; flex-direction: row; justify-content: center; width: 100%;
+							flex-shrink: 1; font-size: 14px;">
             			<small>{{t('OPEN IN GOOGLE MAPS')}}</small>
 					</button>
 				</div>
