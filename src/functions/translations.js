@@ -640,35 +640,191 @@ export default {
         },
         'I WILL ATTEND explanation': {
             'EN': 'You are expected to attend the event.',
-            'JP': 'You are expected to attend the event.'
+            'JP': 'イベントに参加予定。'
         },
         'maybe explanation': {
             'EN': 'A neutral setting. Not attending. Not declining. Not receiving notifications.',
-            'JP': 'A neutral setting. Not attending. Not declining. Not receiving notifications.'
+            'JP': '参加可否について、未回答。通知を受け取らない。'
         },
         'wait_list explanation': {
             'EN': 'You are waiting for a spot to open. If spots open / close you will get notifications.',
-            'JP': 'You are waiting for a spot to open. If spots open / close you will get notifications.'
+            'JP': 'キャンセルが出るのを待っている状態。キャンセルおよび満席のお知らせが届く。'
         },
         'invite_request explanation': {
             'EN': 'Ask the host to invite you to the event. Waiting to be accepted.',
-            'JP': 'Ask the host to invite you to the event. Waiting to be accepted.'
+            'JP': '主催者に招待を依頼する。受理されるのを待つ。'
         },
         'decline explanation': {
-            'EN': 'Remove yourself from this event entirely. You will no longer be "invited".',
-            'JP': 'Remove yourself from this event entirely. You will no longer be "invited".'
+            'EN': 'Removes yourself from this event entirely. You will no longer be "invited".',
+            'JP': 'このイベントから除外される。'
         },
         'Privacy Policy': {
             'EN': 'Privacy Policy',
-            'JP': 'Privacy Policy'
+            'JP': '個人情報保護方針'
         },
         'CONTACT US': {
             'EN': 'CONTACT US',
-            'JP': 'CONTACT US'
+            'JP': 'お問い合わせ'
         },
         'FEEDBACK': {
             'EN': 'FEEDBACK',
             'JP': 'フィードバック'
+        },
+        'Q1': {
+            'EN': 'How can I host an event?',
+            'JP': 'イベントを開催するにはどうしたらよいですか？'
+        },
+        'A1': {
+            'EN': 'The hosting feature hasn\'t been released yet. Until then the only hosts are the site creators. As a guest, please feel free to check out the events on the site.',
+            'JP': 'イベント開催機能はまだリリースされていません。現在は、サイト制作者のみの機能となります。ゲストとして、開催されているイベントを自由にチェックしてください。'
+        },
+        'T1': {
+            'EN': '',
+            'JP': ''
+        },
+        'Q2': {
+            'EN': 'What kind of events can we expect to see on this site?',
+            'JP': 'このサイトでは、どのようなイベントが期待できるのでしょうか？'
+        },
+        'A2': {
+            'EN': 'We made this site to help us with the events we were already planning: basically drinking parties. At first that will probably be the main event (pun intended). But we want to branch out so the site can be used for all kinds of events, such as yoga sessions, flower viewing parties, international meet-ups, video game competitions; let your imagination run wild!',
+            'JP': 'このサイトは、すでに企画していた飲み会のイベントをサポートするために制作しました。最初はそれがメインになると思います。でも、今後は、ヨガ、花見、国際交流、ゲーム大会など、さまざまなイベントに活用できるようにしたいと考えています。'
+        },
+        'T2': {
+            'EN': 'type except',
+            'JP': '種類 以外'
+        },
+        'Q3': {
+            'EN': 'What is the cancelation policy for events?',
+            'JP': 'イベントのキャンセルポリシーについて教えてください。'
+        },
+        'A3': {
+            'EN': 'Event attendance is managed by the hosts of the event. It\'s different for every event. You can always cancel by just clicking Decline on an event. Or switching from Attending to Undecided. But you could also consider contacting the host to let them know what happened.',
+            'JP': 'イベントの出欠管理は、イベントの主催者が行います。キャンセルポリシーはイベントごとに異なります。キャンセルする場合は、「辞退」をクリックすればいつでもキャンセルできます。または、出席から未定に変更することもできます。主催者に連絡して、事情を伝えることもできます。'
+        },
+        'T3': {
+            'EN': 'last minute',
+            'JP': '直前 ドタキャン 当日'
+        },
+        'Q4': {
+            'EN': 'Do I need an account to attend events?',
+            'JP': 'イベントに参加するためには、アカウントが必要ですか？'
+        },
+        'A4': {
+            'EN': 'Attendance is managed by the hosts. If you know the host and can organize with them to attend the event without using this site, then go for it. This site is built to assist hosts by gathering all information relating to the event in one place, so by making a free account and confirming through the site, it would help the host out. Additionally, you\'ll be able to access information about other events and parties happening in the city.',
+            'JP': '出席は主催者が管理します。もし、あなたが主催者と知り合いで、このサイトを使わなくてもイベントに参加できるよう主催者に連絡を取れるのであれば構いません。このサイトは、イベントに関する情報を一箇所に集め、主催者を支援する目的で制作されているので、無料のアカウントを作り、サイトを通じて確認することで、主催者を支援することができます。さらに、他のイベントやパーティーの情報にもアクセスできるようになります。'
+        },
+        'T4': {
+            'EN': '',
+            'JP': ''
+        },
+        'Q5': {
+            'EN': 'What\'s the best way to get in contact with a host of an event?',
+            'JP': 'イベントの主催者とコンタクトを取るにはどうしたらよいですか？'
+        },
+        'A5': {
+            'EN': 'Guests can message the hosts of an event they are part of. In the event page, under people, you can click on the \'# people\' button next to "HOSTS" and you can message them there.',
+            'JP': 'ゲストは、自分が参加しているイベントの主催者にメッセージを送ることができます。イベントのページで、参加者リストの「主催者」の横の人数ボタンをクリックするとメッセージを送ることができます。'
+        },
+        'T5': {
+            'EN': '',
+            'JP': ''
+        },
+        'Q6': {
+            'EN': 'How can I turn off line messages / emails / notifications?',
+            'JP': 'LINEのメッセージ／メール／通知をオフにするにはどうすればいいですか？'
+        },
+        'A6': {
+            'EN': 'In the settings screen you can turn off "Get Emails" and "Get Lines". You can\'t however turn off messages from hosts of events you are attending. Hosts need to be able to contact their guests.',
+            'JP': '設定画面で「メール受信」「LINE受信」をオフにすることができます。ただし、参加するイベントの主催者からのメッセージはオフにすることはできません。主催者はゲストと連絡を取る必要があります。'
+        },
+        'T6': {
+            'EN': '1 2',
+            'JP': '1 2 一 二 １ ２'
+        },
+        'Q7': {
+            'EN': 'My LINE account and email account are separate. Now I have two accounts. What do I do?',
+            'JP': 'LINEとメールアドレスの両方でアカウントを作ってしまいました。どうしたらいいのでしょうか？'
+        },
+        'A7': {
+            'EN': 'You can just log into one of your accounts, and then add the other one in the settings page. For example, login with email, and then add line in the settings page. Or, login with line, and then add email. The two accounts will be automatically merged together into one.',
+            'JP': '片方のアカウントにログインし、設定ページでもう片方を追加してください。メールアドレスでログインし、設定ページでLINEを追加する、またはLINEでログインし、メールアドレスを追加することで2つのアカウントは、自動的に1つに統合されます。'
+        },
+        'T7': {
+            'EN': '',
+            'JP': ''
+        },
+        'Q8': {
+            'EN': 'What happens if I forget my password?',
+            'JP': 'パスワードを忘れた場合はどうしたらいいですか？'
+        },
+        'A8': {
+            'EN': 'Click the Forgot Password link on the login page. It\'ll ask for your email address to send you a link. Follow the link from your email to change your password.',
+            'JP': 'ログインページで「パスワードを忘れた場合」をクリックします。メールアドレスを入力してください。届いたメールに記載されているリンクをクリックすると、パスワードの変更画面が表示されます。'
+        },
+        'T8': {
+            'EN': 'forgotten pw',
+            'JP': 'ｐｗ pw'
+        },
+        'Q9': {
+            'EN': 'Can I change the language?',
+            'JP': '言語を変更することはできますか？'
+        },
+        'A9': {
+            'EN': 'Yes! Currently, we support English and Japanese. Change language by clicking on the menu button "|||" at the top of the site.',
+            'JP': 'はい。現在、英語と日本語に対応しています。サイト上部の「|||」ボタンから言語を変更することができます。'
+        },
+        'T9': {
+            'EN': '',
+            'JP': ''
+        },
+        'Q10': {
+            'EN': 'How come the buttons aren\'t working in a past event?',
+            'JP': '過去のイベントでボタンが活性化されないのはなぜですか？'
+        },
+        'A10': {
+            'EN': 'Just like in real life, regrettably, you can\'t change past events.',
+            'JP': '現実と同じで、残念ながら過去の出来事は変えられません。'
+        },
+        'T10': {
+            'EN': 'click nothing',
+            'JP': 'クリック 何も'
+        },
+        'Q11': {
+            'EN': 'Why are some of the event details missing?',
+            'JP': 'イベントの詳細が一部欠落しているのはなぜですか？'
+        },
+        'A11': {
+            'EN': 'It might be a private event. If you aren\'t invited to a private event, or you aren\'t logged in, or don\'t have an account, private events hide some of the information from outsiders.',
+            'JP': 'プライベートイベントかもしれません。プライベートイベントに招待されていない場合、ログインしていない場合、アカウントを持っていない場合、プライベートイベントは一部非表示となります。'
+        },
+        'T11': {
+            'EN': 'cant can\'t see hidden anywhere any where',
+            'JP': '隠し 隠れている ない 無い'
+        },
+        'Q12': {
+            'EN': 'How do I join a private event?',
+            'JP': 'プライベートイベントに参加するにはどうすればいいですか？'
+        },
+        'A12': {
+            'EN': 'Click on the Invite Request button and the host will be alerted that you want to join. Then just wait for the host to accept your request and invite you.',
+            'JP': '招待希望ボタンをクリックすると、主催者にあなたが参加したい旨を通知します。あとは、主催者があなたの招待希望を受け入れて招待してくれるのを待つだけです。'
+        },
+        'T12': {
+            'EN': 'invitation',
+            'JP': ''
+        },
+        'Q13': {
+            'EN': 'Can I bring friends?',
+            'JP': '友達を連れて行ってもいいですか？'
+        },
+        'A13': {
+            'EN': 'Only 1 plus-one is allowed per guest. However, your friends are very welcome to register (for free) and join the event themselves. If not, the last option is to contact the host directly.',
+            'JP': '同伴者はお一人様につき一人までとさせていただきます。ただし、ご友人自身が登録（無料）してイベントに参加することは大歓迎です。同伴者が二人以上の場合は、主催者に直接ご連絡ください。'
+        },
+        'T13': {
+            'EN': 'plusone, +',
+            'JP': ''
         },
     },
 
