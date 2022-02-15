@@ -35,7 +35,7 @@
 					</button>
 					<button class="button google-maps-button" v-on:click.prevent="openInGoogleMaps()"
 							style="display: flex; flex-direction: row; justify-content: center; width: 100%;">
-            			{{t('OPEN IN GOOGLE MAPS')}}
+            			<small>{{t('OPEN IN GOOGLE MAPS')}}</small>
 					</button>
 				</div>
 				<button v-on:click.prevent="showDescription=!showDescription" class="button event-page-button">
@@ -263,13 +263,15 @@
 				{{ t('THE EVENT IS FULL') }}
 			</div>
 			<div style="margin-top: 0.7em; width: 100%; display: flex; flex-direction: column; align-items: center;
-					border: 2px solid rgba(255, 255, 255, .3); border-radius: 7px;" v-show="showEventStatus">
+					border: 2px solid rgba(255, 255, 255, .3); border-radius: 7px; max-width: 100%; overflow-x: hidden;"
+					v-show="showEventStatus">
 				<div style="display: flex; flex-direciton: row; justify-content: center; align-items: center;
 						width: 100%;">
-					<div style="width: 25px;"/>
-					<div style="display: flex; flex-direction: column; align-items: center; width: calc(100% - 50px);">
+					<div style="width: 35px;"/>
+					<div style="display: flex; flex-direction: column; align-items: center; width: calc(100% - 70px);">
 						<div class="dual-set" v-if="myAttendingStatus['invited']"
-								style="border-bottom: 2px solid rgba(255, 255, 255, .3); width: 80%; margin-bottom: 5px;">
+								style="border-bottom: 2px solid rgba(255, 255, 255, .3); width: 80%;
+								margin-bottom: 5px;">
 							{{ t('invited') }}
 							<input type="checkbox" class="checkbox" checked="checked" onclick="return false;"/>
 						</div>
@@ -368,7 +370,7 @@
 							</button>
 						</div>
 					</div>
-					<div style="width: 25px; align-self: flex-start;">
+					<div style="width: 35px; align-self: flex-start; margin-top: 3px;">
 						<button style="background: none; border: none"
 								v-on:click.prevent="showInformation = 'attendingStatus'">
 							<img src="@/assets/iIcon.png" class="icon" style="padding: 3px;" id="events-info"/>

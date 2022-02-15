@@ -77,6 +77,15 @@
 					</button>
 				</div>
 
+				<div class="line-height" v-if="isAuthenticatedUser"/>
+
+				<div style="width: 100%" v-if="isAuthenticatedUser">
+					<button v-on:click.prevent="$refs.selectedTab2.closeModals(); showContactUs = true;"
+							class="button">
+						{{ t('CONTACT US') }}
+					</button>
+				</div>
+
 				<div class="line-height"/>
 
 				<div style="width: 100%">
@@ -99,7 +108,26 @@
 
 			</div>
 		</modal>
+		<modal v-if="showContactUs" @closeModals="showContactUs = false" ref="showContactUsModal" :key="showContactUs">
+			<div slot="contents" class="modal" style="height: 55%;">
+				<div style="width: 100%; display: flex; flex-direction: row; justify-content: space-between;
+						align-content: flex-start">
+					<div style="width: 20px;"/>
+					<div style="font-size: 20px; text-align: center;">
+						{{ t('FEEDBACK') }}
+					</div>
+					<x-close-button :closeFunc="() => {$refs.showContactUsModal.closeModals()}"
+							style="align-self: flex-end;"/>
+				</div>
+				<textarea :placeholder="t('FEEDBACK')" v-model="messageContent" type="text"
+						autocapitalize="sentences" style="height: 90px;" autocomplete="off"/>
+				<button v-on:click.prevent="feedback()" class="button">
+					<div style="width: 100%; text-align: center;">{{ t('SEND') }}</div>
+				</button>
+			</div>
+		</modal>
 		<qr-code-generator v-if="showQrModal" @closeModals="showQrModal=false"/>
+		<flash-modal :text="'SENT!'" ref="flashSent" :time="1500"/>
 	</div>
 </template>
 <script>
@@ -110,6 +138,7 @@
 	import translations from '@/functions/translations.js'
 	import api from '@/functions/apiFunctions.js'
 	import xCloseButton from '@/components/xCloseButton.vue'
+	import flashModal from '@/components/flashModal.vue'
 	import f from '@/functions/functions.js'
 	export default {
 		name: 'appHeader',
@@ -118,6 +147,7 @@
 			tabs,
 			qrCodeGenerator,
 			xCloseButton,
+			flashModal,
 		},
 		data () {
 			return {
@@ -125,6 +155,8 @@
 				selectedTab: 0,
 				showQrModal: false,
 				showLanguageModal: false,
+				showContactUs: false,
+				messageContent: '',
 			}
 		},
 		computed: {
@@ -170,6 +202,13 @@
 				f.goToPage({ page: 'home', args: {} })
 				await api.logout()
 				location.reload()
+			},
+			async feedback () {
+				this.store.loading = true
+				await api.feedback(this.messageContent)
+				this.messageContent = ''
+				this.store.loading = false
+				await this.$refs.flashSent.flashModal()
 			},
 		}
 	}

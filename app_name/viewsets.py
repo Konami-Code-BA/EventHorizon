@@ -365,6 +365,22 @@ To message the host: go to the event (above link) ⇨ Show People ⇨ Hosts
 				user.error = 'you don\'t have permission'
 				continue
 
+	def feedback(self, request):
+		# SECURITY: only non-visitors can give feedback
+		if not request.user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists():
+			f.feedback(
+				f"""User's display name: {request.user.display_name}
+User's ID#: {request.user.id}
+
+Feedback:
+{request.data['message']}"""
+			)
+			return
+		else:
+			user = namedtuple('user', 'error')
+			user.error = 'you don\'t have permission'
+			return
+
 	def register_with_email(self, request):  # SECURITY: anyone is allowed to make a new user
 		if ('email' in request.data and 'password' in request.data and 'display_name' in request.data and
 				request.data['email'] != '' and request.data['password'] != '' and request.data['display_name'] != ''):

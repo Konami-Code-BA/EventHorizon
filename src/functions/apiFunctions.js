@@ -198,6 +198,12 @@ export default {
             message: message,
         })
     },
+    async feedback(message) {
+        return await this.userApi('post', null, {
+            command: 'feedback',
+            message: message,
+        })
+    },
     async forgotPassword(email, returnLink) {
         return await this.userApi('post', null, {
             command: 'forgot_password',

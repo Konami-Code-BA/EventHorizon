@@ -662,6 +662,14 @@ export default {
             'EN': 'Privacy Policy',
             'JP': 'Privacy Policy'
         },
+        'CONTACT US': {
+            'EN': 'CONTACT US',
+            'JP': 'CONTACT US'
+        },
+        'FEEDBACK': {
+            'EN': 'FEEDBACK',
+            'JP': 'フィードバック'
+        },
     },
 
     t: function(w) {
