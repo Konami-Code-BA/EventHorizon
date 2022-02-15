@@ -9,7 +9,7 @@
 			<x-close-button :closeFunc="() => {setSearch({target: {value: ''}})}" style="padding-bottom: 0;"/>
 		</div>
 		<div style="overflow-y: scroll; width: 100%; display: flex; flex-direction: column; align-items: center;
-				justify-content: flex-start;">
+				justify-content: flex-start; padding-top: 20px;">
 			<div style="width:80%; display: flex; flex-direction: column; align-items: flex-start; justify-content:
 					flex-start; padding-bottom: 10px; height: fit-content; flex-shrink: 0; line-height:1.5em; min-height:6em;"
 					v-for="(item, index) in filteredQAndA" :key="index">
