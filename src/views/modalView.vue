@@ -17,7 +17,7 @@
 		<about-us v-show="page === 'aboutUs'"
 				:key="page + 'aboutUs'"/>
 		<faq v-show="page === 'faq'"
-				:key="page + 'faq'"/>
+				:key="page + 'faq' + store.user.language"/>
 		<experiment1 v-show="page === 'experiment1'"
 				:key="page + 'experiment1'"/>
 		<experiment2 v-show="page === 'experiment2'"
