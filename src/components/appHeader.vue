@@ -207,6 +207,7 @@
 				this.store.loading = true
 				await api.feedback(this.messageContent)
 				this.messageContent = ''
+				this.showContactUs = false
 				this.store.loading = false
 				await this.$refs.flashSent.flashModal()
 			},
