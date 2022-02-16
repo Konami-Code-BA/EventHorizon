@@ -93,17 +93,17 @@ def add_line_friend(line_id):
 		result = 'Thank you for following!'
 	except UserViewset.model.DoesNotExist:  # if no user with this line id exists
 		# this wasn't done on the site, it was done in line so there is no user, and can't make session
-		user = UserViewset.model.objects.create_user(  # create temporary line friend user
-			line_id = line_id,
-			do_get_lines = True,
-			is_line_friend = True,
-			display_name = 'Temp Line Friend', 
-			do_get_line_display_name = True,
-			random_secret = secrets.token_urlsafe(16)
-		)
-		user.groups.add(Group.objects.get(name='Temp Line Friend').id)  # temp line friend
-		user.save()
-		print('ADDED NEW TEMP LINE FRIEND')
+		#user = UserViewset.model.objects.create_user(  # create temporary line friend user
+		#	line_id = line_id,
+		#	do_get_lines = True,
+		#	is_line_friend = True,
+		#	display_name = 'Temp Line Friend', 
+		#	do_get_line_display_name = True,
+		#	random_secret = secrets.token_urlsafe(16)
+		#)
+		#user.groups.add(Group.objects.get(name='Temp Line Friend').id)  # temp line friend
+		#user.save()
+		#print('ADDED NEW TEMP LINE FRIEND')
 		result = 'Thank you for following! Your line account isn\'t connected to the site though. Please go to the site in order to get line messages / notifications about events. https://www.eventhorizon.vip'
 	return result
 
@@ -191,7 +191,7 @@ def merge_users(current_user, merge_user):
 		current_user.line_id = merge_user.line_id
 		current_user.line_access_token = merge_user.line_access_token
 		current_user.line_refresh_token = merge_user.line_refresh_token
-	current_user.do_get_line_display_name = current_user.do_get_line_display_name or merge_user.do_get_line_display_name
+	current_user.do_get_line_display_name = current_user.do_get_line_display_name and merge_user.do_get_line_display_name
 	current_user.is_line_friend = current_user.is_line_friend or merge_user.is_line_friend
 	current_user.do_get_lines = current_user.do_get_lines or merge_user.do_get_lines
 	if merge_user.email:
