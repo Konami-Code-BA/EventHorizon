@@ -159,11 +159,6 @@ class UserViewset(viewsets.ModelViewSet):
 					user = namedtuple('user', 'error')
 					user.error = 'you don\'t have permission'
 					return user
-				# if user is visitor, should be in register_with_email
-				if current_user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists():
-					user = namedtuple('user', 'error')
-					user.error = 'something strange happened... a visitor should not be able to run this'
-					return user
 			except self.model.DoesNotExist:  # if can't get current user
 				user = namedtuple('user', 'error')
 				user.error = 'a user with this id could not be found'
@@ -172,8 +167,10 @@ class UserViewset(viewsets.ModelViewSet):
 				existing_user = self.model.objects.get(email=request.data['email'])
 				# if existing user with this email does exist, check their password, and if its good too, merge accounts
 				if existing_user.check_password(request.data['password']):  # if password matches too
-					current_user = f.merge_users(current_user, existing_user)  # merge users
-					return current_user
+					user = f.merge_users(current_user, existing_user)  # merge users
+					request.user = user
+					user = f.authenticate_login(request)  # login user
+					return user
 				else:  # if password doesn't match
 					user = namedtuple('user', 'error')
 					user.error = 'Incorrect password for this email'
@@ -183,6 +180,8 @@ class UserViewset(viewsets.ModelViewSet):
 				current_user.password = make_password(request.data['password'])
 				current_user.do_get_emails = True
 				current_user.save()
+				request.user = current_user
+				current_user = f.authenticate_login(request)  # login user
 				return current_user
 		else:  # missing email / password info
 			user = namedtuple('user', 'error')
@@ -207,7 +206,7 @@ class UserViewset(viewsets.ModelViewSet):
 			user_array = self.model.objects.all()
 			serializer_data = []
 			for user in user_array:
-				if not user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists():
+				if not user.groups.filter(id=Group.objects.get(name='Temp Line Friend').id).exists():
 					serializer_data += [OrderedDict([
 						('id', user.id),
 						('display_name', user.display_name),
@@ -366,8 +365,8 @@ To message the host: go to the event (above link) ⇨ Show People ⇨ Hosts
 				continue
 
 	def feedback(self, request):
-		# SECURITY: only non-visitors can give feedback
-		if not request.user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists():
+		# SECURITY: only users can give feedback
+		if request.user.groups.filter(id=Group.objects.get(name='User').id).exists():
 			f.feedback(
 				f"""User's display name: {request.user.display_name}
 User's ID#: {request.user.id}
@@ -389,17 +388,21 @@ Feedback:
 				user = self.model.objects.get(email=request.data['email'])
 				user = namedtuple('user', 'error')
 				user.error = 'This email is already registered'
-			except self.model.DoesNotExist:  # if this email not already registered, turn visitor into user & add info
-				user = self.model.objects.get(pk=request.user.pk)  # get visitor account (already logged in)
-				user.groups.clear()  # clear visitor group
-				user.groups.add(Group.objects.get(name='User').id)  # change to user
-				user.display_name = request.data['display_name']  # add new user account info
-				user.email = request.data['email']
+			except self.model.DoesNotExist:  # if this email not already registered, new user
+				user = UserViewset.model.objects.create_user(
+					display_name = request.data['display_name'],
+				)
+				user.save()
+				user.groups.clear()  # clear if any group exists
+				user.groups.add(Group.objects.get(name='User').id)  # make user
+				user.email = request.data['email']  # add new user account info
 				user.password = make_password(request.data['password'])
 				user.do_get_emails = True
+				user.do_get_line_display_name = False
 				user.is_superuser = False
 				user.is_staff = False
 				user.save()
+				request.user = user
 				user = f.authenticate_login(request)  # login user
 			return user
 		else:
@@ -441,49 +444,57 @@ Feedback:
 				user.groups.clear()  # clear temp line friend group
 				user.groups.add(Group.objects.get(name='User').id)  # change to user
 				print('CHANGING TEMP LINE FRIEND TO USER')
-			if request.user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists():
-				request.user.groups.clear()  # clear temp line friend group
-				request.user.groups.add(Group.objects.get(name='User').id)  # change to user
-			user = f.verify_update_line_info(request, user)  # verify validity of current line data and put new data
-			user = f.merge_users(request.user, user)
+			result = f.verify_update_line_info(user)  # verify validity of current line data and put new data
+			if hasattr(result, 'error'):
+				user = namedtuple('user', 'error')
+				user.error = 'line couldn\'t be verified'
+				return
+			try:
+				existing_user = self.model.objects.get(pk=request.user.pk)  # get account (if already logged in)
+				user = f.merge_users(user, existing_user)  # merge users
+			except self.model.DoesNotExist:
+				1
+			request.user = user
+			request.data['line_id'] = profile_response['userId']
 			user = f.authenticate_login(request)  # login user
-		except self.model.DoesNotExist:  # if there was no user with this id, add line info to existing account
-			user = self.model.objects.get(pk=request.user.pk)  # get account (already logged in)
-			if user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists():  # if visitor
-				user.groups.clear()  # clear visitor group
+		except self.model.DoesNotExist:  # if there was no user with this line id
+			try:
+				user = self.model.objects.get(pk=request.user.pk)  # get account (if already logged in)
+				user.line_id = profile_response['userId']
+				user.line_access_token = getAccessToken_response['access_token']
+				user.line_refresh_token = getAccessToken_response['refresh_token']
+				user.do_get_lines = True
+				user.save()
+				request.user = user
+				request.data['line_id'] = profile_response['userId']
+				user = f.authenticate_login(request)  # login user
+				return user
+			except self.model.DoesNotExist:
+				user = UserViewset.model.objects.create_user(
+					display_name = profile_response['displayName'],
+				)
+				user.save()
+				user.groups.clear()  # clear if any groups exist
 				user.groups.add(Group.objects.get(name='User').id)  # change to user
-			user.display_name = profile_response['displayName']  # add new user account info
-			user.line_id = profile_response['userId']
-			user.line_access_token = getAccessToken_response['access_token']
-			user.line_refresh_token = getAccessToken_response['refresh_token']
-			user.do_get_line_display_name = True
-			user.do_get_lines = True
-			user.save()
-			print('SAVED NEW LINE USER')
-			user = f.authenticate_login(request)  # login user
-			print('LOGGED IN')
+				user.line_id = profile_response['userId']
+				user.line_access_token = getAccessToken_response['access_token']
+				user.line_refresh_token = getAccessToken_response['refresh_token']
+				user.do_get_line_display_name = True
+				user.do_get_lines = True
+				user.save()
+				print('SAVED NEW LINE USER')
+				request.user = user
+				request.data['line_id'] = profile_response['userId']
+				user = f.authenticate_login(request)  # login user
+				print('LOGGED IN')
 		return user
 
 	def login(self, request):  # SECURITY: anyone is allowed to login
 		#return f.authenticate_login(request)  # FOR EMERGENCY LOGIN (also in backends)
-		visitor = False
-		try:
-			user = self.model.objects.get(pk=request.user.pk)  # get current user that made this request
-			# if visitor made this request, remember that
-			if user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists():
-				visitor = request.user
-		except self.model.DoesNotExist:  # if there is no currently existing user or visitor, make a new visitor
-			user = f.new_visitor(request)
-			request.user = user
-		user = f.authenticate_login(request)  # it will try to login with email or line before loggin in by session
+		user = f.authenticate_login(request)  # it will try to login with email or line before logging in by session
 		if not hasattr(user, 'error'):  # if logged into a user
 			user.visit_count += 1  # add to the visit count
 			user.save()
-			# if not visitor, but a visitor made the request
-			if (not user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists()) and visitor:
-				user.visit_count += visitor.visit_count
-				user.save()
-				visitor.delete()  # delete the visitor account that made the request
 			return user  # done
 		else:  # if couldn't login to anything, probably got an error, so return user anyway
 			return user
@@ -534,8 +545,6 @@ Feedback:
 			user.password = make_password(request.data['new_password'])
 			user.random_secret = ''
 			user.save()
-			if current_user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists():
-				current_user.delete()
 			request.user = user
 			request.data['password'] = request.data['new_password']
 			user = f.authenticate_login(request)  # login user
@@ -811,8 +820,8 @@ To turn off notifications, go here: {f.create_url('/?page=settings')}
 *Note: you can't reply to this message here""",
 				)
 		elif request.data['status'] == 'invite_request':
-			if not request.user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists():
-				event.invite_request.add(user_to_change)  # only non-visitors can request an invite
+			if request.user.groups.filter(id=Group.objects.get(name='User').id).exists():
+				event.invite_request.add(user_to_change)  # only users can request an invite
 				user = UserSerializer.Meta.model.objects.get(pk=user_to_change)
 				for host in event.hosts.all():
 					f.notify_user(
