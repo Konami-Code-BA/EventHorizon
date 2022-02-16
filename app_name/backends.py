@@ -49,12 +49,12 @@ class UserBackend(BaseAuthentication):
 				session = Session.objects.get(pk=request.session.session_key)
 				user_id = session.get_decoded()['_auth_user_id']
 				user = self.UserModel.objects.get(pk=int(user_id))
-				if user.line_id != '':  # if user has a line id, verify and refresh it
-					result = verify_update_line_info(user)  # if refresh fails it won't login by session
-					if hasattr(result, 'error'):
-						user = namedtuple('user', 'error')
-						user.error = 'line couldn\'t be verified'
-						return user
+				#if user.line_id != '':  # if user has a line id, verify and refresh it
+				#	result = verify_update_line_info(user)  # if refresh fails it won't login by session
+				#	if hasattr(result, 'error'):
+				#		user = namedtuple('user', 'error')
+				#		user.error = 'line couldn\'t be verified'
+				#		return user
 				return user
 			except self.UserModel.DoesNotExist:
 				print('DoesNotExist fail')
