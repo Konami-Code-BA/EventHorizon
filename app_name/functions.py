@@ -61,8 +61,8 @@ def line_bot(line_body):
 	else: 
 		return replyToken, reply
 	if events['type'] == 'follow':
-		reply = {'type': 'text', 'text': 'Thank you for following!'}
-		add_line_friend(events['source']['userId'])
+		result = add_line_friend(events['source']['userId'])
+		reply = {'type': 'text', 'text': result}
 	if events['type'] == 'unfollow':
 		remove_line_friend(events['source']['userId'])
 	elif events['type'] == 'message':  # its a message (not a follow etc)
@@ -90,8 +90,9 @@ def add_line_friend(line_id):
 		user.do_get_lines = True
 		user.save()
 		print('CHANGED is_line_friend AND do_get_lines FOR EXISTING LINE FRIEND')
+		result = 'Thank you for following!'
 	except UserViewset.model.DoesNotExist:  # if no user with this line id exists
-		# this wasn't done on the site, it was done in line so there is no visitor, and can't make session
+		# this wasn't done on the site, it was done in line so there is no user, and can't make session
 		user = UserViewset.model.objects.create_user(  # create temporary line friend user
 			line_id = line_id,
 			do_get_lines = True,
@@ -103,6 +104,8 @@ def add_line_friend(line_id):
 		user.groups.add(Group.objects.get(name='Temp Line Friend').id)  # temp line friend
 		user.save()
 		print('ADDED NEW TEMP LINE FRIEND')
+		result = 'Thank you for following! Your line account isn\'t connected to the site though. Please go to the site in order to get line messages / notifications about events. https://www.eventhorizon.vip'
+	return result
 
 
 def remove_line_friend(line_id):
@@ -123,7 +126,7 @@ def authenticate_login(request):
 	return user
 
 
-def verify_update_line_info(request, user):  # user: existing user with line id & access token already gotten
+def verify_update_line_info(user):  # user: existing user with line id & access token already gotten
 	print('VERIFYING AND UPDATING LINE INFO')
 	url = 'https://api.line.me/oauth2/v2.1/token'  # no matter if access token expired or not, refresh access token 1st
 	headers = {'Content-Type': 'application/x-www-form-urlencoded'}
@@ -182,7 +185,7 @@ def new_visitor(request):
 def merge_users(current_user, merge_user):
 	print('MERGING USERS')
 	# merge user field info
-	if current_user.display_name == 'Temp Visitor':
+	if current_user.display_name == 'Temp Line Friend':
 		current_user.display_name = merge_user.display_name
 	if merge_user.line_id:
 		current_user.line_id = merge_user.line_id
