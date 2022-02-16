@@ -104,7 +104,7 @@ def add_line_friend(line_id):
 		#user.groups.add(Group.objects.get(name='Temp Line Friend').id)  # temp line friend
 		#user.save()
 		#print('ADDED NEW TEMP LINE FRIEND')
-		result = 'Thank you for following! Your line account isn\'t connected to the site though. Please go to the site in order to get line messages / notifications about events. https://www.eventhorizon.vip'
+		result = 'Thank you for following! Your Line account isn\'t connected to the site though. Please go to the site and register with Line in order to get Line messages / notifications about events. https://www.eventhorizon.vip'
 	return result
 
 
