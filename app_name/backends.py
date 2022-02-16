@@ -9,68 +9,63 @@ from django.contrib.auth.models import Group
 class UserBackend(BaseAuthentication):
 	UserModel = get_user_model()
 	def authenticate(self, request):
+		print('***AUTHENTICATION START***')
+		print(request.data)
 		#return self.UserModel.objects.filter(email='mdsimeone@gmail.com').first()  # FOR EMERGENCY LOGIN
-		if ('email' in request.data and 'password' in request.data and request.data['email'] != '' and
-				request.data['password'] != ''):  # email
+		if 'email' in request.data:
 			try:
+				print('email')
 				user = self.UserModel.objects.get(email=request.data['email'])
 				if user.check_password(request.data['password']):
 					return user
 				else:
+					print('password fail')
 					user = namedtuple('user', 'error')
 					user.error = 'Incorrect password'
 					return user
 			except self.UserModel.DoesNotExist:
+				print('DoesNotExist fail')
 				user = namedtuple('user', 'error')
-				user.error = 'This email is not registered'
-				return user
-			except self.UserModel.MultipleObjectsReturned:
-				user = self.UserModel.objects.filter(email=request.data['email'])[1]
-				user.delete()
-				user = namedtuple('user', 'error')
-				user.error = 'there were multiple users, deleted one'
+				user.error = 'DoesNotExist'
 				return user
 			except BaseException as error:
+				print('BaseException fail')
 				user = namedtuple('user', 'error')
 				user.error = error
 				return user
-		elif 'line_id' in request.data and request.data['line_id'] != '':  # new line
+		if 'line_id' in request.data:
 			try:
+				print('line')
 				user = self.UserModel.objects.get(line_id=request.data['line_id'])
 				return user
 			except self.UserModel.DoesNotExist:
+				print('DoesNotExist fail')
 				user = namedtuple('user', 'error')
-				user.error = 'this line_id is not registered'
+				user.error = 'DoesNotExist'
 				return user
-		elif 'random_secret' in request.data and request.data['random_secret'] != '':  # random_secret
+		if request.session.session_key:
 			try:
-				user = self.UserModel.objects.get(random_secret=request.data['random_secret'])
-				if user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists():
-					return user  # confirmed visitor, so return user and login
-				else:
-					user = namedtuple('user', 'error')
-					user.error = 'only visitors can log in using random secret'
-					return user
-			except self.UserModel.DoesNotExist:
-				user = namedtuple('user', 'error')
-				user.error = 'this random_secret is not registered'
-				return user
-		elif request.session.session_key:  # when loggin in from session
-			session = Session.objects.get(pk=request.session.session_key)
-			user_id = session.get_decoded()['_auth_user_id']
-			try:
+				print('session')
+				session = Session.objects.get(pk=request.session.session_key)
+				user_id = session.get_decoded()['_auth_user_id']
 				user = self.UserModel.objects.get(pk=int(user_id))
 				if user.line_id != '':  # if user has a line id, verify and refresh it
-					user = verify_update_line_info(request, user)  # if refresh fails it won't login by session
+					result = verify_update_line_info(user)  # if refresh fails it won't login by session
+					if hasattr(result, 'error'):
+						user = namedtuple('user', 'error')
+						user.error = 'line couldn\'t be verified'
+						return user
 				return user
 			except self.UserModel.DoesNotExist:
+				print('DoesNotExist fail')
 				user = namedtuple('user', 'error')
-				user.error = 'this session\'s user_id is not registered (fake session)'
+				user.error = 'DoesNotExist'
 				return user
-		else:  # missing email / password / line id / random secret / session info
-			user = namedtuple('user', 'error')
-			user.error = 'missing email / password / line id / random secret / session info'
-			return user
+		# missing email / password / line id / random secret / session info
+		print('no possible login fail')
+		user = namedtuple('user', 'error')
+		user.error = 'missing email / password / line id / random secret / session info'
+		return user
 
 	def get_user(self, user_id):
 		try:
