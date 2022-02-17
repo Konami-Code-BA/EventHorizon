@@ -219,7 +219,13 @@ export default {
         }
         if (argKeys.length > 0) {
             for (let i = 0; i < argKeys.length; i++) {
-                if (['code', 'friendship_status_changed', 'state'].includes(argKeys[i])) {
+                if ([
+                        'code',
+                        'friendship_status_changed',
+                        'state',
+                        'liffClientId',
+                        'liffRedirectUri',
+                    ].includes(argKeys[i])) {
                     continue
                 }
                 if (encode) {
