@@ -241,6 +241,7 @@
 		height: 15px;
 		width: 20px;
 		z-index: 1;
+		flex-shrink: 0;
 	}
 	.filters {
 		display: flex;

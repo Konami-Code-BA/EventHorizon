@@ -268,7 +268,7 @@
 					v-show="showEventStatus">
 				<div style="display: flex; flex-direciton: row; justify-content: center; align-items: center;
 						width: 100%;">
-					<div style="width: 35px;"/>
+					<div style="width: 35px; flex-shrink: 0"/>
 					<div style="display: flex; flex-direction: column; align-items: center; width: calc(100% - 70px);">
 						<div class="dual-set" v-if="myAttendingStatus['invited']"
 								style="border-bottom: 2px solid rgba(255, 255, 255, .3); width: 80%;
@@ -277,7 +277,7 @@
 							<input type="checkbox" class="checkbox" checked="checked" onclick="return false;"/>
 						</div>
 						<!--if invited, can click maybe / attending / decline-->
-						<div v-if="myAttendingStatus['invited']" style="width: 70%">
+						<div v-if="myAttendingStatus['invited']" style="width: 100%">
 							<div>
 								<div class="dual-set">
 									<button class="button"
@@ -316,7 +316,7 @@
 							</div>
 						</div>
 						<!--if public and not invited, can click maybe / attending-->
-						<div style="width: 70%;" v-if="!myAttendingStatus['invited'] && !event.is_private">
+						<div style="width: 100%;" v-if="!myAttendingStatus['invited'] && !event.is_private">
 							<div>
 								<div class="dual-set">
 									<button class="button"
@@ -346,7 +346,7 @@
 							</div>
 						</div>
 						<!--if private and not invited, can click invite request-->
-						<div style="width: 70%;" v-if="!myAttendingStatus['invited'] && event.is_private">
+						<div style="width: 100%;" v-if="!myAttendingStatus['invited'] && event.is_private">
 							<div>
 								<div class="dual-set">
 									<button class="button"
@@ -358,7 +358,7 @@
 							</div>
 						</div>
 						<div v-if="(myAttendingStatus['invited'] || myAttendingStatus['invite_request'])"
-								style="width: 70%;">
+								style="width: 100%;">
 							<button class="button" v-on:click.prevent="plusOneButton()">
 								<div v-if="!plusOneStatus" style="width: 100%; text-align: center;">
 									{{ t('ADD A PLUS ONE') }}
@@ -371,7 +371,7 @@
 							</button>
 						</div>
 					</div>
-					<div style="width: 35px; align-self: flex-start; margin-top: 3px;">
+					<div style="width: 35px; align-self: flex-start; margin-top: 3px; flex-shrink: 0;">
 						<button style="background: none; border: none"
 								v-on:click.prevent="showInformation = 'attendingStatus'">
 							<img src="@/assets/iIcon.png" class="icon" style="padding: 3px;" id="events-info"/>
@@ -737,11 +737,13 @@
 		align-items: center;
 		justify-content: center;
 		padding: 0;
+		width: 100%;
 	}
 	.checkbox {
 		height: 20px;
 		width: 20px;
 		z-index: 1;
+		flex-shrink: 0;
 	}
 	.button {
 		width: 100%;
