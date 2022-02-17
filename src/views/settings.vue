@@ -257,6 +257,7 @@
 	.checkbox {
 		height: 20px;
 		width: 20px;
+		flex-shrink: 0;
 	}
 	.checkboxdiv {
 		vertical-align: middle; 
