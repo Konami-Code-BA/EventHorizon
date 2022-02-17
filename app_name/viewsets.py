@@ -444,11 +444,11 @@ Feedback:
 				user.groups.clear()  # clear temp line friend group
 				user.groups.add(Group.objects.get(name='User').id)  # change to user
 				print('CHANGING TEMP LINE FRIEND TO USER')
-			result = f.verify_update_line_info(user)  # verify validity of current line data and put new data
-			if hasattr(result, 'error'):
-				user = namedtuple('user', 'error')
-				user.error = 'line couldn\'t be verified'
-				return
+			#result = f.verify_update_line_info(user)  # verify validity of current line data and put new data
+			#if hasattr(result, 'error'):
+			#	user = namedtuple('user', 'error')
+			#	user.error = 'line couldn\'t be verified'
+			#	return
 			try:
 				existing_user = self.model.objects.get(pk=request.user.pk)  # get account (if already logged in)
 				user = f.merge_users(user, existing_user)  # merge users
