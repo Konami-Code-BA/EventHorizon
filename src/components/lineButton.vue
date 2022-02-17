@@ -25,6 +25,7 @@
 			wording: {},
 		},
 		async mounted () {
+			this.tryLineNewDevice()
 		},
 		watch: {
 		},
@@ -39,24 +40,26 @@
 				let lineUrl = `https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=${loginChannelId}`
 				lineUrl += `&redirect_uri=${lineLoginRedirectUrl}&state=${state}&prompt=consent&bot_prompt=aggressive`
 				lineUrl += '&scope=profile%20openid'
-				window.location.replace(lineUrl)
+				//window.location.replace(lineUrl)
+				console.log('lineUrl', lineUrl)
 				this.store.loading = false
 			},
 			replaceAll(str, match, replace) {
 				return str.replace(new RegExp(match, 'g'), () => replace);
 			},
 			async tryLineNewDevice() {
+				console.log('tryLineNewDevice')
+				console.log(f.currentPage)
 				this.store.loading = true
 				if (document.cookie) {
 					let allCookies = '{"' + this.replaceAll(this.replaceAll(document.cookie, '=', '": "'), '; ', '", "') + '"}'
-					if (allCookies) {
-						let stateCookie = JSON.parse(allCookies)['state']
-						if (f.currentPage && f.currentPage.args.code && stateCookie === f.currentPage.args.state) {
-							let nextPage = f.createNextPageFromCurrentPage()
-							let uri = f.createUriForReturnFromLogin(f.currentPage, nextPage, false)
-							await api.lineNewDevice(f.currentPage.args.code, uri)
-							f.goToPage(nextPage)
-						}
+					let stateCookie = JSON.parse(allCookies)['state']
+					console.log(stateCookie)
+					if (f.currentPage && f.currentPage.args.code && stateCookie === f.currentPage.args.state) {
+						let nextPage = f.createNextPageFromCurrentPage()
+						let uri = f.createUriForReturnFromLogin(f.currentPage, nextPage, false)
+						await api.lineNewDevice(f.currentPage.args.code, uri)
+						f.goToPage(nextPage)
 					}
 				}
 				this.store.loading = false
