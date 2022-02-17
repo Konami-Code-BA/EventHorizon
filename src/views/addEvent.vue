@@ -232,5 +232,6 @@
 		height: 20px;
 		width: 20px;
 		transform: translate(90px, 0);
+		flex-shrink: 0;
 	}
 </style>
