@@ -1,62 +1,8 @@
 <template>
 	<div>
 		<div class="main" style="padding-top: 5px;">
-			<div class="viewer filters" style="display: flex; flex-direction: column; align-items: center;
-					width: 100%; min-height: 105px; height: 105px;"><!--remove filters from class and check mac is ok-->
-				<div style="border-bottom: 2px solid rgba(255, 255, 255, .3); width: 100%; display: flex;
-						flex-direction: row; align-items: center; justify-content: center; padding: 5px; position:relative;">
-					<div>
-						{{ t('SELECT WHAT EVENTS TO DISPLAY') }}
-					</div>
-					<div style="right: 0; position: absolute;">
-						<button style="background: none; border: none"
-								v-on:click.prevent="showInformation = 'peopleFilters'">
-							<img src="@/assets/iIcon.png" class="icon" style="padding: 3px;" id="people-info"/>
-						</button>
-					</div>
-				</div>
-				<div style="display: flex; flex-direction: column; align-items: flex-start; width: 100%;
-						padding-top: 5px; padding-bottom: 5px; position: relative;">
-					<div class="filters">
-						<input type="checkbox" class="checkbox" v-model="filters['all']"
-								@click="filterChange('all')"/>
-						<button class="button filter-button" :class="{ selected : filters['all']}"
-								v-on:click.prevent="filters['all']=!filters['all']; filterChange('all')">
-							{{ t('ALL') }}
-						</button>
-					</div>
-					<div class="filters">
-						<input type="checkbox" class="checkbox" v-model="filters['mine']"
-								@click="filterChange('mine')"/>
-						<button class="button filter-button" :class="{ selected : filters['mine']}"
-								v-on:click.prevent="filters['mine']=!filters['mine']; filterChange('mine')">
-								{{ t('MINE') }}
-						</button>
-					</div>
-					<div class="filters">
-						<input type="checkbox" class="checkbox" v-model="filters['allPeople']"
-								@click="filterChange('allPeople')"/>
-						<button class="button filter-button" :class="{ selected : filters['allPeople']}" disabled
-								v-on:click.prevent="filters['allPeople']=!filters['allPeople'];
-								filterChange('allPeople')">
-							<div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center; width: 100%;">
-								<div>
-									{{ t('PEOPLE I FOLLOW') }}
-								</div>
-								<div>
-									<small>({{ t('COMING SOON') }})</small>
-								</div>
-							</div>
-						</button>
-					</div>
-				</div>
-			</div>
-			<div class="tabsdiv" style="width: 100%; display: flex; flex-direction: column;">
-				<!--div style="position: fixed; margin-top: 15px; right: 2px; z-index: 10;">
-					<button class="button" v-on:click.prevent="hideTop = !hideTop" style="border: 2px solid rgba(140, 128, 151, 0.6); border-radius: 7px; width: 25px; height: 25px; padding: 0; background-color: #18002e; padding-bottom: 1px;">
-						<img src="@/assets/fullScreen.png" class="icon" style="width: 80%; height: 80%"/>
-					</button>
-				</div-->
+			<div class="tabsdiv" style="width: 100%; display: flex; flex-direction: column;
+					border-top-left-radius: 7px; border-top-right-radius: 7px;">
 				<div style="display: flex; flex-direction: row; align-items: center; justify-content: center; padding: 5px; position:relative;">
 					<div>
 						{{ t('EVENTS') }}
@@ -88,8 +34,28 @@
 					:key="createComponentKey('list')"/>
 			<events-calendar class="viewer events" v-show="selectedTab==3"
 					:key="createComponentKey('cal')"/>
+			<div class="tabsdiv" style="width: 100%; display: flex; flex-direction: column;
+					border-bottom-left-radius: 7px; border-bottom-right-radius: 7px; margin-bottom: 5px;">
+				<tabs :num-tabs="3" :initial="1" @on-click="(arg) => { filterChange(arg) }" ref="filterTabs"
+						style="border-left: none; border-right: none; border-bottom: none; height: auto !important;
+						border-top: none;">
+					<div slot="1" class="tab">
+						<img src="@/assets/globeIcon.png" class="icon" style="vertical-align: bottom;"/>
+					</div>
+					<div slot="2" class="tab">
+						<img src="@/assets/profileIcon.png" class="icon" style="vertical-align: bottom;"
+								v-if="isAuthenticatedUser"/>
+						<img src="@/assets/greyProfileIcon.png" class="icon" style="vertical-align: bottom;"
+								v-else/>
+					</div>
+					<div slot="3" class="tab">
+						<img src="@/assets/greyPeopleIcon.png" class="icon" style="vertical-align: bottom;"/>
+					</div>
+				</tabs>
+			</div>
 		</div>
 		<information v-if="showInformation" :closeInfo="() => {showInformation=null}" :whichInfo="showInformation"/>
+    	<flash-modal :text="t('COMING SOON')" ref="flashComingSoon" :time="1500"/>
 	</div>
 </template>
 <script>
@@ -102,6 +68,7 @@
 	import translations from '@/functions/translations.js'
 	import api from '@/functions/apiFunctions.js'
 	import f from '@/functions/functions.js'
+	import flashModal from '@/components/flashModal.vue'
 	export default {
 		name: 'home',
 		components: {
@@ -110,13 +77,13 @@
 			eventsMap,
 			eventsCalendar,
 			eventsList,
+			flashModal,
 		},
 		data () {
 			return {
 				store: store,
 				selectedTab: 1,
 				hideTop: false,
-				filters: {'all': true, 'mine': false, 'allPeople': false},
 				showPeopleInfo: false,
 				showInformation: null,
 			}
@@ -152,40 +119,20 @@
 				let key = JSON.stringify(this.store.events.display) + JSON.stringify(this.store.events.selected) + letters
 				return key
 			},
-			doFiltering () {
-				this.store.events.display = []
-				let keys = Object.keys(this.filters)
-				for (let i = 0; i < keys.length; i++) {
-					if (this.filters[keys[i]]) {  // if this filter is true
-						this.store.events.display = this.store.events.display.concat(this.store.events[keys[i]])
-					}
+			async filterChange (selectedFilter) {
+				if (!this.isAuthenticatedUser && selectedFilter === 2) {
+					this.$refs.filterTabs.selected = 1
+					f.goToPage({ page: 'loginRegister', args: {} })
+					return
+				} else if (selectedFilter === 3) {
+					this.$refs.filterTabs.selected = 1
+					await this.$refs.flashComingSoon.flashModal()
+					return
 				}
+				this.store.events.display = this.store.events[
+					{ 1: 'all', 2: 'mine', 3: 'allPeople' }[selectedFilter]
+				]
 				window.initMap()
-			},
-			filterChange (changed) {
-				let keys = Object.keys(this.filters)
-				if (changed === 'all') {  // if it was 'all' that changed
-					if (this.filters[changed]) {  // if selected, deselect all others
-						for (let i = 0; i < keys.length; i++) {
-							if (keys[i] != changed) {
-								this.filters[keys[i]] = false
-							}
-						}
-					} else {  // if deselected, 'all' can only be deselected if its the only one selected, so
-						this.filters['none'] = true  // make 'none' true
-					}
-				} else {  // if it was some other filter selection that changed
-					if (this.filters[changed]) {  // if selected
-						if (this.filters['all']) {  // deselect 'all' filter, if it is selected
-							this.filters['all'] = false
-						}
-					} else {  // if deselected
-						if (!Object.values(this.filters).includes(true)) {  // if no other filter is selected
-							this.filters['none'] = true  // make 'none' true
-						} // otherwise do nothing special, the changed filter has already been changed
-					}
-				}
-				this.doFiltering()
 			},
 		} // methods
 	} // export
@@ -193,8 +140,6 @@
 <style scoped>
 	.tabsdiv {
 		background-color: rgba(0, 0, 0, .2);
-		border-top-left-radius: 7px;
-		border-top-right-radius: 7px;
 		border: 2px solid rgba(255, 255, 255, .3);
 	}
 	.tabs {
@@ -207,8 +152,8 @@
 	}
 	.events {
 		border-top: none;
-		border-top-left-radius: 0;
-		border-top-right-radius: 0;
+		border-bottom: none;
+		border-radius: 0;
 	}
 	.selected {
 		background-color: rgba(255, 255, 255, .2);  /*140,128,151,0.6 after combinging with #18002e*/

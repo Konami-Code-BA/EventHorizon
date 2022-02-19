@@ -47,19 +47,13 @@
 				return str.replace(new RegExp(match, 'g'), () => replace);
 			},
 			async tryLineNewDevice() {
-				console.log('tryLineNewDevice')
-				console.log('f.currentPage', f.currentPage)
 				this.store.loading = true
 				if (document.cookie) {
 					let allCookies = '{"' + this.replaceAll(this.replaceAll(document.cookie, '=', '": "'), '; ', '", "') + '"}'
 					let stateCookie = JSON.parse(allCookies)['state']
-					console.log('stateCookie', stateCookie)
 					if (f.currentPage && f.currentPage.args.code && stateCookie === f.currentPage.args.state) {
 						let nextPage = f.createNextPageFromCurrentPage()
 						let uri = f.createUriForReturnFromLogin(f.currentPage, nextPage, false)
-						console.log('f.currentPage.args.code', f.currentPage.args.code)
-						console.log('uri', uri)
-						console.log('nextPage', nextPage)
 						await api.lineNewDevice(f.currentPage.args.code, uri)
 						f.goToPage(nextPage)
 					}

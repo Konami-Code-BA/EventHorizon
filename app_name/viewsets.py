@@ -399,8 +399,7 @@ Feedback:
 				user.password = make_password(request.data['password'])
 				user.do_get_emails = True
 				user.do_get_line_display_name = False
-				user.is_superuser = False
-				user.is_staff = False
+				user.personal_code=secrets.token_urlsafe(16),
 				user.save()
 				request.user = user
 				user = f.authenticate_login(request)  # login user
@@ -481,6 +480,7 @@ Feedback:
 				user.line_refresh_token = getAccessToken_response['refresh_token']
 				user.do_get_line_display_name = True
 				user.do_get_lines = True
+				user.personal_code=secrets.token_urlsafe(16),
 				user.save()
 				print('SAVED NEW LINE USER')
 				request.user = user
@@ -528,7 +528,7 @@ Feedback:
 			email_from = settings.EMAIL_HOST_USER
 			recipient_list = [request.data['email'],]
 			send_mail(subject, message, email_from, recipient_list, fail_silently=False)
-			user = self.model.objects.get(pk=request.user.pk)
+			user = request.user.pk
 		except self.model.DoesNotExist:
 			user = namedtuple('user', 'error')
 			user.error = 'This email is not registered'
@@ -731,6 +731,7 @@ class EventViewset(viewsets.ViewSet):
 				date_time=request.data['date_time'],
 				include_time=request.data['include_time'],
 				is_private=request.data['is_private'],
+				invite_code=secrets.token_urlsafe(16),
 			)
 			event.save()
 			event.hosts.add(request.user.id)

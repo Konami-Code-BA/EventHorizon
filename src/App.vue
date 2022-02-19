@@ -312,7 +312,6 @@
 	.viewer {
 		width: 100%;
 		height: 100%;
-		margin-bottom: 5px;
 		border: 2px solid rgba(255, 255, 255, .3);
 		border-bottom-left-radius: 7px;
 		border-bottom-right-radius: 7px;
