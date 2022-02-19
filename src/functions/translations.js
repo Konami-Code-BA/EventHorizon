@@ -826,6 +826,14 @@ export default {
             'EN': 'plusone, +',
             'JP': ''
         },
+        'SENT!': {
+            'EN': 'SENT!',
+            'JP': '送りました！'
+        },
+        'CAN\'T CHANGE PAST EVENTS': {
+            'EN': 'CAN\'T CHANGE PAST EVENTS',
+            'JP': '過去の出来事は変えられません'
+        },
     },
 
     t: function(w) {
