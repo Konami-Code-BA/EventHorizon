@@ -471,9 +471,9 @@
 		</modal>
 		<information v-if="showInformation" :closeInfo="() => {showInformation=null}" :whichInfo="showInformation"/>
 		<flash-modal :text="t('DONE!')" ref="flashDone" :time="1500"/>
-		<flash-modal :text="'CAN\'T CHANGE PAST EVENTS'" ref="flashCantChangePastEvents" :time="1500"/>
-    	<flash-modal :text="'Copied!'" ref="flashCoppied" :time="1500"/>
-		<flash-modal :text="'SENT!'" ref="flashSent" :time="1500"/>
+		<flash-modal :text="t('CAN\'T CHANGE PAST EVENTS')" ref="flashCantChangePastEvents" :time="1500"/>
+    	<flash-modal :text="t('COPIED!')" ref="flashCoppied" :time="1500"/>
+		<flash-modal :text="t('SENT!')" ref="flashSent" :time="1500"/>
 	</div>
 </template>
 <script>
