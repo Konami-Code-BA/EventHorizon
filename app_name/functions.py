@@ -16,44 +16,6 @@ def is_admin_or_this_user(request, pk):  # is admin, or is a user that matches t
 	return is_admin(request) or int(pk) == request.user.pk
 
 
-# this doesnt work anymore, also im not sure how necessary it is. keeping it for now tho in case i want it later
-#def get_return_queryset(self, request, pk=None):
-#	if hasattr(request.user, 'error'):  # not a user, just an error
-#		queryset = [request.user]
-#	elif request.user.is_authenticated:  # is an authenticated user
-#		if pk:  # trying to access one user
-#			checker = is_admin_or_this_user(request, pk)  # check if is admin or is this user
-#		else:  # trying to access all users
-#			checker = is_admin(request)  # check if is admin
-#		objects = self.serializer_class.Meta.model.objects
-#		if checker:  # if accessing one user: is admin or is this user. if accessing all users, is admin
-#			if pk:  # trying to access one user
-#				try:
-#					queryset = [objects.get(pk=pk)]  # get the user
-#				except self.serializer_class.Meta.model.DoesNotExist:
-#					user = namedtuple('user', 'error')
-#					user.error = 'a user with this id could not be found'
-#					queryset = [user]
-#			else:  # trying to access all users
-#				queryset = objects.all()  # get all users
-#		else:  # is some user
-#			if pk:  # trying to access one other user
-#				user = namedtuple('user', 'error')
-#				user.error = 'you don\'t have permission to access other users'
-#				queryset = [user]
-#			else:  # trying to access all users
-#				queryset = [request.user]  # get only himself
-#	else:  # unauthenticated user
-#		user = namedtuple('user', 'error')
-#		user.error = 'you are not an authenticated user'
-#		queryset = [user]
-#	if hasattr(queryset[0], 'error'):
-#		serializer_data = [OrderedDict([('error', queryset[0].error)])]
-#	else:
-#		serializer_data = self.serializer_class(queryset, many=True).data
-#	return Response(serializer_data)
-
-
 def line_bot(line_body):
 	replyToken, reply, received = None, None, None
 	if len(line_body['events']) > 0:
@@ -155,30 +117,6 @@ def verify_update_line_info(user):  # user: existing user with line id & access 
 		return user  # client id can't be confirmed
 	#request.data['line_id'] = user.line_id
 	#user = authenticate_login(request)  # login again just in case, and to get new location info
-	return user
-
-
-def new_visitor(request):
-	from app_name.viewsets import UserViewset, SecretsViewset
-	for i in range(1000):
-		random_secret = secrets.token_urlsafe(16)
-		try:
-			user = UserViewset.model.objects.get(random_secret=random_secret)
-		except UserViewset.model.MultipleObjectsReturned:
-			pass
-		except UserViewset.model.DoesNotExist:
-			break
-	user = UserViewset.model.objects.create_user(
-		random_secret = random_secret,
-		display_name = 'Temp Visitor',
-	)
-	user.save()
-	group = Group.objects.get(id=3)
-	group.user_set.add(user)
-	alert = Alert.objects.get(name='Show Cookies')
-	alert.user_set.add(user)
-	request.data['random_secret'] = user.random_secret
-	auth.login(request, user)
 	return user
 
 
