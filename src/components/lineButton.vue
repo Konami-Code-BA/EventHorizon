@@ -51,6 +51,7 @@
 				if (document.cookie) {
 					let allCookies = '{"' + this.replaceAll(this.replaceAll(document.cookie, '=', '": "'), '; ', '", "') + '"}'
 					let stateCookie = JSON.parse(allCookies)['state']
+					document.cookie = `state='';`
 					if (f.currentPage && f.currentPage.args.code && stateCookie === f.currentPage.args.state) {
 						let nextPage = f.createNextPageFromCurrentPage()
 						let uri = f.createUriForReturnFromLogin(f.currentPage, nextPage, false)
