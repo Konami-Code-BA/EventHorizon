@@ -184,7 +184,7 @@
 				}
 			},
 			dayStyling (week, day) {
-				let style = {  // changed this after mac fix. check this is still ok
+				let style = {
 					'display': 'flex',
 					'flex-diretion': 'column',
 					'justify-content': 'center',
@@ -197,7 +197,7 @@
 				let dayDate = date.getDate()
 				if (date.toString().split(' ').slice(0, 4).toString() === f.today.toString().split(' ').slice(0, 4).toString()) {
 					style['border-radius'] = '4px'
-					style['border'] = '2px solid #cae2ff'
+					style['outline'] = '2px solid #cae2ff'
 					style['background-color'] = 'none'
 				}
 				if ((
