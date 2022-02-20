@@ -194,6 +194,8 @@ class UserViewset(viewsets.ModelViewSet):
 		self.queryset = [user]
 		if hasattr(self.queryset[0], 'error'):
 			serializer_data = [OrderedDict([('error', self.queryset[0].error)])]
+		elif hasattr(self.queryset[0], 'success'):
+			serializer_data = [OrderedDict([('success', self.queryset[0].success)])]
 		elif type(user) != self.model:
 			serializer_data = user
 		else:
@@ -528,7 +530,7 @@ Feedback:
 			email_from = settings.EMAIL_HOST_USER
 			recipient_list = [request.data['email'],]
 			send_mail(subject, message, email_from, recipient_list, fail_silently=False)
-			user = request.user.pk
+			user = [OrderedDict([('success', 'success')])]
 		except self.model.DoesNotExist:
 			user = namedtuple('user', 'error')
 			user.error = 'This email is not registered'
