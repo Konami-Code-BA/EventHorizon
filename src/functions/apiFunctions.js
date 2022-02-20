@@ -20,13 +20,14 @@ export default {
         }
         return await this.axiosCall[method](this.baseUrl + uri, data)
             .then(response => {
+                console.log('HERE', response.data)
                 if (data.command === 'logout') {
                     console.log(`success - userApi ${data.command}`)
                     store.user = store.defaultUser
                     return store.user
                 } else if ([
                         'login', 'register_with_email', 'register_email', 'update_user_do_get_lines',
-                        'update_user_do_get_emails', 'update_user_language', 'line_new_device', 'forgot_password',
+                        'update_user_do_get_emails', 'update_user_language', 'line_new_device',
                         'change_password', 'update_user_display_name',
                     ].includes(data.command) && !('error' in response.data[0])) {
                     console.log(`success - userApi ${data.command}`)
