@@ -191,8 +191,8 @@
 				f.shakeFunction([this.$refs.passwordInput, this.$refs.emailInput])
 			},
 			async changePassword () {
-				this.$refs.passwordInput.hasErrors()
-				this.$refs.passwordInput.hasErrors2()
+				this.$refs.passwordInput1.hasErrors()
+				this.$refs.passwordInput1.hasErrors2()
 				this.$refs.passwordInput2.hasErrors()
 				if (
 					this.$refs.passwordInput1.error.length > 0
