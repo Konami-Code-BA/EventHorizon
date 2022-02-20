@@ -449,7 +449,7 @@ Feedback:
 			#	user.error = 'line couldn\'t be verified'
 			#	return
 			try:
-				existing_user = self.model.objects.get(pk=request.user.pk)  # get account (if already logged in)
+				existing_user = request.user
 				user = f.merge_users(user, existing_user)  # merge users
 			except self.model.DoesNotExist:
 				1
@@ -458,7 +458,7 @@ Feedback:
 			user = f.authenticate_login(request)  # login user
 		except self.model.DoesNotExist:  # if there was no user with this line id
 			try:
-				user = self.model.objects.get(pk=request.user.pk)  # get account (if already logged in)
+				user = self.model.objects.get(pk=request.user.pk)
 				user.line_id = profile_response['userId']
 				user.line_access_token = getAccessToken_response['access_token']
 				user.line_refresh_token = getAccessToken_response['refresh_token']
@@ -501,7 +501,7 @@ Feedback:
 
 	def logout(self, request):  # SECURITY: anyone is allowed to logout
 		try:
-			user = self.model.objects.get(pk=request.user.pk)
+			user = request.user
 			auth.logout(request)
 		except self.model.DoesNotExist:
 			user = namedtuple('user', 'error')
@@ -535,7 +535,6 @@ Feedback:
 		return user
 
 	def change_password(self, request):  # could this be in patch with the other change stuff?
-		current_user = self.model.objects.get(pk=request.user.pk)
 		user = self.model.objects.get(email=request.data['email'])
 		if ((  # SECURITY: either they forgot password and code matches the one they have
 			'code' in request.data and user.random_secret == request.data['code']
