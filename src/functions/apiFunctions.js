@@ -20,7 +20,6 @@ export default {
         }
         return await this.axiosCall[method](this.baseUrl + uri, data)
             .then(response => {
-                console.log('HERE', response.data)
                 if (data.command === 'logout') {
                     console.log(`success - userApi ${data.command}`)
                     store.user = store.defaultUser
