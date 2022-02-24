@@ -1,3 +1,4 @@
+
 <template>
 	<div>
 		<div class="main" id="page">
@@ -13,6 +14,7 @@
 			<button v-on:click.prevent="sendEmail()">sendEmail</button>
 			<!--button v-on:click.prevent="makeImage()">makeImage</button-->    <!--for makeImage()-->
 			<!--img :src="imageone"/-->    <!--for makeImage()-->
+			<button v-on:click.prevent="fbLogin()">fbLogin</button>
 		</div>
 	</div>
 </template>
@@ -36,6 +38,17 @@
 			}
 		},
 		async mounted () {
+			let js = document.createElement('script')
+			js.id = 'facebook-jssdk'
+			js.src = 'https://connect.facebook.net/en_US/sdk.js'
+			await document.head.appendChild(js)
+			window.fbAsyncInit = async () => {
+				await window.FB.init({
+					appId: '467874544824216', //You will need to change this
+					cookie: false, // This is important, it's not enabled by default
+					version: 'v13.0'
+				})
+			}
 		},
 		methods: {
 			t (w) { return translations.t(w) },
@@ -96,6 +109,26 @@
 			async sendEmail() {
 				await api.sendEmail()
 			},
+			async fbLogin () {
+				window.FB.getLoginStatus(response => {
+					if (response.status === 'connected') {
+						console.log('ALREADY LOGGED IN')
+					} else {
+						console.log('LOGGING IN')
+						FB.login(response => {
+							if (response.authResponse) {
+								console.log('LOGIN SUCCESS')
+								console.log(response)
+								console.log(document.cookie)
+								// Now you can redirect the user or do an AJAX request to
+								// a PHP script that grabs the signed request from the cookie.
+							} else {
+								console.log('LOGIN FAILED')
+							}
+						})
+					}
+				})
+			}
 		} // methods
 	} // export
 </script>
