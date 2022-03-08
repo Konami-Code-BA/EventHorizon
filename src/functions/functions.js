@@ -327,7 +327,7 @@ export default {
         myAttendingStatus['maybe'] = this.checkPeopleList(people, 'maybe')
         myAttendingStatus['wait_list'] = this.checkPeopleList(people, 'wait_list')
         myAttendingStatus['invite_request'] = this.checkPeopleList(people, 'invite_request')
-
+        console.log('people', people, 'myAttendingStatus', myAttendingStatus)
         return { people: people, myAttendingStatus: myAttendingStatus }
     }
 }
