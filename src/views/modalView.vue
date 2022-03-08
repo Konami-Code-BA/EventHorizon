@@ -18,9 +18,9 @@
 				:key="page + 'aboutUs'"/>
 		<faq v-show="page === 'faq'"
 				:key="page + 'faq' + store.user.language"/>
-		<experiment1 v-show="page === 'experiment1'"
+		<experiment1 v-show="page === 'experiment1' && store.user.is_superuser"
 				:key="page + 'experiment1'"/>
-		<experiment2 v-show="page === 'experiment2'"
+		<experiment2 v-show="page === 'experiment2' && store.user.is_superuser"
 				:key="page + 'experiment2'"/>
 		<!-- COMMENT THIS OUT BEFORE PUSHING TO PRODUCTION -->
 	</div>
