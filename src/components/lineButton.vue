@@ -25,7 +25,6 @@
 			wording: {},
 		},
 		async mounted () {
-			this.tryLineNewDevice()
 		},
 		watch: {
 		},
