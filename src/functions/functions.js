@@ -275,15 +275,17 @@ export default {
         }
     },
     checkPeopleList(people, guestStatus) {
-        let me = {
-            id: store.user.id,
-            display_name: store.user.display_name,
-            limited_user: true,
-            plus_one: false,
-        }
-        for (let i = 0; i < people[guestStatus].length; i++) {
-            if (JSON.stringify(people[guestStatus][i]) === JSON.stringify(me)) {
-                return true
+        if (this.isAuthenticatedUser) {
+            let me = {
+                id: store.user.id,
+                display_name: store.user.display_name,
+                limited_user: true,
+                plus_one: false,
+            }
+            for (let i = 0; i < people[guestStatus].length; i++) {
+                if (JSON.stringify(people[guestStatus][i]) === JSON.stringify(me)) {
+                    return true
+                }
             }
         }
         return false
@@ -320,14 +322,14 @@ export default {
                 x => { return x.id }
             ).includes(person.id)) && this.isAuthenticatedUser
         })
-
-        myAttendingStatus['hosts'] = this.checkPeopleList(people, 'hosts')
-        myAttendingStatus['invited'] = this.checkPeopleList(people, 'invited')
-        myAttendingStatus['attending'] = this.checkPeopleList(people, 'attending')
-        myAttendingStatus['maybe'] = this.checkPeopleList(people, 'maybe')
-        myAttendingStatus['wait_list'] = this.checkPeopleList(people, 'wait_list')
-        myAttendingStatus['invite_request'] = this.checkPeopleList(people, 'invite_request')
-        console.log('people', people, 'myAttendingStatus', myAttendingStatus)
+        if (this.isAuthenticatedUser) {
+            myAttendingStatus['hosts'] = this.checkPeopleList(people, 'hosts')
+            myAttendingStatus['invited'] = this.checkPeopleList(people, 'invited')
+            myAttendingStatus['attending'] = this.checkPeopleList(people, 'attending')
+            myAttendingStatus['maybe'] = this.checkPeopleList(people, 'maybe')
+            myAttendingStatus['wait_list'] = this.checkPeopleList(people, 'wait_list')
+            myAttendingStatus['invite_request'] = this.checkPeopleList(people, 'invite_request')
+        }
         return { people: people, myAttendingStatus: myAttendingStatus }
     }
 }
