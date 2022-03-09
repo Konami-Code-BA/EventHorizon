@@ -93,7 +93,11 @@
 				})
 				if (!user.error) {
 					await f.getEvents()
-					f.goToPage(this.store.lastNonLoginRegisterPage)
+					if (this.store.lastNonLoginRegisterPage) {
+						f.goToPage(this.store.lastNonLoginRegisterPage)
+					} else {
+						f.goToPage({ page: 'home', args: {} })
+					}
 					window.initMap()
 					this.store.loading = false
 					return
