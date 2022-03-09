@@ -524,10 +524,10 @@
 				messagePerson: null,
 				messageContent: '',
 				messageAllPeople: false,
-				showPeople: false,
+				showPeople: true,
 				image: require('@/assets/pexels-photo-event4.jpeg'),
-				showDescription: false,
-				showEventStatus: false,
+				showDescription: true,
+				showEventStatus: true,
 				showInformation: null,
 				plusOneModal: false,
 			}
