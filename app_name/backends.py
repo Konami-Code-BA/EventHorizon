@@ -26,7 +26,7 @@ class UserBackend(BaseAuthentication):
 			except self.UserModel.DoesNotExist:
 				print('DoesNotExist fail')
 				user = namedtuple('user', 'error')
-				user.error = 'DoesNotExist'
+				user.error = 'This email is not registered'
 				return user
 			except BaseException as error:
 				print('BaseException fail')

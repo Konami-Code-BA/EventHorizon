@@ -445,16 +445,9 @@ Feedback:
 				user.groups.clear()  # clear temp line friend group
 				user.groups.add(Group.objects.get(name='User').id)  # change to user
 				print('CHANGING TEMP LINE FRIEND TO USER')
-			#result = f.verify_update_line_info(user)  # verify validity of current line data and put new data
-			#if hasattr(result, 'error'):
-			#	user = namedtuple('user', 'error')
-			#	user.error = 'line couldn\'t be verified'
-			#	return
-			try:
+			if not request.user.is_anonymous:
 				existing_user = request.user
 				user = f.merge_users(user, existing_user)  # merge users
-			except self.model.DoesNotExist:
-				1
 			request.user = user
 			request.data['line_id'] = profile_response['userId']
 			user = f.authenticate_login(request)  # login user
