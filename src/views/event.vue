@@ -20,14 +20,14 @@
 				<div v-if="(!event.is_private || myAttendingStatus['invited']) && event.venue_name" class="flex-row"
 						style="justify-content: space-between; flex-direction: column">
 					<p class="event-attr">
-						<strong>{{t('VENUE')}}</strong>
+						<small>{{t('VENUE')}}</small>
 					</p>
 					<p class="address-value" style="margin-bottom: 1em;">
 						{{ event.venue_name }}
 					</p>
 				</div>
-					<small class="event-attr">{{t('ADDRESS')}}</small>
-					<small class="address-value">{{ event.address }}</small>
+				<small class="event-attr">{{t('ADDRESS')}}</small>
+				<small class="address-value">{{ event.address }}</small>
 				<div class="flex-row" style="justify-content: space-between; max-width: 100%;">
 					<button class="button event-page-button" v-on:click.prevent="copyToClipboard()"
 							style="align-self: center; width: auto; flex-shrink: 1; font-size: 14px;">
@@ -39,40 +39,16 @@
             			<small>{{t('OPEN IN GOOGLE MAPS')}}</small>
 					</button>
 				</div>
-				<button v-on:click.prevent="showDescription=!showDescription" class="button event-page-button">
-					<div v-if="!showDescription" class="drop-down-button">
-						<div style="width: 10px;"/>
-						<div>{{ t('SHOW DESCRIPTION') }}</div>
-						<img src="@/assets/downArrowIcon.png" style="width: 10px;"/>
-					</div>
-					<div v-else class="drop-down-button">
-						<div style="width: 10px;"/>
-						<div>{{ t('HIDE DESCRIPTION') }}</div>
-						<img src="@/assets/upArrowIcon.png" style="width: 10px;"/>
-					</div>
-				</button>
-				<div style="align-self: center; overflow-y: scroll; max-height: 100px; height: auto; margin-bottom: 0.7em" v-show="showDescription">
+				<small class="event-attr">{{t('DESCRIPTION')}}</small>
+				<div style="align-self: center; overflow-y: scroll; max-height: 100px; height: auto; margin-bottom: 0.7em; margin-top: 4px;">
 					{{ event.description }}
 				</div>
-				<button v-on:click.prevent="showEventStatus=!showEventStatus" class="button" style="align-self: center">
-						<div v-if="!showEventStatus" class="drop-down-button">
-							<div style="width: 10px;"/>
-							<div v-if="myAttendingStatus['invited']">{{ t('SHOW ATTENDING STATUS') }}</div>
-							<div v-else>{{ t('CLICK TO JOIN') }}</div>
-							<img src="@/assets/downArrowIcon.png" style="width: 10px;"/>
-						</div>
-						<div v-else class="drop-down-button">
-							<div style="width: 10px;"/>
-							<div>{{ t('HIDE ATTENDING STATUS') }}</div>
-							<img src="@/assets/upArrowIcon.png" style="width: 10px;"/>
-						</div>
-				</button>
-				<div v-show="!isSpaceToAttend && showEventStatus" style="color: red; width: 100%; text-align: center;">
+				<small class="event-attr">{{t('ATTENDING STATUS')}}</small>
+				<div v-show="!isSpaceToAttend" style="color: red; width: 100%; text-align: center; margin-bottom: 0.7em; margin-top: 4px;">
 					{{ t('THE EVENT IS FULL') }}
 				</div>
-				<div style="margin-top: 0.7em; width: 100%; display: flex; flex-direction: column; align-items: center;
-						border: 2px solid rgba(255, 255, 255, .3); border-radius: 7px; max-width: 100%; overflow-x: hidden; margin-bottom: 0.7em"
-						v-show="showEventStatus">
+				<div style="width: 100%; display: flex; flex-direction: column; align-items: center;
+						border: 2px solid rgba(255, 255, 255, .3); border-radius: 7px; max-width: 100%; overflow-x: hidden; margin-bottom: 0.7em; margin-top: 4px;">
 					<div style="display: flex; flex-direciton: row; justify-content: center; align-items: center;
 							width: 100%;">
 						<div style="width: 35px; flex-shrink: 0"/>
@@ -186,19 +162,8 @@
 						</div>
 					</div>
 				</div>
-				<button v-on:click.prevent="showPeople=!showPeople" class="button event-page-button" style="align-self: center">
-					<div v-if="!showPeople" class="drop-down-button">
-						<div style="width: 10px;"/>
-						<div>	{{ t('SHOW PEOPLE') }}</div>
-						<img src="@/assets/downArrowIcon.png" style="width: 10px;"/>
-					</div>
-					<div v-else class="drop-down-button">
-						<div style="width: 10px;"/>
-						<div>{{ t('HIDE PEOPLE') }}</div>
-						<img src="@/assets/upArrowIcon.png" style="width: 10px;"/>
-					</div>
-				</button>
-				<div v-show="showPeople" style="margin-bottom: 1em; height: auto;">
+				<small class="event-attr">{{t('PEOPLE')}}</small>
+				<div style="margin-bottom: 1em; height: auto; margin-top: 4px;">
 					<div>
 						<div style="border: 2px solid rgba(255, 255, 255, .3); margin-bottom: 3px; border-radius: 7px;
 								padding: 5px; width: 100%;">
@@ -523,10 +488,7 @@
 				messagePerson: null,
 				messageContent: '',
 				messageAllPeople: false,
-				showPeople: true,
 				image: require('@/assets/pexels-photo-event4.jpeg'),
-				showDescription: true,
-				showEventStatus: true,
 				showInformation: null,
 				plusOneModal: false,
 			}
@@ -779,6 +741,7 @@
 	.address-value {
 		margin: 0 auto;
 		text-align: center;
+		margin-top: 3px;
 	}
 	.event-attr {
 		border-bottom: solid 1px;
