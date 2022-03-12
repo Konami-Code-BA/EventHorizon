@@ -283,16 +283,14 @@
 								markers[this.store.events.display[i].id] = marker
 								let infowindow = new google.maps.InfoWindow({ map: map })
 								google.maps.event.addListener(marker, 'click', function() {
-									//infowindow.close()
+									infowindow.close() // close any other open window
 									infowindow.setContent(infowindowContents[i])
 									infowindow.open(map, this)
 								})
-								google.maps.event.trigger(marker, 'click')
-								google.maps.event.trigger(marker, 'click')
-								google.maps.event.trigger(marker, 'click')
-								//google.maps.event.addListener(map, "click", function() {
-								//	infowindow.close()
-								//})
+								//google.maps.event.trigger(marker, 'click') // auto open all windows
+								google.maps.event.addListener(map, "click", function() {
+									infowindow.close()
+								})
 								bounds.extend(position)
 								await map.fitBounds(bounds)
 								map.setZoom(12)
