@@ -52,8 +52,30 @@ export default {
         }
         return result
     },
+    areDictsEqual(dict1, dict2) {
+        let dict1Keys = Object.keys(dict1)
+        let dict2Keys = Object.keys(dict2)
+        for (let i = 0; i < dict1Keys.length; i++) {
+            if (dict2Keys.includes(dict1Keys[i])) {
+                if (typeof dict2[dict1Keys[i]] === 'object') {
+                    if (!this.areDictsEqual(dict2[dict1Keys[i]], dict1[dict1Keys[i]])) {
+                        return false
+                    }
+                } else {
+                    if (dict2[dict1Keys[i]] !== dict1[dict1Keys[i]]) {
+                        return false
+                    }
+                }
+            } else {
+                return false
+            }
+        }
+        return true
+    },
     goToPage(pageDict) {
-        store.pages.push(pageDict)
+        if (store.pages.length === 0 || !this.areDictsEqual(store.pages[store.pages.length - 1], pageDict)) {
+            store.pages.push(pageDict)
+        }
         if (!['loginRegister', 'registerWithEmail', 'forgotPassword', 'resetPassword'].includes(pageDict.page)) {
             store.lastNonLoginRegisterPage = pageDict
         }

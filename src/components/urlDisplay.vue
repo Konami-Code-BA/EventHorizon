@@ -12,7 +12,7 @@
 
 				<div class="line-height"/>
 
-				<button v-on:click.prevent="share()" class="button">
+				<button v-on:click.prevent="share()" class="button" v-if="navigator.share">
 					<img src="@/assets/shareIcon.png" class="icon"/>
 				</button>
 			</div>
@@ -49,14 +49,12 @@
 		methods: {
 			t (w) { return translations.t(w) },
 			async copyToClipboard () {
-        const promise1 = new Promise((resolve, reject) => {
-          resolve(this.url);
-        });
-        promise1.then((value) => {
-          navigator.clipboard.writeText(value)
-          // console.log(`Copied: "${value}"`);
-    // expected output: "Success!"
-        });
+				const promise1 = new Promise((resolve, reject) => {
+					resolve(this.url)
+				})
+				promise1.then((value) => {
+					navigator.clipboard.writeText(value)
+				})
 				//// if the above fails on some browser, this is supposed to work. maybe use both if the first fails
 				// let textArea = document.createElement("textarea")
 				// textArea.value = this.url
@@ -68,13 +66,12 @@
 				await this.$refs.flashCoppied.flashModal()
 			},
 			share () {
-         const promise1 = new Promise((resolve, reject) => {
-          resolve(this.url);
-        });
-        promise1.then((value) => {
-          console.log(value);
-          navigator.share({url: value})
-        });
+        		const promise1 = new Promise((resolve, reject) => {
+          			resolve(this.url);
+        		})
+        		promise1.then((value) => {
+					navigator.share({url: value})
+				})
 			},
 		} // methods
 	} // export

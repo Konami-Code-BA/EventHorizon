@@ -40,9 +40,9 @@
 					</button>
 				</div>
 				<small class="event-attr">{{t('DESCRIPTION')}}</small>
-				<div style="align-self: center; overflow-y: scroll; max-height: 100px; height: auto; margin-bottom: 0.7em; margin-top: 4px;">
-					{{ event.description }}
-				</div>
+				<div style="align-self: center; overflow-y: scroll; max-height: 100px; height: auto;
+						margin-bottom: 0.7em; margin-top: 4px; white-space: pre-line; text-indent: 0 !important; line-height: 20px;"
+				>{{ event.description }}</div>
 				<small class="event-attr">{{t('ATTENDING STATUS')}}</small>
 				<div v-show="!isSpaceToAttend" style="color: red; width: 100%; text-align: center; margin-bottom: 0.7em; margin-top: 4px;">
 					{{ t('THE EVENT IS FULL') }}
