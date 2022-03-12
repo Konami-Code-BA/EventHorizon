@@ -357,6 +357,9 @@
 		width: 10px;
 		height: 10px;
 	}
+	/*::-webkit-scrollbar-track {
+		background-color: rgba(0, 0, 0, .3);
+	}*/
 	::-webkit-scrollbar-thumb {
 		border-radius: 4px;
 		background-color: rgba(0, 0, 0, .5);
