@@ -1,5 +1,5 @@
 <template>
-	<div class="main" style="justify-content: center; overflow-y: scroll;">
+	<div class="main scroll-height" style="justify-content: center; overflow-y: scroll;">
 		<div style="width: 80%">
 			<div style="font-size: 24px; align-self: flex-start">{{ t('LOGIN WITH EMAIL') }}</div>
 			<form v-on:keyup.enter="login()">
@@ -27,8 +27,9 @@
 
 			<div class="line-height"/>
 
-			<line-button :pageToReturnTo="store.lastNonLoginRegisterPage" :wording="t('LINE LOGIN / REGISTER')"
-					ref="lineButton"/>
+			<line-button :pageToReturnTo="
+					store.lastNonLoginRegisterPage ? store.lastNonLoginRegisterPage : { page: 'home', args: {} }
+					" :wording="t('LINE LOGIN / REGISTER')" ref="lineButton"/>
 
 			<div class="line-height"/>
 
@@ -132,5 +133,10 @@
 	}
 	.button {
 		width: 100%;
+	}
+	@media (max-height: 497px) {
+		.scroll-height {
+			justify-content: flex-start !important;
+		}
 	}
 </style>
