@@ -99,6 +99,7 @@ export default {
     },
     async getEvents() {
         let events = await api.getAllEvents()
+        events = this.sortEventsByDate(events)
         for (let i = 0; i < events.length; i++) {
             // only get new images if (there is an image to get AND
             // (there are no events at all OR (there are events and the image_data hasn't been saved yet)))
@@ -113,7 +114,7 @@ export default {
                 events[i].image_data = store.events.all[i].image_data
             } // and if there are no images to get, then
         }
-        store.events.all = this.sortEventsByDate(events)
+        store.events.all = events
         store.events.mine = await this.filterEventsByMyStatus()
         store.events.display = store.events.all
     },
