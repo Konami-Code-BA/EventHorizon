@@ -1,5 +1,5 @@
 <template>
-	<div class="main" v-if="store.events.selected && event" style="overflow-y: scroll">
+	<div class="main" v-if="store.events.selected && event" style="overflow-y: scroll;">
 		<div style="width: 98%; display: flex; flex-direction: column; align-items: center; height: auto;">
 			<div class="flex-row" style="align-items: center; justify-content: center; height: 60px;">
 				<div style="max-width: 100%; overflow-x: scroll; max-height: 100%; overflow-y: hidden;
@@ -15,7 +15,10 @@
 					<small>{{ event.is_private ? t('PRIVATE') : t('PUBLIC') }}</small>
 				</div>
 			</div>
-			<img :src="image" style="height: 160px; width: auto; margin-top: 16px; margin-bottom: 10px; border-radius: 2px;"/>
+			<img :src="image" style="
+					width: calc(100% + 30px); height: auto; max-width: 500px; margin-top: 16px; margin-bottom: 10px;
+					border-radius: 2px; margin-left: -15px; margin-right: -15px;
+			"/>
 			<div class="flex-table" style="height: auto;">
 				<div v-if="(!event.is_private || myAttendingStatus['invited']) && event.venue_name" class="flex-row"
 						style="justify-content: space-between; flex-direction: column">
