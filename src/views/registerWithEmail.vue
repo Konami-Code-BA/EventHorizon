@@ -1,5 +1,6 @@
 <template>
-	<div class="main" style="display: flex; flex-direction: column; justify-content: center; overflow-y: scroll;">
+	<div class="main scroll-height"
+			style="display: flex; flex-direction: column; justify-content: center; overflow-y: scroll;">
 		<form v-on:keyup.enter="registerWithEmail()" style="width: 80%;">
 			<display-name-input ref="displayNameInput" usage="Registration"
 					:key="store.user.language+'displayNameInputRegistration'"/>
@@ -96,5 +97,10 @@
 <style scoped>
 	.button {
 		width: 80%;
+	}
+	@media (max-height: 363px) {
+		.scroll-height {
+			justify-content: flex-start !important;
+		}
 	}
 </style>
