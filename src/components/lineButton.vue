@@ -21,7 +21,12 @@
 			}
 		},
 		props: {
-			pageToReturnTo: {},
+			pageToReturnTo: {
+				type: Object,
+        		default() {
+					return { page: 'home', args: {} }
+				}
+			},
 			wording: {},
 		},
 		async mounted () {
