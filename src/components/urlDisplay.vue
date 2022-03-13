@@ -4,7 +4,7 @@
 			<div slot="contents" class="modal">
 				<x-close-button :closeFunc="() => {$refs.urlDisplayModal.closeModals()}" style="align-self: flex-end;"/>
 				<div style="width: 100%; display: flex; flex-direction: row; align-items: center">
-					<button v-on:click.prevent="copyToClipboard()" class="button" style="border: none;">
+					<button v-on:click.prevent="copyToClipboard()" class="button" style="border: none;"> 
 						<img src="@/assets/copyIcon.png" class="icon"/>
 					</button>
 					<div style="width: 90%; overflow-wrap: break-word;">{{url}}</div>
