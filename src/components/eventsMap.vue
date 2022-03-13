@@ -21,8 +21,6 @@
 			},
 		},
 		async created () {
-		},
-		async mounted () {
 			window.initMap = this.initMap
 			window.openEventModal = this.openEventModal
 			window.initMap()
