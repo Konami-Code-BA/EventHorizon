@@ -29,7 +29,8 @@ git merge origin/test
 git push -u origin yourbranchname
 ```
 ### DONE
-# VS Code buttons:
+
+# Or... VS Code buttons:
 ### Make sure you have all the most recent versions of all remote branches
 Git area 3-dots > Pull, Push > Fetch From All Remotes
 ### Create new branch from the origin/test branch
