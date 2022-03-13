@@ -12,7 +12,7 @@
 
 				<div class="line-height"/>
 
-				<button v-on:click.prevent="share()" class="button" v-if="navigator.share">
+				<button v-on:click.prevent="share()" class="button" v-if="navigate">
 					<img src="@/assets/shareIcon.png" class="icon"/>
 				</button>
 			</div>
@@ -37,6 +37,7 @@
 		data () {
 			return {
 				store: store,
+				navigate: navigator.share,
 			}
 		},
 		computed: {
