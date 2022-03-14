@@ -70,7 +70,6 @@
 			if (this.$refs.lineButton && this.tryLine) {
 				await this.$refs.lineButton.tryLineNewDevice()
 			}
-			f.focusCursor(document, 'emailLogin')
 		},
 		watch: {
 		},
