@@ -262,7 +262,12 @@ export default {
     },
     createNextPageFromCurrentPage() {
         let nextArgKeys = Object.keys(this.currentPage.args)
-        let nextPage = this.currentPage.args.next
+        let nextPage = null
+        if (this.currentPage.args.next) {
+            nextPage = this.currentPage.args.next
+        } else {
+            nextPage = 'home'
+        }
         let nextArgs = {}
         if (nextArgKeys.length > 0) {
             for (let i = 0; i < nextArgKeys.length; i++) {
