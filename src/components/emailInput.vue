@@ -43,7 +43,7 @@
 					this.error = 'Required'
 					return true
 				} else if (this.hasInvalidEmailStructure(this.email) || f.hasIllegalSymbols(this.email)) {
-					this.error = 'This is an impossible email'
+					this.error = 'Required'
 					return true
 				} else if (this.email.length > 75) {
 					this.error = 'Must be 75 characters or less'
