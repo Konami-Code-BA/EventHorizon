@@ -10,7 +10,7 @@
 					class="router"
 					v-show="page != 'home'"
 					:key="page"/>
-			<app-footer @homePage="$refs.homepage.selectedTab = 1; window.initMap();"/>
+			<app-footer @homePage="$refs.homepage.selectedTab = 1"/>
 		</div>
 		<div class="loading" v-if="store.loading"/>
 		<opening-logo class="opening" :class="fadeOutClass" v-if="opening"/>
