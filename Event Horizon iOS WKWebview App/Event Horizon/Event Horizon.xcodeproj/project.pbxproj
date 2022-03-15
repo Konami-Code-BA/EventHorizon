@@ -15,32 +15,14 @@
 		56A2AEFB27D98F4B00DFB9F5 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 56A2AEFA27D98F4B00DFB9F5 /* Preview Assets.xcassets */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		56A2AF0127D98F4B00DFB9F5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 56A2AEE827D98F4B00DFB9F5 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 56A2AEEF27D98F4B00DFB9F5;
-			remoteInfo = "Event Horizon";
-		};
-		56A2AF0B27D98F4B00DFB9F5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 56A2AEE827D98F4B00DFB9F5 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 56A2AEEF27D98F4B00DFB9F5;
-			remoteInfo = "Event Horizon";
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
 		5696F13527E0821300CF7E56 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		5696F13727E082BD00CF7E56 /* Event Horizon.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Event Horizon.entitlements"; sourceTree = "<group>"; };
 		56A2AEF027D98F4B00DFB9F5 /* Event Horizon.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Event Horizon.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		56A2AEF327D98F4B00DFB9F5 /* Event_HorizonApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event_HorizonApp.swift; sourceTree = "<group>"; };
 		56A2AEF527D98F4B00DFB9F5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		56A2AEF727D98F4B00DFB9F5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		56A2AEFA27D98F4B00DFB9F5 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		56A2AF0027D98F4B00DFB9F5 /* Event HorizonTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Event HorizonTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		56A2AF0A27D98F4B00DFB9F5 /* Event HorizonUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Event HorizonUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -49,20 +31,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				5696F13427E081DB00CF7E56 /* FirebaseMessaging in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		56A2AEFD27D98F4B00DFB9F5 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		56A2AF0727D98F4B00DFB9F5 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -81,8 +49,6 @@
 			isa = PBXGroup;
 			children = (
 				56A2AEF027D98F4B00DFB9F5 /* Event Horizon.app */,
-				56A2AF0027D98F4B00DFB9F5 /* Event HorizonTests.xctest */,
-				56A2AF0A27D98F4B00DFB9F5 /* Event HorizonUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -90,6 +56,7 @@
 		56A2AEF227D98F4B00DFB9F5 /* Event Horizon */ = {
 			isa = PBXGroup;
 			children = (
+				5696F13727E082BD00CF7E56 /* Event Horizon.entitlements */,
 				5696F13527E0821300CF7E56 /* GoogleService-Info.plist */,
 				56A2AEF327D98F4B00DFB9F5 /* Event_HorizonApp.swift */,
 				56A2AEF527D98F4B00DFB9F5 /* ContentView.swift */,
@@ -130,42 +97,6 @@
 			productReference = 56A2AEF027D98F4B00DFB9F5 /* Event Horizon.app */;
 			productType = "com.apple.product-type.application";
 		};
-		56A2AEFF27D98F4B00DFB9F5 /* Event HorizonTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 56A2AF1727D98F4B00DFB9F5 /* Build configuration list for PBXNativeTarget "Event HorizonTests" */;
-			buildPhases = (
-				56A2AEFC27D98F4B00DFB9F5 /* Sources */,
-				56A2AEFD27D98F4B00DFB9F5 /* Frameworks */,
-				56A2AEFE27D98F4B00DFB9F5 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				56A2AF0227D98F4B00DFB9F5 /* PBXTargetDependency */,
-			);
-			name = "Event HorizonTests";
-			productName = "Event HorizonTests";
-			productReference = 56A2AF0027D98F4B00DFB9F5 /* Event HorizonTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		56A2AF0927D98F4B00DFB9F5 /* Event HorizonUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 56A2AF1A27D98F4B00DFB9F5 /* Build configuration list for PBXNativeTarget "Event HorizonUITests" */;
-			buildPhases = (
-				56A2AF0627D98F4B00DFB9F5 /* Sources */,
-				56A2AF0727D98F4B00DFB9F5 /* Frameworks */,
-				56A2AF0827D98F4B00DFB9F5 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				56A2AF0C27D98F4B00DFB9F5 /* PBXTargetDependency */,
-			);
-			name = "Event HorizonUITests";
-			productName = "Event HorizonUITests";
-			productReference = 56A2AF0A27D98F4B00DFB9F5 /* Event HorizonUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -178,14 +109,6 @@
 				TargetAttributes = {
 					56A2AEEF27D98F4B00DFB9F5 = {
 						CreatedOnToolsVersion = 13.2.1;
-					};
-					56A2AEFF27D98F4B00DFB9F5 = {
-						CreatedOnToolsVersion = 13.2.1;
-						TestTargetID = 56A2AEEF27D98F4B00DFB9F5;
-					};
-					56A2AF0927D98F4B00DFB9F5 = {
-						CreatedOnToolsVersion = 13.2.1;
-						TestTargetID = 56A2AEEF27D98F4B00DFB9F5;
 					};
 				};
 			};
@@ -206,8 +129,6 @@
 			projectRoot = "";
 			targets = (
 				56A2AEEF27D98F4B00DFB9F5 /* Event Horizon */,
-				56A2AEFF27D98F4B00DFB9F5 /* Event HorizonTests */,
-				56A2AF0927D98F4B00DFB9F5 /* Event HorizonUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -223,20 +144,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		56A2AEFE27D98F4B00DFB9F5 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		56A2AF0827D98F4B00DFB9F5 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -249,34 +156,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		56A2AEFC27D98F4B00DFB9F5 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		56A2AF0627D98F4B00DFB9F5 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		56A2AF0227D98F4B00DFB9F5 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 56A2AEEF27D98F4B00DFB9F5 /* Event Horizon */;
-			targetProxy = 56A2AF0127D98F4B00DFB9F5 /* PBXContainerItemProxy */;
-		};
-		56A2AF0C27D98F4B00DFB9F5 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 56A2AEEF27D98F4B00DFB9F5 /* Event Horizon */;
-			targetProxy = 56A2AF0B27D98F4B00DFB9F5 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		56A2AF1227D98F4B00DFB9F5 /* Debug */ = {
@@ -400,6 +280,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Event Horizon/Event Horizon.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Event Horizon/Preview Content\"";
@@ -429,6 +310,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Event Horizon/Event Horizon.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Event Horizon/Preview Content\"";
@@ -453,82 +335,6 @@
 			};
 			name = Release;
 		};
-		56A2AF1827D98F4B00DFB9F5 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = LX766335XD;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "Event-Horizon.Event-HorizonTests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Event Horizon.app/Event Horizon";
-			};
-			name = Debug;
-		};
-		56A2AF1927D98F4B00DFB9F5 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = LX766335XD;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "Event-Horizon.Event-HorizonTests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Event Horizon.app/Event Horizon";
-			};
-			name = Release;
-		};
-		56A2AF1B27D98F4B00DFB9F5 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = LX766335XD;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "Event-Horizon.Event-HorizonUITests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = "Event Horizon";
-			};
-			name = Debug;
-		};
-		56A2AF1C27D98F4B00DFB9F5 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = LX766335XD;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "Event-Horizon.Event-HorizonUITests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = "Event Horizon";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -546,24 +352,6 @@
 			buildConfigurations = (
 				56A2AF1527D98F4B00DFB9F5 /* Debug */,
 				56A2AF1627D98F4B00DFB9F5 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		56A2AF1727D98F4B00DFB9F5 /* Build configuration list for PBXNativeTarget "Event HorizonTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				56A2AF1827D98F4B00DFB9F5 /* Debug */,
-				56A2AF1927D98F4B00DFB9F5 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		56A2AF1A27D98F4B00DFB9F5 /* Build configuration list for PBXNativeTarget "Event HorizonUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				56A2AF1B27D98F4B00DFB9F5 /* Debug */,
-				56A2AF1C27D98F4B00DFB9F5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
