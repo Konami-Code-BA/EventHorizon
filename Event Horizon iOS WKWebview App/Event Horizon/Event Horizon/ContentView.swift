@@ -2,20 +2,22 @@
 //  ContentView.swift
 //  Event Horizon
 //
-//  Created by user216955 on 3/10/22.
+//  Created by user216955 on 3/15/22.
 //
 
 import SwiftUI
+import WebKit
 
-struct ContentView: View {
-    var body: some View {
-        Text("Hello, world!")
-            .padding()
+struct WebView: UIViewRepresentable {
+ 
+    var url: URL
+ 
+    func makeUIView(context: Context) -> WKWebView {
+        return WKWebView()
     }
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
+ 
+    func updateUIView(_ webView: WKWebView, context: Context) {
+        let request = URLRequest(url: url)
+        webView.load(request)
     }
 }

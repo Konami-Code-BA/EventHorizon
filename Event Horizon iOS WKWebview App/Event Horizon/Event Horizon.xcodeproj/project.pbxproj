@@ -7,13 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5696F13427E081DB00CF7E56 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 5696F13327E081DB00CF7E56 /* FirebaseMessaging */; };
+		5696F13627E0821300CF7E56 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5696F13527E0821300CF7E56 /* GoogleService-Info.plist */; };
 		56A2AEF427D98F4B00DFB9F5 /* Event_HorizonApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56A2AEF327D98F4B00DFB9F5 /* Event_HorizonApp.swift */; };
 		56A2AEF627D98F4B00DFB9F5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56A2AEF527D98F4B00DFB9F5 /* ContentView.swift */; };
 		56A2AEF827D98F4B00DFB9F5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 56A2AEF727D98F4B00DFB9F5 /* Assets.xcassets */; };
 		56A2AEFB27D98F4B00DFB9F5 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 56A2AEFA27D98F4B00DFB9F5 /* Preview Assets.xcassets */; };
-		56A2AF0527D98F4B00DFB9F5 /* Event_HorizonTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56A2AF0427D98F4B00DFB9F5 /* Event_HorizonTests.swift */; };
-		56A2AF0F27D98F4B00DFB9F5 /* Event_HorizonUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56A2AF0E27D98F4B00DFB9F5 /* Event_HorizonUITests.swift */; };
-		56A2AF1127D98F4B00DFB9F5 /* Event_HorizonUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56A2AF1027D98F4B00DFB9F5 /* Event_HorizonUITestsLaunchTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,16 +33,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5696F13527E0821300CF7E56 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		56A2AEF027D98F4B00DFB9F5 /* Event Horizon.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Event Horizon.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		56A2AEF327D98F4B00DFB9F5 /* Event_HorizonApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event_HorizonApp.swift; sourceTree = "<group>"; };
 		56A2AEF527D98F4B00DFB9F5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		56A2AEF727D98F4B00DFB9F5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		56A2AEFA27D98F4B00DFB9F5 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		56A2AF0027D98F4B00DFB9F5 /* Event HorizonTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Event HorizonTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		56A2AF0427D98F4B00DFB9F5 /* Event_HorizonTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event_HorizonTests.swift; sourceTree = "<group>"; };
 		56A2AF0A27D98F4B00DFB9F5 /* Event HorizonUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Event HorizonUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		56A2AF0E27D98F4B00DFB9F5 /* Event_HorizonUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event_HorizonUITests.swift; sourceTree = "<group>"; };
-		56A2AF1027D98F4B00DFB9F5 /* Event_HorizonUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event_HorizonUITestsLaunchTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,6 +48,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5696F13427E081DB00CF7E56 /* FirebaseMessaging in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -75,8 +73,6 @@
 			isa = PBXGroup;
 			children = (
 				56A2AEF227D98F4B00DFB9F5 /* Event Horizon */,
-				56A2AF0327D98F4B00DFB9F5 /* Event HorizonTests */,
-				56A2AF0D27D98F4B00DFB9F5 /* Event HorizonUITests */,
 				56A2AEF127D98F4B00DFB9F5 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -94,6 +90,7 @@
 		56A2AEF227D98F4B00DFB9F5 /* Event Horizon */ = {
 			isa = PBXGroup;
 			children = (
+				5696F13527E0821300CF7E56 /* GoogleService-Info.plist */,
 				56A2AEF327D98F4B00DFB9F5 /* Event_HorizonApp.swift */,
 				56A2AEF527D98F4B00DFB9F5 /* ContentView.swift */,
 				56A2AEF727D98F4B00DFB9F5 /* Assets.xcassets */,
@@ -108,23 +105,6 @@
 				56A2AEFA27D98F4B00DFB9F5 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
-			sourceTree = "<group>";
-		};
-		56A2AF0327D98F4B00DFB9F5 /* Event HorizonTests */ = {
-			isa = PBXGroup;
-			children = (
-				56A2AF0427D98F4B00DFB9F5 /* Event_HorizonTests.swift */,
-			);
-			path = "Event HorizonTests";
-			sourceTree = "<group>";
-		};
-		56A2AF0D27D98F4B00DFB9F5 /* Event HorizonUITests */ = {
-			isa = PBXGroup;
-			children = (
-				56A2AF0E27D98F4B00DFB9F5 /* Event_HorizonUITests.swift */,
-				56A2AF1027D98F4B00DFB9F5 /* Event_HorizonUITestsLaunchTests.swift */,
-			);
-			path = "Event HorizonUITests";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -143,6 +123,9 @@
 			dependencies = (
 			);
 			name = "Event Horizon";
+			packageProductDependencies = (
+				5696F13327E081DB00CF7E56 /* FirebaseMessaging */,
+			);
 			productName = "Event Horizon";
 			productReference = 56A2AEF027D98F4B00DFB9F5 /* Event Horizon.app */;
 			productType = "com.apple.product-type.application";
@@ -215,6 +198,9 @@
 				Base,
 			);
 			mainGroup = 56A2AEE727D98F4B00DFB9F5;
+			packageReferences = (
+				5696F13227E081DB00CF7E56 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			productRefGroup = 56A2AEF127D98F4B00DFB9F5 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -233,6 +219,7 @@
 			files = (
 				56A2AEFB27D98F4B00DFB9F5 /* Preview Assets.xcassets in Resources */,
 				56A2AEF827D98F4B00DFB9F5 /* Assets.xcassets in Resources */,
+				5696F13627E0821300CF7E56 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -266,7 +253,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				56A2AF0527D98F4B00DFB9F5 /* Event_HorizonTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -274,8 +260,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				56A2AF0F27D98F4B00DFB9F5 /* Event_HorizonUITests.swift in Sources */,
-				56A2AF1127D98F4B00DFB9F5 /* Event_HorizonUITestsLaunchTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -585,6 +569,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		5696F13227E081DB00CF7E56 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		5696F13327E081DB00CF7E56 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5696F13227E081DB00CF7E56 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 56A2AEE827D98F4B00DFB9F5 /* Project object */;
 }
