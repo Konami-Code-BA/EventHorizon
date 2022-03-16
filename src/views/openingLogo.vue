@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<div style="font-size: 40px;">
+		<div style="font-size: 40px; text-align: center;">
 			EVENT HORIZON
 		</div>
 
@@ -12,7 +12,7 @@
 
 		<div class="line-height"/>
 
-		<div style="font-size: 20px;">
+		<div style="font-size: 20px; text-align: center;">
 			REACH OUT TO NEW HORIZONS
 		</div>
 	</div>
