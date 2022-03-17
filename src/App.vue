@@ -89,7 +89,7 @@
 		watch: {
 			'store.pages' () {
 				this.page = f.currentPage.page
-				if (this.page === 'home') {
+				if (this.page === 'home' && window.initMap) {
 					window.initMap()
 				}
 				window.history.pushState({ path: f.currentUrl }, '', f.currentUrl)
