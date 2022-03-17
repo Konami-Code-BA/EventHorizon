@@ -63,7 +63,17 @@
 		computed: {
 			page () {
 				if (f.currentPage) {
-					return f.currentPage.page
+					if (
+						(f.isAuthenticatedUser && (
+							f.currentPage.page === 'loginRegister' || f.currentPage.page === 'registerWithEmail'
+						)) ||
+						(!f.isAuthenticatedUser && f.currentPage.page === 'settings')
+					) {
+						f.goToPage({ page: 'home', args: {} })
+						return
+					} else {
+						return f.currentPage.page
+					}
 				}
 			},
 		},
