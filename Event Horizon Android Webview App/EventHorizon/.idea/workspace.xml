@@ -70,7 +70,7 @@
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.17" />
     <property name="project.structure.side.proportion" value="0.0" />
-    <property name="settings.editor.selected.configurable" value="org.jetbrains.plugins.github.ui.GithubSettingsConfigurable" />
+    <property name="settings.editor.selected.configurable" value="preferences.sourceCode.Kotlin" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -278,9 +278,21 @@
       <screen x="0" y="0" width="1920" height="1032" />
     </state>
     <state width="1489" height="270" key="GridCell.Tab.0.right/0.0.1920.1032/-1920.0.1920.1032@0.0.1920.1032" timestamp="1647435492207" />
+    <state x="461" y="160" key="SettingsEditor" timestamp="1647479106105">
+      <screen x="0" y="0" width="1920" height="1032" />
+    </state>
+    <state x="461" y="160" key="SettingsEditor/0.0.1920.1032/-1920.0.1920.1032@0.0.1920.1032" timestamp="1647479106105" />
+    <state x="667" y="249" width="585" height="534" key="find.popup" timestamp="1647513069939">
+      <screen x="0" y="0" width="1920" height="1032" />
+    </state>
+    <state x="667" y="249" width="585" height="534" key="find.popup/0.0.1920.1032/-1920.0.1920.1032@0.0.1920.1032" timestamp="1647513069939" />
     <state x="803" y="287" key="refactoring.ChangeSignatureDialog" timestamp="1647435989757">
       <screen x="0" y="0" width="1920" height="1032" />
     </state>
     <state x="803" y="287" key="refactoring.ChangeSignatureDialog/0.0.1920.1032/-1920.0.1920.1032@0.0.1920.1032" timestamp="1647435989757" />
+    <state x="623" y="223" width="672" height="678" key="search.everywhere.popup" timestamp="1647478758502">
+      <screen x="0" y="0" width="1920" height="1032" />
+    </state>
+    <state x="623" y="223" width="672" height="678" key="search.everywhere.popup/0.0.1920.1032/-1920.0.1920.1032@0.0.1920.1032" timestamp="1647478758502" />
   </component>
 </project>
