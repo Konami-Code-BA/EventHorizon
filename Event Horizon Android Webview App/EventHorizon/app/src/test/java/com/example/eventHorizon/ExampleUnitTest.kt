@@ -1,4 +1,4 @@
-package com.example.EventHorizon
+package com.example.eventHorizon
 
 import org.junit.Test
 
