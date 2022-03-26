@@ -78,6 +78,9 @@ export default {
     goToPage(pageDict) {
         if (store.pages.length === 0 || !this.areDictsEqual(store.pages[store.pages.length - 1], pageDict)) {
             store.pages.push(pageDict)
+            if (this.currentPage.page === 'home' && window.initMap) {
+                window.initMap()
+            }
         }
         if (!['loginRegister', 'registerWithEmail', 'forgotPassword', 'resetPassword'].includes(pageDict.page)) {
             store.lastNonLoginRegisterPage = pageDict
@@ -88,6 +91,9 @@ export default {
             window.history.go(-2)
         } else if (!store.modalBack) {
             store.pages.pop() // remove the current page
+            if (this.currentPage.page === 'home' && window.initMap) {
+                window.initMap()
+            }
         }
     },
     focusCursor(documentt, id) {

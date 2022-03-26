@@ -2,7 +2,7 @@
 	<div>
 		<div class="main">
 			<div class="card-shape" style="height: calc(100% - 20px); width: 95%; margin-top: 10px; margin-bottom: 15px;">
-				<div class="tabsdiv" style="width: 100%; display: flex; flex-direction: column;">
+				<div class="tabsdiv" style="width: 100%; display: flex; flex-direction: column; border-top: none; border-top-radius: 7px;">
 					<div style="display: flex; flex-direction: row; align-items: center; justify-content: center; padding: 5px; position:relative;">
 						<div>
 							{{ t('EVENTS') }}
@@ -43,7 +43,7 @@
 						</div>
 						<div slot="2" class="tab">
 							<img src="@/assets/profileIcon.png" class="icon" style="vertical-align: bottom;"
-									v-if="isAuthenticatedUser"/>
+									v-if="false"/>
 							<img src="@/assets/greyProfileIcon.png" class="icon" style="vertical-align: bottom;"
 									v-else/>
 						</div>
@@ -124,7 +124,7 @@
 					this.$refs.filterTabs.selected = 1
 					f.goToPage({ page: 'loginRegister', args: {} })
 					return
-				} else if (selectedFilter === 3) {
+				} else if (selectedFilter === 3 || selectedFilter === 2) {
 					this.$refs.filterTabs.selected = 1
 					await this.$refs.flashComingSoon.flashModal()
 					return
