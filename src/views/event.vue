@@ -160,7 +160,7 @@
 					</button>
 				</div>
 				<small class="event-attr">{{t('DESCRIPTION')}}</small>
-				<div style="align-self: center; overflow-y: scroll; max-height: 105px; height: auto; width: 95%; text-align: center;
+				<div style="align-self: center; overflow-y: scroll; max-height: 109px; height: auto; width: 95%; text-align: center;
 						margin-bottom: 0.7em; margin-top: 4px; white-space: pre-line; text-indent: 0 !important; line-height: 20px;"
 				>{{ event.description }}</div>
 				<small class="event-attr">{{t('PEOPLE')}}</small>
