@@ -10,7 +10,7 @@
 				align-items: center; padding-left: 10px; height: 100%;" id="scroller">
 			<div style="width: 90%;">
 				<div class="list">
-					<div v-for="event in listEvents" class="event-card-item" style="">
+					<div v-for="event in listEvents" class="card-shape event-card-item" style="box-shadow: rgba(0, 0, 0, 1) 0px 3px 3px;">
 						<button v-on:click.prevent="openEventModal(event.id)" class="no-border-button"
 								style="width: 100%;" :id="`item${event.id}`">
 							<event-block :event="event" :key="JSON.stringify(event)"/>
@@ -114,7 +114,7 @@
 		padding-top: 10px;
 	}
 	.event-card-item {
-		width:100%;
+		width: 98%;
 		height: 50px;
 		margin: 6px auto;
 	}

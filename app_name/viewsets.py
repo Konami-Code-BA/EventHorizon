@@ -401,7 +401,8 @@ Feedback:
 				user.password = make_password(request.data['password'])
 				user.do_get_emails = True
 				user.do_get_line_display_name = False
-				user.personal_code=secrets.token_urlsafe(16),
+				user.personal_code = secrets.token_urlsafe(16)
+				user.language = request.data['lang']
 				user.save()
 				request.user = user
 				user = f.authenticate_login(request)  # login user
@@ -433,6 +434,7 @@ Feedback:
 		# use access token to get profile info
 		profile_response = json.loads(requests.get(url, headers=headers).content)
 		try:  # try to get a user with this line id, if there is one then set all the new data to their account
+			# this is a login situation
 			user = self.model.objects.get(line_id=profile_response['userId'])
 			user.line_access_token = getAccessToken_response['access_token']
 			user.line_refresh_token = getAccessToken_response['refresh_token']
@@ -444,6 +446,8 @@ Feedback:
 			if user.groups.filter(id=Group.objects.get(name='Temp Line Friend').id).exists():
 				user.groups.clear()  # clear temp line friend group
 				user.groups.add(Group.objects.get(name='User').id)  # change to user
+				user.language = uri.split('&lang=')[1][:2]
+				user.display_name = profile_response['displayName']
 				print('CHANGING TEMP LINE FRIEND TO USER')
 			if not request.user.is_anonymous:
 				existing_user = request.user
@@ -452,7 +456,7 @@ Feedback:
 			request.data['line_id'] = profile_response['userId']
 			user = f.authenticate_login(request)  # login user
 		except self.model.DoesNotExist:  # if there was no user with this line id
-			try:
+			try:  # if this use is logged in then this is an add line situation
 				user = self.model.objects.get(pk=request.user.pk)
 				user.line_id = profile_response['userId']
 				user.line_access_token = getAccessToken_response['access_token']
@@ -463,7 +467,7 @@ Feedback:
 				request.data['line_id'] = profile_response['userId']
 				user = f.authenticate_login(request)  # login user
 				return user
-			except self.model.DoesNotExist:
+			except self.model.DoesNotExist: # otherwise this is a new line user situation
 				user = UserViewset.model.objects.create_user(
 					display_name = profile_response['displayName'],
 				)
@@ -476,6 +480,7 @@ Feedback:
 				user.do_get_line_display_name = True
 				user.do_get_lines = True
 				user.personal_code=secrets.token_urlsafe(16),
+				user.language = uri.split('&lang=')[1][:2]
 				user.save()
 				print('SAVED NEW LINE USER')
 				request.user = user

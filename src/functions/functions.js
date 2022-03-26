@@ -31,17 +31,20 @@ export default {
         return Object.fromEntries(urlSearchParams.entries())
     },
     inGroups(groupNames) {
-        let groupIds = []
-        for (let i = 0; i < groupNames.length; i++) {
-            groupIds.push(store.groups.filter(group => {
-                if (group.name === groupNames[i]) {
-                    return true
-                } else {
-                    return false
-                }
-            })[0].id)
+        let result = false
+        if (store.groups) {
+            let groupIds = []
+            for (let i = 0; i < groupNames.length; i++) {
+                groupIds.push(store.groups.filter(group => {
+                    if (group.name === groupNames[i]) {
+                        return true
+                    } else {
+                        return false
+                    }
+                })[0].id)
+            }
+            result = groupIds.includes(store.user.groups[0])
         }
-        let result = groupIds.includes(store.user.groups[0])
         return result
     },
     createUrl(pageDict) {
@@ -177,11 +180,11 @@ export default {
             filtered_events = events.filter(event => {
                 for (let i = 0; i < criteria.length; i++) {
                     if (!strictlyEqual) {
-                        if (String(event[criteria[i]]).includes(String(search))) {
+                        if (String(event[criteria[i]]).toUpperCase().includes(String(search).toUpperCase())) {
                             return true
                         }
                     } else {
-                        if (String(event[criteria[i]]) === String(search)) {
+                        if (String(event[criteria[i]]).toUpperCase() === String(search).toUpperCase()) {
                             return true
                         }
                     }
@@ -236,7 +239,7 @@ export default {
         let argKeys = Object.keys(returnToPageDict.args)
         if (encode) {
             uri = `${e['/']}${e['?']}page${e['=']}${currentPageDict.page}${e['&']}next`
-            uri += `${e['=']}${returnToPageDict.page}`
+            uri += `${e['=']}${returnToPageDict.page}${e['&']}lang${e['=']}${store.user.language}`
         } else {
             uri = `/?page=${currentPageDict.page}&next=${returnToPageDict.page}`
         }

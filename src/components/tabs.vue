@@ -64,6 +64,7 @@
 	.button {
 		outline: none;
 		border: none;
+		box-shadow: none;
 		background: none;
 		color: #ffe07a;
 		cursor: pointer;
@@ -77,5 +78,7 @@
 		background-color: rgba(255, 255, 255, .2);  /*140,128,151,0.6 after combinging with #18002e*/
 		width: 100%;
 		height: 100%;
+		box-shadow: rgba(0, 0, 0, 1) 3px 3px 8px;
+		border-radius: 3px;
 	}
 </style>

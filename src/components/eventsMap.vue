@@ -15,15 +15,9 @@
 		},
 		components: {
 		},
-		watch: {
-			'store.user.language' () {
-				window.initMap()
-			},
-		},
 		async created () {
 			window.initMap = this.initMap
 			window.openEventModal = this.openEventModal
-			window.initMap()
 		},
 		methods: {
 			t (w) { return translations.t(w) },
