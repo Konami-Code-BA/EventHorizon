@@ -22,6 +22,7 @@
 		methods: {
 			t (w) { return translations.t(w) },
 			async initMap () {
+				console.log('INIT MAP')
 				try {
 					let map = new google.maps.Map(document.getElementById("map_canvas"), {
 						mapTypeId: 'roadmap',
@@ -290,6 +291,7 @@
 						}
 					}
 					if (noEvents) {
+						console.log('IN HERE')
 						let position = new google.maps.LatLng(
 							35.685174,
 							139.752744
@@ -297,7 +299,7 @@
 						let marker = new google.maps.Marker({
 							position: position,
 							map: map,
-							icon: 'http://maps.google.com/mapfiles/ms/icons/empty.png',
+							icon: '',
 							label: {
 								color: 'rgba(0, 0, 0, 0.7)',
 								//highlight: 'rgba(0, 0, 0, 0.5)',
