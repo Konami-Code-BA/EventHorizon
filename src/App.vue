@@ -48,13 +48,6 @@
 			isAuthenticatedUser () {
 				return f.isAuthenticatedUser
 			},
-			appHeaderVar () {
-				if (this.$refs.appHeader) {
-					return this.$refs.appHeader
-				} else {
-					return false
-				}
-			}
 		},
 		async created () {
 			// back button setup
@@ -89,7 +82,6 @@
 			// openingLogo
 			await new Promise(r => setTimeout(r, 2000))
 			this.fadeOutClass = 'fade-out'
-			console.log('App Load Completed: ', this.authenticatedUserCheck())
 			await new Promise(r => setTimeout(r, 1000))
 			this.opening = false
 			this.fadeOutClass = null
@@ -98,9 +90,6 @@
 			'store.pages' () {
 				this.page = f.currentPage.page
 				window.history.pushState({ path: f.currentUrl }, '', f.currentUrl)
-			},
-			'appHeaderVar' () {
-				this.authenticatedUserCheck()
 			},
 			'store.events.display' () {
 				if (window.initMap) {
@@ -115,17 +104,6 @@
 		},
 		methods: {
 			t (w) { return translations.t(w) },
-			authenticatedUserCheck () {
-				let result = 'VISITOR'
-				if (!this.isAuthenticatedUser) {{
-					this.$refs.appHeader.showLanguageModal = true
-					}
-				} else {
-					result = 'AUTHENTICATED USER'
-					this.$refs.appHeader.showLanguageModal = false
-				}
-				return result
-			}
 		},
 	}
 </script>
