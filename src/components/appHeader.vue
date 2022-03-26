@@ -157,6 +157,7 @@
 				showLanguageModal: false,
 				showContactUs: false,
 				messageContent: '',
+				mountedDone: false,
 			}
 		},
 		computed: {
@@ -165,8 +166,17 @@
 			},
 		},
 		watch: {
+			'isAuthenticatedUser' () {
+				// if line login, might be authenticated after this mounts. but don't run if not mounted.
+				if (this.mountedDone) {
+					this.checkIsAuthenticatedUser()
+				}
+			}
 		},
 		async mounted () {
+			// this will check if authenticated once this mounts. might check again if authentication changes from line
+			this.mountedDone = true
+			this.checkIsAuthenticatedUser ()
 		},
 		methods: {
 			t (w) { return translations.t(w) },
@@ -215,6 +225,17 @@
 				this.store.loading = false
 				await this.$refs.flashSent.flashModal()
 			},
+			checkIsAuthenticatedUser () {
+				let result = 'VISITOR'
+				if (!this.isAuthenticatedUser) {{
+					this.showLanguageModal = true
+					}
+				} else {
+					result = 'AUTHENTICATED USER'
+					this.showLanguageModal = false
+				}
+				console.log('App Load Completed: ', result)
+			}
 		}
 	}
 </script>
