@@ -48,6 +48,13 @@
 			isAuthenticatedUser () {
 				return f.isAuthenticatedUser
 			},
+			appHeaderVar () {
+				if (this.$refs.appHeader) {
+					return this.$refs.appHeader
+				} else {
+					return false
+				}
+			}
 		},
 		async created () {
 			// back button setup
@@ -92,7 +99,7 @@
 				this.page = f.currentPage.page
 				window.history.pushState({ path: f.currentUrl }, '', f.currentUrl)
 			},
-			'isAuthenticatedUser' () {
+			'appHeaderVar' () {
 				this.authenticatedUserCheck()
 			},
 			'store.events.display' () {
@@ -110,15 +117,12 @@
 			t (w) { return translations.t(w) },
 			authenticatedUserCheck () {
 				let result = 'VISITOR'
-				if (!this.isAuthenticatedUser) {
-					if (this.$refs.appHeader) {
-						this.$refs.appHeader.showLanguageModal = true
+				if (!this.isAuthenticatedUser) {{
+					this.$refs.appHeader.showLanguageModal = true
 					}
 				} else {
 					result = 'AUTHENTICATED USER'
-					if (this.$refs.appHeader) {
-						this.$refs.appHeader.showLanguageModal = false
-					}
+					this.$refs.appHeader.showLanguageModal = false
 				}
 				return result
 			}
