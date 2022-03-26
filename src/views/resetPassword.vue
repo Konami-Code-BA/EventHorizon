@@ -53,7 +53,6 @@
 				if (!user.error) {
 					this.store.loading = false
 					await this.$refs.flashPasswordChangedForgot.flashModal()
-					window.initMap()
 					let nextPage = f.createNextPageFromCurrentPage()
 					f.goToPage(nextPage)
 					return

@@ -98,7 +98,6 @@
 					} else {
 						f.goToPage({ page: 'home', args: {} })
 					}
-					window.initMap()
 					this.store.loading = false
 					return
 				}

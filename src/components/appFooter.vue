@@ -118,9 +118,7 @@
 </script>
 <style scoped>
 	.tabs {
-		border-bottom: none !important;
-		border-left: none !important;
-		border-right: none !important;
+		border: none !important;
 		justify-content: space-around;
 	}
 	.tab {
