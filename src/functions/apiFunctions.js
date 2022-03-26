@@ -173,6 +173,7 @@ export default {
             display_name: displayName,
             email: email,
             password: password,
+            lang: store.user.language,
         })
     },
     async addAnEmail(email, password) {
