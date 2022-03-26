@@ -1,6 +1,6 @@
 <template>
 	<div class="main" v-if="store.events.selected && event" style="overflow-y: scroll;">
-		<div style="width: 98%; display: flex; flex-direction: column; align-items: center; height: auto;">
+		<div style="width: 100%; display: flex; flex-direction: column; align-items: center; height: auto;">
 			<div class="flex-row" style="align-items: center; justify-content: center; height: 60px;">
 				<div style="max-width: 100%; overflow-x: scroll; max-height: 100%; overflow-y: hidden;
 						white-space: nowrap; font-size: 22px;">
@@ -16,42 +16,14 @@
 				</div>
 			</div>
 			<img :src="image" style="
-					width: calc(100% + 30px); height: auto; max-width: 500px; margin-top: 16px; margin-bottom: 10px;
-					border-radius: 2px; margin-left: -15px; margin-right: -15px;
+					width: 100%; height: auto; max-width: 500px; margin-top: 16px; margin-bottom: 10px;
 			"/>
 			<div class="flex-table" style="height: auto;">
-				<div v-if="(!event.is_private || myAttendingStatus['invited']) && event.venue_name" class="flex-row"
-						style="justify-content: space-between; flex-direction: column">
-					<p class="event-attr">
-						<small>{{t('VENUE')}}</small>
-					</p>
-					<p class="address-value" style="margin-bottom: 1em;">
-						{{ event.venue_name }}
-					</p>
-				</div>
-				<small class="event-attr">{{t('ADDRESS')}}</small>
-				<small class="address-value">{{ event.address }}</small>
-				<div class="flex-row" style="justify-content: space-between; max-width: 100%;">
-					<button class="button event-page-button" v-on:click.prevent="copyToClipboard()"
-							style="align-self: center; width: auto; flex-shrink: 1; font-size: 14px;">
-						<small>{{t('COPY ADDRESS')}}</small>
-					</button>
-					<button class="button google-maps-button" v-on:click.prevent="openInGoogleMaps()"
-							style="display: flex; flex-direction: row; justify-content: center; width: 100%;
-							flex-shrink: 1; font-size: 14px;">
-            			<small>{{t('OPEN IN GOOGLE MAPS')}}</small>
-					</button>
-				</div>
-				<small class="event-attr">{{t('DESCRIPTION')}}</small>
-				<div style="align-self: center; overflow-y: scroll; max-height: 100px; height: auto;
-						margin-bottom: 0.7em; margin-top: 4px; white-space: pre-line; text-indent: 0 !important; line-height: 20px;"
-				>{{ event.description }}</div>
 				<small class="event-attr">{{t('ATTENDING STATUS')}}</small>
 				<div v-show="!isSpaceToAttend" style="color: red; width: 100%; text-align: center; margin-bottom: 0.7em; margin-top: 4px;">
 					{{ t('THE EVENT IS FULL') }}
 				</div>
-				<div style="width: 100%; display: flex; flex-direction: column; align-items: center;
-						border: 2px solid rgba(255, 255, 255, .3); border-radius: 7px; max-width: 100%; overflow-x: hidden; margin-bottom: 0.7em; margin-top: 4px;">
+				<div class="card-shape" style="margin-bottom: 3px; width: 95%; max-width: 95%; overflow-x: hidden; margin-bottom: 0.7em; margin-top: 4px;">
 					<div style="display: flex; flex-direciton: row; justify-content: center; align-items: center;
 							width: 100%;">
 						<div style="width: 35px; flex-shrink: 0"/>
@@ -165,11 +137,36 @@
 						</div>
 					</div>
 				</div>
+				<div v-if="(!event.is_private || myAttendingStatus['invited']) && event.venue_name" class="flex-row"
+						style="justify-content: space-between; flex-direction: column">
+					<p class="event-attr">
+						<small>{{t('VENUE')}}</small>
+					</p>
+					<p class="address-value" style="margin-bottom: 1em;">
+						{{ event.venue_name }}
+					</p>
+				</div>
+				<small class="event-attr">{{t('ADDRESS')}}</small>
+				<small class="address-value">{{ event.address }}</small>
+				<div class="flex-row" style="justify-content: space-between; max-width: 100%;">
+					<button class="button event-page-button" v-on:click.prevent="copyToClipboard()"
+							style="align-self: center; width: auto; flex-shrink: 1; font-size: 14px;">
+						<small>{{t('COPY ADDRESS')}}</small>
+					</button>
+					<button class="button google-maps-button" v-on:click.prevent="openInGoogleMaps()"
+							style="display: flex; flex-direction: row; justify-content: center; width: 100%;
+							flex-shrink: 1; font-size: 14px;">
+            			<small>{{t('OPEN IN GOOGLE MAPS')}}</small>
+					</button>
+				</div>
+				<small class="event-attr">{{t('DESCRIPTION')}}</small>
+				<div style="align-self: center; overflow-y: scroll; max-height: 101px; height: auto; width: 95%; text-align: center;
+						margin-bottom: 0.7em; margin-top: 4px; white-space: pre-line; text-indent: 0 !important; line-height: 20px;"
+				>{{ event.description }}</div>
 				<small class="event-attr">{{t('PEOPLE')}}</small>
-				<div style="margin-bottom: 1em; height: auto; margin-top: 4px;">
-					<div>
-						<div style="border: 2px solid rgba(255, 255, 255, .3); margin-bottom: 3px; border-radius: 7px;
-								padding: 5px; width: 100%;">
+				<div style="margin-bottom: 1em; height: auto; margin-top: 4px; width: 100%;">
+					<div style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+						<div class="card-shape" style="margin-bottom: 3px; width: 95%; max-width: 95%;">
 							<div class="flex-row" style="justify-content: space-between">
 								<div style="align-self: center">
 									{{ t('invited') }}
@@ -209,7 +206,7 @@
 								</button>
 							</div>
 						</div>
-						<div style="border: 2px solid rgba(255, 255, 255, .3); border-radius: 7px; padding: 5px; width: 100%;">
+						<div class="card-shape" style="margin-bottom: 3px; width: 95%; max-width: 95%;">
 							<div class="flex-row" style="justify-content: space-between">
 								<div style="align-self: center">
 									{{ t('attending') }}
@@ -254,8 +251,7 @@
 								</button>
 							</div>
 						</div>
-						<div style="border: 2px solid rgba(255, 255, 255, .3); margin-bottom: 3px; border-radius: 7px;
-								padding: 5px; width: 100%;">
+						<div class="card-shape" style="margin-bottom: 3px; width: 95%; max-width: 95%;">
 							<div class="flex-row" style="justify-content: space-between">
 								<div style="align-self: center">
 									{{ t('maybe') }}
@@ -297,8 +293,7 @@
 								</button>
 							</div>
 						</div>
-						<div style="border: 2px solid rgba(255, 255, 255, .3); margin-bottom: 3px; border-radius: 7px;
-								padding: 5px; width: 100%;">
+						<div class="card-shape" style="margin-bottom: 3px; width: 95%; max-width: 95%;">
 							<div class="flex-row" style="justify-content: space-between">
 								<div style="align-self: center">
 									{{ t('invite_request') }}
@@ -320,8 +315,8 @@
 								</button>
 							</div>
 						</div>
-						<div style="border: 2px solid rgba(255, 255, 255, .3); margin-bottom: 3px; border-radius: 7px;
-								padding: 5px; width: 100%;" v-if="myAttendingStatus['hosts']">
+						<div class="card-shape" style="margin-bottom: 3px; width: 95%; max-width: 95%;"
+								v-if="myAttendingStatus['hosts']">
 							<div class="flex-row" style="justify-content: space-between">
 								<div style="align-self: center">
 									{{ t('uninvited_followers') }}
@@ -687,9 +682,10 @@
 		width: 100%;
 		display: flex;
 		flex-direction: column;
+		align-items: center;
 	}
 	.flex-row {
-		width: 100%;
+		width: 95%;
 		display: flex;
 		flex-direction: row;
 		justify-content: center;

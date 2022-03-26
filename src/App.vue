@@ -1,7 +1,7 @@
 <template>
 	<div id="app">
 		<div v-show="!store.loading" class="app" v-if="initialLoadCompleted">
-			<app-header/>
+			<app-header ref="appHeader"/>
 			<router-view
 					:key="$route.fullPath"
 					class="router"
@@ -44,6 +44,11 @@
 				window: window,
 			}
 		},
+		computed: {
+			isAuthenticatedUser () {
+				return f.isAuthenticatedUser
+			},
+		},
 		async created () {
 			// back button setup
 			let goBack = f.goBack
@@ -56,11 +61,6 @@
 			// user auto-login from cookies
 			console.log(process.env.PYTHON_ENV)
 			await api.login({})
-			if (f.isAuthenticatedUser) {
-				console.log('AUTHENTICATED USER')
-			} else {
-				console.log('VISITOR')
-			}
 
 			// get events
 			await f.getEvents()
@@ -82,6 +82,7 @@
 			// openingLogo
 			await new Promise(r => setTimeout(r, 2000))
 			this.fadeOutClass = 'fade-out'
+			console.log('App Load Completed: ', this.authenticatedUserCheck())
 			await new Promise(r => setTimeout(r, 1000))
 			this.opening = false
 			this.fadeOutClass = null
@@ -89,14 +90,38 @@
 		watch: {
 			'store.pages' () {
 				this.page = f.currentPage.page
-				if (this.page === 'home' && window.initMap) {
+				window.history.pushState({ path: f.currentUrl }, '', f.currentUrl)
+			},
+			'isAuthenticatedUser' () {
+				this.authenticatedUserCheck()
+			},
+			'store.events.display' () {
+				if (window.initMap) {
 					window.initMap()
 				}
-				window.history.pushState({ path: f.currentUrl }, '', f.currentUrl)
+			},
+			'store.user.language' () {
+				if (window.initMap) {
+					window.initMap()
+				}
 			},
 		},
 		methods: {
 			t (w) { return translations.t(w) },
+			authenticatedUserCheck () {
+				let result = 'VISITOR'
+				if (!this.isAuthenticatedUser) {
+					if (this.$refs.appHeader) {
+						this.$refs.appHeader.showLanguageModal = true
+					}
+				} else {
+					result = 'AUTHENTICATED USER'
+					if (this.$refs.appHeader) {
+						this.$refs.appHeader.showLanguageModal = false
+					}
+				}
+				return result
+			}
 		},
 	}
 </script>
@@ -167,8 +192,6 @@
 		width: 100%;
 		height: 100%;
 		z-index: 1;
-		padding-left: 10px;
-		padding-right: 10px;
 	}
 	/*[v-cloak] {
 		display: none;
@@ -202,6 +225,7 @@
 		align-items: center;
 		justify-content: center;
 		white-space: nowrap;
+		box-shadow: rgba(0, 0, 0, 1) 0px 5px 8px;
 	}
 	.button:disabled, .button[disabled] {
 		font-family: inherit;
@@ -237,6 +261,15 @@
 		justify-content: center;
 		white-space: nowrap;
 		text-decoration: underline;
+	}
+	.card-shape {
+		box-shadow: rgba(0, 0, 0, 1) 0px 5px 8px;
+		background: rgba(255, 255, 255, .05);
+		border: none;
+		border-radius: 7px;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
 	}
 	input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus,
 	input:-webkit-autofill:active, input[type=text], input[type=email], input[type=password],
@@ -312,17 +345,6 @@
 		flex-direction: row;
 		align-items: center;
 		justify-content: center;
-	}
-	.viewer {
-		width: 100%;
-		height: 100%;
-		border: 2px solid rgba(255, 255, 255, .3);
-		border-bottom-left-radius: 7px;
-		border-bottom-right-radius: 7px;
-		border-top-left-radius: 7px;
-		border-top-right-radius: 7px;
-		overflow-x: hidden;
-		overflow-y: hidden;
 	}
 	.small-button {
 		height: 19px !important;

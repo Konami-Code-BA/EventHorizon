@@ -55,7 +55,9 @@
 				})
 				promise1.then((value) => {
 					navigator.clipboard.writeText(value)
-					NativeAndroid.copyToClipboard(value)
+					if (typeof NativeAndroid !== 'undefined') {
+						NativeAndroid.copyToClipboard(value)
+					}
 				})
 				//// if the above fails on some browser, this is supposed to work. maybe use both if the first fails
 				// let textArea = document.createElement("textarea")

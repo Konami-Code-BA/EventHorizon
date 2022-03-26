@@ -1,6 +1,6 @@
 <template>
 	<div class="main">
-		<div class="main" style="overflow-y: scroll; width: 100%;">
+		<div class="main" style="overflow-y: hidden; width: 100%;">
 			<div style="font-size: 36px;">{{ t('SETTINGS') }}</div>
 
 			<div class="line-height"/>
@@ -179,7 +179,6 @@
 				)
 				if (!user.error) {
 					f.goToPage(this.store.lastNonLoginRegisterPage)
-					window.initMap()
 					this.showAddEmailModal = false
 					this.store.loading = false
 					return
