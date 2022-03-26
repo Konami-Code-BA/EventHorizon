@@ -28,6 +28,10 @@
     venv/Scripts/activate
     pip install -r requirements.txt
     ```
+    might need, might not
+    ```shell script
+    SET PATH=C:\Program Files\Nodejs;%PATH%
+    ```
 1. Install npm packages
     ```shell script
     npm install
