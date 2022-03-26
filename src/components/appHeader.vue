@@ -186,12 +186,16 @@
 			async english () {
 				let lang = 'EN'
 				store.user.language = lang
-				await api.updateUserLanguage()
+				if (this.isAuthenticatedUser) {
+					await api.updateUserLanguage()
+				}
 			},
 			async japanese () {
 				let lang = 'JP'
 				store.user.language = lang
-				await api.updateUserLanguage()
+				if (this.isAuthenticatedUser) {
+					await api.updateUserLanguage()
+				}
 			},
 			goToLoginRegister () {
 				f.goToPage({ page: 'loginRegister', args: {} })
@@ -219,9 +223,7 @@
 		height: 16px;
 	}
 	.tabs {
-		border-top: none !important;
-		border-left: none !important;
-		border-right: none !important;
+		border: none !important;
 		justify-content: space-around !important;
 		width: 100%;
 		max-width: 100%;

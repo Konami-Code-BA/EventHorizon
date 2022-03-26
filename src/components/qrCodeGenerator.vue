@@ -51,7 +51,7 @@
 							<img src="@/assets/downloadIcon.png" class="icon"/>
 						</div>
 					</a>
-					<button v-on:click.prevent="share()" class="qr-button">
+					<button v-on:click.prevent="share()" class="qr-button" v-if="navigate">
 						<img src="@/assets/blackShareIcon.png" class="icon"/>
 					</button>
 				</div>
@@ -81,6 +81,7 @@
 				image_name: null,
 				image_file: null,
 				selectedQr: null,
+				navigate: navigator.share,
 			}
 		},
 		props: {

@@ -11,12 +11,12 @@ backup database, download backup, and import backup
 you can edit the database as you do in python in the viewsets etc. by using this (for example chaning group name)
 	heroku run python manage.py shell --app=event-horizon-test
 	>>> from django.contrib.auth.models import Group
+	>>> from app_name.serializers import UserSerializer
 	>>> Group.objects.get(name='Visitor')
 	>>> group = Group.objects.get(name='Visitor')
 	>>> group.name = 'Temp Visitor'
 	>>> group.save()
 	>>> exit()
-	>>> from app_name.serializers import UserSerializer
 	>>> user = UserSerializer.Meta.model.objects.get(email="mdsimeone@gmail.com")
 	>>> user.is_superuser = True
 	>>> user.is_staff = True

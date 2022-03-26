@@ -75,7 +75,6 @@
 				if (!user.error) {
 					await f.getEvents()
 					f.goToPage(this.store.lastNonLoginRegisterPage)
-					window.initMap()
 					this.store.loading = false
 					return
 				}
