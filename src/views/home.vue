@@ -1,57 +1,57 @@
 <template>
 	<div>
-		<div class="main" style="padding-top: 5px;">
-			<div class="tabsdiv" style="width: 100%; display: flex; flex-direction: column;
-					border-top-left-radius: 7px; border-top-right-radius: 7px;">
-				<div style="display: flex; flex-direction: row; align-items: center; justify-content: center; padding: 5px; position:relative;">
-					<div>
-						{{ t('EVENTS') }}
+		<div class="main">
+			<div class="card-shape" style="height: calc(100% - 20px); width: 95%; margin-top: 10px; margin-bottom: 15px;">
+				<div class="tabsdiv" style="width: 100%; display: flex; flex-direction: column;">
+					<div style="display: flex; flex-direction: row; align-items: center; justify-content: center; padding: 5px; position:relative;">
+						<div>
+							{{ t('EVENTS') }}
+						</div>
+						<div style="position: absolute; right: 0;">
+							<button style="background: none; border: none"
+									v-on:click.prevent="showInformation = 'events'">
+								<img src="@/assets/iIcon.png" class="icon" style="padding: 3px;" id="events-info"/>
+							</button>
+						</div>
 					</div>
-					<div style="position: absolute; right: 0;">
-						<button style="background: none; border: none"
-								v-on:click.prevent="showInformation = 'events'">
-							<img src="@/assets/iIcon.png" class="icon" style="padding: 3px;" id="events-info"/>
-						</button>
-					</div>
+					<tabs :num-tabs="3" :initial="selectedTab" :key="selectedTab"
+							@on-click="(arg) => { selectedTab = arg }"
+							style="border-left: none; border-right: none; border-bottom: none; height: auto !important;">
+						<div slot="1" class="tab">
+							<img src="@/assets/mapIcon.png" class="icon" style="vertical-align: bottom;"/>
+						</div>
+						<div slot="2" class="tab">
+							<img src="@/assets/threeBarsHIcon.png" class="icon" style="vertical-align: bottom;"/>
+						</div>
+						<div slot="3" class="tab">
+							<img src="@/assets/calendarIcon.png" class="icon" style="vertical-align: bottom;"/>
+						</div>
+					</tabs>
 				</div>
-				<tabs :num-tabs="3" :initial="selectedTab" :key="selectedTab"
-						@on-click="(arg) => { selectedTab = arg }"
-						style="border-left: none; border-right: none; border-bottom: none; height: auto !important;">
-					<div slot="1" class="tab">
-						<img src="@/assets/mapIcon.png" class="icon" style="vertical-align: bottom;"/>
-					</div>
-					<div slot="2" class="tab">
-						<img src="@/assets/threeBarsHIcon.png" class="icon" style="vertical-align: bottom;"/>
-					</div>
-					<div slot="3" class="tab">
-						<img src="@/assets/calendarIcon.png" class="icon" style="vertical-align: bottom;"/>
-					</div>
-				</tabs>
-			</div>
-			<events-map class="viewer events" v-show="selectedTab==1"
-					:key="createComponentKey('map')"/>
-			<events-list class="viewer events" v-show="selectedTab==2"
-					:key="createComponentKey('list')"/>
-			<events-calendar class="viewer events" v-show="selectedTab==3"
-					:key="createComponentKey('cal')"/>
-			<div class="tabsdiv" style="width: 100%; display: flex; flex-direction: column;
-					border-bottom-left-radius: 7px; border-bottom-right-radius: 7px; margin-bottom: 5px;">
-				<tabs :num-tabs="3" :initial="1" @on-click="(arg) => { filterChange(arg) }" ref="filterTabs"
-						style="border-left: none; border-right: none; border-bottom: none; height: auto !important;
-						border-top: none;">
-					<div slot="1" class="tab">
-						<img src="@/assets/globeIcon.png" class="icon" style="vertical-align: bottom;"/>
-					</div>
-					<div slot="2" class="tab">
-						<img src="@/assets/profileIcon.png" class="icon" style="vertical-align: bottom;"
-								v-if="isAuthenticatedUser"/>
-						<img src="@/assets/greyProfileIcon.png" class="icon" style="vertical-align: bottom;"
-								v-else/>
-					</div>
-					<div slot="3" class="tab">
-						<img src="@/assets/greyPeopleIcon.png" class="icon" style="vertical-align: bottom;"/>
-					</div>
-				</tabs>
+				<events-map class="viewer events" v-show="selectedTab==1"
+						:key="createComponentKey('map')"/>
+				<events-list class="viewer events" v-show="selectedTab==2"
+						:key="createComponentKey('list')"/>
+				<events-calendar class="viewer events" v-show="selectedTab==3"
+						:key="createComponentKey('cal')"/>
+				<div class="tabsdiv" style="width: 100%; display: flex; flex-direction: column; border-bottom-left-radius: 7px; border-bottom-right-radius: 7px; border-bottom: none;">
+					<tabs :num-tabs="3" :initial="1" @on-click="(arg) => { filterChange(arg) }" ref="filterTabs"
+							style="border-left: none; border-right: none; border-bottom: none; height: auto !important;
+							border-top: none;">
+						<div slot="1" class="tab">
+							<img src="@/assets/globeIcon.png" class="icon" style="vertical-align: bottom;"/>
+						</div>
+						<div slot="2" class="tab">
+							<img src="@/assets/profileIcon.png" class="icon" style="vertical-align: bottom;"
+									v-if="isAuthenticatedUser"/>
+							<img src="@/assets/greyProfileIcon.png" class="icon" style="vertical-align: bottom;"
+									v-else/>
+						</div>
+						<div slot="3" class="tab">
+							<img src="@/assets/greyPeopleIcon.png" class="icon" style="vertical-align: bottom;"/>
+						</div>
+					</tabs>
+				</div>
 			</div>
 		</div>
 		<information v-if="showInformation" :closeInfo="() => {showInformation=null}" :whichInfo="showInformation"/>
@@ -132,15 +132,22 @@
 				this.store.events.display = this.store.events[
 					{ 1: 'all', 2: 'mine', 3: 'allPeople' }[selectedFilter]
 				]
-				window.initMap()
 			},
 		} // methods
 	} // export
 </script>
 <style scoped>
+	.viewer {
+		width: 100%;
+		height: 100%;
+		overflow-x: hidden;
+		overflow-y: hidden;
+	}
 	.tabsdiv {
 		background-color: rgba(0, 0, 0, .2);
 		border: 2px solid rgba(255, 255, 255, .3);
+		border-left: none;
+		border-right: none;
 	}
 	.tabs {
 		justify-content: space-around;
