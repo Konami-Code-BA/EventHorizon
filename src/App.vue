@@ -192,7 +192,7 @@
 		font-weight: inherit;
 		font-size: inherit;
 		background-color: transparent;  /*5300e1, 000bff*/
-		border: 2px solid #ffe07a;  /*18002e*/
+		border: 0.8px solid #ffe07a;  /*18002e*/
 		border-radius: 15px;
 		height: 30px;
 		cursor: pointer;
@@ -215,7 +215,7 @@
 		font-weight: inherit;
 		font-size: inherit;
 		background-color: transparent;  /*5300e1, 000bff*/
-		border: 2px solid #808080;  /*18002e*/
+		border: 0.8px solid #808080;  /*18002e*/
 		border-radius: 15px;
 		height: 30px;
 		cursor: pointer;
