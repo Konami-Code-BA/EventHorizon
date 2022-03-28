@@ -7,7 +7,7 @@
 					{{event.name}}
 				</div>
 			</div>
-			<div class="flex-row" style="justify-content: space-between;">
+			<div class="flex-row rsvp-button" style="">
 				<div>
 					{{ getDate }}
 				</div>
@@ -137,8 +137,8 @@
 						</div>
 					</div>
 				</div>
-				<div v-if="(!event.is_private || myAttendingStatus['invited']) && event.venue_name" class="flex-row"
-						style="justify-content: space-between; flex-direction: column">
+				<div v-if="(!event.is_private || myAttendingStatus['invited']) && event.venue_name" class="flex-row rsvp-button"
+						style="flex-direction: column">
 					<p class="event-attr">
 						<small>{{t('VENUE')}}</small>
 					</p>
@@ -166,8 +166,8 @@
 				<small class="event-attr">{{t('PEOPLE')}}</small>
 				<div style="margin-bottom: 1em; height: auto; margin-top: 4px; width: 100%;">
 					<div style="width: 100%; display: flex; flex-direction: column; align-items: center;">
-						<div class="card-shape" style="margin-bottom: 3px; width: 95%; max-width: 95%;">
-							<div class="flex-row" style="justify-content: space-between">
+						<div class="card-shape" style="margin-bottom: 3px; width: 95%; max-width: 95%; padding: 8px;">
+							<div class="flex-row rsvp-button">
 								<div style="align-self: center">
 									{{ t('invited') }}
 								</div>
@@ -187,7 +187,7 @@
 									</div>
 								</button>
 							</div>
-							<div class="flex-row" style="justify-content: space-between">
+							<div class="flex-row rsvp-button">
 								<div style="align-self: center">
 									{{ t('hosts') }}
 								</div>
@@ -206,8 +206,8 @@
 								</button>
 							</div>
 						</div>
-						<div class="card-shape" style="margin-bottom: 3px; width: 95%; max-width: 95%;">
-							<div class="flex-row" style="justify-content: space-between">
+						<div class="card-shape" style="margin-bottom: 3px; width: 95%; max-width: 95%; padding:6px">
+							<div class="flex-row rsvp-button">
 								<div style="align-self: center">
 									{{ t('attending') }}
 								</div>
@@ -227,7 +227,7 @@
 									</div>
 								</button>
 							</div>
-							<div class="flex-row" style="justify-content: space-between">
+							<div class="flex-row rsvp-button">
 								<div style="align-self: center">
 									{{ t('ATTENDING LIMIT') }}
 								</div>
@@ -251,8 +251,8 @@
 								</button>
 							</div>
 						</div>
-						<div class="card-shape" style="margin-bottom: 3px; width: 95%; max-width: 95%;">
-							<div class="flex-row" style="justify-content: space-between">
+						<div class="card-shape" style="margin-bottom: 3px; width: 95%; max-width: 95%; padding: 6px;">
+							<div class="flex-row rsvp-button" style="justify-content: space-between">
 								<div style="align-self: center">
 									{{ t('maybe') }}
 								</div>
@@ -272,7 +272,7 @@
 									</div>
 								</button>
 							</div>
-							<div class="flex-row" style="justify-content: space-between">
+							<div class="flex-row" style="justify-content: space-between; margin-bottom:4px">
 								<div style="align-self: center">
 									{{ t('wait_list') }}
 								</div>
@@ -293,7 +293,7 @@
 								</button>
 							</div>
 						</div>
-						<div class="card-shape" style="margin-bottom: 3px; width: 95%; max-width: 95%;">
+						<div class="card-shape" style="margin-bottom: 3px; width: 95%; max-width: 95%; padding:6px">
 							<div class="flex-row" style="justify-content: space-between">
 								<div style="align-self: center">
 									{{ t('invite_request') }}
@@ -315,9 +315,9 @@
 								</button>
 							</div>
 						</div>
-						<div class="card-shape" style="margin-bottom: 3px; width: 95%; max-width: 95%;"
+						<div class="card-shape" style="margin-bottom: 3px; width: 95%; max-width: 95%; padding: 6px"
 								v-if="myAttendingStatus['hosts']">
-							<div class="flex-row" style="justify-content: space-between">
+							<div class="flex-row rsvp-button" style="">
 								<div style="align-self: center">
 									{{ t('uninvited_followers') }}
 								</div>
@@ -748,5 +748,10 @@
 		margin-bottom: 2px;
 		text-align: center;
 		margin: 0 auto;
-	}
+  }
+    .rsvp-button{
+      margin-bottom:4px;
+      justify-content: space-between;
+    }
+
 </style>
