@@ -25,7 +25,7 @@ export default {
                     store.user = store.defaultUser
                     return store.user
                 } else if ([
-                        'login', 'register_with_email', 'register_email', 'update_user_do_get_lines',
+                        'login', 'try_login', 'register', 'update_user_do_get_lines',
                         'update_user_do_get_emails', 'update_user_language', 'line_new_device',
                         'change_password', 'update_user_display_name',
                     ].includes(data.command) && !('error' in response.data[0])) {
@@ -205,11 +205,27 @@ export default {
             message: message,
         })
     },
-    async forgotPassword(email, returnLink) {
+    async startLoginRegister(email, returnLink) {
         return await this.userApi('post', null, {
-            command: 'forgot_password',
+            command: 'start_login_register',
             email: email,
             return_link: returnLink,
+            lang: store.user.language,
+        })
+    },
+    async tryLogin(email, code) {
+        return await this.userApi('post', null, {
+            command: 'try_login',
+            email: email,
+            code: code,
+        })
+    },
+    async register(email, code, displayName) {
+        return await this.userApi('post', null, {
+            command: 'register',
+            email: email,
+            code: code,
+            display_name: displayName
         })
     },
     async changePassword(email, newPassword, code = null, currentPassword = null) {

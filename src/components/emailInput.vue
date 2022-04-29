@@ -59,13 +59,17 @@
 					return true
 				}
 				let [mailPrefix, mailDomain] = atSplit
-				let periodSplit = mailDomain.split('.')
-				if (periodSplit.length != 2) {
+				if (mailPrefix.length < 1) {
 					return true
 				}
-				let [domainPrefix, domainSuffix] = periodSplit
-				if (mailPrefix.length < 1 || domainPrefix.length < 1 || domainSuffix.length < 2) {
+				let periodSplit = mailDomain.split('.')
+				if (periodSplit.length <= 1) {
 					return true
+				}
+				for (let i = 0; i < periodSplit.length; i++) {
+					if (periodSplit[i].length < 1) {
+						return true
+					}
 				}
 				return false
 			},

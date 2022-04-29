@@ -15,6 +15,7 @@
 			<!--button v-on:click.prevent="makeImage()">makeImage</button-->    <!--for makeImage()-->
 			<!--img :src="imageone"/-->    <!--for makeImage()-->
 			<button v-on:click.prevent="fbLogin()">fbLogin</button>
+			<button v-on:click.prevent="notification()">notification</button>
 		</div>
 	</div>
 </template>
@@ -38,17 +39,18 @@
 			}
 		},
 		async mounted () {
-			let js = document.createElement('script')
-			js.id = 'facebook-jssdk'
-			js.src = 'https://connect.facebook.net/en_US/sdk.js'
-			await document.head.appendChild(js)
-			window.fbAsyncInit = async () => {
-				await window.FB.init({
-					appId: '467874544824216', //You will need to change this
-					cookie: false, // This is important, it's not enabled by default
-					version: 'v13.0'
-				})
-			}
+			//let js = document.createElement('script')
+			//js.id = 'facebook-jssdk'
+			//js.src = 'https://connect.facebook.net/en_US/sdk.js'
+			//await document.head.appendChild(js)
+			//window.fbAsyncInit = async () => {
+			//	await window.FB.init({
+			//		appId: '467874544824216', //You will need to change this
+			//		cookie: false, // This is important, it's not enabled by default
+			//		version: 'v13.0'
+			//	})
+			//}
+			Notification.requestPermission()
 		},
 		methods: {
 			t (w) { return translations.t(w) },
@@ -128,7 +130,15 @@
 						})
 					}
 				})
-			}
+			},
+			notification () {
+				console.log(Notification.permission)
+				if (Notification.permission) {
+					var img = '/to-do-notifications/img/icon-128.png';
+					var text = 'HEY! Your task "' + 'hello' + '" is now overdue.';
+					var notification = new Notification('To do list', { body: text, icon: img });
+				}
+			},
 		} // methods
 	} // export
 </script>
