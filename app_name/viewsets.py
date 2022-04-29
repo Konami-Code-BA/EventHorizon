@@ -311,20 +311,11 @@ class UserViewset(viewsets.ModelViewSet):
 		):
 			f.notify_user(
 				user,
-				f"""Event: {event.name}
-
-Direct Message From {
+				f"""Direct message from {
 	'Host' if f.user_in_guest_statuses(event, request.user.id, ['hosts']) else 'Guest'
-} {request.user.display_name}:
-{request.data['message']}
-
-
-To view this event, go here: {f.create_url(f'/?page=event&id={event.id}')}
-To message back: go to the event (above link) ⇨ Show People ⇨ {
-	'Hosts' if f.user_in_guest_statuses(event, request.user.id, ['hosts']) else 'Total Invited'
-}
-*Note: You can't turn off direct messages from hosts
-*Note: you can't reply to this message here""",
+} '{request.user.display_name}' about the event '{event.name}'.
+    '{request.data['message']}'
+Event page: {f.create_url(f'/?page=event&id={event.id}')}""",
 				notification_type='DM',
 				)
 			return
@@ -348,16 +339,9 @@ To message back: go to the event (above link) ⇨ Show People ⇨ {
 					event, id, ['hosts', 'invited', 'wait_list', 'invite_request']):
 				f.notify_user(
 					user,
-					f"""Event: {event.name}
-
-Direct Message From Host:
-{request.data['message']}
-
-
-To view this event, go here: {f.create_url(f'/?page=event&id={event.id}')}
-To message the host: go to the event (above link) ⇨ Show People ⇨ Hosts
-*Note: You can't turn off direct messages from hosts
-*Note: you can't reply to this message here""",
+					f"""Direct message from Host '{request.user.display_name}' about the event '{event.name}'.
+    '{request.data['message']}'
+Event page: {f.create_url(f'/?page=event&id={event.id}')}""",
 					notification_type='DM',
 				)
 				continue
@@ -517,21 +501,51 @@ Feedback:
 	#		send_mail(subject, message, email_from, recipient_list, fail_silently=False)
 	#	return request.user
 
-	def forgot_password(self, request):  # SECURITY: anyone can say they forgot a password
-		try:
+	def start_login_register(self, request):  # SECURITY: anyone is allowed to do this
+		try:  # if user already exists, get the user
 			user = self.model.objects.get(email=request.data['email'])
-			user.random_secret = secrets.token_urlsafe(16)
+		except self.model.DoesNotExist:  # if user doesn't exist, create a new user
+			user = UserViewset.model.objects.create_user()
 			user.save()
-			subject = 'Event Horizon - Change Password Link'
-			message = f'Please follow this link to change your password:\n'
-			message += request.data['return_link'] + '&code=' + user.random_secret
-			email_from = settings.EMAIL_HOST_USER
-			recipient_list = [request.data['email'],]
-			send_mail(subject, message, email_from, recipient_list, fail_silently=False)
-			user = [OrderedDict([('success', 'success')])]
+			user.groups.clear()  # clear if any group exists
+			user.groups.add(Group.objects.get(name='User').id)  # put into User group
+			user.email = request.data['email']  # add new user account info
+			user.do_get_emails = True
+			user.language = request.data['lang']
+			#request.user = user
+			#f.authenticate_login(request)  # login user
+		code = secrets.token_urlsafe(16)
+		user.password = make_password(code)  # make password a new secret code
+		user.save()
+		subject = 'Login / Register Link'
+		message = f'Please follow this link to login / register:\n'
+		message += request.data['return_link'] + '&code=' + code
+		email_from = settings.EMAIL_HOST_USER
+		recipient_list = [request.data['email'],]
+		send_mail(subject, message, email_from, recipient_list, fail_silently=False)
+		user = [OrderedDict([('success', 'success')])]
+		return user
+	
+	def try_login(self, request):  # SECURITY: anyone is allowed to do this
+		try:  # if user already exists, get the user
+			print(request.data['email'])
+			user = self.model.objects.get(email=request.data['email'])
+			user = f.authenticate_login(request)  # login user
 		except self.model.DoesNotExist:
 			user = namedtuple('user', 'error')
-			user.error = 'This email is not registered'
+			user.error = 'a user with this email could not be found'
+		return user
+
+	def register(self, request):
+		try:
+			print(request.data['email'])
+			user = self.model.objects.get(email=request.data['email'])  # get user
+			user.display_name = request.data['display_name']
+			user.save()
+			user = f.authenticate_login(request)  # login user
+		except self.model.DoesNotExist:
+			user = namedtuple('user', 'error')
+			user.error = 'a user with this email could not be found'
 		return user
 
 	def change_password(self, request):  # could this be in patch with the other change stuff?
@@ -808,16 +822,8 @@ class EventViewset(viewsets.ViewSet):
 			for host in event.hosts.all():
 				f.notify_user(
 					host,
-					f"""Event: {event.name}
-
-Notification:
-{user.display_name} has left this event.
-
-
-To view this event, go here: {f.create_url(f'/?page=event&id={event.id}')}
-
-To turn off notifications, go here: {f.create_url('/?page=settings')}
-*Note: you can't reply to this message here""",
+					f"""'{user.display_name}' has left the event '{event.name}'.
+Event page: {f.create_url(f'/?page=event&id={event.id}')}""",
 				)
 		elif request.data['status'] == 'invite_request':
 			if request.user.groups.filter(id=Group.objects.get(name='User').id).exists():
@@ -826,17 +832,8 @@ To turn off notifications, go here: {f.create_url('/?page=settings')}
 				for host in event.hosts.all():
 					f.notify_user(
 						host,
-						f"""Event: {event.name}
-
-Notification:
-{user.display_name} has requested an invite to this event.
-
-
-To view this event, go here: {f.create_url(f'/?page=event&id={event.id}')}
-
-To message {user.display_name}: go to the event (above link) ⇨ Show People ⇨ Invite Requests
-To turn off notifications, go here: {f.create_url('/?page=settings')}
-*Note: you can't reply to this message here""",
+						f"""'{user.display_name}' has requested an invite to the event '{event.name}'.
+Event page: {f.create_url(f'/?page=event&id={event.id}')}""",
 					)
 		elif request.data['status'] == 'invited':
 			# only host can invite user
@@ -847,18 +844,8 @@ To turn off notifications, go here: {f.create_url('/?page=settings')}
 				user = UserSerializer.Meta.model.objects.get(pk=user_to_change)
 				f.notify_user(
 					user,
-					f"""Event: {event.name}
-
-Notification:
-You have been invited to this event!
-For now, you're marked as "undecided".
-
-
-To view this event, go here: {f.create_url(f'/?page=event&id={event.id}')}
-
-To turn off notifications, go here: {f.create_url('/?page=settings')}
-To message the host: go to the event (above link) ⇨ Show People ⇨ Hosts
-*Note: you can't reply to this message here""",
+					f"""Invitation to the event '{event.name}'.
+Event page: {f.create_url(f'/?page=event&id={event.id}')}""",
 				)
 		elif request.data['status'] == 'wait_list':
 			# only invited can be changed to wait_list (unless its public)

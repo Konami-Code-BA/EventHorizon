@@ -197,7 +197,7 @@ def notify_user(user, message, notification_type='other'):
 	# if has email and doesn't have line, it'll send email
 	# if has line and email but both marked off, it'll not send line, it will send email
 	if user.do_get_emails or (notification_type == 'DM' and user.email and (not user.do_get_lines)):
-		subject = 'Event Horizon Notification'
+		subject = message.split('\n')[0]
 		message = message
 		email_from = settings.EMAIL_HOST_USER
 		recipient_list = [user.email,]
@@ -269,17 +269,8 @@ def notify_waiting_users_if_necessary(event, changing_user_id, selected_status=N
 				):
 					notify_user(
 						waiting_user,
-						f"""Event: {event.name}
-
-Notification:
-Space has opened up to attend the event!
-
-
-To view this event, go here: {create_url(f'/?page=event&id={event.id}')}
-
-To turn off notifications, go here: {create_url('/?page=settings')}
-To message the host: go to the event (above link) ⇨ Show People ⇨ Hosts
-*Note: you can't reply to this message here""",
+						f"""Open space in event '{event.name}'.
+Event page: {create_url(f'/?page=event&id={event.id}')}""",
 					)
 	# if changing_user is not in attending and he is entering, or he is in attending and he's adding a plus_one
 	elif (((not event.attending.filter(id=changing_user_id).exists()) and selected_status == 'attending')
