@@ -3,32 +3,29 @@
 		<div class="header" style="width: 100%;">
 			<tabs :num-tabs="5" :initial="0" @on-click="tab => { selectATab(tab) }"
 					style="background-color: rgba(0, 0, 0, .5); height: 100%;">
-				<div slot="1" style="width: 35px !important;">
+				<div slot="1" style="width: 30px !important;">
 					<img src="@/assets/backIcon.png" style="height: 22px; margin-top: 4px;"
 							v-if="store.pages.length > 1">
-					<div v-else style="width: 35px;"/>
+					<div v-else style="width: 30px;"/>
 				</div>
-				<div slot="2" style="width: 35px !important;">
+				<div slot="2" style="width: 30px !important;">
 					<img src="@/assets/threeBarsIcon.png" style="height: 24px; margin-top: 4px;">
 				</div>
-				<div slot="3" style="width: 140px !important;">
+				<div slot="3" style="width: 75px !important;">
+				</div>
+				<div slot="4" style="width: 30px !important;">
 					<div class="no-border-button" style="display: flex; flex-direction: row; align-items: center;">
-						<div>EVENT</div>
-						<div>
-							<img src="@/assets/eventhorizonTopIcon.png" style="height: 20px; vertical-align: middle;">
-						</div>
-						<div>HORIZON</div>
+						<img src="@/assets/eventhorizonTopIcon.png" style="height: 20px; vertical-align: middle;">
 					</div>
 				</div>
-				<div slot="4" style="width: 0 !important; padding: 0 !important; margin: 0 !important;"/>
-				<div slot="5" style="width: 70px !important;">
-          			<div class="current-user" v-if="isAuthenticatedUser" style="color: #cae2ff; font-size: 10px;">
+				<div slot="5" style="width: 135px !important;">
+          			<div class="current-user" v-if="isAuthenticatedUser"
+							style="color: #cae2ff; font-size: 10px; align-items: flex-end;">
 						{{ store.user.display_name }}
 					</div>
-          			<button class="no-border-button current-user" v-else v-on:click.prevent="goToLoginRegister()"
-					  		style="font-size: 14px;">
-						{{t('LOGIN')}}
-					</button>
+          			<div class="no-border-button current-user" v-else style="font-size: 14px; align-items: flex-end;">
+						{{t('LOGIN / REGISTER')}}
+					</div>
 				</div>
 			</tabs>
 		</div>
@@ -185,12 +182,14 @@
 			},
 			selectATab (tab) {
 				this.selectedTab = tab
-				if (tab === 3) {
+				if (tab === 4) {
 					window.location.replace(window.origin)
 				} else if (tab === 1) {
 					if (store.pages.length > 1) {
 						f.goBack()
 					}
+				} else if (tab === 5) {
+					this.goToLoginRegister()
 				}
 			},
 			async english () {
@@ -245,7 +244,7 @@
 	}
 	.tabs {
 		border: none !important;
-		justify-content: space-around !important;
+		justify-content: center !important;
 		width: 100%;
 		max-width: 100%;
 	}
