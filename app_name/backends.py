@@ -16,12 +16,12 @@ class UserBackend(BaseAuthentication):
 			try:
 				print('email')
 				user = self.UserModel.objects.get(email=request.data['email'])
-				if user.check_password(request.data['password']):
+				if user.check_password(request.data['code']):
 					return user
 				else:
-					print('password fail')
+					print('code fail')
 					user = namedtuple('user', 'error')
-					user.error = 'Incorrect password'
+					user.error = 'Incorrect code'
 					return user
 			except self.UserModel.DoesNotExist:
 				print('DoesNotExist fail')
@@ -32,16 +32,6 @@ class UserBackend(BaseAuthentication):
 				print('BaseException fail')
 				user = namedtuple('user', 'error')
 				user.error = error
-				return user
-		if 'line_id' in request.data:
-			try:
-				print('line')
-				user = self.UserModel.objects.get(line_id=request.data['line_id'])
-				return user
-			except self.UserModel.DoesNotExist:
-				print('DoesNotExist fail')
-				user = namedtuple('user', 'error')
-				user.error = 'DoesNotExist'
 				return user
 		if request.session.session_key:
 			try:

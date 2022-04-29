@@ -53,8 +53,6 @@
 	}
 	.tab {
 		width: auto;
-		padding-left: 5px;
-		padding-right: 5px;
 		display: flex;
 		flex-direction: column;
 		align-items: center;

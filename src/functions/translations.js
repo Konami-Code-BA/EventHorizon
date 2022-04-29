@@ -834,6 +834,14 @@ export default {
             'EN': 'CAN\'T CHANGE PAST EVENTS',
             'JP': '過去の出来事は変えられません'
         },
+        'SUBMIT': {
+            'EN': 'SUBMIT',
+            'JP': '提出'
+        },
+        'NOT AUTHENTICATED': {
+            'EN': 'NOT AUTHENTICATED',
+            'JP': 'NOT AUTHENTICATED'
+        },
     },
 
     t: function(w) {

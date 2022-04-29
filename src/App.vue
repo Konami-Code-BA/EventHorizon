@@ -9,7 +9,8 @@
 			<modal-view
 					class="router"
 					v-show="page != 'home'"
-					:key="page"/>
+					:key="page"
+					@closeLanguage="$refs.appHeader.showLanguageModal = false"/>
 			<app-footer @homePage="$refs.homepage.selectedTab = 1"/>
 		</div>
 		<div class="loading" v-if="store.loading"/>

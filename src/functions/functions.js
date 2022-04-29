@@ -16,7 +16,7 @@ export default {
         return result
     },
     get isAuthenticatedUser() {
-        let result = this.inGroups(['User', 'Admin'])
+        let result = this.inGroups(['User', 'Admin']) && store.user.display_name !== ''
         return result
     },
     get isAdmin() {
@@ -82,7 +82,7 @@ export default {
                 window.initMap()
             }
         }
-        if (!['loginRegister', 'registerWithEmail', 'forgotPassword', 'resetPassword'].includes(pageDict.page)) {
+        if (!['loginRegister', 'welcome'].includes(pageDict.page)) {
             store.lastNonLoginRegisterPage = pageDict
         }
     },
@@ -289,9 +289,10 @@ export default {
         }
         return { page: nextPage, args: nextArgs }
     },
-    createUrlForPasswordChange(email) {
+    createUrlForLoginRegister(email) {
         let nextArgKeys = Object.keys(store.lastNonLoginRegisterPage.args)
-        let returnUrl = `${window.origin}/?page=resetPassword&next=${store.lastNonLoginRegisterPage.page}`
+        console.log('HERE I AM', store.lastNonLoginRegisterPage.page)
+        let returnUrl = `${window.origin}/?page=welcome&next=${store.lastNonLoginRegisterPage.page}`
         returnUrl += `&email=${encodeURIComponent(email)}`
         if (nextArgKeys.length > 0) {
             for (let i = 0; i < nextArgKeys.length; i++) {
@@ -299,6 +300,16 @@ export default {
             }
         }
         return returnUrl
+    },
+    removeArgFromUrl(argName) {
+        let query = window.location.search
+        query = query.split('&')
+        query = query.filter(item => { return !item.includes(argName) && !item.includes('?') })
+        let params = Object.assign({}, ...query.map(item => ({
+            [item.split('=')[0]]: item.split('=')[1]
+        })))
+        store.pages[store.pages.length - 1].args = params
+        window.history.pushState({ path: this.currentUrl }, '', this.currentUrl)
     },
     shakeFunction(thiss) {
         if (Array.isArray(thiss)) {
