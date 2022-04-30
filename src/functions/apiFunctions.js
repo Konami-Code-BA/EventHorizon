@@ -25,9 +25,9 @@ export default {
                     store.user = store.defaultUser
                     return store.user
                 } else if ([
-                        'login', 'register_with_email', 'register_email', 'update_user_do_get_lines',
-                        'update_user_do_get_emails', 'update_user_language', 'line_new_device', 'forgot_password',
-                        'change_password',
+                        'login', 'try_login', 'register', 'update_user_do_get_lines',
+                        'update_user_do_get_emails', 'update_user_language', 'line_new_device',
+                        'change_password', 'update_user_display_name',
                     ].includes(data.command) && !('error' in response.data[0])) {
                     console.log(`success - userApi ${data.command}`)
                     store.user = response.data[0]
@@ -105,11 +105,11 @@ export default {
                 headers: { "content-type": "multipart/form-data" }
             })
             .then(response => {
-                console.log(`success - saveImageFunction`)
+                console.log(`success - imagesApi ${data.get('command')}`)
                 return response.data
             })
             .catch(error => {
-                console.log(`*API ERROR* - saveImageFunction:`, error)
+                console.log(`*API ERROR* - imagesApi: ${data.get('command')}`, error)
                 return error
             })
     },
@@ -154,13 +154,12 @@ export default {
             })
     },
     // USERS ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //async getUserLimitedInfo(userIds) { // userIds is an array
-    //    return await this.userApi('post', null, {
-    //        command: 'get_user_limited_info',
-    //        ids: userIds,
-    //        pks: userIds,
-    //    })
-    //},
+    async getUserLimitedInfo(userIds = null) { // userIds is an array. normally it would be my followers. but for now it will be null and we will get everyone
+        return await this.userApi('post', null, {
+            command: 'get_user_limited_info',
+            ids: userIds,
+        })
+    },
     async getEventUserInfo(eventId, guestType) {
         return await this.userApi('post', null, {
             command: 'get_event_user_info',
@@ -174,6 +173,7 @@ export default {
             display_name: displayName,
             email: email,
             password: password,
+            lang: store.user.language,
         })
     },
     async addAnEmail(email, password) {
@@ -199,11 +199,33 @@ export default {
             message: message,
         })
     },
-    async forgotPassword(email, returnLink) {
+    async feedback(message) {
         return await this.userApi('post', null, {
-            command: 'forgot_password',
+            command: 'feedback',
+            message: message,
+        })
+    },
+    async startLoginRegister(email, returnLink) {
+        return await this.userApi('post', null, {
+            command: 'start_login_register',
             email: email,
             return_link: returnLink,
+            lang: store.user.language,
+        })
+    },
+    async tryLogin(email, code) {
+        return await this.userApi('post', null, {
+            command: 'try_login',
+            email: email,
+            code: code,
+        })
+    },
+    async register(email, code, displayName) {
+        return await this.userApi('post', null, {
+            command: 'register',
+            email: email,
+            code: code,
+            display_name: displayName
         })
     },
     async changePassword(email, newPassword, code = null, currentPassword = null) {
@@ -258,6 +280,12 @@ export default {
             do_get_lines: store.user.do_get_lines,
         })
     },
+    async updateUserDisplayName() {
+        return await this.userApi('patch', store.user.id, {
+            command: 'update_user_display_name',
+            display_name: store.user.display_name
+        })
+    },
     //async updateUserAlerts(name) {
     //    return await this.userApi('patch', store.user.id, {
     //        command: 'update_user_alerts',
@@ -299,10 +327,10 @@ export default {
         let result = await this.eventsApi('post', null, data)
         return result[0]
     },
-    async getMyEvents() {
-        let result = await this.eventsApi('post', null, { command: 'my_events' })
-        return result
-    },
+    //async getMyEvents() {
+    //    let result = await this.eventsApi('post', null, { command: 'my_events' })
+    //    return result
+    //},
     async checkUserStatus(eventId) {
         return await this.eventsApi('post', null, {
             command: 'check_user_status',
@@ -354,23 +382,21 @@ export default {
     //},
     // IMAGES //////////////////////////////////////////////////////////////////////////////////////////////////////////
     async saveImage(formData) {
-        formData.append('command', 'create')
+        formData.append('command', 'upload_image')
         let result = await this.imagesApi('post', null, formData)
         return result[0]
     },
-    async getEventImage(pk, eventId) {
+    async getEventImage(imageId, eventId) {
         let formData = new FormData()
-        formData.append('event_pk', eventId)
-        formData.append('command', 'get')
-        let result = await this.imagesApi('patch', pk, formData)
-        return result[0]
-    },
-    async getImage(keys) {
-        let formData = new FormData()
-        formData.append('keys', keys)
-        formData.append('command', 'get')
+        formData.append('event_id', eventId)
+        formData.append('command', 'get_event_image')
+        formData.append('image_id', imageId)
         let result = await this.imagesApi('post', null, formData)
-        return result
+        if (result.length > 0) {
+            return result[0].key
+        } else {
+            return 'fail'
+        }
     },
     // GROUPS //////////////////////////////////////////////////////////////////////////////////////////////////////////
     async getGroups() {

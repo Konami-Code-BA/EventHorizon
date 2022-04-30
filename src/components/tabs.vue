@@ -33,10 +33,10 @@
 		},
 		methods: {
 			buttonClick (num) {
-				this.$emit('on-click', num)
 				if (this.initial != 0) {
 					this.selected = num
 				}
+				this.$emit('on-click', num)
 			}
 		}
 	}
@@ -52,17 +52,17 @@
 		align-items: center;  /* this isnt for buttons, its for text */
 	}
 	.tab {
-		width: 100%;
-		padding-left: 5px;
-		padding-right: 5px;
+		width: auto;
 		display: flex;
 		flex-direction: column;
-		align-items: stretch;
+		align-items: center;
 		justify-content: center;
+		text-align: center;
 	}
 	.button {
 		outline: none;
 		border: none;
+		box-shadow: none;
 		background: none;
 		color: #ffe07a;
 		cursor: pointer;
@@ -73,8 +73,10 @@
 		height: 100%;
 	}
 	.selected {
-		background-color: rgba(255, 255, 255, .3);  /*140,128,151,0.6 after combinging with #18002e*/
+		background-color: rgba(255, 255, 255, .2);  /*140,128,151,0.6 after combinging with #18002e*/
 		width: 100%;
 		height: 100%;
+		box-shadow: rgba(0, 0, 0, 1) 3px 3px 8px;
+		border-radius: 3px;
 	}
 </style>

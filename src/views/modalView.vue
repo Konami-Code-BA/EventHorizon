@@ -2,25 +2,22 @@
 	<div>
 		<event v-if="page === 'event'"
 				:key="page + 'event'"/>
-		<login-register v-show="page === 'loginRegister'" :tryLine="page === 'loginRegister'"
+		<login-register v-show="page === 'loginRegister'"
 				:key="page + 'loginRegister'"/>
-		<register-with-email v-show="page === 'registerWithEmail'"
-				:key="page + 'registerWithEmail'"/>
 		<add-event v-show="page === 'addEvent'"
 				:key="page + 'addEvent'"/>
-		<settings v-show="page === 'settings'" :tryLine="page === 'settings'"
+		<settings v-show="page === 'settings'"
 				:key="page + 'settings'"/>
-		<forgot-password v-show="page === 'forgotPassword'"
-				:key="page + 'forgotPassword'"/>
-		<reset-password v-show="page === 'resetPassword'"
-				:key="page + 'resetPassword'"/>
+		<welcome v-if="page === 'welcome'"
+				:key="page + 'welcome'"
+				@closeLanguage="$emit('closeLanguage')"/>
 		<about-us v-show="page === 'aboutUs'"
 				:key="page + 'aboutUs'"/>
 		<faq v-show="page === 'faq'"
-				:key="page + 'faq'"/>
-		<experiment1 v-show="page === 'experiment1'"
+				:key="page + 'faq' + store.user.language"/>
+		<experiment1 v-show="page === 'experiment1' && store.user.is_superuser"
 				:key="page + 'experiment1'"/>
-		<experiment2 v-show="page === 'experiment2'"
+		<experiment2 v-show="page === 'experiment2' && store.user.is_superuser"
 				:key="page + 'experiment2'"/>
 		<!-- COMMENT THIS OUT BEFORE PUSHING TO PRODUCTION -->
 	</div>
@@ -32,8 +29,7 @@
 	import registerWithEmail from '@/views/registerWithEmail'
 	import addEvent from '@/views/addEvent'
 	import settings from '@/views/settings'
-	import resetPassword from '@/views/resetPassword'
-	import forgotPassword from '@/views/forgotPassword'
+	import welcome from '@/views/welcome'
 	import aboutUs from '@/views/aboutUs'
 	import faq from '@/views/faq'
 	import experiment1 from '@/views/experiment1'
@@ -47,8 +43,7 @@
 			registerWithEmail,
 			addEvent,
 			settings,
-			resetPassword,
-			forgotPassword,
+			welcome,
 			aboutUs,
 			faq,
 			experiment1,
@@ -60,10 +55,22 @@
 				//page: null,
 			}
 		},
+		props: {
+		},
 		computed: {
 			page () {
 				if (f.currentPage) {
-					return f.currentPage.page
+					if (
+						(f.isAuthenticatedUser && (
+							f.currentPage.page === 'loginRegister' || f.currentPage.page === 'registerWithEmail'
+						)) ||
+						(!f.isAuthenticatedUser && f.currentPage.page === 'settings')
+					) {
+						f.goToPage({ page: 'home', args: {} })
+						return
+					} else {
+						return f.currentPage.page
+					}
 				}
 			},
 		},

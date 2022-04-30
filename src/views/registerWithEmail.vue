@@ -1,5 +1,6 @@
 <template>
-	<div class="main" style="display: flex; flex-direction: column; justify-content: center; overflow-y: scroll;">
+	<div class="main scroll-height"
+			style="display: flex; flex-direction: column; justify-content: center; overflow-y: scroll;">
 		<form v-on:keyup.enter="registerWithEmail()" style="width: 80%;">
 			<display-name-input ref="displayNameInput" usage="Registration"
 					:key="store.user.language+'displayNameInputRegistration'"/>
@@ -11,6 +12,14 @@
 		<button v-on:click.prevent="registerWithEmail()" class="button">
 			{{ t('REGISTER') }}
 		</button>
+
+		<div class="line-height"/>
+
+		<div style="width: 100%; display: flex; flex-direction: column; justify-content: center;">
+			<button class="link-button" v-on:click.prevent="openPrivacyPolicy()">
+				{{t('Privacy Policy')}}
+			</button>
+		</div>
 	</div>
 </template>
 <script>
@@ -41,6 +50,10 @@
 		methods: {
 			t (w) { return translations.t(w) },
 			async registerWithEmail () {
+				this.$refs.passwordInput.hasErrors()
+				this.$refs.passwordInput.hasErrors2()
+				this.$refs.emailInput.hasErrors()
+				this.$refs.displayNameInput.hasErrors()
 				if (
 					this.$refs.passwordInput.error.length > 0
 					|| this.$refs.passwordInput.error2.length > 0
@@ -60,8 +73,8 @@
 					this.$refs.displayNameInput.displayName
 				)
 				if (!user.error) {
+					await f.getEvents()
 					f.goToPage(this.store.lastNonLoginRegisterPage)
-					window.initMap()
 					this.store.loading = false
 					return
 				}
@@ -71,11 +84,22 @@
 				this.store.loading = false
 				f.shakeFunction([this.$refs.passwordInput, this.$refs.emailInput, this.$refs.displayNameInput])
 			},
+			openPrivacyPolicy () {
+				window.open(
+					'https://www.privacypolicytemplate.net/live.php?token=4ZdtebbIvgIe1fWqttdZ873Pal0uM2oh',
+					'_blank'
+				).focus()
+			},
 		} // methods
 	} // export
 </script>
 <style scoped>
 	.button {
 		width: 80%;
+	}
+	@media (max-height: 363px) {
+		.scroll-height {
+			justify-content: flex-start !important;
+		}
 	}
 </style>

@@ -1,35 +1,26 @@
 <template>
-	<div class="main" style="justify-content: center; overflow-y: scroll;">
-		<div style="width: 80%">
-			<div style="font-size: 24px; align-self: flex-start">{{ t('LOGIN WITH EMAIL') }}</div>
-			<form v-on:keyup.enter="login()">
+	<div class="main scroll-height" style="justify-content: center; overflow-y: scroll;">
+		<div style="width: 80%" v-if="!showDone">
+			<div style="font-size: 24px;">{{ t('LOGIN / REGISTER') }}</div>
+			<form v-on:keyup.enter="submit()">
 				<email-input ref="emailInput" usage="Login"
 					:key="store.user.language+'emailInputLogin'"/>
-				<password-input ref="passwordInput" usage="Login"
-					:key="store.user.language+'passwordInputLogin'"/>
+				<button v-on:click.prevent="submit()" class="button">
+					{{ t('SUBMIT') }}
+				</button>
 			</form>
-			<button v-on:click.prevent="login()" class="button">
-				{{ t('LOGIN WITH EMAIL') }}
-			</button>
-			<br>
+
+			<div class="line-height"/>
+
 			<div style="width: 100%; display: flex; flex-direction: column; justify-content: center;">
-				<button class="link-button" v-on:click.prevent="forgotPassword()">
-					Forgot Password
+				<button class="link-button" v-on:click.prevent="openPrivacyPolicy()">
+					{{t('Privacy Policy')}}
 				</button>
 			</div>
 
-			<div class="line-height"/>
-			<div class="line-height"/>
-			<div class="line-height"/>
-
-			<button v-on:click.prevent="goToPage({ page: 'registerWithEmail', args: {} })" class="button">
-				{{t('REGISTER EMAIL')}}
-			</button>
-
-			<div class="line-height"/>
-
-			<line-button :pageToReturnTo="store.lastNonLoginRegisterPage" :wording="t('LINE LOGIN / REGISTER')"
-					ref="lineButton"/>
+		</div>
+		<div style="width: 80%" v-else>
+			DONE
 		</div>
 	</div>
 </template>
@@ -40,27 +31,20 @@
 	import api from '@/functions/apiFunctions.js'
 	import f from '@/functions/functions.js'
 	import emailInput from '@/components/emailInput.vue'
-	import passwordInput from '@/components/passwordInput.vue'
-	import lineButton from '@/components/lineButton.vue'
 	export default {
 		name: 'loginRegister',
 		components: {
 			emailInput,
-			passwordInput,
-			lineButton,
 		},
 		data () {
 			return {
 				store: store,
+				showDone: false,
 			}
 		},
 		props: {
-			tryLine: { default: false },
 		},
-		async mounted () {
-			if (this.$refs.lineButton && this.tryLine) {
-				await this.$refs.lineButton.tryLineNewDevice()
-			}
+		mounted () {
 			f.focusCursor(document, 'emailLogin')
 		},
 		watch: {
@@ -70,34 +54,27 @@
 			goToPage (pageDict) {
 				f.goToPage(pageDict)
 			},
-			async login () {
-				if (this.$refs.passwordInput.error.length > 0 || this.$refs.emailInput.error.length > 0) {
-					f.shakeFunction([this.$refs.passwordInput, this.$refs.emailInput])
+			async submit () {
+				this.$refs.emailInput.hasErrors()
+				if (
+					this.$refs.emailInput.error.length > 0
+				) {
+					f.shakeFunction(this.$refs.emailInput)
 					return
 				}
-				this.$refs.passwordInput.showPassword = false
 				this.store.loading = true
-				let user = await api.login({
-					'email': this.$refs.emailInput.email,
-					'password': this.$refs.passwordInput.password
-				})
+				let returnUrl = f.createUrlForLoginRegister(this.$refs.emailInput.email)
+				let user = await api.startLoginRegister(this.$refs.emailInput.email, returnUrl)
 				if (!user.error) {
-					f.goToPage(this.store.lastNonLoginRegisterPage)
-					window.initMap()
-					this.store.loading = false
-					return
-				}
-				if (user.error === 'This email is not registered') {
-					this.$refs.emailInput.error = user.error
-				}
-				if (user.error === 'Incorrect password') {
-					this.$refs.passwordInput.error = user.error
+					this.showDone = true
 				}
 				this.store.loading = false
-				f.shakeFunction([this.$refs.passwordInput, this.$refs.emailInput])
 			},
-			forgotPassword () {
-				f.goToPage({ page: 'forgotPassword', args: {} })
+			openPrivacyPolicy () {
+				window.open(
+					'https://www.privacypolicytemplate.net/live.php?token=4ZdtebbIvgIe1fWqttdZ873Pal0uM2oh',
+					'_blank'
+				).focus()
 			},
 		} // methods
 	} // export
@@ -111,5 +88,10 @@
 	}
 	.button {
 		width: 100%;
+	}
+	@media (max-height: 497px) {
+		.scroll-height {
+			justify-content: flex-start !important;
+		}
 	}
 </style>

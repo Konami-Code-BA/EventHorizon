@@ -15,21 +15,14 @@
 		},
 		components: {
 		},
-		watch: {
-			'store.user.language' () {
-				window.initMap()
-			},
-		},
 		async created () {
-		},
-		async mounted () {
 			window.initMap = this.initMap
 			window.openEventModal = this.openEventModal
-			window.initMap()
 		},
 		methods: {
 			t (w) { return translations.t(w) },
 			async initMap () {
+				console.log('INIT MAP')
 				try {
 					let map = new google.maps.Map(document.getElementById("map_canvas"), {
 						mapTypeId: 'roadmap',
@@ -107,7 +100,6 @@
 						],
 					})
 					let bounds = new google.maps.LatLngBounds()
-					let infowindow = new google.maps.InfoWindow({ map: map })
 					let markers = {}
 					let infowindowContents = []
 					let noEvents = true
@@ -116,41 +108,159 @@
 							if (this.store.events.display[i].latitude != 0
 									|| this.store.events.display[i].longitude != 0) {
 								noEvents = false
-								let icon = window.origin.replace('8080', '8000') + '/static/publicPastMapIcon.png'
-								if (f.isoStringDateToDateObject(this.store.events.display[i].date_time) > f.today) {
-									icon = window.origin.replace('8080', '8000') + '/static/publicMapIcon.png'
-								}
+								let icon = ''
 								if (this.store.events.display[i].is_private
 										&& !f.isGuestStatus(this.store.events.display[i], 'invited')) {
+									// PRIVATE UPCOMING
 									if (f.isoStringDateToDateObject(this.store.events.display[i].date_time) > f.today) {
-										icon = window.origin.replace('8080', '8000') + '/static/privateMapIcon.png'
+										icon = window.origin.replace('8080', '8000')
+											+ '/static/upcomingPrivateMapIcon2.png'
+										infowindowContents.push(`
+											<button
+												onclick="openEventModal(${this.store.events.display[i].id})"
+												style="
+													text-decoration: none;
+													color: black;
+													font-weight: 600;
+													font-size: 16px;
+													-webkit-font-smoothing: antialiased;
+													-moz-osx-font-smoothing: grayscale;
+													border: 3px solid #ffffff;
+													border-radius: 15px;
+													outline: 1px solid #585858;
+													margin: 1px;
+													background-color: #ffffff !important;
+												"
+											>
+												${this.store.events.display[i].name}
+											</button>
+										`)
+									// PRIVATE PAST
 									} else {
-										icon = window.origin.replace('8080', '8000') + '/static/privatePastMapIcon.png'
+										icon = window.origin.replace('8080', '8000')
+											+ '/static/pastPrivateMapIcon2.png'
+										infowindowContents.push(`
+											<button
+												onclick="openEventModal(${this.store.events.display[i].id})"
+												style="
+													text-decoration: none;
+													color: black;
+													font-weight: 600;
+													font-size: 16px;
+													-webkit-font-smoothing: antialiased;
+													-moz-osx-font-smoothing: grayscale;
+													border: 3px solid #ffffff;
+													border-radius: 15px;
+													outline: 1px solid #585858;
+													margin: 1px;
+													background-color: #585858 !important;
+												"
+											>
+												${this.store.events.display[i].name}
+											</button>
+										`)
 									}
-								} else if (f.isGuestStatus(this.store.events.display[i], 'invited')) {
+								} else if (!this.store.events.display[i].is_private
+										&& !f.isGuestStatus(this.store.events.display[i], 'invited')) {
+									// PUBLIC UPCOMING
 									if (f.isoStringDateToDateObject(this.store.events.display[i].date_time) > f.today) {
-										icon = window.origin.replace('8080', '8000') + '/static/myMapIcon.png'
+										icon = window.origin.replace('8080', '8000')
+											+ '/static/upcomingPublicMapIcon2.png'
+										infowindowContents.push(`
+											<button
+												onclick="openEventModal(${this.store.events.display[i].id})"
+												style="
+													text-decoration: none;
+													color: black;
+													font-weight: 600;
+													font-size: 16px;
+													-webkit-font-smoothing: antialiased;
+													-moz-osx-font-smoothing: grayscale;
+													border: 3px solid #ffffff;
+													border-radius: 15px;
+													outline: 1px solid #585858;
+													margin: 1px;
+													background-color: #ffffff !important;
+												"
+											>
+												${this.store.events.display[i].name}
+											</button>
+										`)
 									} else {
-										icon = window.origin.replace('8080', '8000') + '/static/myPastMapIcon.png'
+										// PUBLIC PAST
+										icon = window.origin.replace('8080', '8000')
+											+ '/static/pastPublicMapIcon2.png'
+										infowindowContents.push(`
+											<button
+												onclick="openEventModal(${this.store.events.display[i].id})"
+												style="
+													text-decoration: none;
+													color: black;
+													font-weight: 600;
+													font-size: 16px;
+													-webkit-font-smoothing: antialiased;
+													-moz-osx-font-smoothing: grayscale;
+													border: 3px solid #ffffff;
+													border-radius: 15px;
+													outline: 1px solid #585858;
+													margin: 1px;
+													background-color: #585858 !important;
+												"
+											>
+												${this.store.events.display[i].name}
+											</button>
+										`)
+									}	
+								} else if (f.isGuestStatus(this.store.events.display[i], 'invited')) {
+									// INVITED UPCOMING
+									if (f.isoStringDateToDateObject(this.store.events.display[i].date_time) > f.today) {
+										icon = window.origin.replace('8080', '8000')
+											+ '/static/upcomingMyMapIcon2.png'
+										infowindowContents.push(`
+											<button
+												onclick="openEventModal(${this.store.events.display[i].id})"
+												style="
+													text-decoration: none;
+													color: black;
+													font-weight: 600;
+													font-size: 16px;
+													-webkit-font-smoothing: antialiased;
+													-moz-osx-font-smoothing: grayscale;
+													border: 3px solid #44ff00;
+													border-radius: 15px;
+													outline: 1px solid #585858;
+													margin: 1px;
+													background-color: #ffffff !important;
+												"
+											>
+												${this.store.events.display[i].name}
+											</button>
+										`)
+									} else {
+										// INVITED PAST
+										icon = window.origin.replace('8080', '8000') + '/static/pastMyMapIcon2.png'
+										infowindowContents.push(`
+											<button
+												onclick="openEventModal(${this.store.events.display[i].id})"
+												style="
+													text-decoration: none;
+													color: black;
+													font-weight: 600;
+													font-size: 16px;
+													-webkit-font-smoothing: antialiased;
+													-moz-osx-font-smoothing: grayscale;
+													border: 3px solid #44ff00;
+													border-radius: 15px;
+													outline: 1px solid #585858;
+													margin: 1px;
+													background-color: #585858 !important;
+												"
+											>
+												${this.store.events.display[i].name}
+											</button>
+										`)
 									}
 								}
-								infowindowContents.push(`
-									<button
-										onclick="openEventModal(${this.store.events.display[i].id})"
-										style="
-											text-decoration: none;
-											color: blue;
-											font-weight: 600;
-											font-size: 16px;
-											-webkit-font-smoothing: antialiased;
-											-moz-osx-font-smoothing: grayscale;
-											border: none;
-											outline: none;
-										"
-									>
-										${this.store.events.display[i].name}
-									</button>
-								`)
 								let position = new google.maps.LatLng(
 									this.store.events.display[i].latitude,
 									this.store.events.display[i].longitude
@@ -164,11 +274,13 @@
 									icon: image,
 								})
 								markers[this.store.events.display[i].id] = marker
+								let infowindow = new google.maps.InfoWindow({ map: map })
 								google.maps.event.addListener(marker, 'click', function() {
-									infowindow.close()
+									infowindow.close() // close any other open window
 									infowindow.setContent(infowindowContents[i])
 									infowindow.open(map, this)
 								})
+								//google.maps.event.trigger(marker, 'click') // auto open all windows
 								google.maps.event.addListener(map, "click", function() {
 									infowindow.close()
 								})
@@ -179,6 +291,7 @@
 						}
 					}
 					if (noEvents) {
+						console.log('IN HERE')
 						let position = new google.maps.LatLng(
 							35.685174,
 							139.752744
@@ -186,7 +299,7 @@
 						let marker = new google.maps.Marker({
 							position: position,
 							map: map,
-							icon: 'http://maps.google.com/mapfiles/ms/icons/empty.png',
+							icon: '',
 							label: {
 								color: 'rgba(0, 0, 0, 0.7)',
 								//highlight: 'rgba(0, 0, 0, 0.5)',
@@ -202,7 +315,7 @@
 					if (markers[this.selectedEventId]) {
 						bounds.extend(markers[this.selectedEventId].getPosition())
 						await map.fitBounds(bounds)
-						map.setZoom(15)
+						map.setZoom(12)
 						map.panTo(markers[this.selectedEventId].getPosition())
 						google.maps.event.trigger(markers[this.selectedEventId], 'click');
 					}

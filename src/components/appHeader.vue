@@ -2,39 +2,39 @@
 	<div>
 		<div class="header" style="width: 100%;">
 			<tabs :num-tabs="5" :initial="0" @on-click="tab => { selectATab(tab) }"
-					style="background-color: rgba(0, 0, 0, .5);">
-				<div slot="1">
-					<img src="@/assets/backIcon.png" style="height: 22px; margin-top: 4px;">
+					style="background-color: rgba(0, 0, 0, .5); height: 100%;">
+				<div slot="1" style="width: 30px !important;">
+					<img src="@/assets/backIcon.png" style="height: 22px; margin-top: 4px;"
+							v-if="store.pages.length > 1">
+					<div v-else style="width: 30px;"/>
 				</div>
-				<div slot="2">
-					<img src="@/assets/languageIcon.png" style="height: 24px; margin-top: 4px;">
+				<div slot="2" style="width: 30px !important;">
+					<img src="@/assets/threeBarsIcon.png" style="height: 24px; margin-top: 4px;">
 				</div>
-				<div slot="3">
+				<div slot="3" style="width: 75px !important;">
+				</div>
+				<div slot="4" style="width: 30px !important;">
 					<div class="no-border-button" style="display: flex; flex-direction: row; align-items: center;">
-						<div>EVENT</div>
-						<div>
-							<img src="@/assets/eventhorizonTopIcon.png" style="height: 20px; vertical-align: middle;">
-						</div>
-						<div>HORIZON</div>
+						<img src="@/assets/eventhorizonTopIcon.png" style="height: 20px; vertical-align: middle;">
 					</div>
 				</div>
-				<div slot="4">
-					<img src="@/assets/threeBarsIcon.png" class="icon" style="height: 21px; margin-bottom: 2px;"/>
-				</div>
-				<div slot="5">
-					<!--img src="@/assets/bellIcon.png" class="icon" style="height: 21px; margin-bottom: 2px;"/-->
+				<div slot="5" style="width: 135px !important;">
+          			<div class="current-user" v-if="isAuthenticatedUser"
+							style="color: #cae2ff; font-size: 10px; align-items: flex-end;">
+						{{ store.user.display_name }}
+					</div>
+          			<div class="no-border-button current-user" v-else style="font-size: 14px; align-items: flex-end;">
+						{{t('LOGIN / REGISTER')}}
+					</div>
 				</div>
 			</tabs>
 		</div>
-		<modal v-if="selectedTab === 2" @closeModals="selectedTab = 0">
+		<modal v-if="showLanguageModal" @closeModals="showLanguageModal = false" ref="showLanguageModal"
+				:key="showLanguageModal">
 			<div slot="contents" class="modal">
-				<div style="align-self: flex-end; padding-bottom: 5px;">
-					<button v-on:click.prevent="selectedTab = 0" class="no-border-button x-button">
-						✖
-					</button>
-				</div>
-				<div style="width: 100%">
-					<button v-on:click.prevent="english()" class="button">
+				<x-close-button :closeFunc="() => {$refs.showLanguageModal.closeModals()}" style="align-self: flex-end;"/>
+				<div style="width: 100%;">
+					<button v-on:click.prevent="$refs.showLanguageModal.closeModals(); english()" class="button">
 						ENGLISH
 					</button>
 				</div>
@@ -42,7 +42,7 @@
 				<div class="line-height"/>
 
 				<div style="width: 100%">
-					<button v-on:click.prevent="japanese()" class="button">
+					<button v-on:click.prevent="$refs.showLanguageModal.closeModals(); japanese()" class="button">
 						日本語
 					</button>
 				</div>
@@ -51,15 +51,11 @@
 
 			</div>
 		</modal>
-		<modal v-if="selectedTab === 4" @closeModals="selectedTab = 0">
+		<modal v-if="selectedTab === 2" @closeModals="selectedTab = 0" ref="selectedTab2">
 			<div slot="contents" class="modal">
-				<div style="align-self: flex-end; padding-bottom: 5px;">
-					<button v-on:click.prevent="selectedTab = 0" class="no-border-button x-button">
-						✖
-					</button>
-				</div>
+				<x-close-button :closeFunc="() => {$refs.selectedTab2.closeModals()}" style="align-self: flex-end;"/>
 				<div v-if="!isAuthenticatedUser" style="width: 100%">
-					<button v-on:click.prevent="goToLoginRegister()" class="button">
+					<button v-on:click.prevent="$refs.selectedTab2.closeModals(); goToLoginRegister();" class="button">
 						{{ t('LOGIN / REGISTER') }}
 					</button>
 				</div>
@@ -72,16 +68,25 @@
 				<div class="line-height"/>
 
 				<div style="width: 100%">
-					<button v-on:click.prevent="selectedTab = 0; goToPage({ page: 'aboutUs', args: {} })"
+					<button v-on:click.prevent="$refs.selectedTab2.closeModals(); goToPage({ page: 'aboutUs', args: {} });"
 							class="button">
 						ABOUT US
+					</button>
+				</div>
+
+				<div class="line-height" v-if="isAuthenticatedUser"/>
+
+				<div style="width: 100%" v-if="isAuthenticatedUser">
+					<button v-on:click.prevent="$refs.selectedTab2.closeModals(); showContactUs = true;"
+							class="button">
+						{{ t('CONTACT US') }}
 					</button>
 				</div>
 
 				<div class="line-height"/>
 
 				<div style="width: 100%">
-					<button v-on:click.prevent="selectedTab = 0; goToPage({ page: 'faq', args: {} })"
+					<button v-on:click.prevent="$refs.selectedTab2.closeModals(); goToPage({ page: 'faq', args: {} });"
 							class="button">
 						FAQ
 					</button>
@@ -89,28 +94,37 @@
 
 				<div class="line-height"/>
 
+				<div style="width: 100%">
+					<button v-on:click.prevent="$refs.selectedTab2.closeModals(); showLanguageModal = true;"
+							class="button">
+						ENGLISH / 日本語
+					</button>
+				</div>
+
+				<div class="line-height"/>
+
 			</div>
 		</modal>
-		<!--modal v-if="selectedTab === 5" @closeModals="selectedTab = 0">
-			<div slot="contents" class="modal">
+		<modal v-if="showContactUs" @closeModals="showContactUs = false" ref="showContactUsModal" :key="showContactUs">
+			<div slot="contents" class="modal" style="height: 55%;">
 				<div style="width: 100%; display: flex; flex-direction: row; justify-content: space-between;
 						align-content: flex-start">
-					<div/>
-					<div style="font-size: 24px;">
-						NOTIFICATIONS
+					<div style="width: 20px;"/>
+					<div style="font-size: 20px; text-align: center;">
+						{{ t('FEEDBACK') }}
 					</div>
-					<div style="padding-bottom: 5px;">
-						<button v-on:click.prevent="selectedTab = 0" class="no-border-button x-button">
-							✖
-						</button>
-					</div>
+					<x-close-button :closeFunc="() => {$refs.showContactUsModal.closeModals()}"
+							style="align-self: flex-end;"/>
 				</div>
-				<div>
-
-				</div>
+				<textarea :placeholder="t('FEEDBACK')" v-model="messageContent" type="text"
+						autocapitalize="sentences" style="height: 90px;" autocomplete="off"/>
+				<button v-on:click.prevent="feedback()" class="button">
+					<div style="width: 100%; text-align: center;">{{ t('SEND') }}</div>
+				</button>
 			</div>
-		</modal-->
+		</modal>
 		<qr-code-generator v-if="showQrModal" @closeModals="showQrModal=false"/>
+		<flash-modal :text="'SENT!'" ref="flashSent" :time="1500"/>
 	</div>
 </template>
 <script>
@@ -120,20 +134,28 @@
 	import qrCodeGenerator from '@/components/qrCodeGenerator.vue'
 	import translations from '@/functions/translations.js'
 	import api from '@/functions/apiFunctions.js'
+	import xCloseButton from '@/components/xCloseButton.vue'
+	import flashModal from '@/components/flashModal.vue'
 	import f from '@/functions/functions.js'
 	export default {
 		name: 'appHeader',
+		components: {
+			modal,
+			tabs,
+			qrCodeGenerator,
+			xCloseButton,
+			flashModal,
+		},
 		data () {
 			return {
 				store: store,
 				selectedTab: 0,
 				showQrModal: false,
+				showLanguageModal: false,
+				showContactUs: false,
+				messageContent: '',
+				mountedDone: false,
 			}
-		},
-		components: {
-			modal,
-			tabs,
-			qrCodeGenerator,
 		},
 		computed: {
 			isAuthenticatedUser () {
@@ -141,8 +163,17 @@
 			},
 		},
 		watch: {
+			'isAuthenticatedUser' () {
+				// if line login, might be authenticated after this mounts. but don't run if not mounted.
+				if (this.mountedDone) {
+					this.checkIsAuthenticatedUser()
+				}
+			}
 		},
 		async mounted () {
+			// this will check if authenticated once this mounts. might check again if authentication changes from line
+			this.mountedDone = true
+			this.checkIsAuthenticatedUser ()
 		},
 		methods: {
 			t (w) { return translations.t(w) },
@@ -151,23 +182,29 @@
 			},
 			selectATab (tab) {
 				this.selectedTab = tab
-				if (tab === 3) {
+				if (tab === 4) {
 					window.location.replace(window.origin)
 				} else if (tab === 1) {
-					f.goBack()
+					if (store.pages.length > 1) {
+						f.goBack()
+					}
+				} else if (tab === 5) {
+					this.goToLoginRegister()
 				}
 			},
 			async english () {
 				let lang = 'EN'
 				store.user.language = lang
-				this.selectedTab = 0
-				await api.updateUserLanguage()
+				if (this.isAuthenticatedUser) {
+					await api.updateUserLanguage()
+				}
 			},
 			async japanese () {
 				let lang = 'JP'
 				store.user.language = lang
-				this.selectedTab = 0
-				await api.updateUserLanguage()
+				if (this.isAuthenticatedUser) {
+					await api.updateUserLanguage()
+				}
 			},
 			goToLoginRegister () {
 				f.goToPage({ page: 'loginRegister', args: {} })
@@ -179,11 +216,25 @@
 				await api.logout()
 				location.reload()
 			},
-			closeModal () {
-				f.freeUpBackButton(this)  // this should change
-				this.selectedTab = 0
-				this.showQrModal = false
+			async feedback () {
+				this.store.loading = true
+				await api.feedback(this.messageContent)
+				this.messageContent = ''
+				this.showContactUs = false
+				this.store.loading = false
+				await this.$refs.flashSent.flashModal()
 			},
+			checkIsAuthenticatedUser () {
+				let result = 'VISITOR'
+				if (!this.isAuthenticatedUser) {{
+					this.showLanguageModal = true
+					}
+				} else {
+					result = 'AUTHENTICATED USER'
+					this.showLanguageModal = false
+				}
+				console.log('App Load Completed: ', result)
+			}
 		}
 	}
 </script>
@@ -192,11 +243,29 @@
 		height: 16px;
 	}
 	.tabs {
-		border-top: none !important;
-		border-left: none !important;
-		border-right: none !important;
+		border: none !important;
+		justify-content: center !important;
+		width: 100%;
+		max-width: 100%;
 	}
 	.button {
 		width: 100%;
+	}
+	.current-user {
+		width: 100%;
+		max-width: 100%;
+		height: 40px;
+		max-height: 30px;
+		overflow: hidden;
+		vertical-align: middle;
+		white-space: normal;
+		overflow-wrap: normal;
+  		word-break: normal;
+		text-align: left;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		justify-content: center;
+		text-overflow: "...";
 	}
 </style>

@@ -19,6 +19,8 @@ from botocore.exceptions import ClientError
 import io
 from datetime import datetime
 import base64
+from binascii import a2b_base64
+import os
 
 
 random.seed(1)
@@ -71,7 +73,7 @@ class UserViewset(viewsets.ModelViewSet):
 		else:
 			serializer_data = self.serializer_class(self.queryset, many=True).data
 		return Response(serializer_data)
-	
+
 	def update_user_language(self, request, pk):
 		try:
 			user = self.model.objects.get(pk=pk)
@@ -87,7 +89,7 @@ class UserViewset(viewsets.ModelViewSet):
 			user = namedtuple('user', 'error')
 			user.error = 'you don\'t have permission'
 			return user
-	
+
 	def update_user_do_get_emails(self, request, pk):
 		try:
 			user = self.model.objects.get(pk=pk)
@@ -103,7 +105,7 @@ class UserViewset(viewsets.ModelViewSet):
 			user = namedtuple('user', 'error')
 			user.error = 'you don\'t have permission'
 			return user
-	
+
 	def update_user_do_get_lines(self, request, pk):
 		try:
 			user = self.model.objects.get(pk=pk)
@@ -119,7 +121,7 @@ class UserViewset(viewsets.ModelViewSet):
 			user = namedtuple('user', 'error')
 			user.error = 'you don\'t have permission'
 			return user
-	
+
 	#def update_user_alerts(self, request, pk):
 	#	try:
 	#		user = self.model.objects.get(pk=pk)
@@ -133,7 +135,21 @@ class UserViewset(viewsets.ModelViewSet):
 	#	else:  # if user does not have this alert, add it
 	#		alert.user_set.add(user)
 	#	return user
-	
+
+	def update_user_display_name(self, request, pk):
+		try:
+			user = self.model.objects.get(pk=pk)
+		except self.model.DoesNotExist:
+			user = namedtuple('user', 'error')
+			user.error = 'a user with this id could not be found'
+		if user == request.user:  # SECURITY: you can only do this for yourself
+			user.display_name = request.data['display_name']
+			user.save()
+		else:
+			user = namedtuple('user', 'error')
+			user.error = 'you don\'t have permission'
+		return user
+
 	def register_email(self, request, pk):
 		if ('email' in request.data and 'password' in request.data and request.data['email'] != '' and
 				request.data['password'] != ''):
@@ -143,11 +159,6 @@ class UserViewset(viewsets.ModelViewSet):
 					user = namedtuple('user', 'error')
 					user.error = 'you don\'t have permission'
 					return user
-				# if user is visitor, should be in register_with_email
-				if current_user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists():
-					user = namedtuple('user', 'error')
-					user.error = 'something strange happened... a visitor should not be able to run this'
-					return user
 			except self.model.DoesNotExist:  # if can't get current user
 				user = namedtuple('user', 'error')
 				user.error = 'a user with this id could not be found'
@@ -156,8 +167,10 @@ class UserViewset(viewsets.ModelViewSet):
 				existing_user = self.model.objects.get(email=request.data['email'])
 				# if existing user with this email does exist, check their password, and if its good too, merge accounts
 				if existing_user.check_password(request.data['password']):  # if password matches too
-					current_user = f.merge_users(current_user, existing_user)  # merge users
-					return current_user
+					user = f.merge_users(current_user, existing_user)  # merge users
+					request.user = user
+					user = f.authenticate_login(request)  # login user
+					return user
 				else:  # if password doesn't match
 					user = namedtuple('user', 'error')
 					user.error = 'Incorrect password for this email'
@@ -167,6 +180,8 @@ class UserViewset(viewsets.ModelViewSet):
 				current_user.password = make_password(request.data['password'])
 				current_user.do_get_emails = True
 				current_user.save()
+				request.user = current_user
+				current_user = f.authenticate_login(request)  # login user
 				return current_user
 		else:  # missing email / password info
 			user = namedtuple('user', 'error')
@@ -179,26 +194,32 @@ class UserViewset(viewsets.ModelViewSet):
 		self.queryset = [user]
 		if hasattr(self.queryset[0], 'error'):
 			serializer_data = [OrderedDict([('error', self.queryset[0].error)])]
+		elif hasattr(self.queryset[0], 'success'):
+			serializer_data = [OrderedDict([('success', self.queryset[0].success)])]
 		elif type(user) != self.model:
 			serializer_data = user
 		else:
 			serializer_data = self.serializer_class(self.queryset, many=True).data
 		return Response(serializer_data)
 
-	#def get_user_limited_info(self, request):  # SECURITY: retrieve only returns id/pk and name of user
-	#	user_array = self.model.objects.filter(pk__in=request.data['ids'])
-	#	serializer_data = []
-	#	for all_user_info_dont_send_me in user_array:
-	#		serializer_data += [OrderedDict([
-	#			('id', all_user_info_dont_send_me.id),
-	#			('pk', all_user_info_dont_send_me.pk),
-	#			('display_name', all_user_info_dont_send_me.display_name),
-	#			('limited_user', True),
-	#			('plus_ones', []),
-	#		])]
-	#	return serializer_data
+	def get_user_limited_info(self, request):  # SECURITY: only returns limited user info
+		#user_array = self.model.objects.filter(pk__in=request.data['ids'])  # normally it would be my followers. but for now it will be null and we will get everyone
+		if request.user.is_superuser:  # for now only superuser. later we will get followers of any person
+			user_array = self.model.objects.all()
+			serializer_data = []
+			for user in user_array:
+				if not user.groups.filter(id=Group.objects.get(name='Temp Line Friend').id).exists():
+					serializer_data += [OrderedDict([
+						('id', user.id),
+						('display_name', user.display_name),
+						('limited_user', True),
+						('plus_one', False),
+					])]
+			return serializer_data
+		else:
+			return [OrderedDict([])]
 
-	def get_event_user_info(self, request):  # SECURITY: retrieve only returns display_name of user
+	def get_event_user_info(self, request):  # SECURITY: only returns limited user info
 		# everyone can see hosts
 		# can't see invited/attending/maybe people if not invited
 		# can't see wait_list, invite_request people if not host
@@ -259,7 +280,7 @@ class UserViewset(viewsets.ModelViewSet):
 							('plus_one', True),
 						])]
 		return final_guest_array
-	
+
 	def message_user(self, request):
 		try:
 			user = self.model.objects.get(pk=request.data['user_id'])
@@ -268,7 +289,8 @@ class UserViewset(viewsets.ModelViewSet):
 			user.error = 'a user with this id could not be found'
 			return user
 		event = EventSerializer.Meta.model.objects.get(pk=request.data['event_id'])
-		# SECURITY: i must be the host of the event id im passing, and the user must be affiliated with that event
+		# SECURITY: i must be the host of the event id im passing, and the receiver must be affiliated with that event
+		# or, i must be affiliated with the event, and i am messaging the host
 		# note: before we let people make events. people could make an event and invite someone just to be able to message them. this could be an issue later.
 		if (
 				(
@@ -289,20 +311,11 @@ class UserViewset(viewsets.ModelViewSet):
 		):
 			f.notify_user(
 				user,
-				f"""Event: {event.name}
-
-Direct Message From {
+				f"""Direct message from {
 	'Host' if f.user_in_guest_statuses(event, request.user.id, ['hosts']) else 'Guest'
-} {request.user.display_name}:
-{request.data['message']}
-
-
-To view this event, go here: {f.create_url(f'/?page=event&id={event.id}')}
-To message back: go to the event (above link) ⇨ Show People ⇨ {
-	'Hosts' if f.user_in_guest_statuses(event, request.user.id, ['hosts']) else 'Total Invited'
-}
-*Note: You can't turn off direct messages from hosts
-*Note: you can't reply to this message here""",
+} '{request.user.display_name}' about the event '{event.name}'.
+    '{request.data['message']}'
+Event page: {f.create_url(f'/?page=event&id={event.id}')}""",
 				notification_type='DM',
 				)
 			return
@@ -310,7 +323,7 @@ To message back: go to the event (above link) ⇨ Show People ⇨ {
 			user = namedtuple('user', 'error')
 			user.error = 'you don\'t have permission'
 			return
-	
+
 	def message_users(self, request):
 		for id in request.data['user_ids']:
 			try:
@@ -326,16 +339,9 @@ To message back: go to the event (above link) ⇨ Show People ⇨ {
 					event, id, ['hosts', 'invited', 'wait_list', 'invite_request']):
 				f.notify_user(
 					user,
-					f"""Event: {event.name}
-
-Direct Message From Host:
-{request.data['message']}
-
-
-To view this event, go here: {f.create_url(f'/?page=event&id={event.id}')}
-To message the host: go to the event (above link) ⇨ Show People ⇨ Hosts
-*Note: You can't turn off direct messages from hosts
-*Note: you can't reply to this message here""",
+					f"""Direct message from Host '{request.user.display_name}' about the event '{event.name}'.
+    '{request.data['message']}'
+Event page: {f.create_url(f'/?page=event&id={event.id}')}""",
 					notification_type='DM',
 				)
 				continue
@@ -343,6 +349,22 @@ To message the host: go to the event (above link) ⇨ Show People ⇨ Hosts
 				user = namedtuple('user', 'error')
 				user.error = 'you don\'t have permission'
 				continue
+
+	def feedback(self, request):
+		# SECURITY: only users can give feedback
+		if request.user.groups.filter(id=Group.objects.get(name='User').id).exists():
+			f.feedback(
+				f"""User's display name: {request.user.display_name}
+User's ID#: {request.user.id}
+
+Feedback:
+{request.data['message']}"""
+			)
+			return
+		else:
+			user = namedtuple('user', 'error')
+			user.error = 'you don\'t have permission'
+			return
 
 	def register_with_email(self, request):  # SECURITY: anyone is allowed to make a new user
 		if ('email' in request.data and 'password' in request.data and 'display_name' in request.data and
@@ -352,17 +374,21 @@ To message the host: go to the event (above link) ⇨ Show People ⇨ Hosts
 				user = self.model.objects.get(email=request.data['email'])
 				user = namedtuple('user', 'error')
 				user.error = 'This email is already registered'
-			except self.model.DoesNotExist:  # if this email not already registered, turn visitor into user & add info
-				user = self.model.objects.get(pk=request.user.pk)  # get visitor account (already logged in)
-				user.groups.clear()  # clear visitor group
-				user.groups.add(Group.objects.get(name='User').id)  # change to user
-				user.display_name = request.data['display_name']  # add new user account info
-				user.email = request.data['email']
+			except self.model.DoesNotExist:  # if this email not already registered, new user
+				user = UserViewset.model.objects.create_user(
+					display_name = request.data['display_name'],
+				)
+				user.save()
+				user.groups.clear()  # clear if any group exists
+				user.groups.add(Group.objects.get(name='User').id)  # make user
+				user.email = request.data['email']  # add new user account info
 				user.password = make_password(request.data['password'])
 				user.do_get_emails = True
-				user.is_superuser = False
-				user.is_staff = False
+				user.do_get_line_display_name = False
+				user.personal_code = secrets.token_urlsafe(16)
+				user.language = request.data['lang']
 				user.save()
+				request.user = user
 				user = f.authenticate_login(request)  # login user
 			return user
 		else:
@@ -392,6 +418,7 @@ To message the host: go to the event (above link) ⇨ Show People ⇨ Hosts
 		# use access token to get profile info
 		profile_response = json.loads(requests.get(url, headers=headers).content)
 		try:  # try to get a user with this line id, if there is one then set all the new data to their account
+			# this is a login situation
 			user = self.model.objects.get(line_id=profile_response['userId'])
 			user.line_access_token = getAccessToken_response['access_token']
 			user.line_refresh_token = getAccessToken_response['refresh_token']
@@ -403,102 +430,134 @@ To message the host: go to the event (above link) ⇨ Show People ⇨ Hosts
 			if user.groups.filter(id=Group.objects.get(name='Temp Line Friend').id).exists():
 				user.groups.clear()  # clear temp line friend group
 				user.groups.add(Group.objects.get(name='User').id)  # change to user
+				user.language = uri.split('&lang=')[1][:2]
+				user.display_name = profile_response['displayName']
 				print('CHANGING TEMP LINE FRIEND TO USER')
-			if request.user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists():
-				request.user.groups.clear()  # clear temp line friend group
-				request.user.groups.add(Group.objects.get(name='User').id)  # change to user
-			user = f.verify_update_line_info(request, user)  # verify validity of current line data and put new data
-			user = f.merge_users(request.user, user)
+			if not request.user.is_anonymous:
+				existing_user = request.user
+				user = f.merge_users(user, existing_user)  # merge users
+			request.user = user
+			request.data['line_id'] = profile_response['userId']
 			user = f.authenticate_login(request)  # login user
-		except self.model.DoesNotExist:  # if there was no user with this id, add line info to existing account
-			user = self.model.objects.get(pk=request.user.pk)  # get account (already logged in)
-			if user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists():  # if visitor
-				user.groups.clear()  # clear visitor group
+		except self.model.DoesNotExist:  # if there was no user with this line id
+			try:  # if this use is logged in then this is an add line situation
+				user = self.model.objects.get(pk=request.user.pk)
+				user.line_id = profile_response['userId']
+				user.line_access_token = getAccessToken_response['access_token']
+				user.line_refresh_token = getAccessToken_response['refresh_token']
+				user.do_get_lines = True
+				user.save()
+				request.user = user
+				request.data['line_id'] = profile_response['userId']
+				user = f.authenticate_login(request)  # login user
+				return user
+			except self.model.DoesNotExist: # otherwise this is a new line user situation
+				user = UserViewset.model.objects.create_user(
+					display_name = profile_response['displayName'],
+				)
+				user.save()
+				user.groups.clear()  # clear if any groups exist
 				user.groups.add(Group.objects.get(name='User').id)  # change to user
-			user.display_name = profile_response['displayName']  # add new user account info
-			user.line_id = profile_response['userId']
-			user.line_access_token = getAccessToken_response['access_token']
-			user.line_refresh_token = getAccessToken_response['refresh_token']
-			user.do_get_line_display_name = True
-			user.do_get_lines = True
-			user.save()
-			print('SAVED NEW LINE USER')
-			user = f.authenticate_login(request)  # login user
-			print('LOGGED IN')
+				user.line_id = profile_response['userId']
+				user.line_access_token = getAccessToken_response['access_token']
+				user.line_refresh_token = getAccessToken_response['refresh_token']
+				user.do_get_line_display_name = True
+				user.do_get_lines = True
+				user.personal_code=secrets.token_urlsafe(16),
+				user.language = uri.split('&lang=')[1][:2]
+				user.save()
+				print('SAVED NEW LINE USER')
+				request.user = user
+				request.data['line_id'] = profile_response['userId']
+				user = f.authenticate_login(request)  # login user
+				print('LOGGED IN')
 		return user
 
 	def login(self, request):  # SECURITY: anyone is allowed to login
 		#return f.authenticate_login(request)  # FOR EMERGENCY LOGIN (also in backends)
-		visitor = False
-		try:
-			user = self.model.objects.get(pk=request.user.pk)  # get current user that made this request
-			# if visitor made this request, remember that
-			if user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists():
-				visitor = request.user
-		except self.model.DoesNotExist:  # if there is no currently existing user or visitor, make a new visitor
-			user = f.new_visitor(request)
-			request.user = user
-		user = f.authenticate_login(request)  # it will try to login with email or line before loggin in by session
+		user = f.authenticate_login(request)  # it will try to login with email or line before logging in by session
 		if not hasattr(user, 'error'):  # if logged into a user
 			user.visit_count += 1  # add to the visit count
 			user.save()
-			# if not visitor, but a visitor made the request
-			if (not user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists()) and visitor:
-				user.visit_count += visitor.visit_count
-				user.save()
-				visitor.delete()  # delete the visitor account that made the request
 			return user  # done
 		else:  # if couldn't login to anything, probably got an error, so return user anyway
 			return user
 
 	def logout(self, request):  # SECURITY: anyone is allowed to logout
 		try:
-			user = self.model.objects.get(pk=request.user.pk)
+			user = request.user
 			auth.logout(request)
 		except self.model.DoesNotExist:
 			user = namedtuple('user', 'error')
 			user.error = 'a user with this id could not be found'
 		return user
-	
-	def send_email(self, request):
-		if request.user.is_superuser:
-			subject = 'Test sending email from site from mikey'
-			message = 'Was I able to send it?'
-			email_from = settings.EMAIL_HOST_USER
-			recipient_list = ['mdsimeone@gmail.com',]
-			send_mail(subject, message, email_from, recipient_list, fail_silently=False)
-		return request.user
-	
-	def forgot_password(self, request):
-		try:
+
+	#def send_email(self, request):
+	#	if request.user.is_superuser:  # SECURITY: this is only in experimental
+	#		subject = 'Test sending email from site from mikey'
+	#		message = 'Was I able to send it?'
+	#		email_from = settings.EMAIL_HOST_USER
+	#		recipient_list = ['mdsimeone@gmail.com',]
+	#		send_mail(subject, message, email_from, recipient_list, fail_silently=False)
+	#	return request.user
+
+	def start_login_register(self, request):  # SECURITY: anyone is allowed to do this
+		try:  # if user already exists, get the user
 			user = self.model.objects.get(email=request.data['email'])
-			user.random_secret = secrets.token_urlsafe(16)
+		except self.model.DoesNotExist:  # if user doesn't exist, create a new user
+			user = UserViewset.model.objects.create_user()
 			user.save()
-			subject = 'Event Horizon - Change Password Link'
-			message = f'Please follow this link to change your password:\n'
-			message += request.data['return_link'] + '&code=' + user.random_secret
-			email_from = settings.EMAIL_HOST_USER
-			recipient_list = [request.data['email'],]
-			send_mail(subject, message, email_from, recipient_list, fail_silently=False)
-			user = self.model.objects.get(pk=request.user.pk)
+			user.groups.clear()  # clear if any group exists
+			user.groups.add(Group.objects.get(name='User').id)  # put into User group
+			user.email = request.data['email']  # add new user account info
+			user.do_get_emails = True
+			user.language = request.data['lang']
+			#request.user = user
+			#f.authenticate_login(request)  # login user
+		code = secrets.token_urlsafe(16)
+		user.password = make_password(code)  # make password a new secret code
+		user.save()
+		subject = 'Login / Register Link'
+		message = f'Please follow this link to login / register:\n'
+		message += request.data['return_link'] + '&code=' + code
+		email_from = settings.EMAIL_HOST_USER
+		recipient_list = [request.data['email'],]
+		send_mail(subject, message, email_from, recipient_list, fail_silently=False)
+		user = [OrderedDict([('success', 'success')])]
+		return user
+	
+	def try_login(self, request):  # SECURITY: anyone is allowed to do this
+		try:  # if user already exists, get the user
+			print(request.data['email'])
+			user = self.model.objects.get(email=request.data['email'])
+			user = f.authenticate_login(request)  # login user
 		except self.model.DoesNotExist:
 			user = namedtuple('user', 'error')
-			user.error = 'This email is not registered'
+			user.error = 'a user with this email could not be found'
 		return user
-		
-	def change_password(self, request):
-		current_user = self.model.objects.get(pk=request.user.pk)
+
+	def register(self, request):
+		try:
+			print(request.data['email'])
+			user = self.model.objects.get(email=request.data['email'])  # get user
+			user.display_name = request.data['display_name']
+			user.save()
+			user = f.authenticate_login(request)  # login user
+		except self.model.DoesNotExist:
+			user = namedtuple('user', 'error')
+			user.error = 'a user with this email could not be found'
+		return user
+
+	def change_password(self, request):  # could this be in patch with the other change stuff?
 		user = self.model.objects.get(email=request.data['email'])
-		if ((
+		if ((  # SECURITY: either they forgot password and code matches the one they have
 			'code' in request.data and user.random_secret == request.data['code']
-		) or (
+		) or (  # SECURITY: or they are changing the password and they have input the correct one
 			'current_password' in request.data and user.check_password(request.data['current_password'])
 		)):
 			user.password = make_password(request.data['new_password'])
 			user.random_secret = ''
 			user.save()
-			if current_user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists():
-				current_user.delete()
 			request.user = user
 			request.data['password'] = request.data['new_password']
 			user = f.authenticate_login(request)  # login user
@@ -513,104 +572,97 @@ class LineViewset(viewsets.ViewSet):
 	queryset = []
 
 	def list(self, request):  # GET {prefix}/
-		pass
+		pass  # SECURITY: does nothing
 
 	def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
-		pass
+		pass  # SECURITY: does nothing
 
 	def update(self, request, pk=None):  # PUT {prefix}/{lookup}/
-		pass
+		pass  # SECURITY: does nothing
 
 	def partial_update(self, request, pk):  # PATCH {prefix}/{lookup}/
-		pass
+		pass  # SECURITY: does nothing
 
 	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
-		pass
+		pass  # SECURITY: does nothing
 
-	def create(self, request):
-		if request.user.is_superuser:  # SECURITY: only superuser can
-			response = eval(f"self.{request.data['command']}(request)")  # SECURITY: inside each command function
-		else:
-			response = {}
-			response['error'] = 'only superuser can do this'
-		return Response(response)
+	#def create(self, request):
+	#	if request.user.is_superuser:  # SECURITY: only superuser can
+	#		response = eval(f"self.{request.data['command']}(request)")  # SECURITY: inside each command function
+	#	else:
+	#		response = {}
+	#		response['error'] = 'only superuser can do this'
+	#	return Response(response)
 
-	def consumption(self, request):  # SECURITY: messaging channel access token only used here in backend
-		url = 'https://api.line.me/v2/bot/message/quota/consumption'
-		headers = {
-			'Content-Type': 'application/json',
-			'Authorization': 'Bearer ' + config('MESSAGING_CHANNEL_ACCESS_TOKEN'),
-		}
-		response = requests.get(url, headers=headers)
-		return response
+	#def consumption(self, request):  # SECURITY: messaging channel access token only used here in backend
+	#	url = 'https://api.line.me/v2/bot/message/quota/consumption'
+	#	headers = {
+	#		'Content-Type': 'application/json',
+	#		'Authorization': 'Bearer ' + config('MESSAGING_CHANNEL_ACCESS_TOKEN'),
+	#	}
+	#	response = requests.get(url, headers=headers)
+	#	return response
 
-	def broadcast(self, request):  # SECURITY: messaging channel access token only used here in backend
-		url = 'https://api.line.me/v2/bot/message/broadcast'
-		headers = {
-			'Content-Type': 'application/json',
-			'Authorization': 'Bearer ' + config('MESSAGING_CHANNEL_ACCESS_TOKEN'),
-		}
-		data = json.dumps({
-			'messages': [{
-				"type": "text",
-				"text": request.data['message'],
-			}]
-		})
-		response = requests.post(url, headers=headers, data=data)
-		return response
+	#def broadcast(self, request):  # SECURITY: messaging channel access token only used here in backend
+	#	url = 'https://api.line.me/v2/bot/message/broadcast'
+	#	headers = {
+	#		'Content-Type': 'application/json',
+	#		'Authorization': 'Bearer ' + config('MESSAGING_CHANNEL_ACCESS_TOKEN'),
+	#	}
+	#	data = json.dumps({
+	#		'messages': [{
+	#			"type": "text",
+	#			"text": request.data['message'],
+	#		}]
+	#	})
+	#	response = requests.post(url, headers=headers, data=data)
+	#	return response
 
-	def push(self, request):  # SECURITY: messaging channel access token only used here in backend
-		mikeyOrStu = {
-			'mikey': config('MIKEY_LINE_USER_ID'),
-			'stu': config('STU_LINE_USER_ID'),
-		}
-		data = request.data['data']
-		data['to'] = mikeyOrStu[data['to']]
-		url = 'https://api.line.me/v2/bot/message/push'
-		headers = {
-			'Content-Type': 'application/json',
-			'Authorization': 'Bearer ' + config('MESSAGING_CHANNEL_ACCESS_TOKEN'),
-		}
-		data = json.dumps(data)
-		response = requests.post(url, headers=headers, data=data)
-		return response
+	#def push(self, request):  # SECURITY: messaging channel access token only used here in backend
+	#	mikeyOrStu = {
+	#		'mikey': config('MIKEY_LINE_USER_ID'),
+	#		'stu': config('STU_LINE_USER_ID'),
+	#	}
+	#	data = request.data['data']
+	#	data['to'] = mikeyOrStu[data['to']]
+	#	url = 'https://api.line.me/v2/bot/message/push'
+	#	headers = {
+	#		'Content-Type': 'application/json',
+	#		'Authorization': 'Bearer ' + config('MESSAGING_CHANNEL_ACCESS_TOKEN'),
+	#	}
+	#	data = json.dumps(data)
+	#	response = requests.post(url, headers=headers, data=data)
+	#	return response
 
 
 # SECRETS VIEW SET #####################################################################################################
 class SecretsViewset(viewsets.ViewSet):
 	queryset = []
-	
+
 	def list(self, request):  # GET {prefix}/
-		pass
-	
+		pass  # SECURITY: does nothing
+
 	def update(self, request, pk=None):  # PUT {prefix}/{lookup}/
-		pass
+		pass  # SECURITY: does nothing
 
 	def partial_update(self, request, pk):  # PATCH {prefix}/{lookup}/
-		pass
+		pass  # SECURITY: does nothing
 
 	def create(self, request):  # POST {prefix}/
-		pass
+		pass  # SECURITY: does nothing
 
 	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
-		pass
+		pass  # SECURITY: does nothing
 
 	def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
-		if ((pk in ['mikey-line-user-id', 'stu-line-user-id'] and request.user.is_superuser)
-				or pk not in ['mikey-line-user-id', 'stu-line-user-id']):  # SECURITY: only superuser can get our ids
-			secrets_dict = {
-				'new-random-secret': secrets.token_urlsafe(16),
-				# SECURITY: this is safe because of domain restriction, and channel secret not used in client, only back
-				'login-channel-id': config('LOGIN_CHANNEL_ID'),
-				# SECURITY: this is safe because of domain restriction
-				'google-maps-api-key': config('GOOGLE_MAPS_API_KEY'),
-				# SECURITY: this is safe because only superuser can get it
-				'mikey-line-user-id': config('MIKEY_LINE_USER_ID'),
-				# SECURITY: this is safe because only superuser can get it
-				'stu-line-user-id': config('STU_LINE_USER_ID'),
-			}
-			return Response(secrets_dict[pk])
-		return Response()
+		secrets_dict = {  # SECURITY: in the end anyone can get these secrets lol
+			'new-random-secret': secrets.token_urlsafe(16),
+			# SECURITY: this is safe because of domain restriction, and channel secret not used in client, only back
+			'login-channel-id': config('LOGIN_CHANNEL_ID'),
+			# SECURITY: this is safe because of domain restriction
+			'google-maps-api-key': config('GOOGLE_MAPS_API_KEY'),
+		}
+		return Response(secrets_dict[pk])
 
 
 # EVENTS VIEW SET ######################################################################################################
@@ -620,10 +672,10 @@ class EventViewset(viewsets.ViewSet):
 	queryset = []
 
 	def update(self, request, pk=None):  # PUT {prefix}/{lookup}/
-		pass
+		pass  # SECURITY: does nothing
 
 	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
-		pass
+		pass  # SECURITY: does nothing
 
 	def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
 		my_hosting = self.model.objects.filter(hosts=request.user.id)
@@ -692,6 +744,7 @@ class EventViewset(viewsets.ViewSet):
 				date_time=request.data['date_time'],
 				include_time=request.data['include_time'],
 				is_private=request.data['is_private'],
+				invite_code=secrets.token_urlsafe(16),
 			)
 			event.save()
 			event.hosts.add(request.user.id)
@@ -706,17 +759,17 @@ class EventViewset(viewsets.ViewSet):
 			serializer_data = self.serializer_class([], many=True).data
 		return serializer_data
 
-	def my_events(self, request):  # SECURITY: anyone can get my events
-		my_hosting = self.model.objects.filter(hosts=request.user.id)
-		serializer_data_my_hosting = serializer_host(my_hosting)  # SECURITY: see serializers
-		my_invited = self.model.objects.filter(Q(invited=request.user.id) & ~Q(hosts=request.user.id))
-		serializer_data_my_invited = serializer_public_invited(my_invited)
-		my_invite_requests = self.model.objects.filter(Q(is_private=True) & Q(invite_request=request.user.id))
-		serializer_data_my_invite_requests = serializer_private(my_invite_requests)
-		return serializer_data_my_hosting + serializer_data_my_invited + serializer_data_my_invite_requests
-	
+	#def my_events(self, request):  # SECURITY: anyone can get my events  # this is maybe not used anymore
+	#	my_hosting = self.model.objects.filter(hosts=request.user.id)
+	#	serializer_data_my_hosting = serializer_host(my_hosting)  # SECURITY: see serializers
+	#	my_invited = self.model.objects.filter(Q(invited=request.user.id) & ~Q(hosts=request.user.id))
+	#	serializer_data_my_invited = serializer_public_invited(my_invited)
+	#	my_invite_requests = self.model.objects.filter(Q(is_private=True) & Q(invite_request=request.user.id))
+	#	serializer_data_my_invite_requests = serializer_private(my_invite_requests)
+	#	return serializer_data_my_hosting + serializer_data_my_invited + serializer_data_my_invite_requests
+
 	def check_user_status(self, request):
-		user = request.user
+		user = request.user  # SECURITY: anyone can get their own user status
 		event = EventSerializer.Meta.model.objects.get(pk=request.data['event_id'])
 		if f.user_in_guest_statuses(event, user.id, ['hosts']):
 			result = [OrderedDict([('status', 'hosts')])]
@@ -745,7 +798,7 @@ class EventViewset(viewsets.ViewSet):
 	def partial_update(self, request, pk):  # PATCH {prefix}/{lookup}/
 		eval(f"self.{request.data['command']}(request, pk)")  # SECURITY: inside each command function
 		return Response()  # SECURITY: returns nothing
-	
+
 	def update_guest_status(self, request, pk):
 		event = self.model.objects.get(pk=pk)  # SECURITY: in the following comments
 		if event.hosts.filter(id=request.user.id).exists():  # only host can change other users statuses
@@ -765,13 +818,35 @@ class EventViewset(viewsets.ViewSet):
 			plus_one = event.plus_ones.filter(chaperone=request.user.id)
 			if plus_one:
 				plus_one.delete()
+			user = UserSerializer.Meta.model.objects.get(pk=user_to_change)
+			for host in event.hosts.all():
+				f.notify_user(
+					host,
+					f"""'{user.display_name}' has left the event '{event.name}'.
+Event page: {f.create_url(f'/?page=event&id={event.id}')}""",
+				)
 		elif request.data['status'] == 'invite_request':
-			if not request.user.groups.filter(id=Group.objects.get(name='Temp Visitor').id).exists():
-				event.invite_request.add(user_to_change)  # only non-visitors can request an invite
-		#elif request.data['status'] == 'invited':
-		#	if event.hosts.filter(id=request.user.id).exists():  # only host can invite user if private
-		#		event.invited.add(user_to_change)
-		#		event.maybe.add(user_to_change)
+			if request.user.groups.filter(id=Group.objects.get(name='User').id).exists():
+				event.invite_request.add(user_to_change)  # only users can request an invite
+				user = UserSerializer.Meta.model.objects.get(pk=user_to_change)
+				for host in event.hosts.all():
+					f.notify_user(
+						host,
+						f"""'{user.display_name}' has requested an invite to the event '{event.name}'.
+Event page: {f.create_url(f'/?page=event&id={event.id}')}""",
+					)
+		elif request.data['status'] == 'invited':
+			# only host can invite user
+			if event.hosts.filter(id=request.user.id).exists() and not event.invited.filter(id=user_to_change).exists():
+				event.invite_request.remove(user_to_change)
+				event.invited.add(user_to_change)
+				event.maybe.add(user_to_change)
+				user = UserSerializer.Meta.model.objects.get(pk=user_to_change)
+				f.notify_user(
+					user,
+					f"""Invitation to the event '{event.name}'.
+Event page: {f.create_url(f'/?page=event&id={event.id}')}""",
+				)
 		elif request.data['status'] == 'wait_list':
 			# only invited can be changed to wait_list (unless its public)
 			if event.invited.filter(id=user_to_change).exists() or (not event.is_private):
@@ -800,7 +875,7 @@ class EventViewset(viewsets.ViewSet):
 					event.attending.add(user_to_change)
 				else:
 					return [OrderedDict([('error', 'full')])]
-		return {}  # SECURITY: returns nothing
+		return {}  # SECURITY: returns nothing so you get no info from this
 
 
 def randomize_lat_lng(address):
@@ -921,32 +996,25 @@ class ImageViewset(viewsets.ViewSet):
 	queryset = []
 
 	def list(self, request):  # GET {prefix}/
-		pass
+		pass  # SECURITY: does nothing
 
 	def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
-		pass
+		pass  # SECURITY: does nothing
 
 	def update(self, request, pk=None):  # PUT {prefix}/{lookup}/
-		pass
+		pass  # SECURITY: does nothing
 
 	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
-		pass
+		pass  # SECURITY: does nothing
 
-	def create(self, request):  # POST {prefix}/ 
-		if request.data['command'] == 'get':
-			result = []
-			for key in request.data['keys'].split(','):
-				if 'MapIcon' in key:
-					result += aws_get_file(key)
-				else: 
-					result += {'error': 'Not authorized'}
-			response = HttpResponse(result)
-			response['Content-Type'] = "image/png"
-			response['Cache-Control'] = "max-age=0"
-			return response
-		else:  # create
-			file = request.data['file']
-			result = aws_upload_file(file)
+	def create(self, request):  # POST {prefix}/
+		response = eval(f"self.{request.data['command']}(request)")  # SECURITY: inside each command function
+		return response
+
+	def upload_image(self, request):
+		if request.user.is_superuser:  # SECURITY: only super user can add images now (since only he can add events)
+			data = request.data['data']
+			result = aws_upload_file(data)
 			if 'error' in result:
 				serializer_data = self.serializer_class([result], many=True).data
 			else:
@@ -954,54 +1022,37 @@ class ImageViewset(viewsets.ViewSet):
 				image.save()
 				serializer_data = self.serializer_class([image], many=True).data
 			return Response(serializer_data)
-
-	def partial_update(self, request, pk):  # PATCH {prefix}/{lookup}/
-		if request.data['command'] == 'get':
-			my_events = EventSerializer.Meta.model.objects.filter(invited=request.user.id)
-			event = EventSerializer.Meta.model.objects.get(pk=request.data['event_pk'])
-			image = self.model.objects.get(pk=pk)
-			if image in event.images.all() and event in my_events:
-				result = aws_get_file(image.key)
-				response = HttpResponse(result)
-				response['Content-Type'] = "image/jpg"
-				response['Cache-Control'] = "max-age=0"
-				return response
-			else:
-				serializer_data = self.serializer_class([{'error': 'Not authorized'}], many=True).data
-			return Response(serializer_data)
 		else:
-			serializer_data = self.serializer_class([{'error': 'Not get command'}], many=True).data
+			serializer_data = self.serializer_class([], many=True).data
 			return Response(serializer_data)
 
-def aws_upload_file(file):
+	def get_event_image(self, request):  # SECURITY: anyone can get images for now, they are public
+		event = EventSerializer.Meta.model.objects.get(pk=request.data['event_id'])
+		image = self.model.objects.get(pk=request.data['image_id'])
+		if image in event.images.all():
+			serializer_data = [OrderedDict([('key', image.key)])]
+		else:
+			serializer_data = self.serializer_class([{'error': 'Not authorized'}], many=True).data
+		return Response(serializer_data)
+
+def aws_upload_file(data):
 	s3_client = boto3.client(
 		's3',
 		aws_access_key_id=config('AWS_ACCESS_KEY_ID'),
 		aws_secret_access_key=config('AWS_SECRET_ACCESS_KEY')
 	)
 	try:
-		file_type = '.' + file.name.split('.')[len(file.name.split('.'))-1]
-		if file_type not in ['.jpg', '.JPG', '.jpeg', '.JPEG', '.png', '.PNG', '.gif', '.PNG']:
-			return {'error': 'Not supported file type'}
-		key = str(datetime.now()).replace(' ', 'T').replace(':', '_').replace('.', '_')
-		key += '--' + str(secrets.token_urlsafe(4)) + file_type
-		s3_client.upload_fileobj(file, config('AWS_BUCKET_ACCESS_POINT'), key)
-		return {'key': key}
-	except ClientError as e:
-		print('AWS S3 UPLOAD ERROR:', e)
-		return {'error': e}
-
-def aws_get_file(key):
-	try:
-		s3_client = boto3.client(
-			's3',
-			aws_access_key_id=config('AWS_ACCESS_KEY_ID'),
-			aws_secret_access_key=config('AWS_SECRET_ACCESS_KEY')
-		)
-		file_stream = io.BytesIO()
-		s3_client.download_fileobj(config('AWS_BUCKET_ACCESS_POINT'), key, file_stream)
-		send = base64.b64encode(file_stream.getbuffer())
-		return send
+		binary_data = a2b_base64(data.split('data:image/png;base64,')[1])
+		with open('image.jpg', 'wb') as file:
+			file.write(binary_data)
+			file.close()
+		with open('image.jpg', 'rb') as file:
+			key = str(datetime.now()).replace(' ', 'T').replace(':', '_').replace('.', '_')
+			key += '--' + str(secrets.token_urlsafe(4)) + '.png'
+			s3_client.upload_fileobj(file, 'event-horizon-use1', key)
+			file.close()
+			os.remove('image.jpg')
+			return {'key': key}
 	except ClientError as e:
 		print('AWS S3 UPLOAD ERROR:', e)
 		return {'error': e}
@@ -1012,7 +1063,8 @@ class PlusOneViewset(viewsets.ViewSet):
 	serializer_class = PlusOneSerializer
 	model = serializer_class.Meta.model
 	queryset = []
-	
+
+	# SECURITY:
 	# everyone can see hosts
 	# can't see invited/attending/maybe plus ones if not invited
 	# can't see wait_list/invite_request plus ones if not host
@@ -1032,7 +1084,7 @@ class PlusOneViewset(viewsets.ViewSet):
 		result = eval(f"self.{request.data['command']}(request)")  # SECURITY: inside each command function
 		return Response(result)
 
-	def set_plus_one(self, request):  # get is done in get_event_user_info
+	def set_plus_one(self, request):  # note: get is done in get_event_user_info
 		event = EventSerializer.Meta.model.objects.get(pk=request.data['event_id'])
 		if event.plus_ones.filter(chaperone=request.user.id).exists():  # SECURITY: user can't add more than 1 plus-one
 			return [OrderedDict([('error', 'user can\'t add more than 1 plus-one')])]
@@ -1068,7 +1120,7 @@ class PlusOneViewset(viewsets.ViewSet):
 			or event.invite_request.filter(id=request.user.id).exists()
 		):
 			f.notify_waiting_users_if_necessary(event, request.user.id, change_is_plus_one=-1)
-			plus_one = event.plus_ones.filter(chaperone=request.user.id)
+			plus_one = event.plus_ones.filter(chaperone=request.user.id)  # SECURITY: this deletes your own plus one
 			plus_one.delete()
 			return []
 		else:
@@ -1084,23 +1136,23 @@ class GroupViewset(viewsets.ViewSet):
 	queryset = []
 
 	def list(self, request):  # GET {prefix}/
-		groups = self.model.objects.all()
+		groups = self.model.objects.all()  # SECURITY: anyone can get list of groups, cuz really its like nothing
 		result = []
 		for group in groups:
 			result += [OrderedDict([('name', group.name), ('id', group.id)])]
 		return Response(result)
 
 	def retrieve(self, request, pk=None):  # GET {prefix}/{lookup}/
-		pass
+		pass  # SECURITY: does nothing
 
 	def update(self, request, pk=None):  # PUT {prefix}/{lookup}/
-		pass
+		pass  # SECURITY: does nothing
 
 	def partial_update(self, request, pk):  # PATCH {prefix}/{lookup}/
-		pass
+		pass  # SECURITY: does nothing
 
 	def create(self, request):  # POST {prefix}/
-		pass
+		pass  # SECURITY: does nothing
 
 	def destroy(self, request, pk=None):  # DELETE {prefix}/{lookup}/
-		pass
+		pass  # SECURITY: does nothing
