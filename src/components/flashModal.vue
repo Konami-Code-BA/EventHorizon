@@ -1,5 +1,5 @@
 <template>
-	<div v-if="showFlashModal" :class="flashModalClass" class="flash-modal">
+	<div v-if="showFlashModal" class="flash-modal" :class="[nonCenter ? 'noncentered' : 'centered', flashModalClass]">
 		{{ text }}
 	</div>
 </template>
@@ -9,6 +9,7 @@
 		props: {
 			time: { default: 700 }, // .7 seconds
 			text: {},
+			nonCenter: { default: false }
 		},
 		data () {
 			return {
@@ -32,15 +33,20 @@
 </script>
 <style scoped>
 	.flash-modal {
-		position: fixed;
-		color: white;
-		font-size: 24px;
-		left: 50%;
-		top: 50%;
-		transform: translate(-50%, -50%);
-		background-color: rgba(0, 0, 0, .9);
+		color: black;
+		font-size: 45px;
+		background-color: rgba(255, 255, 255, .5);
 		z-index: 90000;
 		width: 90%;
 		text-align: center;
+	}
+	.centered {
+		position: fixed;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -50%);
+	}
+	.noncentered {
+		position: absolute;
 	}
 </style>

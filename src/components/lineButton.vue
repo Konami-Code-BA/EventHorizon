@@ -21,7 +21,12 @@
 			}
 		},
 		props: {
-			pageToReturnTo: {},
+			pageToReturnTo: {
+				type: Object,
+        		default() {
+					return { page: 'home', args: {} }
+				}
+			},
 			wording: {},
 		},
 		async mounted () {
@@ -47,13 +52,16 @@
 			},
 			async tryLineNewDevice() {
 				this.store.loading = true
-				let allCookies = '{"' + this.replaceAll(this.replaceAll(document.cookie, '=', '": "'), '; ', '", "') + '"}'
-				let stateCookie = JSON.parse(allCookies)['state']
-				if (f.currentPage && f.currentPage.args.code && stateCookie === f.currentPage.args.state) {
-					let nextPage = f.createNextPageFromCurrentPage()
-					let uri = f.createUriForReturnFromLogin(f.currentPage, nextPage, false)
-					await api.lineNewDevice(f.currentPage.args.code, uri)
-					f.goToPage(nextPage)
+				if (document.cookie) {
+					let allCookies = '{"' + this.replaceAll(this.replaceAll(document.cookie, '=', '": "'), '; ', '", "') + '"}'
+					let stateCookie = JSON.parse(allCookies)['state']
+					document.cookie = `state='';`
+					if (f.currentPage && f.currentPage.args.code && stateCookie === f.currentPage.args.state) {
+						let nextPage = f.createNextPageFromCurrentPage()
+						let uri = f.createUriForReturnFromLogin(f.currentPage, nextPage, false)
+						await api.lineNewDevice(f.currentPage.args.code, uri)
+						f.goToPage(nextPage)
+					}
 				}
 				this.store.loading = false
 			},

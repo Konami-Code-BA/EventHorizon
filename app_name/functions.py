@@ -16,44 +16,6 @@ def is_admin_or_this_user(request, pk):  # is admin, or is a user that matches t
 	return is_admin(request) or int(pk) == request.user.pk
 
 
-# this doesnt work anymore, also im not sure how necessary it is. keeping it for now tho in case i want it later
-#def get_return_queryset(self, request, pk=None):
-#	if hasattr(request.user, 'error'):  # not a user, just an error
-#		queryset = [request.user]
-#	elif request.user.is_authenticated:  # is an authenticated user
-#		if pk:  # trying to access one user
-#			checker = is_admin_or_this_user(request, pk)  # check if is admin or is this user
-#		else:  # trying to access all users
-#			checker = is_admin(request)  # check if is admin
-#		objects = self.serializer_class.Meta.model.objects
-#		if checker:  # if accessing one user: is admin or is this user. if accessing all users, is admin
-#			if pk:  # trying to access one user
-#				try:
-#					queryset = [objects.get(pk=pk)]  # get the user
-#				except self.serializer_class.Meta.model.DoesNotExist:
-#					user = namedtuple('user', 'error')
-#					user.error = 'a user with this id could not be found'
-#					queryset = [user]
-#			else:  # trying to access all users
-#				queryset = objects.all()  # get all users
-#		else:  # is some user
-#			if pk:  # trying to access one other user
-#				user = namedtuple('user', 'error')
-#				user.error = 'you don\'t have permission to access other users'
-#				queryset = [user]
-#			else:  # trying to access all users
-#				queryset = [request.user]  # get only himself
-#	else:  # unauthenticated user
-#		user = namedtuple('user', 'error')
-#		user.error = 'you are not an authenticated user'
-#		queryset = [user]
-#	if hasattr(queryset[0], 'error'):
-#		serializer_data = [OrderedDict([('error', queryset[0].error)])]
-#	else:
-#		serializer_data = self.serializer_class(queryset, many=True).data
-#	return Response(serializer_data)
-
-
 def line_bot(line_body):
 	replyToken, reply, received = None, None, None
 	if len(line_body['events']) > 0:
@@ -61,8 +23,8 @@ def line_bot(line_body):
 	else: 
 		return replyToken, reply
 	if events['type'] == 'follow':
-		reply = {'type': 'text', 'text': 'Thank you for following!'}
-		add_line_friend(events['source']['userId'])
+		result = add_line_friend(events['source']['userId'])
+		reply = {'type': 'text', 'text': result}
 	if events['type'] == 'unfollow':
 		remove_line_friend(events['source']['userId'])
 	elif events['type'] == 'message':  # its a message (not a follow etc)
@@ -90,19 +52,22 @@ def add_line_friend(line_id):
 		user.do_get_lines = True
 		user.save()
 		print('CHANGED is_line_friend AND do_get_lines FOR EXISTING LINE FRIEND')
+		result = 'Thank you for following!'
 	except UserViewset.model.DoesNotExist:  # if no user with this line id exists
-		# this wasn't done on the site, it was done in line so there is no visitor, and can't make session
-		user = UserViewset.model.objects.create_user(  # create temporary line friend user
-			line_id = line_id,
-			do_get_lines = True,
-			is_line_friend = True,
-			display_name = 'Temp Line Friend', 
-			do_get_line_display_name = True,
-			random_secret = secrets.token_urlsafe(16)
-		)
-		user.groups.add(Group.objects.get(name='Temp Line Friend').id)  # temp line friend
-		user.save()
-		print('ADDED NEW TEMP LINE FRIEND')
+		# this wasn't done on the site, it was done in line so there is no user, and can't make session
+		#user = UserViewset.model.objects.create_user(  # create temporary line friend user
+		#	line_id = line_id,
+		#	do_get_lines = True,
+		#	is_line_friend = True,
+		#	display_name = 'Temp Line Friend', 
+		#	do_get_line_display_name = True,
+		#	random_secret = secrets.token_urlsafe(16)
+		#)
+		#user.groups.add(Group.objects.get(name='Temp Line Friend').id)  # temp line friend
+		#user.save()
+		#print('ADDED NEW TEMP LINE FRIEND')
+		result = 'Thank you for following! Your Line account isn\'t connected to the site though. Please go to the site and register with Line in order to get Line messages / notifications about events. https://www.eventhorizon.vip'
+	return result
 
 
 def remove_line_friend(line_id):
@@ -123,7 +88,7 @@ def authenticate_login(request):
 	return user
 
 
-def verify_update_line_info(request, user):  # user: existing user with line id & access token already gotten
+def verify_update_line_info(user):  # user: existing user with line id & access token already gotten
 	print('VERIFYING AND UPDATING LINE INFO')
 	url = 'https://api.line.me/oauth2/v2.1/token'  # no matter if access token expired or not, refresh access token 1st
 	headers = {'Content-Type': 'application/x-www-form-urlencoded'}
@@ -155,49 +120,27 @@ def verify_update_line_info(request, user):  # user: existing user with line id 
 	return user
 
 
-def new_visitor(request):
-	from app_name.viewsets import UserViewset, SecretsViewset
-	for i in range(1000):
-		random_secret = secrets.token_urlsafe(16)
-		try:
-			user = UserViewset.model.objects.get(random_secret=random_secret)
-		except UserViewset.model.MultipleObjectsReturned:
-			pass
-		except UserViewset.model.DoesNotExist:
-			break
-	user = UserViewset.model.objects.create_user(
-		random_secret = random_secret,
-		display_name = 'Temp Visitor',
-	)
-	user.save()
-	group = Group.objects.get(id=3)
-	group.user_set.add(user)
-	alert = Alert.objects.get(name='Show Cookies')
-	alert.user_set.add(user)
-	request.data['random_secret'] = user.random_secret
-	auth.login(request, user)
-	return user
-
-
 def merge_users(current_user, merge_user):
 	print('MERGING USERS')
 	# merge user field info
-	if current_user.display_name == 'Temp Visitor':
+	if current_user.display_name == 'Temp Line Friend':
 		current_user.display_name = merge_user.display_name
 	if merge_user.line_id:
 		current_user.line_id = merge_user.line_id
 		current_user.line_access_token = merge_user.line_access_token
 		current_user.line_refresh_token = merge_user.line_refresh_token
-		current_user.do_get_line_display_name = merge_user.do_get_line_display_name
-		current_user.is_line_friend = merge_user.is_line_friend
-		current_user.do_get_lines = merge_user.do_get_lines
-	elif merge_user.email:
+	current_user.do_get_line_display_name = current_user.do_get_line_display_name and merge_user.do_get_line_display_name
+	current_user.is_line_friend = current_user.is_line_friend or merge_user.is_line_friend
+	current_user.do_get_lines = current_user.do_get_lines or merge_user.do_get_lines
+	if merge_user.email:
 		current_user.email = merge_user.email
 		current_user.password = merge_user.password
-		current_user.do_get_emails = merge_user.do_get_emails
+	current_user.do_get_emails = current_user.do_get_emails or merge_user.do_get_emails
 	if merge_user.date_joined < current_user.date_joined:
 		current_user.date_joined = merge_user.date_joined
 	current_user.visit_count += merge_user.visit_count
+	current_user.is_staff = current_user.is_staff or merge_user.is_staff
+	current_user.is_superuser = current_user.is_superuser or merge_user.is_superuser
 	current_user.save()
 	# merge events
 	events = Event.objects.filter(invited=merge_user.id)
@@ -254,11 +197,19 @@ def notify_user(user, message, notification_type='other'):
 	# if has email and doesn't have line, it'll send email
 	# if has line and email but both marked off, it'll not send line, it will send email
 	if user.do_get_emails or (notification_type == 'DM' and user.email and (not user.do_get_lines)):
-		subject = 'Event Horizon Notification'
+		subject = message.split('\n')[0]
 		message = message
 		email_from = settings.EMAIL_HOST_USER
 		recipient_list = [user.email,]
 		send_mail(subject, message, email_from, recipient_list, fail_silently=False)
+
+
+def feedback(message):
+	subject = 'FEEDBACK'
+	message = message
+	email_from = settings.EMAIL_HOST_USER
+	recipient_list = [settings.EMAIL_HOST_USER,]
+	send_mail(subject, message, email_from, recipient_list, fail_silently=False)
 
 
 def impossibly_over_attending_limit(event, changing_user_id, change_is_plus_one=False):
@@ -318,17 +269,8 @@ def notify_waiting_users_if_necessary(event, changing_user_id, selected_status=N
 				):
 					notify_user(
 						waiting_user,
-						f"""Event: {event.name}
-
-Notification:
-Space has opened up to attend the event!
-
-
-To view this event, go here: {create_url(f'/?page=event&id={event.id}')}
-
-To turn off notifications, go here: {create_url('/?page=settings')}
-To message the host: go to the event (above link) ⇨ Show People ⇨ Hosts
-*Note: you can't reply to this message here""",
+						f"""Open space in event '{event.name}'.
+Event page: {create_url(f'/?page=event&id={event.id}')}""",
 					)
 	# if changing_user is not in attending and he is entering, or he is in attending and he's adding a plus_one
 	elif (((not event.attending.filter(id=changing_user_id).exists()) and selected_status == 'attending')

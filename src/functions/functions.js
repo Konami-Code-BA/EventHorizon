@@ -16,7 +16,7 @@ export default {
         return result
     },
     get isAuthenticatedUser() {
-        let result = this.inGroups(['User', 'Admin'])
+        let result = this.inGroups(['User', 'Admin']) && store.user.display_name !== ''
         return result
     },
     get isAdmin() {
@@ -31,17 +31,20 @@ export default {
         return Object.fromEntries(urlSearchParams.entries())
     },
     inGroups(groupNames) {
-        let groupIds = []
-        for (let i = 0; i < groupNames.length; i++) {
-            groupIds.push(store.groups.filter(group => {
-                if (group.name === groupNames[i]) {
-                    return true
-                } else {
-                    return false
-                }
-            })[0].id)
+        let result = false
+        if (store.groups) {
+            let groupIds = []
+            for (let i = 0; i < groupNames.length; i++) {
+                groupIds.push(store.groups.filter(group => {
+                    if (group.name === groupNames[i]) {
+                        return true
+                    } else {
+                        return false
+                    }
+                })[0].id)
+            }
+            result = groupIds.includes(store.user.groups[0])
         }
-        let result = groupIds.includes(store.user.groups[0])
         return result
     },
     createUrl(pageDict) {
@@ -52,17 +55,45 @@ export default {
         }
         return result
     },
+    areDictsEqual(dict1, dict2) {
+        let dict1Keys = Object.keys(dict1)
+        let dict2Keys = Object.keys(dict2)
+        for (let i = 0; i < dict1Keys.length; i++) {
+            if (dict2Keys.includes(dict1Keys[i])) {
+                if (typeof dict2[dict1Keys[i]] === 'object') {
+                    if (!this.areDictsEqual(dict2[dict1Keys[i]], dict1[dict1Keys[i]])) {
+                        return false
+                    }
+                } else {
+                    if (dict2[dict1Keys[i]] !== dict1[dict1Keys[i]]) {
+                        return false
+                    }
+                }
+            } else {
+                return false
+            }
+        }
+        return true
+    },
     goToPage(pageDict) {
-        store.pages.push(pageDict)
-        if (!['loginRegister', 'registerWithEmail', 'forgotPassword', 'resetPassword'].includes(pageDict.page)) {
+        if (store.pages.length === 0 || !this.areDictsEqual(store.pages[store.pages.length - 1], pageDict)) {
+            store.pages.push(pageDict)
+            if (this.currentPage.page === 'home' && window.initMap) {
+                window.initMap()
+            }
+        }
+        if (!['loginRegister', 'welcome'].includes(pageDict.page)) {
             store.lastNonLoginRegisterPage = pageDict
         }
     },
     goBack() {
         if (store.pages.length === 1) {
             window.history.go(-2)
-        } else {
+        } else if (!store.modalBack) {
             store.pages.pop() // remove the current page
+            if (this.currentPage.page === 'home' && window.initMap) {
+                window.initMap()
+            }
         }
     },
     focusCursor(documentt, id) {
@@ -77,9 +108,60 @@ export default {
     },
     async getEvents() {
         let events = await api.getAllEvents()
-        store.events.all = this.sortEventsByDate(events)
-        store.events.mine = this.filterEvents(store.events.all, store.user.id, ['invited'], false)
+        events = this.sortEventsByDate(events)
+        for (let i = 0; i < events.length; i++) {
+            // only get new images if (there is an image to get AND
+            // (there are no events at all OR (there are events and the image_data hasn't been saved yet)))
+            if (events[i].images.length > 0 && (store.events.all.length === 0 || (store.events.all.length > 0 && !('image_data' in store.events.all[i])))) {
+                let result = await api.getEventImage(events[i].images[0], events[i].id)
+                if (result != 'fail') {
+                    events[i].image_data = `https://event-horizon-use1.s3.amazonaws.com/${result}`
+                }
+                // otherwise just get the image from the store, if
+                // there is an image to get but events have been stored and the image is saved there too
+            } else if (events[i].images.length > 0 && store.events.all.length > 0 && 'image_data' in store.events.all[i]) {
+                events[i].image_data = store.events.all[i].image_data
+            } // and if there are no images to get, then
+        }
+        store.events.all = events
+        store.events.mine = await this.filterEventsByMyStatus()
         store.events.display = store.events.all
+    },
+    async getEvent(thisEvent) {
+        let event = await api.getEvent(thisEvent.id)
+        if (event.images.length > 0 && !('image_data' in thisEvent)) {
+            let result = await api.getEventImage(event.images[0], event.id)
+            if (result != 'fail') {
+                event.image_data = `https://event-horizon-use1.s3.amazonaws.com/${result}`
+            }
+        }
+        store.events.selected = event
+        let ind = store.events.all.find(ev => { ev.id === event.id })
+        store.events.all[ind] = event
+        store.events.mine = await this.filterEventsByMyStatus()
+        store.events.display = store.events.all
+    },
+    async asyncFilter(arr, callback) { // how to use: await this.asyncFilter(events, async event => {})
+        const fail = Symbol()
+        return (await Promise.all(arr.map(async item => (await callback(item)) ? item : fail))).filter(i => i !== fail)
+    },
+    async filterEventsByMyStatus() {
+        let filteredEvents = []
+        for (let i = 0; i < store.events.all.length; i++) {
+            let result = await api.checkUserStatus(store.events.all[i].id)
+            store.events.all[i].myStatus = result[0].status
+            if (
+                store.events.all[i].myStatus === 'hosts' ||
+                store.events.all[i].myStatus === 'invited' ||
+                store.events.all[i].myStatus === 'attending' ||
+                store.events.all[i].myStatus === 'maybe' ||
+                store.events.all[i].myStatus === 'wait_list' ||
+                store.events.all[i].myStatus === 'invite_request'
+            ) {
+                filteredEvents.push(store.events.all[i])
+            }
+        }
+        return filteredEvents
     },
     sortEventsByDate(events) {
         let sorted_events = []
@@ -104,11 +186,11 @@ export default {
             filtered_events = events.filter(event => {
                 for (let i = 0; i < criteria.length; i++) {
                     if (!strictlyEqual) {
-                        if (String(event[criteria[i]]).includes(String(search))) {
+                        if (String(event[criteria[i]]).toUpperCase().includes(String(search).toUpperCase())) {
                             return true
                         }
                     } else {
-                        if (String(event[criteria[i]]) === String(search)) {
+                        if (String(event[criteria[i]]).toUpperCase() === String(search).toUpperCase()) {
                             return true
                         }
                     }
@@ -163,13 +245,19 @@ export default {
         let argKeys = Object.keys(returnToPageDict.args)
         if (encode) {
             uri = `${e['/']}${e['?']}page${e['=']}${currentPageDict.page}${e['&']}next`
-            uri += `${e['=']}${returnToPageDict.page}`
+            uri += `${e['=']}${returnToPageDict.page}${e['&']}lang${e['=']}${store.user.language}`
         } else {
             uri = `/?page=${currentPageDict.page}&next=${returnToPageDict.page}`
         }
         if (argKeys.length > 0) {
             for (let i = 0; i < argKeys.length; i++) {
-                if (['code', 'friendship_status_changed', 'state'].includes(argKeys[i])) {
+                if ([
+                        'code',
+                        'friendship_status_changed',
+                        'state',
+                        'liffClientId',
+                        'liffRedirectUri',
+                    ].includes(argKeys[i])) {
                     continue
                 }
                 if (encode) {
@@ -183,7 +271,12 @@ export default {
     },
     createNextPageFromCurrentPage() {
         let nextArgKeys = Object.keys(this.currentPage.args)
-        let nextPage = this.currentPage.args.next
+        let nextPage = null
+        if (this.currentPage.args.next) {
+            nextPage = this.currentPage.args.next
+        } else {
+            nextPage = 'home'
+        }
         let nextArgs = {}
         if (nextArgKeys.length > 0) {
             for (let i = 0; i < nextArgKeys.length; i++) {
@@ -196,9 +289,10 @@ export default {
         }
         return { page: nextPage, args: nextArgs }
     },
-    createUrlForPasswordChange(email) {
+    createUrlForLoginRegister(email) {
         let nextArgKeys = Object.keys(store.lastNonLoginRegisterPage.args)
-        let returnUrl = `${window.origin}/?page=resetPassword&next=${store.lastNonLoginRegisterPage.page}`
+        console.log('HERE I AM', store.lastNonLoginRegisterPage.page)
+        let returnUrl = `${window.origin}/?page=welcome&next=${store.lastNonLoginRegisterPage.page}`
         returnUrl += `&email=${encodeURIComponent(email)}`
         if (nextArgKeys.length > 0) {
             for (let i = 0; i < nextArgKeys.length; i++) {
@@ -206,6 +300,16 @@ export default {
             }
         }
         return returnUrl
+    },
+    removeArgFromUrl(argName) {
+        let query = window.location.search
+        query = query.split('&')
+        query = query.filter(item => { return !item.includes(argName) && !item.includes('?') })
+        let params = Object.assign({}, ...query.map(item => ({
+            [item.split('=')[0]]: item.split('=')[1]
+        })))
+        store.pages[store.pages.length - 1].args = params
+        window.history.pushState({ path: this.currentUrl }, '', this.currentUrl)
     },
     shakeFunction(thiss) {
         if (Array.isArray(thiss)) {
@@ -218,4 +322,62 @@ export default {
             setTimeout(() => { thiss.shakeIt = false; }, 1000)
         }
     },
+    checkPeopleList(people, guestStatus) {
+        if (this.isAuthenticatedUser) {
+            let me = {
+                id: store.user.id,
+                display_name: store.user.display_name,
+                limited_user: true,
+                plus_one: false,
+            }
+            for (let i = 0; i < people[guestStatus].length; i++) {
+                if (JSON.stringify(people[guestStatus][i]) === JSON.stringify(me)) {
+                    return true
+                }
+            }
+        }
+        return false
+    },
+    async getEventUserInfoCheckPeopleList(eventId) {
+        let myAttendingStatus = {
+            'hosts': false,
+            'invited': false,
+            'attending': false,
+            'maybe': false,
+            'wait_list': false,
+            'invite_request': false,
+        }
+        let people = {
+            'hosts': [],
+            'invited': [],
+            'attending': [],
+            'maybe': [],
+            'wait_list': [],
+            'invite_request': [],
+            'uninvited_followers': [],
+        }
+        people['hosts'] = await api.getEventUserInfo(eventId, 'hosts')
+        people['invited'] = await api.getEventUserInfo(eventId, 'invited')
+        people['maybe'] = await api.getEventUserInfo(eventId, 'maybe')
+        people['attending'] = await api.getEventUserInfo(eventId, 'attending')
+        people['wait_list'] = await api.getEventUserInfo(eventId, 'wait_list')
+        people['invite_request'] = await api.getEventUserInfo(eventId, 'invite_request')
+        people['uninvited_followers'] = await api.getUserLimitedInfo()
+        people['uninvited_followers'] = people['uninvited_followers'].filter(person => {
+            return !(people['hosts'].concat(
+                people['invited'], people['maybe'], people['attending'], people['wait_list']
+            ).map(
+                x => { return x.id }
+            ).includes(person.id)) && this.isAuthenticatedUser
+        })
+        if (this.isAuthenticatedUser) {
+            myAttendingStatus['hosts'] = this.checkPeopleList(people, 'hosts')
+            myAttendingStatus['invited'] = this.checkPeopleList(people, 'invited')
+            myAttendingStatus['attending'] = this.checkPeopleList(people, 'attending')
+            myAttendingStatus['maybe'] = this.checkPeopleList(people, 'maybe')
+            myAttendingStatus['wait_list'] = this.checkPeopleList(people, 'wait_list')
+            myAttendingStatus['invite_request'] = this.checkPeopleList(people, 'invite_request')
+        }
+        return { people: people, myAttendingStatus: myAttendingStatus }
+    }
 }

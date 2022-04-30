@@ -8,7 +8,7 @@ export default {
         groups: [100],
     },
     pages: [],
-    lastNonLoginRegisterPage: null,
+    lastNonLoginRegisterPage: { page: 'home', args: {} },
     events: {
         selected: null,
         none: [],
@@ -18,4 +18,5 @@ export default {
     },
     loading: true,
     groups: null,
+    modalBack: false,
 }

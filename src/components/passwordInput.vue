@@ -4,7 +4,8 @@
 			<div style="display: flex; flex-direction: row">
 				<input :placeholder="placeholder1" v-model="password"
 					:type="[showPassword ? 'text' : 'password']" style="flex-grow: 1; width: 100%"
-					:id="`password${usage}`" autocorrect="off" autocapitalize="none" v-on:keyup.enter="enter()"/>
+					:id="`password${usage}`" autocorrect="off" autocapitalize="none" v-on:keyup.enter="enter()"
+					autocomplete="off"/>
 				<button v-on:click.prevent="showButton()" class="button" style="width: 45px; font-size: 12px;"
 						type="button">
 					<small v-if="!showPassword">
@@ -23,7 +24,8 @@
 			<div style="display: flex; flex-direction: row">
 				<input :placeholder="placeholder2" v-model="password2"
 					:type="[showPassword2 ? 'text' : 'password']" style="flex-grow: 1; width: 100%"
-					:id="`password2${usage}`" autocorrect="off" autocapitalize="none" v-on:keyup.enter="enter()"/>
+					:id="`password2${usage}`" autocorrect="off" autocapitalize="none" v-on:keyup.enter="enter()"
+					autocomplete="off"/>
 				<button v-on:click.prevent="showButton2()" class="button" style="width: 45px; font-size: 12px;"
 						type="button">
 					<small v-if="!showPassword2">
@@ -65,6 +67,7 @@
 			usage: {},
 			customPlaceholder: { default: '' },
 			enter: { type: Function, default: () => {} },
+			dontStartError: { default: true },
 		},
 		created () {
 			if (this.customPlaceholder) {
@@ -77,8 +80,10 @@
 			
 		},
 		mounted () {
-			this.hasErrors()
-			this.hasErrors2()
+			if (!this.dontStartError) {
+				this.hasErrors()
+				this.hasErrors2()
+			}
 		},
 		watch: {
 			'password' () { this.hasErrors(); this.hasErrors2() },

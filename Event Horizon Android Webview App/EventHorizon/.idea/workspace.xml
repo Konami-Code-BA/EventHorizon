@@ -5,6 +5,9 @@
       <config />
     </shared>
   </component>
+  <component name="AndroidLogFilters">
+    <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
+  </component>
   <component name="BranchesTreeState">
     <expand>
       <path>
@@ -30,10 +33,7 @@
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1fce7ac0-6cef-42bc-aee1-cddb71ec37b9" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../../db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/../../db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../src/views/front.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../../src/views/front.vue" afterDir="false" />
-    </list>
+    <list default="true" id="1fce7ac0-6cef-42bc-aee1-cddb71ec37b9" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -42,7 +42,7 @@
   <component name="CodeInsightWorkspaceSettings">
     <option name="optimizeImportsOnTheFly" value="true" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[Pixel_3a_API_30_x86]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -61,6 +61,8 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="DeviceAndSnapshotComboBoxAction.selectedDevice" value="Pixel_3a_API_30_x86" />
+    <property name="DeviceAndSnapshotComboBoxAction.selectionTime" value="2022-03-16T09:53:00.121Z" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
@@ -68,7 +70,7 @@
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.17" />
     <property name="project.structure.side.proportion" value="0.0" />
-    <property name="settings.editor.selected.configurable" value="org.jetbrains.plugins.github.ui.GithubSettingsConfigurable" />
+    <property name="settings.editor.selected.configurable" value="preferences.sourceCode.Kotlin" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -260,5 +262,37 @@
       <screen x="0" y="0" width="1920" height="1032" />
     </state>
     <state x="92" y="92" width="1736" height="848" key="AVDManager/0.0.1920.1032/-1920.0.1920.1032@0.0.1920.1032" timestamp="1641613734354" />
+    <state width="1489" height="270" key="GridCell.Tab.0.bottom" timestamp="1647435492207">
+      <screen x="0" y="0" width="1920" height="1032" />
+    </state>
+    <state width="1489" height="270" key="GridCell.Tab.0.bottom/0.0.1920.1032/-1920.0.1920.1032@0.0.1920.1032" timestamp="1647435492207" />
+    <state width="1489" height="270" key="GridCell.Tab.0.center" timestamp="1647435492207">
+      <screen x="0" y="0" width="1920" height="1032" />
+    </state>
+    <state width="1489" height="270" key="GridCell.Tab.0.center/0.0.1920.1032/-1920.0.1920.1032@0.0.1920.1032" timestamp="1647435492207" />
+    <state width="1489" height="270" key="GridCell.Tab.0.left" timestamp="1647435492207">
+      <screen x="0" y="0" width="1920" height="1032" />
+    </state>
+    <state width="1489" height="270" key="GridCell.Tab.0.left/0.0.1920.1032/-1920.0.1920.1032@0.0.1920.1032" timestamp="1647435492207" />
+    <state width="1489" height="270" key="GridCell.Tab.0.right" timestamp="1647435492207">
+      <screen x="0" y="0" width="1920" height="1032" />
+    </state>
+    <state width="1489" height="270" key="GridCell.Tab.0.right/0.0.1920.1032/-1920.0.1920.1032@0.0.1920.1032" timestamp="1647435492207" />
+    <state x="461" y="160" key="SettingsEditor" timestamp="1647479106105">
+      <screen x="0" y="0" width="1920" height="1032" />
+    </state>
+    <state x="461" y="160" key="SettingsEditor/0.0.1920.1032/-1920.0.1920.1032@0.0.1920.1032" timestamp="1647479106105" />
+    <state x="667" y="249" width="585" height="534" key="find.popup" timestamp="1647513069939">
+      <screen x="0" y="0" width="1920" height="1032" />
+    </state>
+    <state x="667" y="249" width="585" height="534" key="find.popup/0.0.1920.1032/-1920.0.1920.1032@0.0.1920.1032" timestamp="1647513069939" />
+    <state x="803" y="287" key="refactoring.ChangeSignatureDialog" timestamp="1647435989757">
+      <screen x="0" y="0" width="1920" height="1032" />
+    </state>
+    <state x="803" y="287" key="refactoring.ChangeSignatureDialog/0.0.1920.1032/-1920.0.1920.1032@0.0.1920.1032" timestamp="1647435989757" />
+    <state x="623" y="223" width="672" height="678" key="search.everywhere.popup" timestamp="1647478758502">
+      <screen x="0" y="0" width="1920" height="1032" />
+    </state>
+    <state x="623" y="223" width="672" height="678" key="search.everywhere.popup/0.0.1920.1032/-1920.0.1920.1032@0.0.1920.1032" timestamp="1647478758502" />
   </component>
 </project>

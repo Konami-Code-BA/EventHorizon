@@ -53,6 +53,7 @@ class User(AbstractUser):
 	username = models.CharField(max_length=40, unique=False, default='', blank=True)
 	visit_count = models.IntegerField(default=1, blank=True)
 	alerts = models.ManyToManyField(Alert, blank=True)
+	personal_code = models.CharField(max_length=40, default='', blank=True)
 	objects = UserManager()
 	def __str__(self):
 		return self.display_name
@@ -60,11 +61,12 @@ class User(AbstractUser):
 
 class UserAdmin(admin.ModelAdmin):
 	readonly_fields = ('id',)
-	list_display = ('display_name', 'email', 'line_id', 'id')
+	list_display = ('display_name', 'email', 'line_id', 'id', 'visit_count')
 	fields = (
 		'id', 'display_name', 'email', 'do_get_emails', 'line_id', 'line_access_token', 'line_refresh_token',
 		'do_get_line_display_name', 'is_line_friend', 'do_get_lines', 'language', 'groups', 'user_permissions',
-		'is_staff', 'is_superuser', 'last_login', 'date_joined', 'visit_count', 'alerts', 'random_secret'
+		'is_staff', 'is_superuser', 'last_login', 'date_joined', 'visit_count', 'alerts', 'random_secret',
+		'personal_code',
 	)
 
 
@@ -132,6 +134,7 @@ class Event(models.Model):
 	plus_ones = models.ManyToManyField(PlusOne, blank=True, related_name='plus_ones')
 	images = models.ManyToManyField(Image, blank=True, related_name='images')
 	attending_limit = models.IntegerField(default=999999, blank=False)
+	invite_code = models.CharField(max_length=40, default='', blank=True)
 
 	def __str__(self):
 		return self.name
@@ -143,5 +146,5 @@ class EventAdmin(admin.ModelAdmin):
 	fields = (
 		'id', 'name', 'description', 'is_private', 'address', 'area', 'venue_name', 'latitude', 'longitude',
 		'rand_latitude', 'rand_longitude', 'date_time', 'include_time', 'hosts', 'invited', 'attending', 'maybe',
-		'wait_list', 'invite_request', 'images', 'attending_limit', 'plus_ones'
+		'wait_list', 'invite_request', 'images', 'attending_limit', 'plus_ones', 'invite_code'
 	)

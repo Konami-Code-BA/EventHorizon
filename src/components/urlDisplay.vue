@@ -1,14 +1,10 @@
 <template>
 	<div>
-		<modal @closeModals="$emit('closeModals')">
+		<modal @closeModals="$emit('closeModals')" ref="urlDisplayModal">
 			<div slot="contents" class="modal">
-				<div style="align-self: flex-end; padding-bottom: 5px; padding-bottom: 5px;">
-					<button v-on:click.prevent="$emit('closeModals')" class="no-border-button x-button">
-						✖
-					</button>
-				</div>
+				<x-close-button :closeFunc="() => {$refs.urlDisplayModal.closeModals()}" style="align-self: flex-end;"/>
 				<div style="width: 100%; display: flex; flex-direction: row; align-items: center">
-					<button v-on:click.prevent="copyToClipboard()" class="button" style="border: none;">
+					<button v-on:click.prevent="copyToClipboard()" class="button" style="border: none;"> 
 						<img src="@/assets/copyIcon.png" class="icon"/>
 					</button>
 					<div style="width: 90%; overflow-wrap: break-word;">{{url}}</div>
@@ -16,7 +12,7 @@
 
 				<div class="line-height"/>
 
-				<button v-on:click.prevent="share()" class="button">
+				<button v-on:click.prevent="share()" class="button" v-if="navigate">
 					<img src="@/assets/shareIcon.png" class="icon"/>
 				</button>
 			</div>
@@ -30,15 +26,18 @@
 	import modal from '@/components/modal'
 	import f from '@/functions/functions.js'
 	import flashModal from '@/components/flashModal.vue'
+	import xCloseButton from '@/components/xCloseButton.vue'
 	export default {
 		name: 'urlDisplay',
 		components: {
 			modal,
 			flashModal,
+			xCloseButton,
 		},
 		data () {
 			return {
 				store: store,
+				navigate: navigator.share,
 			}
 		},
 		computed: {
@@ -51,19 +50,32 @@
 		methods: {
 			t (w) { return translations.t(w) },
 			async copyToClipboard () {
-				navigator.clipboard.writeText(this.url)
+				const promise1 = new Promise((resolve, reject) => {
+					resolve(this.url)
+				})
+				promise1.then((value) => {
+					navigator.clipboard.writeText(value)
+					if (typeof NativeAndroid !== 'undefined') {
+						NativeAndroid.copyToClipboard(value)
+					}
+				})
 				//// if the above fails on some browser, this is supposed to work. maybe use both if the first fails
-				//let textArea = document.createElement("textarea")
-				//textArea.value = this.url
-				//textArea.hidden = true  // not sure about this line or not
-				//document.body.appendChild(textArea)
-				//textArea.select()
-				//document.execCommand('copy')
+				// let textArea = document.createElement("textarea")
+				// textArea.value = this.url
+				// textArea.hidden = true  // not sure about this line or not
+				// document.body.appendChild(textArea)
+				// textArea.select()
+				// document.execCommand('copy')
 
 				await this.$refs.flashCoppied.flashModal()
 			},
 			share () {
-				navigator.share({url: this.url})
+        		const promise1 = new Promise((resolve, reject) => {
+          			resolve(this.url);
+        		})
+        		promise1.then((value) => {
+					navigator.share({url: value})
+				})
 			},
 		} // methods
 	} // export
