@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
-# import django_heroku
+import django_heroku
 from decouple import config
 import os
 
@@ -38,7 +38,7 @@ ALLOWED_HOSTS = [
 CORS_ALLOW_CREDENTIALS = True
 CSRF_COOKIE_NAME = 'XSRF-TOKEN'
 
-# CORS_ALLOW_ALL_ORIGINS = True  # dangerous, want to restrict origins that can make cross-origin requests
+#CORS_ALLOW_ALL_ORIGINS = True  # dangerous, want to restrict origins that can make cross-origin requests
 CORS_ALLOWED_ORIGINS = (
 	'https://event-horizon-jp.herokuapp.com',
 	'https://event-horizon-test.herokuapp.com',
@@ -100,13 +100,13 @@ INSTALLED_APPS = [
 AUTH_USER_MODEL = 'app_name.User'
 
 AUTHENTICATION_BACKENDS = [
- #'django.contrib.auth.backends.ModelBackend',
- 'app_name.backends.UserBackend',
+	#'django.contrib.auth.backends.ModelBackend',
+	'app_name.backends.UserBackend',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
- 'whitenoise.middleware.WhiteNoiseMiddleware',
+	'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -204,4 +204,4 @@ TEMPLATES[0]['DIRS'] += [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Activate Django-Heroku.
-# django_heroku.settings(locals())
+django_heroku.settings(locals())
