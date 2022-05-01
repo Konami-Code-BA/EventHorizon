@@ -1,5 +1,7 @@
 \venv
 .env
+\frontend\node_modules
+\backup\frontend\node_modules
 \node_modules
 */__pycache__/*
 app_name/migrations/__pycache__/*
