@@ -1,0 +1,66 @@
+heroku run python manage.py shell --app=event-horizon-jp
+
+from app_name.serializers import UserSerializer
+from django.core.mail import send_mail
+from django.conf import settings
+from decouple import config
+import requests, json
+
+testemails = ['mdsimeone@gmail.com', 'mdsimeone+1@gmail.com', 'stuart.william.auld@gmail.com', 'masudachihiro9@gmail.com']
+
+subject = 'Zak Party Invitation May 6 Fri'
+message = """Zak's Cinco de Mayo party May 6 Friday! Tequila! Tacos! 20:00 - 23:00, 1000y. Oak bar Shibuya, under Tasuichi (same as last time)
+ザックのシンコ・デ・マヨ（メキシコ）テーマのパーティー！テキーラ！タコス！20:00~23:00、1000円。オークバー渋谷、タスイチの下（前回と一緒）"""
+email_from = settings.EMAIL_HOST_USER
+
+for email in testemails:
+	recipient_list = [email,]
+	send_mail(subject, message, email_from, recipient_list, fail_silently=False)
+
+---------------------------v CAREFUL v---------------------------
+users = UserSerializer.Meta.model.objects.all()
+len(users)
+emails = [user.email for user in users if user.email != '']
+len(emails)
+
+for email in emails:
+	recipient_list = [email,]
+	send_mail(subject, message, email_from, recipient_list, fail_silently=False)
+
+
+---------------------------^ CAREFUL ^---------------------------
+
+message = """Zak's Cinco de Mayo party May 6 Friday! Tequila! Tacos! 20:00 - 23:00, 1000y. Oak bar Shibuya, under Tasuichi (same as last time)
+ザックのシンコ・デ・マヨ（メキシコ）テーマのパーティー！テキーラ！タコス！20:00~23:00、1000円。オークバー渋谷、タスイチの下（前回と一緒）"""
+
+testlines = ['U7139ad1375429964a43e49031a509341', 'U09e3b108910c1711d2732a8b9ac8a19d']
+
+for line in testlines:
+	data = {"to": line, "messages": [{"type": "text", "text": message}]}
+	url = 'https://api.line.me/v2/bot/message/push'
+	headers = {
+		'Content-Type': 'application/json',
+		'Authorization': 'Bearer ' + config('MESSAGING_CHANNEL_ACCESS_TOKEN'),
+	}
+	data = json.dumps(data)
+	requests.post(url, headers=headers, data=data)
+
+
+---------------------------v CAREFUL v---------------------------
+users = UserSerializer.Meta.model.objects.all()
+len(users)
+lines = [user.line_id for user in users if user.line_id != '']
+len(lines)
+
+for line in lines:
+	data = {"to": line, "messages": [{"type": "text", "text": message}]}
+	url = 'https://api.line.me/v2/bot/message/push'
+	headers = {
+		'Content-Type': 'application/json',
+		'Authorization': 'Bearer ' + config('MESSAGING_CHANNEL_ACCESS_TOKEN'),
+	}
+	data = json.dumps(data)
+	requests.post(url, headers=headers, data=data)
+
+
+---------------------------^ CAREFUL ^---------------------------

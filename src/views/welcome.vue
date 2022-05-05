@@ -3,10 +3,10 @@
 		<form v-on:keyup.enter="register()" style="width: 80%;">
 			<display-name-input ref="displayNameInput" usage="Registration"
 					:key="store.user.language+'displayNameInputRegistration'"/>
+			<button v-on:click.prevent="register()" class="button">
+				{{ t('REGISTER') }}
+			</button>
 		</form>
-		<button v-on:click.prevent="register()" class="button">
-			{{ t('REGISTER') }}
-		</button>
 	</div>
 </template>
 <script>
@@ -50,10 +50,12 @@
 				f.goToPage(nextPage)
 			}
 			this.store.loading = false
+			f.focusCursor(document, 'displayNameRegistration')
 		},
 		methods: {
 			t (w) { return translations.t(w) },
 			async register () {
+				console.log('REGISTER IS HAPPENING')
 				this.$refs.displayNameInput.hasErrors()
 				if (this.$refs.displayNameInput.error.length > 0) {
 					f.shakeFunction([this.$refs.displayNameInput])
