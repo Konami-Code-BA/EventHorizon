@@ -842,6 +842,10 @@ export default {
             'EN': 'NOT AUTHENTICATED',
             'JP': 'NOT AUTHENTICATED'
         },
+        'DONE! LOGIN EMAIL IS SENT!': {
+            'EN': 'DONE! LOGIN EMAIL IS SENT!',
+            'JP': 'できた！ログインのメール送信した！'
+        },
     },
 
     t: function(w) {

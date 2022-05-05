@@ -50,7 +50,7 @@
 			//		version: 'v13.0'
 			//	})
 			//}
-			Notification.requestPermission()
+			//Notification.requestPermission()
 		},
 		methods: {
 			t (w) { return translations.t(w) },

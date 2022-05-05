@@ -20,7 +20,7 @@
 
 		</div>
 		<div style="width: 80%" v-else>
-			DONE
+			{{t('DONE! LOGIN EMAIL IS SENT!')}}
 		</div>
 	</div>
 </template>
@@ -88,10 +88,5 @@
 	}
 	.button {
 		width: 100%;
-	}
-	@media (max-height: 497px) {
-		.scroll-height {
-			justify-content: flex-start !important;
-		}
 	}
 </style>
