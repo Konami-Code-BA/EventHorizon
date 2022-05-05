@@ -12,7 +12,7 @@
 				<div class="list">
 					<div v-for="event in listEvents" class="card-shape event-card-item" style="box-shadow: rgba(0, 0, 0, 1) 0px 3px 3px;">
 						<button v-on:click.prevent="openEventModal(event.id)" class="no-border-button"
-								style="width: 100%;" :id="`item${event.id}`">
+								style="width: 100%; height: 100%;" :id="`item${event.id}`">
 							<event-block :event="event" :key="JSON.stringify(event)"/>
 						</button>
 					</div>
