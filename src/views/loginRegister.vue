@@ -2,7 +2,7 @@
 	<div class="main scroll-height" style="justify-content: center; overflow-y: scroll;">
 		<div style="width: 80%" v-if="!showDone">
 			<div style="font-size: 24px;">{{ t('LOGIN / REGISTER') }}</div>
-			<form v-on:keyup.enter="submit()">
+			<form>
 				<email-input ref="emailInput" usage="Login"
 					:key="store.user.language+'emailInputLogin'"/>
 				<button v-on:click.prevent="submit()" class="button">
