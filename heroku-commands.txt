@@ -22,3 +22,10 @@ you can edit the database as you do in python in the viewsets etc. by using this
 	>>> user.is_staff = True
 	>>> user.save()
 	heroku run python manage.py createsuperuser --app=event-horizon-jp
+
+
+
+
+	heroku login
+	heroku git:remote -a event-horizon-jp
+	git push heroku test:main
