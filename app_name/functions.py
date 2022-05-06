@@ -51,9 +51,15 @@ def add_line_friend(line_id):
 		user.is_line_friend = True
 		user.do_get_lines = True
 		user.save()
-		print('CHANGED is_line_friend AND do_get_lines FOR EXISTING LINE FRIEND')
-		result = 'Thank you for following!'
+		result = 'Thank you for following!\nhttps://www.eventhorizon.vip'
 	except UserViewset.model.DoesNotExist:  # if no user with this line id exists
+		user = UserViewset.model.objects.create_user()
+		user.save()
+		user.groups.clear()  # clear if any group exists
+		user.groups.add(Group.objects.get(name='User').id)  # put into User group
+		user.line_id = line_id  # add new user account info
+		user.do_get_lines = True
+		user.save()
 		# this wasn't done on the site, it was done in line so there is no user, and can't make session
 		#user = UserViewset.model.objects.create_user(  # create temporary line friend user
 		#	line_id = line_id,
@@ -66,7 +72,7 @@ def add_line_friend(line_id):
 		#user.groups.add(Group.objects.get(name='Temp Line Friend').id)  # temp line friend
 		#user.save()
 		#print('ADDED NEW TEMP LINE FRIEND')
-		result = 'Thank you for following! Your Line account isn\'t connected to the site though. Please go to the site and register with Line in order to get Line messages / notifications about events. https://www.eventhorizon.vip'
+		result = 'Thank you for following!\nhttps://www.eventhorizon.vip'
 	return result
 
 

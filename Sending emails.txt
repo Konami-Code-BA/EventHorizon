@@ -8,14 +8,15 @@ import requests, json
 
 testemails = ['mdsimeone@gmail.com', 'mdsimeone+1@gmail.com', 'stuart.william.auld@gmail.com', 'masudachihiro9@gmail.com']
 
-subject = 'Zak Party Invitation May 6 Fri'
-message = """Zak's Cinco de Mayo party May 6 Friday! Tequila! Tacos! 20:00 - 23:00, 1000y. Oak bar Shibuya, under Tasuichi (same as last time)
-ザックのシンコ・デ・マヨ（メキシコ）テーマのパーティー！テキーラ！タコス！20:00~23:00、1000円。オークバー渋谷、タスイチの下（前回と一緒）"""
+subject = 'Zak\'s Party Tonight!'
+message = """Zak's Cinco de Mayo party tonight (Fri)　20:00 - 23:00! Tacos & Burritos for sale! Free Tequila Shots! Show this message for 1000y entrance. Oak bar Shibuya, under Tasuichi (same as last time)
+ザックのシンコ・デ・マヨ（メキシコ）テーマのパーティーは今日（金）20時~23時！タコス・ブリート販売！無料テキーラショットあり！このメッセージを見せたら入場料1000円。オークバー渋谷、タスイチの下（前回と一緒）"""
 email_from = settings.EMAIL_HOST_USER
 
 for email in testemails:
 	recipient_list = [email,]
 	send_mail(subject, message, email_from, recipient_list, fail_silently=False)
+
 
 ---------------------------v CAREFUL v---------------------------
 users = UserSerializer.Meta.model.objects.all()
@@ -29,9 +30,6 @@ for email in emails:
 
 
 ---------------------------^ CAREFUL ^---------------------------
-
-message = """Zak's Cinco de Mayo party May 6 Friday! Tequila! Tacos! 20:00 - 23:00, 1000y. Oak bar Shibuya, under Tasuichi (same as last time)
-ザックのシンコ・デ・マヨ（メキシコ）テーマのパーティー！テキーラ！タコス！20:00~23:00、1000円。オークバー渋谷、タスイチの下（前回と一緒）"""
 
 testlines = ['U7139ad1375429964a43e49031a509341', 'U09e3b108910c1711d2732a8b9ac8a19d']
 
