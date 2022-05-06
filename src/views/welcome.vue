@@ -1,6 +1,6 @@
 <template>
 	<div class="main" style="display: flex; flex-direction: column; justify-content: center">
-		<form v-on:keyup.enter="register()" style="width: 80%;">
+		<form style="width: 80%;">
 			<display-name-input ref="displayNameInput" usage="Registration"
 					:key="store.user.language+'displayNameInputRegistration'"/>
 			<button v-on:click.prevent="register()" class="button">
