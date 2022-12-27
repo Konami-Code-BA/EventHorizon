@@ -7,6 +7,13 @@ backup database, download backup, and import backup
 
 	heroku pg:backups:restore "VERY LONG PRESIGNED URL" HEROKU_POSTGRESQL_CRIMSON_URL --app=event-horizon-test
 
+to access database file locally, you can open pgAdmin 4 program, and from there you dont have to do commands.
+in pgadmin4, make a new database, click on the db, schemas, public, rightclick, do restore, select the database dump file.
+to see the data, rightclick on one of the tables and click view.
+if you do commands in the terminal, starting command would be this, in order to not have to use a password.
+	psql -h 127.0.0.1 -U postgres
+  havent gone past that tho since pgadmin seems good
+
 
 you can edit the database as you do in python in the viewsets etc. by using this (for example chaning group name)
 	heroku run python manage.py shell --app=event-horizon-test
