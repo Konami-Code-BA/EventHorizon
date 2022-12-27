@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
-import django_heroku
+#import django_heroku
 from decouple import config
 import os
 
@@ -203,5 +203,5 @@ TEMPLATES[0]['DIRS'] += [
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Activate Django-Heroku.
-django_heroku.settings(locals())
+## Activate Django-Heroku.
+#django_heroku.settings(locals())
