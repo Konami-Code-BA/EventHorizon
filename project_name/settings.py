@@ -27,6 +27,8 @@ SECRET_KEY = config('SECRET_KEY')
 ALLOWED_HOSTS = [
 	'event-horizon-jp.herokuapp.com/',
 	'event-horizon-test.herokuapp.com/',
+	'entirely-vivid-alpaca-compound-dev.wayscript.cloud/',
+	'entirely-vivid-alpaca-compound.wayscript.cloud/',
 	'localhost',
 	'eventhorizon.vip/',
 	'localhost',
@@ -44,6 +46,8 @@ CORS_ALLOWED_ORIGINS = (
 	'https://event-horizon-test.herokuapp.com',
 	'http://eventhorizon.vip',
 	'https://eventhorizon.vip',
+	'https://entirely-vivid-alpaca-compound-dev.wayscript.cloud',
+	'https://entirely-vivid-alpaca-compound.wayscript.cloud',
 )
 if config('PYTHON_ENV', default='production') == 'development':
 	CORS_ALLOWED_ORIGINS += (
@@ -57,6 +61,8 @@ CSRF_TRUSTED_ORIGINS = (
 	'https://event-horizon-test.herokuapp.com',
 	'http://eventhorizon.vip',
 	'https://eventhorizon.vip',
+	'https://entirely-vivid-alpaca-compound-dev.wayscript.cloud',
+	'https://entirely-vivid-alpaca-compound.wayscript.cloud',
 )
 if config('PYTHON_ENV', default='production') == 'development':
 	CSRF_TRUSTED_ORIGINS += (
