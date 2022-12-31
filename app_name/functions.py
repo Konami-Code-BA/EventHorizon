@@ -336,7 +336,7 @@ def create_url(path):
 	if config('PYTHON_ENV', default='\'"production"\'') == 'development':
 		url = 'http://127.0.0.1:8080' + path
 	elif config('PYTHON_ENV', default='\'"production"\'') == '\'"test"\'':
-		url = 'https://event-horizon-test.herokuapp.com' + path
+		url = 'https://entirely-vivid-alpaca-compound-dev.wayscript.cloud' + path
 	else:
-		url = 'https://www.eventhorizon.vip' + path
+		url = 'https://entirely-vivid-alpaca-compound.wayscript.cloud' + path
 	return url
