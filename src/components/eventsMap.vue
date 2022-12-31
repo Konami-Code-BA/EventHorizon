@@ -114,7 +114,7 @@
 									// PRIVATE UPCOMING
 									if (f.isoStringDateToDateObject(this.store.events.display[i].date_time) > f.today) {
 										icon = window.origin.replace('8080', '8000')
-											+ '/static/upcomingPrivateMapIcon2.png'
+											+ '/dist/static/upcomingPrivateMapIcon2.png'
 										infowindowContents.push(`
 											<button
 												onclick="openEventModal(${this.store.events.display[i].id})"
@@ -138,7 +138,7 @@
 									// PRIVATE PAST
 									} else {
 										icon = window.origin.replace('8080', '8000')
-											+ '/static/pastPrivateMapIcon2.png'
+											+ '/dist/static/pastPrivateMapIcon2.png'
 										infowindowContents.push(`
 											<button
 												onclick="openEventModal(${this.store.events.display[i].id})"
@@ -165,7 +165,7 @@
 									// PUBLIC UPCOMING
 									if (f.isoStringDateToDateObject(this.store.events.display[i].date_time) > f.today) {
 										icon = window.origin.replace('8080', '8000')
-											+ '/static/upcomingPublicMapIcon2.png'
+											+ '/dist/static/upcomingPublicMapIcon2.png'
 										infowindowContents.push(`
 											<button
 												onclick="openEventModal(${this.store.events.display[i].id})"
@@ -189,7 +189,7 @@
 									} else {
 										// PUBLIC PAST
 										icon = window.origin.replace('8080', '8000')
-											+ '/static/pastPublicMapIcon2.png'
+											+ '/dist/static/pastPublicMapIcon2.png'
 										infowindowContents.push(`
 											<button
 												onclick="openEventModal(${this.store.events.display[i].id})"
@@ -215,7 +215,7 @@
 									// INVITED UPCOMING
 									if (f.isoStringDateToDateObject(this.store.events.display[i].date_time) > f.today) {
 										icon = window.origin.replace('8080', '8000')
-											+ '/static/upcomingMyMapIcon2.png'
+											+ '/dist/static/upcomingMyMapIcon2.png'
 										infowindowContents.push(`
 											<button
 												onclick="openEventModal(${this.store.events.display[i].id})"
@@ -238,7 +238,7 @@
 										`)
 									} else {
 										// INVITED PAST
-										icon = window.origin.replace('8080', '8000') + '/static/pastMyMapIcon2.png'
+										icon = window.origin.replace('8080', '8000') + '/dist/static/pastMyMapIcon2.png'
 										infowindowContents.push(`
 											<button
 												onclick="openEventModal(${this.store.events.display[i].id})"
