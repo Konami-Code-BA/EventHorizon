@@ -24,58 +24,61 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ## SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('PYTHON_ENV', default='production') == 'development'  # need to make sure this works
 SECRET_KEY = config('SECRET_KEY')
-ALLOWED_HOSTS = [
-	'event-horizon-jp.herokuapp.com/',
-	'event-horizon-test.herokuapp.com/',
-	'entirely-vivid-alpaca-compound-dev.wayscript.cloud/',
-	'entirely-vivid-alpaca-compound.wayscript.cloud/',
-	'localhost',
-	'eventhorizon.vip/',
-	'localhost',
-	'localhost/',
-	'127.0.0.1',
-	'127.0.0.1/',
-]
+ALLOWED_HOSTS = ['*']
+#ALLOWED_HOSTS = [
+#	'event-horizon-jp.herokuapp.com/',
+#	'event-horizon-test.herokuapp.com/',
+#	'entirely-vivid-alpaca-compound-dev.wayscript.cloud/',
+#	'entirely-vivid-alpaca-compound.wayscript.cloud/',
+#	'localhost',
+#	'eventhorizon.vip/',
+#	'localhost',
+#	'localhost/',
+#	'127.0.0.1',
+#	'127.0.0.1/',
+#]
 
 CORS_ALLOW_CREDENTIALS = True
 CSRF_COOKIE_NAME = 'XSRF-TOKEN'
 
-#CORS_ALLOW_ALL_ORIGINS = True  # dangerous, want to restrict origins that can make cross-origin requests
-CORS_ALLOWED_ORIGINS = (
-	'https://event-horizon-jp.herokuapp.com',
-	'https://event-horizon-test.herokuapp.com',
-	'http://eventhorizon.vip',
-	'https://eventhorizon.vip',
-	'https://entirely-vivid-alpaca-compound-dev.wayscript.cloud',
-	'https://entirely-vivid-alpaca-compound.wayscript.cloud',
-)
-if config('PYTHON_ENV', default='production') == 'development':
-	CORS_ALLOWED_ORIGINS += (
-		'http://127.0.0.1:8080',
-		'http://127.0.0.1:8000',
-		'http://localhost:8080',
-		'http://localhost:8000',
-	)
-CSRF_TRUSTED_ORIGINS = (
-	'https://event-horizon-jp.herokuapp.com',
-	'https://event-horizon-test.herokuapp.com',
-	'http://eventhorizon.vip',
-	'https://eventhorizon.vip',
-	'https://entirely-vivid-alpaca-compound-dev.wayscript.cloud',
-	'https://entirely-vivid-alpaca-compound.wayscript.cloud',
-)
-if config('PYTHON_ENV', default='production') == 'development':
-	CSRF_TRUSTED_ORIGINS += (
-		'http://127.0.0.1:8080',
-		'http://127.0.0.1:8000',
-		'http://localhost:8080',
-		'http://localhost:8000',
-	)
+CORS_ALLOW_ALL_ORIGINS = True  # dangerous, want to restrict origins that can make cross-origin requests
+#CORS_ALLOWED_ORIGINS = (
+#	'https://event-horizon-jp.herokuapp.com',
+#	'https://event-horizon-test.herokuapp.com',
+#	'http://eventhorizon.vip',
+#	'https://eventhorizon.vip',
+#	'https://entirely-vivid-alpaca-compound-dev.wayscript.cloud',
+#	'https://entirely-vivid-alpaca-compound.wayscript.cloud',
+#)
+#if config('PYTHON_ENV', default='production') == 'development':
+#	CORS_ALLOWED_ORIGINS += (
+#		'http://127.0.0.1:8080',
+#		'http://127.0.0.1:8000',
+#		'http://localhost:8080',
+#		'http://localhost:8000',
+#	)
+CSRF_TRUSTED_ORIGINS = ('*')
+#CSRF_TRUSTED_ORIGINS = (
+#	'https://event-horizon-jp.herokuapp.com',
+#	'https://event-horizon-test.herokuapp.com',
+#	'http://eventhorizon.vip',
+#	'https://eventhorizon.vip',
+#	'https://entirely-vivid-alpaca-compound-dev.wayscript.cloud',
+#	'https://entirely-vivid-alpaca-compound.wayscript.cloud',
+#)
+#if config('PYTHON_ENV', default='production') == 'development':
+#	CSRF_TRUSTED_ORIGINS += (
+#		'http://127.0.0.1:8080',
+#		'http://127.0.0.1:8000',
+#		'http://localhost:8080',
+#		'http://localhost:8000',
+#	)
 
 # 'Strict': prevents the cookie from being sent by the browser to the target site in all cross-site browsing context, even when following a regular link
 # 'Lax': maintain user’s logged-in session after the user arrives from an external link
 # 'None': the session cookie will be sent with all same-site and cross-site requests
-SESSION_COOKIE_SAMESITE = 'Strict'
+SESSION_COOKIE_SAMESITE = 'None'
+#SESSION_COOKIE_SAMESITE = 'Strict'
 
 #EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 #EMAIL_HOST = 'smtp-mail.outlook.com'
