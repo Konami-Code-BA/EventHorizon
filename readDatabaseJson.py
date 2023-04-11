@@ -6,6 +6,8 @@ import requests
 
 
 # to run:
+# change commented stuff as explained below, and save
+# venv\Scripts\activate venv
 # python manage.py shell
 # import readDatabaseJson; readDatabaseJson.main()
 def main():
@@ -18,26 +20,30 @@ def main():
 		name = item[16]
 		if item[7]:  # EMAIL
 			contact = item[7]
-			if True:  # contact == 'mdsimeone@gmail.com':
+			# ALWAYS TEST WITH YOURSELF FIRST ONCE
+			if contact == 'mdsimeone@gmail.com':  # True:  # 
 				count += 1
-				subject = 'Zak\'s Spring Fling Party!'
-				message = f"""It's Zak! We got a Spring Fling at Aoyama Ever Club on April 8th (sat).
-Omotesando. Party starts at 7:30pm and lasts until 10pm.
-Entry costs guys ¥1,500 and girls ¥1,000 (show this email).
-We have DJs and good vibes!
-Re-entry okay. Hope to see you guys there!
+				subject = 'Art and Music Event 1000¥!'
+				message = f"""An Art and Music event will be held at Toggle Hotel Suidobashi, an Instagrammable luxury hotel located a 5-minute walk from the west exit of JR Suidobashi Station in the city center
+
+TIME: 4/29 (SAT) 17:00-23:00
+Live performance: 
+1st set 18:30 
+2nd set 21:00
+PLACE: 9F Toggle Hotel Suidobashi (5min walk from JR Suidobashi station)
+Entrance: 1000¥
 BTW if you want Line messages: https://lin.ee/wPa66oQ
 If you don't want emails anymore, just reply to this.
 
-ザックです！土曜日4月8日にSpring Flingという春のパーティーあります！
-表参道にある青山Ever Clubで、午後7時半〜10時。
-入場料は男性1500円、女性1000円（このメールを見せてください）。
-DJとかいます！再入場可能。会えるのを楽しみにしてるよ！
-因みに、Lineメールを欲しかったら：https://lin.ee/wPa66oQ
-Eメール欲しくないならこれ返事してくださいね"""
+都心のJR水道橋駅の西口から徒歩5分にあるインスタ映えするラグジュアリーホテルToggle Hotel SuidobashiにてArtとMusicのイベントをやります。
+テラスもあるのでいい景色を見ながらお酒をゆっくり飲むのもありですね。
+1000円という破格な入場料なので友達と遊びに来てください！
+ちなみに、LINEでの連絡を希望する場合はこちら：https://lin.ee/wPa66oQ
+Eメールを希望しない場合は、このメールに返信してください"""
 				email_from = settings.EMAIL_HOST_USER
 				recipient_list = [contact,]
-				#send_mail(subject, message, email_from, recipient_list, fail_silently=False)
+				# UNCOMMENT THIS IN ORDER TO SEND
+				# send_mail(subject, message, email_from, recipient_list, fail_silently=False)
 				print(f"{i+1}, id: {item[0]}, lang: {item[11]}, email: {contact}, name: {name}")
 		#if item[13]:  # LINE
 		#	contact = item[13]
