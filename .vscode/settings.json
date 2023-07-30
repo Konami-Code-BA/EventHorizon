@@ -1,6 +1,0 @@
-{
-	"eslint.enable": false,
-	"eslint.autoFixOnSave": false,
-	"editor.codeActionsOnSave": null,
-	"git.ignoreLimitWarning": true
-}
