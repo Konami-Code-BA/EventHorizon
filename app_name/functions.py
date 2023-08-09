@@ -3,7 +3,7 @@ from decouple import config
 from collections import namedtuple
 from django.contrib.auth.models import Group
 from django.contrib import auth
-from .models import Alert, Event, PlusOne
+from .models import Event, PlusOne
 from django.core.mail import send_mail
 from django.conf import settings
 
@@ -90,7 +90,10 @@ def remove_line_friend(line_id):
 def authenticate_login(request):
 	user = auth.authenticate(request)
 	if not hasattr(user, 'error'):
+		user.visit_count += 1  # add to the visit count
+		user.save()
 		auth.login(request, user)
+	print(f'{request.session.session_key=}', f'{request.session.modified=}')
 	return user
 
 
@@ -334,7 +337,7 @@ To message the host: go to the event (above link) ⇨ Show People ⇨ Hosts
 
 def create_url(path):
 	if config('PYTHON_ENV', default='\'"production"\'') == 'development':
-		url = 'http://127.0.0.1:8080' + path
+		url = 'http://localhost:8080' + path
 	elif config('PYTHON_ENV', default='\'"production"\'') == '\'"test"\'':
 		url = 'https://entirely-vivid-alpaca-compound-dev.wayscript.cloud' + path
 	else:

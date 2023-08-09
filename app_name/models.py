@@ -2,20 +2,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib import admin
 from django.contrib.auth.models import BaseUserManager
-from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
-from django.conf import settings
 from django.utils import timezone
-
-
-class Alert(models.Model):
-	name = models.CharField(max_length=40, default='', blank=True)
-	def __str__(self):
-		return self.name
-
-
-class AlertAdmin(admin.ModelAdmin):
-	list_display = ('name', 'id')
 
 
 class UserManager(BaseUserManager):
@@ -30,11 +18,11 @@ class UserManager(BaseUserManager):
 
 	def create_superuser(self, **extra_fields):
 		user = self.model(**extra_fields)
-		user.password = make_password(extra_fields['password'])
+		user.set_password(extra_fields['password'])
 		user.is_superuser = True
 		user.is_staff = True
 		user.save()
-		group = Group.objects.get(id=1)
+		group = Group.objects.get(name='Admin')
 		group.user_set.add(user)
 		return user
 
@@ -52,7 +40,6 @@ class User(AbstractUser):
 	random_secret = models.CharField(max_length=40, default='', blank=True)
 	username = models.CharField(max_length=40, unique=False, default='', blank=True)
 	visit_count = models.IntegerField(default=1, blank=True)
-	alerts = models.ManyToManyField(Alert, blank=True)
 	personal_code = models.CharField(max_length=40, default='', blank=True)
 	objects = UserManager()
 	def __str__(self):
@@ -65,7 +52,7 @@ class UserAdmin(admin.ModelAdmin):
 	fields = (
 		'id', 'display_name', 'email', 'do_get_emails', 'line_id', 'line_access_token', 'line_refresh_token',
 		'do_get_line_display_name', 'is_line_friend', 'do_get_lines', 'language', 'groups', 'user_permissions',
-		'is_staff', 'is_superuser', 'last_login', 'date_joined', 'visit_count', 'alerts', 'random_secret',
+		'is_staff', 'is_superuser', 'last_login', 'date_joined', 'visit_count', 'random_secret',
 		'personal_code',
 	)
 
@@ -79,14 +66,16 @@ class GroupAdmin(admin.ModelAdmin):
 
 
 class SessionAdmin(admin.ModelAdmin):
-    def user(self, obj):
-        session_user = obj.get_decoded().get('_auth_user_id')
+    def custom_user(self, obj):
+        session_user = obj.get_decoded().get('id')
         user = User.objects.get(pk=session_user)
         return user.display_name
+
     def _session_data(self, obj):
         return obj.get_decoded()
+
     _session_data.allow_tags = True
-    list_display = ['user', 'session_key', '_session_data', 'expire_date']
+    list_display = ['custom_user', 'session_key', '_session_data', 'expire_date']
     readonly_fields = ['_session_data']
 
 

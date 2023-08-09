@@ -61,7 +61,7 @@
 
 			// user auto-login from cookies
 			console.log(process.env.PYTHON_ENV)
-			await api.login({})
+			await api.checkSession()
 
 			// get events
 			await f.getEvents()

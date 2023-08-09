@@ -473,15 +473,20 @@ Feedback:
 				print('LOGGED IN')
 		return user
 
-	def login(self, request):  # SECURITY: anyone is allowed to login
+	def check_session(self, request):  # SECURITY: anyone is allowed to login
 		#return f.authenticate_login(request)  # FOR EMERGENCY LOGIN (also in backends)
 		user = f.authenticate_login(request)  # it will try to login with email or line before logging in by session
-		if not hasattr(user, 'error'):  # if logged into a user
-			user.visit_count += 1  # add to the visit count
-			user.save()
-			return user  # done
-		else:  # if couldn't login to anything, probably got an error, so return user anyway
-			return user
+		return user
+
+	#def login(self, request):  # SECURITY: anyone is allowed to login
+	#	#return f.authenticate_login(request)  # FOR EMERGENCY LOGIN (also in backends)
+	#	user = f.authenticate_login(request)  # it will try to login with email or line before logging in by session
+	#	if not hasattr(user, 'error'):  # if logged into a user
+	#		user.visit_count += 1  # add to the visit count
+	#		user.save()
+	#		return user  # done
+	#	else:  # if couldn't login to anything, probably got an error, so return user anyway
+	#		return user
 
 	def logout(self, request):  # SECURITY: anyone is allowed to logout
 		try:
@@ -518,8 +523,9 @@ Feedback:
 		user.password = make_password(code)  # make password a new secret code
 		user.save()
 		subject = 'Login / Register Link'
-		message = f'Please follow this link to login / register:\n'
+		message = 'Please follow this link to login / register:\n'
 		message += request.data['return_link'] + '&code=' + code
+		message += '\n**Do not share this link with anyone else!**'
 		email_from = settings.EMAIL_HOST_USER
 		recipient_list = [request.data['email'],]
 		send_mail(subject, message, email_from, recipient_list, fail_silently=False)
@@ -1036,11 +1042,8 @@ class ImageViewset(viewsets.ViewSet):
 		return Response(serializer_data)
 
 def aws_upload_file(data):
-	s3_client = boto3.client(
-		's3',
-		aws_access_key_id=config('AWS_ACCESS_KEY_ID'),
-		aws_secret_access_key=config('AWS_SECRET_ACCESS_KEY')
-	)
+	session = boto3.Session(profile_name='eventhorizon')
+	s3_client = session.client('s3')
 	try:
 		binary_data = a2b_base64(data.split('data:image/png;base64,')[1])
 		with open('image.jpg', 'wb') as file:
@@ -1049,7 +1052,7 @@ def aws_upload_file(data):
 		with open('image.jpg', 'rb') as file:
 			key = str(datetime.now()).replace(' ', 'T').replace(':', '_').replace('.', '_')
 			key += '--' + str(secrets.token_urlsafe(4)) + '.png'
-			s3_client.upload_fileobj(file, 'event-horizon-use1', key)
+			s3_client.upload_fileobj(file, 'eventhorizon-us-east-1', key)
 			file.close()
 			os.remove('image.jpg')
 			return {'key': key}

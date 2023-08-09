@@ -115,7 +115,7 @@ export default {
             if (events[i].images.length > 0 && (store.events.all.length === 0 || (store.events.all.length > 0 && !('image_data' in store.events.all[i])))) {
                 let result = await api.getEventImage(events[i].images[0], events[i].id)
                 if (result != 'fail') {
-                    events[i].image_data = `https://event-horizon-use1.s3.amazonaws.com/${result}`
+                    events[i].image_data = `https://eventhorizon-us-east-1.s3.amazonaws.com/${result}`
                 }
                 // otherwise just get the image from the store, if
                 // there is an image to get but events have been stored and the image is saved there too
@@ -132,7 +132,7 @@ export default {
         if (event.images.length > 0 && !('image_data' in thisEvent)) {
             let result = await api.getEventImage(event.images[0], event.id)
             if (result != 'fail') {
-                event.image_data = `https://event-horizon-use1.s3.amazonaws.com/${result}`
+                event.image_data = `https://eventhorizon-us-east-1.s3.amazonaws.com/${result}`
             }
         }
         store.events.selected = event
@@ -228,7 +228,7 @@ export default {
     createEncodedURL() {
         let url = 'https%3A%2F%2Fwww.eventhorizon.vip'
         if (process.env.PYTHON_ENV == 'development') {
-            url = 'http%3A%2F%2F127.0.0.1%3A8080'
+            url = 'http%3A%2F%2Flocalhost%3A8080'
         } else if (process.env.PYTHON_ENV == '"test"') {
             url = 'https%3A%2F%2Fevent-horizon-test.herokuapp.com'
         }

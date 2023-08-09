@@ -291,7 +291,7 @@
 						}
 					}
 					if (noEvents) {
-						console.log('IN HERE')
+						console.log('NO EVENTS')
 						let position = new google.maps.LatLng(
 							35.685174,
 							139.752744

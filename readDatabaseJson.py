@@ -1,8 +1,10 @@
 import json
-from decouple import config
-from django.core.mail import send_mail
+#from decouple import config
+#from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
-import requests
+import base64
+#import requests
 
 
 # to run:
@@ -20,31 +22,49 @@ def main():
 		name = item[16]
 		if item[7]:  # EMAIL
 			contact = item[7]
-			# ALWAYS TEST WITH YOURSELF FIRST ONCE
+			# ALWAYS TEST WITH YOURSELF FIRST ##########################################################################
 			if contact == 'mdsimeone@gmail.com':  # True:  # 
 				count += 1
-				subject = 'Art and Music Event 1000¥!'
-				message = f"""An Art and Music event will be held at Toggle Hotel Suidobashi, an Instagrammable luxury hotel located a 5-minute walk from the west exit of JR Suidobashi Station in the city center
+				subject = 'Swimsuit Bikini Party! Aug 12'
+				text_content = f"""Hey guys, zak is having an event, a swimsuit/bikini party at Aoyama ever club in Omotesando with ¥300 shots, so come stop by with your friends. 
 
-TIME: 4/29 (SAT) 17:00-23:00
-Live performance: 
-1st set 18:30 
-2nd set 21:00
-PLACE: 9F Toggle Hotel Suidobashi (5min walk from JR Suidobashi station)
-Entrance: 1000¥
-BTW if you want Line messages: https://lin.ee/wPa66oQ
-If you don't want emails anymore, just reply to this.
+Location: 青山ever (in Omotesando)
+Time: Saturday august 12, 9pm to 2am
+Price: guys ¥2,000 girls ¥1,500 (¥1,000 if bikini worn, at least the top) 
+Re-entry okay 
 
-都心のJR水道橋駅の西口から徒歩5分にあるインスタ映えするラグジュアリーホテルToggle Hotel SuidobashiにてArtとMusicのイベントをやります。
-テラスもあるのでいい景色を見ながらお酒をゆっくり飲むのもありですね。
-1000円という破格な入場料なので友達と遊びに来てください！
-ちなみに、LINEでの連絡を希望する場合はこちら：https://lin.ee/wPa66oQ
-Eメールを希望しない場合は、このメールに返信してください"""
+皆さん、zak は Event Horizon でイベントをやります！今回は表参道の青山エバークラブでの水着・ビキニパーティーです。 300円ショットもありますので、お友達とぜひ来てください！
+
+場所：青山エバー（表参道内）
+時間: 8月12日土曜日、午後9時から午前2時まで
+料金：男子 2,000円 女子 1,500円（ビキニトップ着用場合は1,000円）
+再入場OK"""
+				html_content = f"""
+<p><img src="https://i.imgur.com/MbmBmZ6.jpg"></p>
+<p>Hey guys, zak is having an event, a swimsuit/bikini party at Aoyama ever club in Omotesando with ¥300 shots, so come stop by with your friends. </p>
+<br>
+<p>Location: 青山ever (in Omotesando)</p>
+<p>Time: Saturday august 12, 9pm to 2am</p>
+<p>Price: guys ¥2,000 girls ¥1,500 (¥1,000 if bikini worn, at least the top) </p>
+<p>Re-entry okay </p>
+<br>
+<p>皆さん、zak は Event Horizon でイベントをやります！</p>
+<p>今回は表参道の青山エバークラブでの水着・ビキニパーティーです。 </p>
+<p>300円ショットもありますので、お友達とぜひ来てください！</p>
+<br>
+<p>場所：青山エバー（表参道内）</p>
+<p>時間: 8月12日土曜日、午後9時から午前2時まで</p>
+<p>料金：男子 2,000円 女子 1,500円（ビキニトップ着用場合は1,000円）</p>
+<p>再入場OK</p>
+"""
 				email_from = settings.EMAIL_HOST_USER
 				recipient_list = [contact,]
-				# UNCOMMENT THIS IN ORDER TO SEND
-				# send_mail(subject, message, email_from, recipient_list, fail_silently=False)
+				#send_mail(subject, message, email_from, recipient_list, fail_silently=False)
+				msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
+				msg.attach_alternative(html_content, "text/html")
+				msg.send()
 				print(f"{i+1}, id: {item[0]}, lang: {item[11]}, email: {contact}, name: {name}")
+		# THIS IS FOR LINE, BUT WE CAN USE THE APP FOR NOW
 		#if item[13]:  # LINE
 		#	contact = item[13]
 		#	to_print += f", line: {contact}, name: {name}rea"

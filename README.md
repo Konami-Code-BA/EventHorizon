@@ -38,6 +38,10 @@
     ```
 1. Start backend and frontend
     ```shell script
+	python manage.py makemigrations
+	python manage.py migrate auth
+	python manage.py migrate app_name
+	python manage.py migrate
     python manage.py runserver
     npm run start
     ```

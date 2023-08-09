@@ -1,9 +1,8 @@
 from rest_framework.authentication import BaseAuthentication
 from django.contrib.auth import get_user_model
 from django.contrib.sessions.models import Session
-from app_name.functions import verify_update_line_info
 from collections import namedtuple
-from django.contrib.auth.models import Group
+from django.contrib.auth import login as auth_login
 
 
 class UserBackend(BaseAuthentication):
@@ -33,7 +32,7 @@ class UserBackend(BaseAuthentication):
 				user = namedtuple('user', 'error')
 				user.error = error
 				return user
-		if request.session.session_key:
+		elif request.session.session_key:
 			try:
 				print('session')
 				session = Session.objects.get(pk=request.session.session_key)
@@ -52,9 +51,9 @@ class UserBackend(BaseAuthentication):
 				user.error = 'DoesNotExist'
 				return user
 		# missing email / password / line id / random secret / session info
-		print('no possible login fail')
+		print('no possible login')
 		user = namedtuple('user', 'error')
-		user.error = 'missing email / password / line id / random secret / session info'
+		user.error = 'none'
 		return user
 
 	def get_user(self, user_id):
@@ -64,3 +63,6 @@ class UserBackend(BaseAuthentication):
 			user = namedtuple('user', 'error')
 			user.error = 'a user with this id could not be found'
 			return user
+
+	def login(self, request, user):
+		auth_login(request, user)

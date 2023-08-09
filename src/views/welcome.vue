@@ -46,6 +46,7 @@
 			await api.tryLogin(this.email, this.code)
 			if (this.isAuthenticatedUser) {
 				console.log('LOGGED IN')
+				console.log('cookies', document.cookie)
 				let nextPage = f.createNextPageFromCurrentPage()
 				f.goToPage(nextPage)
 			}

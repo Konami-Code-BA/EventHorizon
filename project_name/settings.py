@@ -23,6 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ## SECURITY WARNING: keep the secret key used in production secret!
 ## SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('PYTHON_ENV', default='production') == 'development'  # need to make sure this works
+print(f'{DEBUG=}')
 SECRET_KEY = config('SECRET_KEY')
 ALLOWED_HOSTS = ['*']
 #ALLOWED_HOSTS = [
@@ -77,8 +78,8 @@ CSRF_TRUSTED_ORIGINS = ('*')
 # 'Strict': prevents the cookie from being sent by the browser to the target site in all cross-site browsing context, even when following a regular link
 # 'Lax': maintain user’s logged-in session after the user arrives from an external link
 # 'None': the session cookie will be sent with all same-site and cross-site requests
-SESSION_COOKIE_SAMESITE = 'None'
-#SESSION_COOKIE_SAMESITE = 'Strict'
+#SESSION_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SAMESITE = 'Strict'
 
 #EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 #EMAIL_HOST = 'smtp-mail.outlook.com'

@@ -6,7 +6,7 @@ axios.defaults.xsrfHeaderName = "X-CSRFToken"
     //axios.defaults.headers.common['X-CSRFToken'] = csrftoken
 import axios from 'axios'
 export default {
-    get baseUrl() { return process.env.PYTHON_ENV == 'development' ? 'http://127.0.0.1:8000' : '' },
+    get baseUrl() { return process.env.PYTHON_ENV == 'development' ? 'http://localhost:8000' : '' },
     axiosCall: {
         post: axios.post,
         patch: axios.patch,
@@ -25,13 +25,20 @@ export default {
                     store.user = store.defaultUser
                     return store.user
                 } else if ([
-                        'login', 'try_login', 'register', 'update_user_do_get_lines',
+                        'check_session', 'try_login', 'register', 'update_user_do_get_lines',
                         'update_user_do_get_emails', 'update_user_language', 'line_new_device',
                         'change_password', 'update_user_display_name',
                     ].includes(data.command) && !('error' in response.data[0])) {
                     console.log(`success - userApi ${data.command}`)
                     store.user = response.data[0]
                     return response.data
+                } else if ( // when checking session but getting nothing back
+                    data.command === 'check_session' &&
+                    'error' in response.data[0] &&
+                    response.data[0]['error'] === 'none'
+                ) {
+                    console.log(`null - userApi ${data.command}`)
+                    return null
                 } else if ((typeof response.data) === 'number') { // when getting a count of users
                     console.log(`success - userApi ${data.command}`)
                     return response.data
@@ -241,9 +248,10 @@ export default {
         }
         return await this.userApi('post', null, data)
     },
-    async login(data) {
-        data['command'] = 'login'
-        return await this.userApi('post', null, data)
+    async checkSession() {
+        return await this.userApi('post', null, {
+            command: 'check_session'
+        })
     },
     async lineNewDevice(code, path) {
         return await this.userApi('post', null, {
