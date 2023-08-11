@@ -11,6 +11,72 @@
 		data () {
 			return {
 				store: store,
+				mapStyling: [
+					{ elementType: "geometry", stylers: [{ color: "#242f3e" }] },
+					{ elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
+					{ elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
+					{
+						featureType: "administrative.locality",
+						elementType: "labels.text.fill",
+						stylers: [{ color: "#d59563" }],
+					}, {
+						featureType: "poi",
+						elementType: "labels.text.fill",
+						stylers: [{ color: "#d59563" }],
+					}, {
+						featureType: "poi.park",
+						elementType: "geometry",
+						stylers: [{ color: "#263c3f" }],
+					}, {
+						featureType: "poi.park",
+						elementType: "labels.text.fill",
+						stylers: [{ color: "#6b9a76" }],
+					}, {
+						featureType: "road",
+						elementType: "geometry",
+						stylers: [{ color: "#38414e" }],
+					}, {
+						featureType: "road",
+						elementType: "geometry.stroke",
+						stylers: [{ color: "#212a37" }],
+					}, {
+						featureType: "road",
+						elementType: "labels.text.fill",
+						stylers: [{ color: "#9ca5b3" }],
+					}, {
+						featureType: "road.highway",
+						elementType: "geometry",
+						stylers: [{ color: "#746855" }],
+					}, {
+						featureType: "road.highway",
+						elementType: "geometry.stroke",
+						stylers: [{ color: "#1f2835" }],
+					}, {
+						featureType: "road.highway",
+						elementType: "labels.text.fill",
+						stylers: [{ color: "#f3d19c" }],
+					}, {
+						featureType: "transit",
+						elementType: "geometry",
+						stylers: [{ color: "#2f3948" }],
+					}, {
+						featureType: "transit.station",
+						elementType: "labels.text.fill",
+						stylers: [{ color: "#d59563" }],
+					}, {
+						featureType: "water",
+						elementType: "geometry",
+						stylers: [{ color: "#17263c" }],
+					}, {
+						featureType: "water",
+						elementType: "labels.text.fill",
+						stylers: [{ color: "#515c6d" }],
+					}, {
+						featureType: "water",
+						elementType: "labels.text.stroke",
+						stylers: [{ color: "#17263c" }],
+					},
+				],
 			}
 		},
 		components: {
@@ -21,6 +87,28 @@
 		},
 		methods: {
 			t (w) { return translations.t(w) },
+			infoWindow (i, isInvited, isPast) {
+				return `
+					<button
+						onclick="openEventModal(${this.store.events.display[i].id})"
+						style="
+							text-decoration: none;
+							color: black;
+							font-weight: 600;
+							font-size: 16px;
+							-webkit-font-smoothing: antialiased;
+							-moz-osx-font-smoothing: grayscale;
+							border: 3px solid ${isInvited ? '#44ff00' : '#ffffff'};
+							border-radius: 15px;
+							outline: 1px solid #585858;
+							margin: 1px;
+							background-color: ${isPast ? '#585858' : '#ffffff'} !important;
+						"
+					>
+						${this.store.events.display[i].name}
+					</button>
+				`
+			},
 			async initMap () {
 				console.log('INIT MAP')
 				try {
@@ -31,75 +119,12 @@
 						controlSize: 30,
 						tilt: 45,
 						disableDefaultUI: true,
-						zoom: 12,
-						styles: [
-							{ elementType: "geometry", stylers: [{ color: "#242f3e" }] },
-							{ elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
-							{ elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
-							{
-								featureType: "administrative.locality",
-								elementType: "labels.text.fill",
-								stylers: [{ color: "#d59563" }],
-							}, {
-								featureType: "poi",
-								elementType: "labels.text.fill",
-								stylers: [{ color: "#d59563" }],
-							}, {
-								featureType: "poi.park",
-								elementType: "geometry",
-								stylers: [{ color: "#263c3f" }],
-							}, {
-								featureType: "poi.park",
-								elementType: "labels.text.fill",
-								stylers: [{ color: "#6b9a76" }],
-							}, {
-								featureType: "road",
-								elementType: "geometry",
-								stylers: [{ color: "#38414e" }],
-							}, {
-								featureType: "road",
-								elementType: "geometry.stroke",
-								stylers: [{ color: "#212a37" }],
-							}, {
-								featureType: "road",
-								elementType: "labels.text.fill",
-								stylers: [{ color: "#9ca5b3" }],
-							}, {
-								featureType: "road.highway",
-								elementType: "geometry",
-								stylers: [{ color: "#746855" }],
-							}, {
-								featureType: "road.highway",
-								elementType: "geometry.stroke",
-								stylers: [{ color: "#1f2835" }],
-							}, {
-								featureType: "road.highway",
-								elementType: "labels.text.fill",
-								stylers: [{ color: "#f3d19c" }],
-							}, {
-								featureType: "transit",
-								elementType: "geometry",
-								stylers: [{ color: "#2f3948" }],
-							}, {
-								featureType: "transit.station",
-								elementType: "labels.text.fill",
-								stylers: [{ color: "#d59563" }],
-							}, {
-								featureType: "water",
-								elementType: "geometry",
-								stylers: [{ color: "#17263c" }],
-							}, {
-								featureType: "water",
-								elementType: "labels.text.fill",
-								stylers: [{ color: "#515c6d" }],
-							}, {
-								featureType: "water",
-								elementType: "labels.text.stroke",
-								stylers: [{ color: "#17263c" }],
-							},
-						],
+						styles: this.mapStyling,
 					})
-					let bounds = new google.maps.LatLngBounds()
+					let tokyoBounds = new google.maps.LatLngBounds(
+						new google.maps.LatLng(35.58, 139.58), // Southwest corner of Tokyo 23 wards
+    					new google.maps.LatLng(35.82, 139.95)  // Northeast corner of Tokyo 23 wards
+					)
 					let markers = {}
 					let infowindowContents = []
 					let noEvents = true
@@ -108,159 +133,14 @@
 							if (this.store.events.display[i].latitude != 0
 									|| this.store.events.display[i].longitude != 0) {
 								noEvents = false
-								let icon = ''
-								if (this.store.events.display[i].is_private
-										&& !f.isGuestStatus(this.store.events.display[i], 'invited')) {
-									// PRIVATE UPCOMING
-									if (f.isoStringDateToDateObject(this.store.events.display[i].date_time) > f.today) {
-										icon = window.origin.replace('8080', '8000')
-											+ '/dist/static/upcomingPrivateMapIcon2.png'
-										infowindowContents.push(`
-											<button
-												onclick="openEventModal(${this.store.events.display[i].id})"
-												style="
-													text-decoration: none;
-													color: black;
-													font-weight: 600;
-													font-size: 16px;
-													-webkit-font-smoothing: antialiased;
-													-moz-osx-font-smoothing: grayscale;
-													border: 3px solid #ffffff;
-													border-radius: 15px;
-													outline: 1px solid #585858;
-													margin: 1px;
-													background-color: #ffffff !important;
-												"
-											>
-												${this.store.events.display[i].name}
-											</button>
-										`)
-									// PRIVATE PAST
-									} else {
-										icon = window.origin.replace('8080', '8000')
-											+ '/dist/static/pastPrivateMapIcon2.png'
-										infowindowContents.push(`
-											<button
-												onclick="openEventModal(${this.store.events.display[i].id})"
-												style="
-													text-decoration: none;
-													color: black;
-													font-weight: 600;
-													font-size: 16px;
-													-webkit-font-smoothing: antialiased;
-													-moz-osx-font-smoothing: grayscale;
-													border: 3px solid #ffffff;
-													border-radius: 15px;
-													outline: 1px solid #585858;
-													margin: 1px;
-													background-color: #585858 !important;
-												"
-											>
-												${this.store.events.display[i].name}
-											</button>
-										`)
-									}
-								} else if (!this.store.events.display[i].is_private
-										&& !f.isGuestStatus(this.store.events.display[i], 'invited')) {
-									// PUBLIC UPCOMING
-									if (f.isoStringDateToDateObject(this.store.events.display[i].date_time) > f.today) {
-										icon = window.origin.replace('8080', '8000')
-											+ '/dist/static/upcomingPublicMapIcon2.png'
-										infowindowContents.push(`
-											<button
-												onclick="openEventModal(${this.store.events.display[i].id})"
-												style="
-													text-decoration: none;
-													color: black;
-													font-weight: 600;
-													font-size: 16px;
-													-webkit-font-smoothing: antialiased;
-													-moz-osx-font-smoothing: grayscale;
-													border: 3px solid #ffffff;
-													border-radius: 15px;
-													outline: 1px solid #585858;
-													margin: 1px;
-													background-color: #ffffff !important;
-												"
-											>
-												${this.store.events.display[i].name}
-											</button>
-										`)
-									} else {
-										// PUBLIC PAST
-										icon = window.origin.replace('8080', '8000')
-											+ '/dist/static/pastPublicMapIcon2.png'
-										infowindowContents.push(`
-											<button
-												onclick="openEventModal(${this.store.events.display[i].id})"
-												style="
-													text-decoration: none;
-													color: black;
-													font-weight: 600;
-													font-size: 16px;
-													-webkit-font-smoothing: antialiased;
-													-moz-osx-font-smoothing: grayscale;
-													border: 3px solid #ffffff;
-													border-radius: 15px;
-													outline: 1px solid #585858;
-													margin: 1px;
-													background-color: #585858 !important;
-												"
-											>
-												${this.store.events.display[i].name}
-											</button>
-										`)
-									}	
-								} else if (f.isGuestStatus(this.store.events.display[i], 'invited')) {
-									// INVITED UPCOMING
-									if (f.isoStringDateToDateObject(this.store.events.display[i].date_time) > f.today) {
-										icon = window.origin.replace('8080', '8000')
-											+ '/dist/static/upcomingMyMapIcon2.png'
-										infowindowContents.push(`
-											<button
-												onclick="openEventModal(${this.store.events.display[i].id})"
-												style="
-													text-decoration: none;
-													color: black;
-													font-weight: 600;
-													font-size: 16px;
-													-webkit-font-smoothing: antialiased;
-													-moz-osx-font-smoothing: grayscale;
-													border: 3px solid #44ff00;
-													border-radius: 15px;
-													outline: 1px solid #585858;
-													margin: 1px;
-													background-color: #ffffff !important;
-												"
-											>
-												${this.store.events.display[i].name}
-											</button>
-										`)
-									} else {
-										// INVITED PAST
-										icon = window.origin.replace('8080', '8000') + '/dist/static/pastMyMapIcon2.png'
-										infowindowContents.push(`
-											<button
-												onclick="openEventModal(${this.store.events.display[i].id})"
-												style="
-													text-decoration: none;
-													color: black;
-													font-weight: 600;
-													font-size: 16px;
-													-webkit-font-smoothing: antialiased;
-													-moz-osx-font-smoothing: grayscale;
-													border: 3px solid #44ff00;
-													border-radius: 15px;
-													outline: 1px solid #585858;
-													margin: 1px;
-													background-color: #585858 !important;
-												"
-											>
-												${this.store.events.display[i].name}
-											</button>
-										`)
-									}
-								}
+								let isPrivate = this.store.events.display[i].is_private
+								let isInvited = f.isGuestStatus(this.store.events.display[i], 'invited')
+								let isPast = f.isoStringDateToDateObject(this.store.events.display[i].date_time) <= f.today
+								let iconFileName = isPast ? 'past' : 'upcoming'
+								iconFileName += isInvited ? 'My' : (isPrivate ? 'Private' : 'Public')
+								iconFileName += 'MapIcon2.png'
+								let icon = window.origin.replace('8080', '8000') + `/static/${iconFileName}`
+								infowindowContents.push(this.infoWindow(i, isInvited, isPast))
 								let position = new google.maps.LatLng(
 									this.store.events.display[i].latitude,
 									this.store.events.display[i].longitude
@@ -284,9 +164,7 @@
 								google.maps.event.addListener(map, "click", function() {
 									infowindow.close()
 								})
-								bounds.extend(position)
-								await map.fitBounds(bounds)
-								map.setZoom(12)
+								map.fitBounds(tokyoBounds)
 							}
 						}
 					}
@@ -309,12 +187,12 @@
 							},
 						})
 						bounds.extend(position)
-						await map.fitBounds(bounds)
+						map.fitBounds(bounds)
 						map.setZoom(12)
 					}
 					if (markers[this.selectedEventId]) {
 						bounds.extend(markers[this.selectedEventId].getPosition())
-						await map.fitBounds(bounds)
+						map.fitBounds(bounds)
 						map.setZoom(12)
 						map.panTo(markers[this.selectedEventId].getPosition())
 						google.maps.event.trigger(markers[this.selectedEventId], 'click');

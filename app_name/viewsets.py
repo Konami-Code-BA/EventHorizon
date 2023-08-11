@@ -2,7 +2,6 @@ from rest_framework import viewsets
 from .serializers import UserSerializer, EventSerializer, ImageSerializer, PlusOneSerializer
 from django.contrib.auth.models import Group
 from rest_framework.response import Response
-from django.http import HttpResponse
 from django.contrib import auth
 from django.conf import settings
 from decouple import config
@@ -16,9 +15,7 @@ import googlemaps
 import random
 import boto3
 from botocore.exceptions import ClientError
-import io
 from datetime import datetime
-import base64
 from binascii import a2b_base64
 import os
 
@@ -463,7 +460,7 @@ Feedback:
 				user.line_refresh_token = getAccessToken_response['refresh_token']
 				user.do_get_line_display_name = True
 				user.do_get_lines = True
-				user.personal_code=secrets.token_urlsafe(16),
+				user.personal_code = secrets.token_urlsafe(16),
 				user.language = uri.split('&lang=')[1][:2]
 				user.save()
 				print('SAVED NEW LINE USER')

@@ -15,10 +15,6 @@
 				:key="page + 'aboutUs'"/>
 		<faq v-show="page === 'faq'"
 				:key="page + 'faq' + store.user.language"/>
-		<experiment1 v-show="page === 'experiment1' && store.user.is_superuser"
-				:key="page + 'experiment1'"/>
-		<experiment2 v-show="page === 'experiment2' && store.user.is_superuser"
-				:key="page + 'experiment2'"/>
 		<!-- COMMENT THIS OUT BEFORE PUSHING TO PRODUCTION -->
 	</div>
 </template>
@@ -32,8 +28,6 @@
 	import welcome from '@/views/welcome'
 	import aboutUs from '@/views/aboutUs'
 	import faq from '@/views/faq'
-	import experiment1 from '@/views/experiment1'
-	import experiment2 from '@/views/experiment2'
 	import f from '@/functions/functions.js'
 	export default {
 		name: 'modalView',
@@ -46,8 +40,6 @@
 			welcome,
 			aboutUs,
 			faq,
-			experiment1,
-			experiment2,
 		},
 		data () {
 			return {

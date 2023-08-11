@@ -11,13 +11,16 @@ class UserSerializer(serializers.ModelSerializer):
 class EventSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Event
+		fields = '__all__'
 
 
 class ImageSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Image
+		fields = '__all__'
 
 
 class PlusOneSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = PlusOne
+		fields = '__all__'
