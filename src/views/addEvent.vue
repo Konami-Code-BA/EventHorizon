@@ -206,6 +206,7 @@
 		border-radius: 15px;
 		border: none;
 		background-color: #ffe07a;
+		box-shadow: 0 0 0 30px #ffe07a inset;
 		-webkit-box-shadow: 0 0 0 30px #ffe07a inset;
 		padding-top: 5px;
 		padding-bottom: 5px;

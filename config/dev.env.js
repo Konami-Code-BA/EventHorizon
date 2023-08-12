@@ -5,5 +5,5 @@ require('dotenv').config();
 
 module.exports = merge(prodEnv, {
     NODE_ENV: '"development"',
-    PYTHON_ENV: process.env.PYTHON_ENV
+    PYTHON_ENV: '"development"'
 })
