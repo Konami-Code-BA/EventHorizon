@@ -45,6 +45,9 @@ export default {
                 } else if (response.data.length === 0) { // when gettin an empty array of users
                     console.log(`success - userApi ${data.command}`)
                     return response.data
+                } else if ('hosts' in response.data) { // when getting an array of users
+                    console.log(`success - userApi ${data.command}`)
+                    return response.data
                 } else if ('limited_user' in response.data[0]) { // when getting an array of users
                     console.log(`success - userApi ${data.command}`)
                     return response.data
@@ -167,11 +170,10 @@ export default {
             ids: userIds,
         })
     },
-    async getEventUserInfo(eventId, guestType) {
+    async getEventUserInfo(eventId) {
         return await this.userApi('post', null, {
             command: 'get_event_user_info',
             event_id: eventId,
-            guest_type: guestType,
         })
     },
     async registerWithEmail(email, password, displayName) {
@@ -326,24 +328,10 @@ export default {
         let result = await this.eventsApi('get', null, { command: 'getAllEvents' })
         return result
     },
-    async getEvent(eventId) {
-        let result = await this.eventsApi('get', eventId, { command: 'getEvent' })
-        return result[0]
-    },
     async createEvent(data) {
         data.command = 'add_event'
         let result = await this.eventsApi('post', null, data)
         return result[0]
-    },
-    //async getMyEvents() {
-    //    let result = await this.eventsApi('post', null, { command: 'my_events' })
-    //    return result
-    //},
-    async checkUserStatus(eventId) {
-        return await this.eventsApi('post', null, {
-            command: 'check_user_status',
-            event_id: eventId,
-        })
     },
     async changeGuestStatus(eventId, status, userId = null) {
         if (f.isoStringDateToDateObject(store.events.selected.date_time) > f.today) { // this protection isnt in api yet

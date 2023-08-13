@@ -28,3 +28,5 @@ typing_extensions==4.0.1
 tzdata==2021.5
 urllib3==1.26.5
 whitenoise==5.2.0
+mysqlclient==2.2.0
+awscli==1.29.25

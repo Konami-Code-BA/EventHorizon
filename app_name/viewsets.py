@@ -222,61 +222,69 @@ class UserViewset(viewsets.ModelViewSet):
 		# can't see wait_list, invite_request people if not host
 		event = EventSerializer.Meta.model.objects.get(pk=request.data['event_id'])
 		plus_ones = event.plus_ones.all()
-		guest_ids = getattr(event, request.data['guest_type']).all().values_list('id', flat=True)
-		actual_guest_array = list(self.model.objects.filter(pk__in=guest_ids))
-		final_guest_array = []
-		for guest in actual_guest_array:
-			# if it is me, i get more info. also if i am a host
-			if (guest.id == request.user.id or f.user_in_guest_statuses(event, request.user.id, ['hosts'])
-					or f.user_in_guest_statuses(event, guest.id, ['hosts'])):
-				final_guest_array += [OrderedDict([
-					('id', guest.id),
-					('display_name', guest.display_name),
-					('limited_user', True),
-					('plus_one', False),
-				])]
-				if request.data['guest_type'] != 'hosts':  # hosts' plus-ones aren't added to hosts, they're added elsewhere
-					plus_one = plus_ones.filter(chaperone=guest.id)  # get plus-one for this guest
-					if len(plus_one) > 0:  # if there is a plus-one
-						final_guest_array += [OrderedDict([
-							('id', guest.id),
-							('display_name', plus_one[0].name),
-							('limited_user', True),
-							('plus_one', True),
-						])]
-			elif ((  # get some info if
-					request.user.id in event.invited.all().values_list('id', flat=True)  # im invited and
-					and request.data['guest_type'] in ['invited', 'attending', 'maybe']  # get invited/attending/maybe
-				) or (  # or im getting hosts
-					request.data['guest_type'] == 'hosts'
-				)
-			):
-				final_guest_array += [OrderedDict([
-					('display_name', guest.display_name),
-					('limited_user', True),
-					('plus_one', False),
-				])]
-				if request.data['guest_type'] != 'hosts':  # hosts' plus-ones aren't added to hosts, they're added elsewhere
-					plus_one = plus_ones.filter(chaperone=guest.id)  # get plus-one for this guest
-					if len(plus_one) > 0:  # if there is a plus-one
-						final_guest_array += [OrderedDict([
-							('display_name', plus_one[0].name),
-							('limited_user', True),
-							('plus_one', True),
-						])]
-			else: # im not getting me, im not a host, im not invited getting invitees, im not getting hosts
-				final_guest_array += [OrderedDict([
-					('limited_user', True),
-					('plus_one', False),
-				])]
-				if request.data['guest_type'] != 'hosts':  # hosts' plus-ones aren't added to hosts, they're added elsewhere
-					plus_one = plus_ones.filter(chaperone=guest.id)  # get plus-one for this guest
-					if len(plus_one) > 0:  # if there is a plus-one
-						final_guest_array += [OrderedDict([
-							('limited_user', True),
-							('plus_one', True),
-						])]
-		return final_guest_array
+		event_user_info = OrderedDict([
+			('hosts', []),
+			('invited', []),
+			('maybe', []),
+			('attending', []),
+			('wait_list', []),
+			('invite_request', []),
+		])
+		for guest_type in event_user_info:
+			guest_ids = getattr(event, guest_type).all().values_list('id', flat=True)
+			actual_guest_array = list(self.model.objects.filter(pk__in=guest_ids))
+			for guest in actual_guest_array:
+				# if it is me, i get more info. also if i am a host
+				if (guest.id == request.user.id or f.user_in_guest_statuses(event, request.user.id, ['hosts'])
+						or f.user_in_guest_statuses(event, guest.id, ['hosts'])):
+					event_user_info[guest_type] += [OrderedDict([
+						('id', guest.id),
+						('display_name', guest.display_name),
+						('limited_user', True),
+						('plus_one', False),
+					])]
+					if guest_type != 'hosts':  # hosts' plus-ones aren't added to hosts, they're added elsewhere
+						plus_one = plus_ones.filter(chaperone=guest.id)  # get plus-one for this guest
+						if len(plus_one) > 0:  # if there is a plus-one
+							event_user_info[guest_type] += [OrderedDict([
+								('id', guest.id),
+								('display_name', plus_one[0].name),
+								('limited_user', True),
+								('plus_one', True),
+							])]
+				elif ((  # get some info if
+						request.user.id in event.invited.all().values_list('id', flat=True)  # im invited and
+						and guest_type in ['invited', 'attending', 'maybe']  # get invited/attending/maybe
+					) or (  # or im getting hosts
+						guest_type == 'hosts'
+					)
+				):
+					event_user_info[guest_type] += [OrderedDict([
+						('display_name', guest.display_name),
+						('limited_user', True),
+						('plus_one', False),
+					])]
+					if guest_type != 'hosts':  # hosts' plus-ones aren't added to hosts, they're added elsewhere
+						plus_one = plus_ones.filter(chaperone=guest.id)  # get plus-one for this guest
+						if len(plus_one) > 0:  # if there is a plus-one
+							event_user_info[guest_type] += [OrderedDict([
+								('display_name', plus_one[0].name),
+								('limited_user', True),
+								('plus_one', True),
+							])]
+				else: # im not getting me, im not a host, im not invited getting invitees, im not getting hosts
+					event_user_info[guest_type] += [OrderedDict([
+						('limited_user', True),
+						('plus_one', False),
+					])]
+					if guest_type != 'hosts':  # hosts' plus-ones aren't added to hosts, they're added elsewhere
+						plus_one = plus_ones.filter(chaperone=guest.id)  # get plus-one for this guest
+						if len(plus_one) > 0:  # if there is a plus-one
+							event_user_info[guest_type] += [OrderedDict([
+								('limited_user', True),
+								('plus_one', True),
+							])]
+		return event_user_info
 
 	def message_user(self, request):
 		try:
@@ -761,36 +769,6 @@ class EventViewset(viewsets.ViewSet):
 			print('ERROR IN ADD_EVENT API:', e)
 			serializer_data = self.serializer_class([], many=True).data
 		return serializer_data
-
-	#def my_events(self, request):  # SECURITY: anyone can get my events  # this is maybe not used anymore
-	#	my_hosting = self.model.objects.filter(hosts=request.user.id)
-	#	serializer_data_my_hosting = serializer_host(my_hosting)  # SECURITY: see serializers
-	#	my_invited = self.model.objects.filter(Q(invited=request.user.id) & ~Q(hosts=request.user.id))
-	#	serializer_data_my_invited = serializer_public_invited(my_invited)
-	#	my_invite_requests = self.model.objects.filter(Q(is_private=True) & Q(invite_request=request.user.id))
-	#	serializer_data_my_invite_requests = serializer_private(my_invite_requests)
-	#	return serializer_data_my_hosting + serializer_data_my_invited + serializer_data_my_invite_requests
-
-	def check_user_status(self, request):
-		user = request.user  # SECURITY: anyone can get their own user status
-		event = EventSerializer.Meta.model.objects.get(pk=request.data['event_id'])
-		if f.user_in_guest_statuses(event, user.id, ['hosts']):
-			result = [OrderedDict([('status', 'hosts')])]
-			return result
-		if f.user_in_guest_statuses(event, user.id, ['attending']):
-			result = [OrderedDict([('status', 'attending')])]
-			return result
-		if f.user_in_guest_statuses(event, user.id, ['maybe']):
-			result = [OrderedDict([('status', 'maybe')])]
-			return result
-		if f.user_in_guest_statuses(event, user.id, ['wait_list']):
-			result = [OrderedDict([('status', 'wait_list')])]
-			return result
-		if f.user_in_guest_statuses(event, user.id, ['invite_request']):
-			result = [OrderedDict([('status', 'invite_request')])]
-			return result
-		result = [OrderedDict([('status', '')])]
-		return result
 
 	#def closest_future_date(self, request):
 	#	date_time = request.data['date_time']

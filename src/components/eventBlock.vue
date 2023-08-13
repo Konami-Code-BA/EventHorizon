@@ -29,7 +29,19 @@
 		computed: {
 		},
 		async mounted () {
-			this.userStatus = this.event.myStatus
+			if (this.event.myAttendingStatus['hosts']) {
+				this.userStatus = 'hosts'
+			} else if (this.event.myAttendingStatus['invited']) {
+				this.userStatus = 'invited'
+			} else if (this.event.myAttendingStatus['maybe']) {
+				this.userStatus = 'maybe'
+			} else if (this.event.myAttendingStatus['attending']) {
+				this.userStatus = 'attending'
+			} else if (this.event.myAttendingStatus['wait_list']) {
+				this.userStatus = 'wait_list'
+			} else if (this.event.myAttendingStatus['invite_request']) {
+				this.userStatus = 'invite_request'
+			}
 			if (this.event.image_data) {
 				this.image = this.event.image_data
 			}

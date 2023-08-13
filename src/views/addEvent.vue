@@ -142,17 +142,6 @@
 				}
 				return
 			},
-			async finishCreateEvent () {
-				let data = this.eventData
-				if (this.imageId) {
-					data['images'] = this.imageId
-				}
-				let newEvent = await api.createEvent(data)
-				this.store.events.all.push(newEvent)
-				await f.getEvents()
-				f.goToPage({ page: 'event', args: { id: newEvent.id}})
-				this.store.loading = false
-			},
 			async saveImage () {
 				let input = document.getElementById('img-input')
 				let file = this.imageFile
@@ -192,6 +181,16 @@
 					let result = await api.saveImage(formData)
 					vm.imageId = result.id
 				}
+			},
+			async finishCreateEvent () {
+				let data = this.eventData
+				if (this.imageId) {
+					data['images'] = this.imageId
+				}
+				let newEvent = await api.createEvent(data)
+				await f.updateEvent(newEvent)
+				f.goToPage({ page: 'event', args: { id: newEvent.id}})
+				this.store.loading = false
 			},
 		} // methods
 	} // export

@@ -106,57 +106,63 @@ export default {
             return false
         }
     },
-    async getEvents() {
-        let events = await api.getAllEvents()
-        events = this.sortEventsByDate(events)
-        for (let i = 0; i < events.length; i++) {
-            // only get new images if (there is an image to get AND
-            // (there are no events at all OR (there are events and the image_data hasn't been saved yet)))
-            if (events[i].images.length > 0 && (store.events.all.length === 0 || (store.events.all.length > 0 && !('image_data' in store.events.all[i])))) {
-                let result = await api.getEventImage(events[i].images[0], events[i].id)
-                if (result != 'fail') {
-                    events[i].image_data = `https://eventhorizon-us-east-1.s3.amazonaws.com/${result}`
-                }
-                // otherwise just get the image from the store, if
-                // there is an image to get but events have been stored and the image is saved there too
-            } else if (events[i].images.length > 0 && store.events.all.length > 0 && 'image_data' in store.events.all[i]) {
-                events[i].image_data = store.events.all[i].image_data
-            } // and if there are no images to get, then
-        }
-        store.events.all = events
-        store.events.mine = await this.filterEventsByMyStatus()
-        store.events.display = store.events.all
-    },
-    async getEvent(thisEvent) {
-        let event = await api.getEvent(thisEvent.id)
-        if (event.images.length > 0 && !('image_data' in thisEvent)) {
+    async getImageDataPeopleMyAttendingStatus(event) {
+        // only get image_data if (there is an image to get AND
+        // (there are store events not got yet OR (there are store events and the image_data hasnt been saved yet)))
+        let ind = store.events.all.find(ev => { ev.id === event.id })
+        if (event.images.length > 0 && (store.events.all.length === 0 || (store.events.all.length > 0 && !('image_data' in store.events.all[ind])))) {
             let result = await api.getEventImage(event.images[0], event.id)
             if (result != 'fail') {
                 event.image_data = `https://eventhorizon-us-east-1.s3.amazonaws.com/${result}`
             }
+            // otherwise just get the image from the store, if
+            // there is an image to get but events have been stored and the image is saved there too
+        } else if (event.images.length > 0 && store.events.all.length > 0 && 'image_data' in store.events.all[ind]) {
+            event.image_data = store.events.all[ind].image_data
         }
-        store.events.selected = event
-        let ind = store.events.all.find(ev => { ev.id === event.id })
-        store.events.all[ind] = event
-        store.events.mine = await this.filterEventsByMyStatus()
+
+        let eventUserInfo = await this.getEventUserInfoCheckPeopleList(event.id)
+        event.people = eventUserInfo.people
+        event.myAttendingStatus = eventUserInfo.myAttendingStatus
+        return event
+    },
+    async getEvents() {
+        let events = await api.getAllEvents()
+        events = this.sortEventsByDate(events)
+        for (let i = 0; i < events.length; i++) { // get image data, people, and myAttendingStatus
+            events[i] = await this.getImageDataPeopleMyAttendingStatus(events[i])
+        }
+        store.events.all = events
+        store.events.mine = this.filterEventsByMyStatus()
         store.events.display = store.events.all
+    },
+    async updateEvent(event) {
+        event = await this.getImageDataPeopleMyAttendingStatus(event) // update event
+        let ind = store.events.all.find(ev => { ev.id === event.id })
+        if (ind) { // this event exists, simply update it
+            store.events.all[ind] = event
+        } else { // this event doesn't exist, add it
+            store.events.all.push(event)
+        }
+        store.events.mine = this.filterEventsByMyStatus()
+        store.events.display = store.events.all
+        store.events.selected = event
+        return event
     },
     async asyncFilter(arr, callback) { // how to use: await this.asyncFilter(events, async event => {})
         const fail = Symbol()
         return (await Promise.all(arr.map(async item => (await callback(item)) ? item : fail))).filter(i => i !== fail)
     },
-    async filterEventsByMyStatus() {
+    filterEventsByMyStatus() {
         let filteredEvents = []
         for (let i = 0; i < store.events.all.length; i++) {
-            let result = await api.checkUserStatus(store.events.all[i].id)
-            store.events.all[i].myStatus = result[0].status
             if (
-                store.events.all[i].myStatus === 'hosts' ||
-                store.events.all[i].myStatus === 'invited' ||
-                store.events.all[i].myStatus === 'attending' ||
-                store.events.all[i].myStatus === 'maybe' ||
-                store.events.all[i].myStatus === 'wait_list' ||
-                store.events.all[i].myStatus === 'invite_request'
+                store.events.all[i].myAttendingStatus['hosts'] ||
+                store.events.all[i].myAttendingStatus['invited'] ||
+                store.events.all[i].myAttendingStatus['attending'] ||
+                store.events.all[i].myAttendingStatus['maybe'] ||
+                store.events.all[i].myAttendingStatus['wait_list'] ||
+                store.events.all[i].myAttendingStatus['invite_request']
             ) {
                 filteredEvents.push(store.events.all[i])
             }
@@ -356,12 +362,13 @@ export default {
             'invite_request': [],
             'uninvited_followers': [],
         }
-        people['hosts'] = await api.getEventUserInfo(eventId, 'hosts')
-        people['invited'] = await api.getEventUserInfo(eventId, 'invited')
-        people['maybe'] = await api.getEventUserInfo(eventId, 'maybe')
-        people['attending'] = await api.getEventUserInfo(eventId, 'attending')
-        people['wait_list'] = await api.getEventUserInfo(eventId, 'wait_list')
-        people['invite_request'] = await api.getEventUserInfo(eventId, 'invite_request')
+        let eventUserInfo = await api.getEventUserInfo(eventId)
+        people['hosts'] = eventUserInfo['hosts']
+        people['invited'] = eventUserInfo['invited']
+        people['maybe'] = eventUserInfo['maybe']
+        people['attending'] = eventUserInfo['attending']
+        people['wait_list'] = eventUserInfo['wait_list']
+        people['invite_request'] = eventUserInfo['invite_request']
         people['uninvited_followers'] = await api.getUserLimitedInfo()
         people['uninvited_followers'] = people['uninvited_followers'].filter(person => {
             return !(people['hosts'].concat(

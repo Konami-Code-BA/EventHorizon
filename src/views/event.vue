@@ -462,7 +462,7 @@
 		data () {
 			return {
 				store: store,
-				event: store.events.selected,  // just make sure the key fro this component has event in it
+				event: f.filterEvents(store.events.all, f.currentPage.args.id, ['id'], true)[0],
 				myAttendingStatus: {
 					'hosts': false,
 					'invited': false,
@@ -527,12 +527,9 @@
 			},
 			async getEventAndMyStatusAndPeople () {
 				this.store.loading = true
-				this.event = f.filterEvents(this.store.events.all, f.currentPage.args.id, ['id'], true)[0]
 				this.store.events.selected = this.event
-
-				let result = await f.getEventUserInfoCheckPeopleList(this.event.id)
-				this.myAttendingStatus = result.myAttendingStatus
-				this.people = result.people
+				this.myAttendingStatus = this.event.myAttendingStatus
+				this.people = this.event.people
 
 				this.plusOneStatus = null
 				let keys = Object.keys(this.myAttendingStatus)
@@ -547,52 +544,36 @@
 				}
 				this.store.loading = false
 			},
-			async changeAttendingStatus (status, userId = null) {
+			async changeAttendingStatus (newStatus, userId = null) {
 				if (!this.isAuthenticatedUser) {
 					this.goToLogin()
 					return
 				}
-				if (status === 'invited') {
+				if (
+					!this.myAttendingStatus[newStatus] || // change myAttendingStatus
+					newStatus === 'invited' || // myAttendingStatus unchanged + invite means invite someone else
+					newStatus === 'decline' || // myAttendingStatus unchanged + decline means means remove invite
+					newStatus === 'invite_request' // myAttendingStatus unchanged + invite_request means remove invite_request
+				) {
 					store.loading = true
-					let result = await api.changeGuestStatus(this.event.id, status, userId)
+					if (newStatus != 'invited') {
+						userId = null // if invited, we send userId of invited user. else, it'll use my own
+					} else if (this.myAttendingStatus[newStatus] && newStatus === 'invite_request') {
+						newStatus = 'decline'
+					}
+					let result = await api.changeGuestStatus(this.event.id, newStatus, userId)
 					if (result === 'failed') {
 						store.loading = false
 						await this.$refs.flashCantChangePastEvents.flashModal()
 						return
 					}
-					await f.getEvent(this.event)
+					this.event = await f.updateEvent(this.event)
 					await this.getEventAndMyStatusAndPeople()
 					store.loading = false
 					await this.$refs.flashDone.flashModal()
 					return
-				} else if (status === 'decline' || !this.myAttendingStatus[status]) {
-					store.loading = true
-					let result = await api.changeGuestStatus(this.event.id, status, null)
-					if (result === 'failed') {
-						store.loading = false
-						await this.$refs.flashCantChangePastEvents.flashModal()
-						return
-					}
-					await f.getEvent(this.event)
-					await this.getEventAndMyStatusAndPeople()
-					store.loading = false
-					await this.$refs.flashDone.flashModal()
-					return
-				} else if (status === 'invite_request') {
-					// if my status is already this status, only change it if im changing invite_request
-					store.loading = true
-					let result = await api.changeGuestStatus(this.event.id, 'decline', null)
-					if (result === 'failed') {
-						store.loading = false
-						await this.$refs.flashCantChangePastEvents.flashModal()
-						return
-					}
-					await f.getEvent(this.event)
-					await this.getEventAndMyStatusAndPeople()
-					store.loading = false
-					await this.$refs.flashDone.flashModal()
-					return
-				}  // otherwise, if my status is already this status, do nothing
+				}
+				// otherwise, do nothing, no status change
 			},
 			async plusOneButton () {
 				if (this.plusOneStatus) {  // already has plus one
@@ -603,7 +584,7 @@
 						await this.$refs.flashCantChangePastEvents.flashModal()
 						return
 					}
-					await f.getEvent(this.event)
+					this.event = await f.updateEvent(this.event)
 					await this.getEventAndMyStatusAndPeople()
 					this.store.loading = false
 					await this.$refs.flashDone.flashModal()
@@ -625,7 +606,7 @@
 					await this.$refs.flashCantChangePastEvents.flashModal()
 					return
 				}
-				await f.getEvent(this.event)
+				this.event = await f.updateEvent(this.event)
 				await this.getEventAndMyStatusAndPeople()
 				this.$refs.plusOneModal.closeModals()
 				this.store.loading = false
