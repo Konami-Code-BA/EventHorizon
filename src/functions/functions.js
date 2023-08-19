@@ -106,42 +106,54 @@ export default {
             return false
         }
     },
-    async getImageDataPeopleMyAttendingStatus(event) {
-        // only get image_data if (there is an image to get AND
-        // (there are store events not got yet OR (there are store events and the image_data hasnt been saved yet)))
-        let ind = store.events.all.find(ev => { ev.id === event.id })
-        if (event.images.length > 0 && (store.events.all.length === 0 || (store.events.all.length > 0 && !('image_data' in store.events.all[ind])))) {
-            let result = await api.getEventImage(event.images[0], event.id)
-            if (result != 'fail') {
-                event.image_data = `https://eventhorizon-us-east-1.s3.amazonaws.com/${result}`
+    async getImageDataPeopleMyAttendingStatus(rawEvent) {
+        let ind = store.events.all.find(ev => { ev.id === rawEvent.id })
+        let processedEvent = rawEvent
+        if (ind) { // this event is already stored, simply update it
+            // only get image_data if (there is an image to get AND
+            // (there are store events not got yet OR (there are store events and the image_data hasnt been saved yet)))
+            if (rawEvent.images.length > 0 && (store.events.all.length === 0 || (store.events.all.length > 0 && !('image_data' in store.events.all[ind])))) {
+                // if no image_data yet, add image_data
+                let result = await api.getEventImage(rawEvent.images[0], rawEvent.id)
+                if (result != 'fail') {
+                    processedEvent.image_data = `https://eventhorizon-us-east-1.s3.amazonaws.com/${result}`
+                }
+                // otherwise just get the image from the store, if
+                // there is an image to get but events have been stored and the image is saved there too
+            } else if (rawEvent.images.length > 0 && store.events.all.length > 0 && 'image_data' in store.events.all[ind]) {
+                processedEvent.image_data = store.events.all[ind].image_data
             }
-            // otherwise just get the image from the store, if
-            // there is an image to get but events have been stored and the image is saved there too
-        } else if (event.images.length > 0 && store.events.all.length > 0 && 'image_data' in store.events.all[ind]) {
-            event.image_data = store.events.all[ind].image_data
+        } else { // this event hasn't been stored
+            if (rawEvent.images.length > 0) { // if there is image data to get
+                let result = await api.getEventImage(rawEvent.images[0], rawEvent.id)
+                if (result != 'fail') {
+                    processedEvent.image_data = `https://eventhorizon-us-east-1.s3.amazonaws.com/${result}`
+                }
+            }
         }
-
-        let eventUserInfo = await this.getEventUserInfoCheckPeopleList(event.id)
-        event.people = eventUserInfo.people
-        event.myAttendingStatus = eventUserInfo.myAttendingStatus
-        return event
+        let eventUserInfo = await this.getEventUserInfoCheckPeopleList(rawEvent.id)
+        processedEvent.people = eventUserInfo.people
+        processedEvent.myAttendingStatus = eventUserInfo.myAttendingStatus
+        return processedEvent
     },
     async getEvents() {
-        let events = await api.getAllEvents()
-        events = this.sortEventsByDate(events)
-        for (let i = 0; i < events.length; i++) { // get image data, people, and myAttendingStatus
-            events[i] = await this.getImageDataPeopleMyAttendingStatus(events[i])
+        let rawEvents = await api.getAllEvents()
+        rawEvents = this.sortEventsByDate(rawEvents)
+        let processedEvents = rawEvents.map(item => null)
+        for (let i = 0; i < rawEvents.length; i++) { // get image_data, people, and myAttendingStatus
+            processedEvents[i] = await this.getImageDataPeopleMyAttendingStatus(rawEvents[i])
         }
-        store.events.all = events
+        // set store.events to these processedEvents
+        store.events.all = processedEvents
         store.events.mine = this.filterEventsByMyStatus()
         store.events.display = store.events.all
     },
     async updateEvent(event) {
         event = await this.getImageDataPeopleMyAttendingStatus(event) // update event
         let ind = store.events.all.find(ev => { ev.id === event.id })
-        if (ind) { // this event exists, simply update it
+        if (ind) { // this event is already stored, simply update it
             store.events.all[ind] = event
-        } else { // this event doesn't exist, add it
+        } else { // this event hasn't been stored, add it
             store.events.all.push(event)
         }
         store.events.mine = this.filterEventsByMyStatus()

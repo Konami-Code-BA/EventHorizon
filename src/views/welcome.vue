@@ -48,6 +48,7 @@
 				console.log('LOGGED IN')
 				console.log('cookies', document.cookie)
 				let nextPage = f.createNextPageFromCurrentPage()
+				await f.getEvents()
 				f.goToPage(nextPage)
 			}
 			this.store.loading = false
@@ -68,7 +69,7 @@
 				if (this.isAuthenticatedUser) {
 					console.log('REGISTERED')
 					let nextPage = f.createNextPageFromCurrentPage()
-					//console.log(nextPage)
+					await f.getEvents()
 					f.goToPage(nextPage)
 				} else {
 					this.$refs.displayNameInput.error = 'NOT AUTHENTICATED'
